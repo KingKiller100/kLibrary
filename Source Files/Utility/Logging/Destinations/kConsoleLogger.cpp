@@ -15,6 +15,7 @@ namespace klib
 {
 	using namespace kString;
 	using namespace kCalendar;
+	using namespace kMisc;
 
 	namespace kLogs
 	{

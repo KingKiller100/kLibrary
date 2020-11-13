@@ -34,24 +34,30 @@
 // Times the length of the test
 #include "../Utility/Stopwatch/kStopwatch.hpp"
 
-#include <iostream>
+// Change console colour
+#include "../Utility/Misc/ConsoleColour.hpp"
 
+#include <iostream>
 
 
 #ifdef TESTING_ENABLED
 namespace kTest
 {
+	using namespace klib;
+	using namespace kStopwatch;
+	using namespace kString;
+
 	TesterManager::TesterManager(Token&)
 		: success(true)
 	{
-		const auto before = klib::kFileSystem::GetCurrentWorkingDirectory();
-		const auto ewd = klib::kFileSystem::GetExeDirectory();
-		const auto dirChanged = klib::kFileSystem::SetCurrentWorkingDirectory(ewd);
+		const auto before = kFileSystem::GetCurrentWorkingDirectory();
+		const auto ewd = kFileSystem::GetExeDirectory();
+		const auto dirChanged = kFileSystem::SetCurrentWorkingDirectory(ewd);
 
 		if (!dirChanged)
 			std::runtime_error("Failed to change current directory");
 		
-		const auto after =  klib::kFileSystem::GetCurrentWorkingDirectory();
+		const auto after = kFileSystem::GetCurrentWorkingDirectory();
 		
 		if (before == after)
 			std::runtime_error("no change occurred");
@@ -122,19 +128,20 @@ namespace kTest
 
 	void TesterManager::Add(Tester* test)
 	{
-		testsUSet.insert(std::unique_ptr<Tester>(std::move(test)));
+		testsSet.insert(std::unique_ptr<Tester>(std::move(test)));
 	}
 
 	void TesterManager::Run(Tester& test)
 	{
-		using namespace klib::kString;
 		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-		const klib::kStopwatch::HighAccuracyStopwatch timer("Test Run Time");
+		const HighAccuracyStopwatch timer("Test Run Time");
 
 		std::cout << "Now running: " << test.GetName();
+		
 		const auto pass = test.Run();
-		const auto testTime = timer.GetLifeTime<klib::kStopwatch::units::Micros>();
+		const auto testTime = timer.GetLifeTime<units::Micros>();
+		
 		if (!pass)
 			success = false;
 
@@ -150,21 +157,22 @@ namespace kTest
 				runtimeResultStr, 
 				test.GetFailureData()); // Fail Case
 
-		klib::kFileSystem::WriteFile(path.c_str(), resultTest.c_str());
+		kFileSystem::WriteFile(path.c_str(), resultTest.c_str());
 	}
 
 	std::string TesterManager::WriteResults(const bool pass, const double resTime) const
 	{
-		using namespace klib::kString;
-
+		using namespace kString;
+				
 		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 		std::cout << " | ";
 		
-		SetConsoleTextAttribute(hConsole, pass ? 10 : 12);
-		auto resultStr = ToString("%s"
-			, (pass ? "Pass" : "Fail")
-		);
+		SetConsoleTextAttribute(hConsole, pass 
+			? kMisc::ConsoleColour::LIGHT_GREEN
+			: kMisc::ConsoleColour::SCARLET_RED);
+		
+		auto resultStr = ToString<char>((pass ? "Pass" : "Fail"));
 		std::cout << resultStr;
 		SetConsoleTextAttribute(hConsole, 7);
 
@@ -181,20 +189,21 @@ namespace kTest
 
 	void TesterManager::RunAll()
 	{
-		klib::kStopwatch::HighAccuracyStopwatch totalRunTimeTimer("Total Test Run Time");
+		HighAccuracyStopwatch totalRunTimeTimer("Total Test Run Time");
 
-		for (const auto& test : testsUSet)
+		for (const auto& test : testsSet)
 		{
 			Run(*test);
 		}
 
-		const auto finalTime = totalRunTimeTimer.GetDeltaTime<klib::kStopwatch::units::Secs>();
+		const auto finalTime = totalRunTimeTimer.GetDeltaTime<units::Secs>();
 		const auto secs = CAST(unsigned, finalTime);
 		const auto remainder = finalTime - secs;
-		const unsigned millis = CAST(unsigned, 1000.0 * remainder);
+		const unsigned millis = CAST(unsigned
+			, std::chrono::milliseconds::period::den * remainder);
 
-		const auto finalTimeStr = klib::kString::ToString("Total Runtime: {0}s  {1}ms", secs, millis);
-		klib::kFileSystem::WriteFile(path, finalTimeStr);
+		const auto finalTimeStr = ToString("Total Runtime: {0}s  {1}ms", secs, millis);
+		kFileSystem::WriteFile(path, finalTimeStr);
 
 		std::cout << "\n" << finalTimeStr << "\n";
 
@@ -204,7 +213,7 @@ namespace kTest
 
 	void TesterManager::ClearAllTests()
 	{
-		testsUSet.clear();
+		testsSet.clear();
 	}
 
 	TesterManager& TesterManager::Get()

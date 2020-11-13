@@ -14,12 +14,12 @@ namespace klib
 	{
 		namespace units
 		{
-			using Hours = kCalendar::TimeComponentBase<std::chrono::minutes>;
-			using Mins = kCalendar::TimeComponentBase<std::chrono::seconds>;
-			using Secs = kCalendar::TimeComponentBase<std::chrono::milliseconds>;
+			using Hours  = kCalendar::TimeComponentBase<std::chrono::minutes>;
+			using Mins   = kCalendar::TimeComponentBase<std::chrono::seconds>;
+			using Secs   = kCalendar::TimeComponentBase<std::chrono::milliseconds>;
 			using Millis = kCalendar::TimeComponentBase<std::chrono::microseconds>;
 			using Micros = kCalendar::TimeComponentBase<std::chrono::nanoseconds>;
-			using Nanos = kCalendar::TimeComponentBase<std::chrono::duration<long long, std::pico>>;
+			using Nanos  = kCalendar::TimeComponentBase<std::chrono::duration<long long, std::pico>>;
 		}
 
 		template<typename RepresentationType = double, typename ClockType = std::chrono::high_resolution_clock>
@@ -100,15 +100,15 @@ namespace klib
 				static constexpr double sixtieth = (CAST(long double, 1) / 60);
 				static constexpr double thousandth = (CAST(long double, 1) / 1000);
 
-				const auto duration = std::chrono::duration_cast<UnitsUnderlyingT>(now - prev);
+				const auto diff = std::chrono::duration_cast<UnitsUnderlyingT>(now - prev);
 
 				long double finalDuration;
 
 				if _CONSTEXPR_IF(std::is_same_v<Units, units::Hours>
 					|| std::is_same_v<Units, units::Mins>)
-					finalDuration = duration.count() * sixtieth;
+					finalDuration = diff.count() * sixtieth;
 				else
-					finalDuration = duration.count() * thousandth;
+					finalDuration = diff.count() * thousandth;
 
 				return static_cast<RepT>(finalDuration);
 			}
