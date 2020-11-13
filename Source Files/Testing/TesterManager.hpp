@@ -35,7 +35,7 @@ namespace kTest
 		
 	private:
 		std::string path;
-		std::set< std::unique_ptr<Tester> > testsUSet;
+		std::set< std::unique_ptr<Tester> > testsSet;
 
 		bool success;
 	};
