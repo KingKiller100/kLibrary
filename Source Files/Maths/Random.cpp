@@ -47,7 +47,7 @@ namespace kmaths::kRng
 		BCRYPT_ALG_HANDLE OpenCryptHandle()
 		{
 			BCRYPT_ALG_HANDLE algHandle;
-			const auto ret = BCryptOpenAlgorithmProvider(&algHandle
+			const auto ret = ::BCryptOpenAlgorithmProvider(&algHandle
 				, BCRYPT_RNG_ALGORITHM
 				, nullptr
 				, 0ul);
@@ -77,7 +77,7 @@ namespace kmaths::kRng
 
 		void CloseBCryptHandle(BCRYPT_ALG_HANDLE algHandle)
 		{
-			const auto ret = BCryptCloseAlgorithmProvider(algHandle, 0ul);
+			const auto ret = ::BCryptCloseAlgorithmProvider(algHandle, 0ul);
 			if (ret != 0)
 				LogBCryptError(ret);
 		}

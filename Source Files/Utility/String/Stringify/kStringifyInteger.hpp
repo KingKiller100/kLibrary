@@ -124,7 +124,7 @@ namespace klib::kString::stringify
 
 	template<class CharType, typename Integral_t, typename = std::enable_if_t <
 		std::is_integral_v<Integral_t>
-		>>
+		>> // Big endian format
 		StringWriter<CharType> StringIntegralBinary(Integral_t val, size_t padding)
 	{
 		StringWriter<CharType> binary;
