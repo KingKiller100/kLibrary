@@ -137,8 +137,10 @@ namespace klib::kString::stringify
 			val >>= 1;
 		}
 
+		AppendPadding(binary, padding, CharType('0'));
+		
 		return binary;
 	}
+}
 
 	
-}

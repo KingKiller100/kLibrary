@@ -31,7 +31,7 @@ namespace kTest
 		static TesterManager& Get();
 
 	private:
-		std::string WriteResults(const bool result, const double resTime) const;
+		USE_RESULT std::string WriteResults(const bool result, const double resTime) const;
 		
 	private:
 		std::string path;

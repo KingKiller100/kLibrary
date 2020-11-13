@@ -18,6 +18,7 @@ namespace kTest::maths
 		= default;
 
 	using namespace kmaths;
+	using namespace kmaths::kRng;
 	void RandomTester::Test()
 	{
 		VERIFY_MULTI_INIT();
@@ -50,9 +51,9 @@ namespace kTest::maths
 		constexpr float lb = 0.25f;
 		constexpr float ub = 0.5f;
 
-		const auto a = RNG(lb, ub);
+		const auto a = RNG(lb, ub, kRng::RngSeedSource::TIME);
 		std::this_thread::sleep_for(1s);
-		const auto b = RNG(lb, ub);
+		const auto b = RNG(lb, ub, kRng::RngSeedSource::BCRYPT);
 
 		VERIFY(a != b);
 		VERIFY(lb < a && a < ub);

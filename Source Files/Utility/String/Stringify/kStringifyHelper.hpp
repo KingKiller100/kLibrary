@@ -13,4 +13,14 @@ namespace klib::kString::stringify
 		const auto count = minDigits - outStr.size();
 		outStr.insert(outStr.begin(), count, padding);
 	}
+
+	template<typename CharType>
+	void AppendPadding(std::basic_string<CharType>& outStr, const size_t minDigits, CharType padding)
+	{
+		if (outStr.size() >= minDigits)
+			return;
+
+		const auto count = minDigits - outStr.size();
+		outStr.insert(outStr.end(), count, padding);
+	}
 }
