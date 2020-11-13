@@ -14,7 +14,10 @@ namespace kTest::utility
 	private:
 		void Test() override;
 
+		bool StrToTest();
+		bool CountTest();
 		bool ReplaceTest();
+		bool RemoveTest();
 		bool SplitTest();
 		bool ToLower();
 		bool ToUpper();

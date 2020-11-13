@@ -44,7 +44,7 @@ namespace kTest
 	if ((test) == false)\
 	{\
 		this->success = false; \
-		this->failureData.append(klib::kString::ToString("\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n\n", #test, __FILE__, __FUNCSIG__, __LINE__));\
+		this->failureData.append(klib::kString::stringify::SprintfWrapper("\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n\n", #test, __FILE__, __FUNCSIG__, __LINE__));\
 	}\
 
 #if MSVC_PLATFORM_TOOLSET > 141

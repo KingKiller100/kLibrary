@@ -11,13 +11,18 @@ namespace klib
 {
 	namespace kString
 	{
+		template<typename Stringish>
+		concept ValidStringT = type_trait::Is_StringType_V<Stringish>
+			|| (type_trait::Is_CharType_V<ONLY_TYPE(Stringish)>
+				&& std::is_pointer_v<Stringish>);
+
 		enum class PreserveToken { YES, NO, };
 		enum class PreserveEmpty { YES, NO, };
 
-		template<class Char = char>
-		USE_RESULT constexpr StringWriter<Char> Replace(const StringReader<Char>& str, const ONLY_TYPE(Char) oldChar, const ONLY_TYPE(Char) newChar) noexcept
+		template<class CharT = char>
+		USE_RESULT constexpr StringWriter<CharT> Replace(const StringReader<CharT>& str, const ONLY_TYPE(CharT) oldChar, const ONLY_TYPE(CharT) newChar) noexcept
 		{
-			using StrW = StringWriter<Char>;
+			using StrW = StringWriter<CharT>;
 
 			auto text = StrW(str);
 
@@ -40,11 +45,11 @@ namespace klib
 			return text;
 		}
 
-		template<class Char = char>
-		USE_RESULT constexpr std::vector<StringWriter<Char>> Split(const StringWriter<Char>& str, const Char* tokens,
+		template<class CharT = char>
+		USE_RESULT constexpr std::vector<StringWriter<CharT>> Split(const StringWriter<CharT>& str, const CharT* tokens,
 			const PreserveToken preserveToken = PreserveToken::NO, const PreserveEmpty preserveEmpty = PreserveEmpty::NO)
 		{
-			using StrW = StringWriter<Char>;
+			using StrW = StringWriter<CharT>;
 
 			const auto keepToken = (preserveToken == PreserveToken::YES);
 			const auto keepEmpty = (preserveEmpty == PreserveEmpty::YES);
@@ -65,8 +70,8 @@ namespace klib
 			return lines;
 		}
 
-		template<class Char = char>
-		USE_RESULT constexpr std::vector<StringWriter<Char>> Split(const StringWriter<Char>& str, const StringReader<Char>& tokens,
+		template<class CharT = char>
+		USE_RESULT constexpr std::vector<StringWriter<CharT>> Split(const StringWriter<CharT>& str, const StringReader<CharT>& tokens,
 			const PreserveToken preserveToken = PreserveToken::NO, const PreserveEmpty preserveEmpty = PreserveEmpty::NO)
 		{
 			return Split(str, tokens.data(), preserveToken, preserveEmpty);
@@ -187,16 +192,16 @@ namespace klib
 			return count;
 		}
 
-		template<class Integer_t, typename StringType
+		template<class Integer_t, typename StringT
 			, typename = std::enable_if_t<
-			type_trait::Is_StringType_V<StringType>
+			std::_Is_specialization_v<StringT, std::basic_string>
 			>>
-			constexpr Integer_t StrTo(StringType string)
+			constexpr Integer_t StrTo(StringT string)
 		{
 			static_assert(std::is_integral_v<Integer_t>, "Can only be used with integer types "
 				"(char, int, long, unsigned short, etc..");
 
-			using CharType = typename StringType::value_type;
+			using CharType = typename StringT::value_type;
 
 			const auto CrashFunc = [](const std::string& errMsg) { throw std::runtime_error(errMsg); };
 
@@ -244,9 +249,27 @@ namespace klib
 
 			return result;
 		}
+
+		template<typename StringType, typename Stringish>
+		requires ValidStringT<Stringish> || type_trait::Is_CharType_V<Stringish>
+			constexpr bool Remove(StringType & str, const Stringish & search)
+		{
+			bool removed = false;
+			auto pos = str.find_first_of(search);
+
+			while (pos != StringType::npos)
+			{
+				const auto endPos = str.find_first_not_of(search, pos);
+				str.erase(str.begin() + pos, str.begin() + endPos);
+				pos = str.find(search);
+				removed = true;
+			}
+			return removed;
+		}
+
 	}
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kString;
 #endif
-}
+	}
 

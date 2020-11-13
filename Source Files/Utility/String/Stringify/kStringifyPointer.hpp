@@ -6,14 +6,13 @@
 
 namespace klib::kString::stringify
 {
-
-	
 	template<class CharType, typename T
 		, typename = std::enable_if_t<std::is_pointer_v<T>
 		|| type_trait::Is_CharType_V<CharType>>
 		>
-		StringWriter<CharType> StringifyPointer(const T* ptr, size_t padding)
+		StringWriter<CharType> StringifyPointer(const T* ptr, const StringWriter<CharType>& specifier)
 	{
+		const auto padding = StrTo<long long>(specifier);
 		const auto asUint = reinterpret_cast<uintptr_t>(ptr);
 		const auto address =
 			StringIntegralHex<CharType>(asUint, padding);

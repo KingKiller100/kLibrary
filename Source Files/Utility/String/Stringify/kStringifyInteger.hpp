@@ -38,7 +38,7 @@ namespace klib::kString::stringify
 		, typename = std::enable_if_t<std::is_integral_v<Signed_t>
 		|| type_trait::Is_CharType_V<CharType>>
 		>
-		kString::StringWriter<CharType> StringSignedIntegral(const Signed_t val, size_t minDigits)
+		kString::StringWriter<CharType> StringSignedIntegral(const Signed_t val, size_t minDigits, CharType placeHolder)
 	{
 		if (minDigits == nPrecision)
 			minDigits = 1;
@@ -59,7 +59,7 @@ namespace klib::kString::stringify
 		}
 		
 		kString::StringWriter<CharType> str(current, end);
-		PrependPadding(str, minDigits, CharType('0'));
+		PrependPadding(str, minDigits, placeHolder);
 
 		return str;
 	}
@@ -68,7 +68,7 @@ namespace klib::kString::stringify
 		, typename = std::enable_if_t<std::is_integral_v<Unsigned_t>
 		|| type_trait::Is_CharType_V<CharType>>
 		>
-		StringWriter<CharType> StringUnsignedIntegral(const Unsigned_t val, size_t minDigits)
+		StringWriter<CharType> StringUnsignedIntegral(const Unsigned_t val, size_t minDigits, CharType placeHolder)
 	{
 		if (minDigits == nPrecision)
 			minDigits = 1;
@@ -79,7 +79,7 @@ namespace klib::kString::stringify
 
 
 		kString::StringWriter<CharType> str(current, end);
-		PrependPadding(str, minDigits, CharType('0'));
+		PrependPadding(str, minDigits, placeHolder);
 
 		return str;
 	}
@@ -88,23 +88,24 @@ namespace klib::kString::stringify
 	template<class CharType, typename Integral_t
 		, typename = std::enable_if_t < std::is_integral_v<Integral_t>
 	>>
-		StringWriter<CharType> StringIntegral(const Integral_t val, size_t minDigits)
+		StringWriter<CharType> StringIntegral(const Integral_t val, size_t minDigits, CharType placeHolder)
 	{
 		if constexpr (std::is_unsigned_v<Integral_t>)
-			return StringUnsignedIntegral<CharType, Integral_t>(val, minDigits);
+			return StringUnsignedIntegral<CharType, Integral_t>(val, minDigits, placeHolder);
 		else
-			return StringSignedIntegral<CharType, Integral_t>(val, minDigits);
+			return StringSignedIntegral<CharType, Integral_t>(val, minDigits, placeHolder);
 	}
 
+	// Big endian format
 	template<class CharType, typename Integral_t, typename = std::enable_if_t < 
 		std::is_integral_v<Integral_t>
 	>>
-	StringWriter<CharType> StringIntegralHex(const Integral_t val, size_t padding)
+	StringWriter<CharType> StringIntegralHex(const Integral_t val, size_t minCharacters, CharType placeHolder)
 	{
 		static constexpr auto& hexMap = s_GeneralHexMap<CharType>;
 
-		if (padding == nPrecision)
-			padding = sizeof(uintptr_t) * 2;
+		if (minCharacters == nPrecision)
+			minCharacters = sizeof(uintptr_t) * 2;
 
 		StringWriter<CharType> address;
 
@@ -117,15 +118,16 @@ namespace klib::kString::stringify
 			asUint /= hexMap.size();
 		}
 
-		PrependPadding(address, padding, CharType('0'));
+		PrependPadding(address, minCharacters, placeHolder);
 
 		return address;
 	}
 
+	// Big endian format
 	template<class CharType, typename Integral_t, typename = std::enable_if_t <
 		std::is_integral_v<Integral_t>
-		>> // Big endian format
-		StringWriter<CharType> StringIntegralBinary(Integral_t val, size_t padding)
+		>> 
+		StringWriter<CharType> StringIntegralBinary(Integral_t val, size_t minCharacters, CharType placeHolder)
 	{
 		StringWriter<CharType> binary;
 		binary.reserve(std::numeric_limits<Integral_t>::digits);
@@ -137,7 +139,9 @@ namespace klib::kString::stringify
 			val >>= 1;
 		}
 
-		AppendPadding(binary, padding, CharType('0'));
+		std::reverse(binary.begin(), binary.end());
+		
+		AppendPadding(binary, minCharacters, placeHolder);
 		
 		return binary;
 	}

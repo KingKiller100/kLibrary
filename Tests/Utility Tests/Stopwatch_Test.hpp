@@ -10,7 +10,7 @@ namespace kTest::utility
 		StopWatchTester();
 		~StopWatchTester() override;
 		
-	private:
+	protected:
 		void Test() override;
 	};
 }

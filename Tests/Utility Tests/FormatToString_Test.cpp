@@ -46,6 +46,10 @@ namespace kTest::utility
 		const auto testStr7 = ToString("%s", o);
 		const auto testStr8 = stringify::SprintfWrapper("%s", std::string("STL strings can be handled by klib SprintfWrapper"));
 
+		constexpr auto num = 1000;
+		const auto hex = "0x" + stringify::StringIntegralHex<char>(num, 4);
+		const auto binary = "0b" + stringify::StringIntegralBinary<char>(num, 4);
+		
 		VERIFY(testStr == "This test 1 ");
 		VERIFY(testStr2 == "will all work printf function format specifiers like with string literals ");
 		VERIFY(testStr3W == L"and with different numerical types such as float 6.283, ");
@@ -54,7 +58,9 @@ namespace kTest::utility
 		VERIFY(testStr6.find("pointer addresses i.e. 0x00") != std::string::npos);
 		VERIFY(testStr7 == "Bitches ain't shit but hoes and tricks");
 		VERIFY(testStr8 == "STL strings can be handled by klib SprintfWrapper");
-
+		VERIFY(hex == "0x03e8");
+		VERIFY(binary == "0x03e8");
+		
 		return success;
 	}
 

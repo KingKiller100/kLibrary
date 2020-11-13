@@ -19,9 +19,35 @@ namespace kTest::utility
 		VERIFY_MULTI(ToWriterAndToReaderTest());
 		VERIFY_MULTI(ToLower());
 		VERIFY_MULTI(ToUpper());
+		VERIFY_MULTI(RemoveTest());
 		VERIFY_MULTI(ReplaceTest());
 		VERIFY_MULTI(SplitTest());
 		VERIFY_MULTI_END();
+	}
+
+	using namespace klib::kString;
+
+	bool StringManipulationTester::StrToTest()
+	{
+		{
+			const std::string str = "1000";
+			const auto res = StrTo<int>(str);
+			constexpr auto expected = 1000;
+			VERIFY(expected == res);
+		}
+		
+		return success;
+	}
+
+	bool StringManipulationTester::CountTest()
+	{
+		{
+			constexpr std::string_view test("Aquarium");
+			constexpr auto count = Count(test, 'a');
+			VERIFY(count == 2);
+		}
+		
+		return success;
 	}
 
 	bool StringManipulationTester::ReplaceTest()
@@ -30,6 +56,17 @@ namespace kTest::utility
 		const auto res = klib::kString::Replace(text, 'R', 'B');
 		VERIFY(res.compare("My name is Bob") == 0);
 
+		return success;
+	}
+
+	bool StringManipulationTester::RemoveTest()
+	{
+		{
+			std::string test("test");
+			const auto removed = Remove(test, 'e');
+			VERIFY(removed);
+			VERIFY(test == "tst");
+		}
 		return success;
 	}
 
@@ -138,7 +175,7 @@ namespace kTest::utility
 			constexpr std::u32string_view expected = U"EXAMPLE TEXT";
 			VERIFY(expected == res);
 		}
-		
+
 		return success;
 	}
 
