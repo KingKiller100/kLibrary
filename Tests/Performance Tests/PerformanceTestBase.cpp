@@ -25,8 +25,9 @@ namespace kTest::performance
 		}
 		catch (...)
 		{
-			const auto output = klib::kString::ToString("{0} seems to have crashed!\n", name);
+			const auto output = klib::kString::ToString("{0} seems to have triggered an exception!\n", name);
 			PerformanceTestManager::Get().CollectResult(output);
+			return;
 		}
 
 		Output();

@@ -11,13 +11,14 @@ namespace kTest::maths
 		FractionTester();
 		~FractionTester() override;
 
-	private:
+	protected:
 		void Test() override;
 
+	private:
 		double RoundTo4(double x);
 		
 		bool AddTest();
-		bool SubractTest();
+		bool SubtractTest();
 		bool MultiplyTest();
 		bool DivideTest();
 		bool NonSimplifiedTest();

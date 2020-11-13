@@ -10,9 +10,10 @@ namespace kTest::utility
 		CalendarTester();
 		~CalendarTester() override;
 		
-	private:
+	protected:
 		void Test() override;
 
+	private:
 		bool DayTest();
 		bool MonthTest();
 		bool YearTest();

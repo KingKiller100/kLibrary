@@ -9,11 +9,12 @@ namespace kTest::maths
 	{
 	public:
 		AlgorithmsTester();
-		~AlgorithmsTester() override;
+		~AlgorithmsTester();
 
-	private:
+	protected:
 		void Test() override;
 
+	private:
 		bool CountTest();
 		bool SineTest();
 		bool CosineTest();

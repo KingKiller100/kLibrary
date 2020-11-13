@@ -10,9 +10,10 @@ namespace kTest::templates
 		BytesStorageTester();
 		~BytesStorageTester() override;
 
-	private:
+	protected:
 		void Test() override;
 
+	private:
 		bool CharacterTest();
 		bool IntegerTest();
 		bool SizeTypeTest();

@@ -11,7 +11,7 @@ namespace kTest::maths
 		QuaternionsTester();
 		~QuaternionsTester() override;
 
-	private:
+	protected:
 		void Test() override;
 	};
 }

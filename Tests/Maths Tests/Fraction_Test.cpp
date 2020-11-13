@@ -25,7 +25,7 @@ namespace kTest::maths
 		VERIFY_MULTI(AddTest());
 		VERIFY_MULTI(DivideTest());
 		VERIFY_MULTI(GetRealTest());
-		VERIFY_MULTI(SubractTest());
+		VERIFY_MULTI(SubtractTest());
 		VERIFY_MULTI(MultiplyTest());
 		VERIFY_MULTI(NonSimplifiedTest());
 		
@@ -124,7 +124,7 @@ namespace kTest::maths
 		return success;
 	}
 
-	bool FractionTester::SubractTest()
+	bool FractionTester::SubtractTest()
 	{
 		{
 			constexpr Fraction f1 = { 0, 1, false };

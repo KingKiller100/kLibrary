@@ -11,9 +11,10 @@ namespace kTest::maths
 		RandomTester() ;
 		~RandomTester() override;
 
-	private:
+	protected:
 		void Test() override;
 
+	private:
 		bool IntegerTest();
 		bool FloatingPointTest();
 	};

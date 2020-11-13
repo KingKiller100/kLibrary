@@ -11,7 +11,7 @@ namespace kTest::utility
 		UTFConverterTester();
 		~UTFConverterTester() override;
 
-	private:
+	protected:
 		void Test() override;
 	};
 }

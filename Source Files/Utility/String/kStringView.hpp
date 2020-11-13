@@ -87,7 +87,7 @@ namespace klib
 			}
 
 			// Operators
-			constexpr bool operator==(const CharType item) const
+			constexpr bool operator==(const CharType& item) const
 			{
 				return Length() == 1 && *Data() == item;
 			}
@@ -103,11 +103,21 @@ namespace klib
 				return Length() == temp.Length() && temp.Data() == string;
 			}
 
-			constexpr bool operator==(const std::string& stdString)
+			template<class Stringish, typename = std::enable_if_t<
+				type_trait::Is_StringType_V<Stringish>
+				>>
+			constexpr bool operator==(const Stringish& str) const
 			{
-				return (Compare(stdString.c_str()) == EQUAL);
+				return (str.size() == Length()
+					&& str.data() == string);
 			}
-			//*****************
+
+			template<typename ComparerT>
+			constexpr bool operator!=(const ComparerT& other)
+			{
+				return !(*this == other);
+			}
+			//****************************************************************
 
 			constexpr operator Const_Ptr() const
 			{
@@ -150,14 +160,14 @@ namespace klib
 
 			USE_RESULT constexpr Const_Ref Front() const
 			{
-				kAssert(string != nullptr, "string is null");
+				kAssert(string != nullptr, "string is null", kDebug::NoAssertCB);
 				return string[0];
 			}
 
 			USE_RESULT constexpr Const_Ref Back() const
 			{
-				kAssert(string != nullptr, "string is null");
-				return length < 1 ? string[0] : string[length - 1];
+				kAssert(string != nullptr, "string is null", kDebug::NoAssertCB);
+				return string[length - 1];
 			}
 
 			constexpr bool StartsWith(const CharType item) noexcept
@@ -290,7 +300,7 @@ namespace klib
 
 					++count;
 					--searchLimit;
-					currentChar++;
+					++currentChar;
 				}
 
 				return npos;
@@ -541,7 +551,7 @@ namespace klib
 #ifdef __cpp_lib_char8_t
 		using u8StringView = Template_String_View<char8_t, std::char_traits<char8_t>>;
 
-		USE_RESULT inline u8StringView operator"" _sv(u8StringView::Const_Ptr str, size_t length) noexcept
+		USE_RESULT constexpr u8StringView operator"" _sv(u8StringView::Const_Ptr str, size_t length) noexcept
 		{
 			return u8StringView(str, length);
 		}

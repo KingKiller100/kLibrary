@@ -27,6 +27,9 @@ namespace kTest::performance
 		
 		static PerformanceTestManager& Get();
 	
+	protected:
+		void Test() override;
+		
 	private:
 		void Initialize();
 		void ShutDown();
@@ -35,7 +38,6 @@ namespace kTest::performance
 
 		void InitializeMaths();
 
-		void Test() override;
 		void OutputResult(const std::string& name);
 
 	private:

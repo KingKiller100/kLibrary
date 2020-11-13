@@ -12,9 +12,10 @@ namespace kTest::performance::maths
 		AlgorithmsSpeedTest();
 		~AlgorithmsSpeedTest();
 
-	private:
+	protected:
 		void Test() override;
 
+	private:
 		void PowerOfFractionsTest();
 		void PowerOfIntegersTest();
 		void SquareTest();

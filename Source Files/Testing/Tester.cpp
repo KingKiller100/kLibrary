@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "Tester.hpp"
 
-#include "TesterManager.hpp"
+#include <iostream>
 
 #ifdef TESTING_ENABLED
 
@@ -12,20 +12,20 @@ namespace kTest
 	{	}
 
 	Tester::Tester(Tester&& other) noexcept
-		: success(true)
 	{
 		*this = std::move(other);
 	}
 
 	Tester& Tester::operator=(Tester&& other) noexcept
 	{
+		this->success = std::move(other.success);
 		this->name = std::move(other.name);
 		this->failureData = std::move(other.failureData);
 		return *this;
 	}
 
 	Tester::~Tester()
-		= default;
+		{}
 
 	const char* Tester::GetName() const noexcept
 	{
@@ -37,19 +37,15 @@ namespace kTest
 		return failureData;
 	}
 
-	void Tester::Add(Tester* test)
-	{
-		TesterManager::Get().Add(test);
-	}
-
 	bool Tester::Run() noexcept
 	{
 		try
 		{
 			Test();
 		}
-		catch (...)
+		catch (const std::exception& e)
 		{
+			std::cout << e.what();
 			success = false;
 		}
 

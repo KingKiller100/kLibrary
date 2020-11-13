@@ -23,15 +23,13 @@ namespace kTest
 		const char* GetName() const noexcept;
 		const std::string& GetFailureData() const noexcept;
 
-		void Add(Tester* test);
-
 		bool Run() noexcept;
 
 		// Deleted Funcs
 		Tester(const Tester& other) = delete;
 		Tester& operator=(const Tester& other) = delete;
 
-	private:
+	protected:
 		virtual void Test() = 0;
 
 	protected:

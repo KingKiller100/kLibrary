@@ -10,9 +10,10 @@ namespace kTest::maths
 		MatricesTester();
 		~MatricesTester() override;
 
-	private:
+	protected:
 		void Test() override;
 
+	private:
 		bool DynamicMatrixTest();
 		bool AddTest();
 		bool SubtractTest();
