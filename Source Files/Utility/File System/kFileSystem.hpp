@@ -332,7 +332,7 @@ namespace klib::kFileSystem
 		if (cwdFullPath.empty() || secret::helper::update_cwd)
 		{
 			Char* cwdBuffer = nullptr;
-			DWORD length = 0;
+			std::uint32_t length = 0;
 			if _CONSTEXPR_IF(std::is_same_v<Char, char>)
 			{
 				length = ::GetCurrentDirectoryA(0, nullptr);
@@ -402,10 +402,10 @@ namespace klib::kFileSystem
 
 		if (exeFullPath.empty())
 		{
-			constexpr DWORD bufferSize = 1024 * 2;
+			constexpr std::uint32_t bufferSize = 1024 * 2;
 			Char* exeBuffer = new Char[bufferSize]{};
 
-			DWORD length = 0;
+			std::uint32_t length = 0;
 			if _CONSTEXPR_IF(std::is_same_v<Char, char>)
 			{
 				length = ::GetModuleFileNameA(nullptr, exeBuffer, bufferSize);

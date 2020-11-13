@@ -206,22 +206,26 @@ namespace kmaths
 		constexpr void Zero() noexcept
 		{
 			for (auto i = 0; i < N; ++i)
-				dimensions[i] = CAST(Type, 0);
+				dimensions[i] = Type();
 		}
 
 		USE_RESULT constexpr bool IsZero() const noexcept
 		{
 			for (auto val : dimensions)
-				if (val != T())
+				if (val != Type())
 					return false;
 			return true;
 		}
 
 		// Compilers earlier than C++20 will not work in constexpr
-		USE_RESULT constexpr Type* GetPointerToData() const
+		USE_RESULT constexpr const Type* GetPointerToData() const
 		{
-			Type& first = (Type)dimensions[0];
-			return std::addressof<Type>(first);
+			return std::addressof(dimensions[0]);
+		}
+		
+		USE_RESULT constexpr Type* GetPointerToData()
+		{
+			return std::addressof(dimensions[0]);
 		}
 
 		USE_RESULT constexpr auto GetTotalBytes() const noexcept

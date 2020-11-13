@@ -22,6 +22,11 @@ project "kLibrary"
         "cpp.hint"
     }
 
+    links
+    {
+        "Bcrypt.lib",
+    }
+
     -- prebuildcommands
     -- {
     --     ("IF EXIST \"$(ProjectDir)Include Files\\\" ( del /f /s /q \"$(ProjectDir)Include Files\\\" ) ELSE (mkdir \"Include Files\")"),
