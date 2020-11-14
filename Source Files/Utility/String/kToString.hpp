@@ -117,7 +117,10 @@ namespace klib {
 				const auto colonPos = currentSection.find(precisionSymbol, replacePos);
 				const auto startPos = colonPos + 1;
 				const auto count = (inputPos - 1) - startPos;
-				auto specifier = currentSection.substr(colonPos + 1, count);
+
+				std::basic_string<CharType> specifier;
+				if (colonPos != npos)
+					specifier = currentSection.substr(colonPos + 1, count);
 
 				currentSection.erase(replacePos);
 

@@ -87,14 +87,12 @@ namespace kTest::utility
 			try
 			{
 				using Int_t = unsigned short;
-				const std::u16string str = u"300000";
+				const std::u16string str = u"300000"; // Too large to represent as an ushort
 				const auto res = StrTo<Int_t>(str);
-				constexpr Int_t expected = std::numeric_limits<Int_t>::max();
-				VERIFY(expected == res);
 			}
 			catch (...)
 			{
-				VERIFY(true);
+				success = true;
 			}
 		}
 
@@ -112,8 +110,44 @@ namespace kTest::utility
 	{
 		{
 			constexpr std::string_view test("Aquarium");
-			constexpr auto count = Count(test, 'a');
+			const auto count = Count(test, 'a');
 			VERIFY(count == 2);
+		}
+
+		{
+			constexpr std::string_view test("Aquarium");
+			const auto count = Count(test, 'a', 2);
+			VERIFY(count == 1);
+		}
+
+		{
+			constexpr std::string_view test("Aquarium");
+			const auto count = Count(test, 'a', 0, CaseSensitive::YES);
+			VERIFY(count == 1);
+		}
+
+		{
+			constexpr std::u32string_view test(U"Douglas");
+			const auto count = Count(test, U'g');
+			VERIFY(count == 1);
+		}
+
+		{
+			constexpr std::u16string_view test(u"Onomatopoeia");
+			const auto count = Count(test, u'o');
+			VERIFY(count == 4);
+		}
+
+		{
+			constexpr std::wstring_view test(L"His cat and my cat are friends");
+			const auto count = Count(test, L"cat");
+			VERIFY(count == 2);
+		}
+
+		{
+			constexpr std::wstring_view test(L"Randall");
+			const auto count = Count(test, L'q');
+			VERIFY(count == 0);
 		}
 
 		return success;
@@ -122,7 +156,7 @@ namespace kTest::utility
 	bool StringManipulationTester::ReplaceTest()
 	{
 		const auto text = klib::kString::StringWriter<char>("My name is Rob");
-		const auto res = klib::kString::Replace(text, 'R', 'B');
+		const auto res = Replace(text, 'R', 'B');
 		VERIFY(res.compare("My name is Bob") == 0);
 
 		return success;
@@ -145,7 +179,7 @@ namespace kTest::utility
 		}
 
 		{
-			std::string test("the brown fox jumped over black the zoo fence");
+			std::string test("the brown fox jumped over the black zoo fence");
 			const auto removed = Remove(test, "zoom");
 			VERIFY(!removed);
 			VERIFY(test == "the brown fox jumped over the black zoo fence");

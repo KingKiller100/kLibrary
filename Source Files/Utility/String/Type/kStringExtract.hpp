@@ -17,9 +17,9 @@ namespace klib::kString::stringify
 		const auto hexMode = Remove(specifier, 'h');
 		const auto binaryMode = Remove(specifier, 'b');
 		const auto padding = StrTo<size_t>(specifier);
-		
+
 		StringWriter<CharT> toAdd;
-		
+
 		if (hexMode)
 			toAdd = stringify::StringIntegralHex<CharT>(*data, padding, CharT('0'));
 		else if (binaryMode)
@@ -27,7 +27,7 @@ namespace klib::kString::stringify
 		else
 			toAdd = stringify::StringIntegral<CharT, ONLY_TYPE(T)>(*data, padding, CharT('0'));
 
-		
+
 		outCurrentSection.append(toAdd);
 		outFinalString.append(outCurrentSection);
 	}
@@ -40,7 +40,7 @@ namespace klib::kString::stringify
 		outCurrentSection.push_back(*data);
 		outFinalString.append(outCurrentSection);
 	}
-	
+
 	template<typename CharT, typename T>
 	void ExtractFloatAndInsertInOutput(const std::any& container, StringWriter<CharT>& specifier
 		, StringWriter<CharT>& outFinalString, StringWriter<CharT>& outCurrentSection)
@@ -49,33 +49,29 @@ namespace klib::kString::stringify
 		bool specified = false;
 
 		std::chars_format fmt = std::chars_format::fixed;
-		if (Contains(specifier, CharT('e')))
+		if (Remove(specifier, CharT('e')))
 		{
 			specified = true;
 			fmt = std::chars_format::scientific;
 		}
-		else if (Contains(specifier, CharT('h')))
+		else if (Remove(specifier, CharT('h')))
 		{
 			specified = true;
 			fmt = std::chars_format::hex;
 		}
-		else if (Contains(specifier, CharT('g')))
+		else if (Remove(specifier, CharT('g')))
 		{
 			specified = true;
 			fmt = std::chars_format::general;
 		}
-		else if (specifier, CharT('f'))
+		else if (Remove(specifier, CharT('f')))
+		{
 			specified = true;
+		}
 
-		Remove(specifier, 'g');
-		Remove(specifier, 'h');
-		Remove(specifier, 'f');
-		Remove(specifier, 'e');
-		
 		const auto padding = StrTo<std::int64_t>(specifier);
 
 		outCurrentSection.append(stringify::StringFloatingPoint<CharT>(*data, padding, fmt));
 		outFinalString.append(outCurrentSection);
 	}
 }
-	

@@ -23,6 +23,7 @@ namespace klib
 
 		enum class PreserveToken { YES, NO, };
 		enum class PreserveEmpty { YES, NO, };
+		enum class CaseSensitive { YES, NO, };
 
 		template<class CharT = char>
 		USE_RESULT constexpr StringWriter<CharT> Replace(const StringReader<CharT>& str, const ONLY_TYPE(CharT) oldChar, const ONLY_TYPE(CharT) newChar) noexcept
@@ -200,13 +201,22 @@ namespace klib
 					&& std::is_pointer_v<Stringish>)
 				)
 			>>
-			USE_RESULT constexpr size_t Count(const StringType& str, const Stringish search)
+			USE_RESULT constexpr size_t Count(const StringType& str, const Stringish search
+				, const size_t offset = 0, CaseSensitive cs = CaseSensitive::NO)
 		{
 			size_t count = 0;
 
-			for (auto currentPos = str.find(search);
+			const auto hayStack = cs == CaseSensitive::YES
+				? ToWriter(str)
+				: ToLower(str);
+
+			const auto needle = cs == CaseSensitive::YES
+				? search
+				: ToLower(search);
+			
+			for (auto currentPos = hayStack.find(needle, offset);
 				currentPos != StringType::npos;
-				currentPos = str.find(search, currentPos + 1))
+				currentPos = hayStack.find(needle, currentPos + 1))
 			{
 				++count;
 			}
@@ -218,7 +228,7 @@ namespace klib
 			, typename = std::enable_if_t<
 			std::_Is_specialization_v<StringT, std::basic_string>
 			>>
-			constexpr Integer_t StrTo(StringT string)
+			USE_RESULT constexpr Integer_t StrTo(StringT string)
 		{
 			static_assert(std::is_integral_v<Integer_t>, __FUNCTION__ " can only be used with integer types "
 				"(char, int, long, unsigned short, etc..");
@@ -242,7 +252,8 @@ namespace klib
 			Remove(string, ' ');
 
 			if (string.empty())
-				CrashFunc("Cannot convert empty string to integer number");
+				return 0;
+			
 			if (Contains(string, CharType('.')))
 				CrashFunc("string must contain only one integer number");
 
