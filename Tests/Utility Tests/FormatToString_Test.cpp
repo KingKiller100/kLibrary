@@ -1,7 +1,6 @@
 #include "pch.hpp"
 #include "FormatToString_Test.hpp"
 
-#include "../../Source Files/Maths/Constants.hpp"
 #include "../../Source Files/Utility/String/kToString.hpp"
 
 #ifdef TESTING_ENABLED
@@ -16,58 +15,117 @@ namespace kTest::utility
 
 	void FormatToStringTester::Test()
 	{
-		VERIFY(FormatToStringTest() == true);
-		VERIFY(SingleObjectToStringTest() == true);
+		VERIFY_MULTI_INIT();
+		VERIFY_MULTI(SprintfWrapperTest());
+		VERIFY_MULTI(StringifyBinaryTest());
+		VERIFY_MULTI(DirectToStringTest());
+		VERIFY_MULTI(DirectToStringTest());
+		VERIFY_MULTI(FormatToStringTest());
+		VERIFY_MULTI(DirectToStringTest());
+		VERIFY_MULTI_END();
+	}
+	using namespace klib::kString;
+
+	bool FormatToStringTester::SprintfWrapperTest()
+	{
+		const struct ObjectWithToString
+		{
+			USE_RESULT const std::string& ToString() const
+			{
+				return str;
+			}
+
+			const std::string str = "klib::SprintfWrapper using object with ToString func";
+		} example;
+		
+		{
+			const auto input = std::string("STL strings can be handled by klib::SprintfWrapper");
+			const auto result = stringify::SprintfWrapper("%s", input);
+			constexpr auto expected = "STL strings can be handled by klib::SprintfWrapper";
+			VERIFY(result == expected);
+		}
+		
+		{
+			const auto input = 100;
+			const auto result = stringify::SprintfWrapper("%d", input);
+			constexpr auto expected = "100";
+			VERIFY(result == expected);
+		}
+		
+		{
+			const auto result = stringify::SprintfWrapper("%s", example);
+			constexpr auto expected = "klib::SprintfWrapper using object with ToString func";
+			VERIFY(result == expected);
+		}
+		
+		return success;
 	}
 
-	struct Object
+	bool FormatToStringTester::StringifyHexTest()
 	{
-		USE_RESULT const std::string& ToString() const
-		{
-			return str;
-		}
+		return success;
+	}
 
-		const std::string str = "Bitches ain't shit but hoes and tricks";
-	};
+	bool FormatToStringTester::StringifyBinaryTest()
+	{
+		return success;
+	}
+
+	bool FormatToStringTester::CustomTypeWithToStringTest()
+	{
+		const struct ObjectWithToString
+		{
+			USE_RESULT const std::string& ToString() const
+			{
+				return str;
+			}
+
+			const std::string str = "Bitches ain't shit but hoes and tricks";
+		} example;
+		const auto testStr7 = ToString("{0}", example);
+
+		return success;
+	}
+
+	bool FormatToStringTester::CustomTypeWithoutToStringTest()
+	{
+		return success;
+	}
 
 	bool FormatToStringTester::FormatToStringTest()
 	{
-		using namespace klib::kString;
 
-		Object o;
 		const auto tempIntPtr = std::make_unique<int>(76);
 
-		const auto testStr  = ToString("This test {0} ", 1U);
+		const auto testStr = ToString("This test {0} ", 1U);
 		const auto testStr2 = ToString("will all %s printf function format specifiers like with string literals ", "work");
-		const auto testStr3W = ToString(L"and with different numerical types such as float {0}, ", static_cast<float>(kmaths::constants::TAU));
-		const auto testStr4 = ToString("doubles {0:7}, ", kmaths::constants::E);
+		const auto testStr3W = ToString(L"and with different numerical types such as float {0:3}, ", 6.283f);
+		const auto testStr4 = ToString("doubles {0:7}, ", 2.7182818);
 		const auto testStr5 = ToString("unsigned ({1}) or signed integers ({0}), ", -50, 200U);
 		const auto testStr6 = ToString("pointer addresses i.e. 0x{0} (random int ptr address)", tempIntPtr.get());
-		const auto testStr7 = ToString("{0}", o);
-		const auto testStr8 = stringify::SprintfWrapper("%s", std::string("STL strings can be handled by klibSprintfWrapper"));
 		const auto testStr9 = ToString("{0:b10}", 54321);
-		const auto testStr19 = ToString("{0:h8}", 54321);
+		const auto testStr10 = ToString("{0:h}", 54321);
 
-		
+
 		constexpr auto num = 1000;
 		const auto hex = "0x" + stringify::StringIntegralHex<char>(num, 4, '0');
 		const auto binary = "0b" + stringify::StringIntegralBinary<char>(num, 4, '0');
-		
+
 		VERIFY(testStr == "This test 1 ");
 		VERIFY(testStr2 == "will all work printf function format specifiers like with string literals ");
 		VERIFY(testStr3W == L"and with different numerical types such as float 6.283, ");
 		VERIFY(testStr4 == "doubles 2.7182818, ");
 		VERIFY(testStr5 == "signed (-50) or unsigned integers (200), ");
 		VERIFY(testStr6.find("pointer addresses i.e. 0x00") != std::string::npos);
-		VERIFY(testStr7 == "Bitches ain't shit but hoes and tricks");
-		VERIFY(testStr8 == "STL strings can be handled by klib SprintfWrapper");
+		VERIFY(testStr9 == "1101010000110001");
+		VERIFY(testStr10 == "0000d431");
 		VERIFY(hex == "0x03e8");
 		VERIFY(binary == "0x03e8");
-		
+
 		return success;
 	}
 
-	bool FormatToStringTester::SingleObjectToStringTest()
+	bool FormatToStringTester::DirectToStringTest()
 	{
 #ifdef __cpp_char8_t
 		const auto test = klib::kString::ToString<char8_t>(980u, 123);

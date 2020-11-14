@@ -47,7 +47,7 @@ namespace klib::kString::stringify
 			throw std::runtime_error(err);
 		}
 
-		const StringWriter<CharType> str(kString::Convert<CharType>(buff));
+		const StringWriter<CharType> str(kString::Convert<ONLY_TYPE(CharType)>(buff));
 #endif 
 
 		return str;

@@ -7,34 +7,42 @@
 
 #include <any>
 
-namespace klib::kString::stringify
+namespace klib::kString::type
 {
-	inline bool IsSimpleInteger(const StringReader<char>& type)
+	constexpr bool IsSimpleInteger(const StringReader<char>& type)
 	{
-		return type == "int"
-			|| type == "char"
-			|| type == "short"
-			|| type == "__int64";
+		return Contains(type, "int")
+			|| Contains(type, "char")
+			|| Contains(type, "short")
+			|| Contains(type, "long")
+			|| Contains(type, "__int64");
 	}
 
 	template<typename CharT>
-	void HandleSimpleIntegerType(StringWriter<CharT>& outFinalString, StringWriter<CharT>& outCurrentSection
+	void HandleSimpleIntegerType(StringWriter<CharT>& outCurrentSection
 		, const StringReader<char>& type, const std::any& container, StringWriter<CharT>& specifier)
 	{
 		if (Contains(type, "char"))
 		{
-			ExtractCharAndInsertInOutput<const CharT>(container, specifier, outFinalString, outCurrentSection);
+			ExtractCharAndInsertInOutput<const CharT>(container, specifier, outCurrentSection);
 		}
 		else if (Contains(type, "short"))
 		{
-			ExtractAndInsertInOutput<CharT, const short>(container, specifier, outFinalString, outCurrentSection);
+			ExtractIntegerAndInsertInOutput<CharT, const short>(container, specifier, outCurrentSection);
+		}
+		else if (Contains(type, "long"))
+		{
+			if (Contains(type, "long long"))
+				ExtractIntegerAndInsertInOutput<CharT, const long long int>(container, specifier, outCurrentSection);
+			else
+				ExtractIntegerAndInsertInOutput<CharT, const long int>(container, specifier, outCurrentSection);
 		}
 		else if (Contains(type, "int"))
 		{
 			if (Contains(type, "__int64"))
-				ExtractAndInsertInOutput<CharT, const __int64>(container, specifier, outFinalString, outCurrentSection);
+				ExtractIntegerAndInsertInOutput<CharT, const __int64>(container, specifier, outCurrentSection);
 			else
-				ExtractAndInsertInOutput<CharT, const int>(container, specifier, outFinalString, outCurrentSection);
+				ExtractIntegerAndInsertInOutput<CharT, const int>(container, specifier, outCurrentSection);
 		}
 	}
 }

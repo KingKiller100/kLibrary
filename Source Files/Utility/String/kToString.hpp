@@ -11,7 +11,6 @@
 #include "../../TypeTraits/StringTraits.hpp"
 #include "../../Utility/String/kStringConverter.hpp"
 
-#include "Type/kStringLongType.hpp"
 #include "Type/kStringUnsignedType.hpp"
 #include "Type/kStringFloatingPointType.hpp"
 #include "Type/kStringSimpleIntegerType.hpp"
@@ -21,6 +20,10 @@
 #include <array>
 #include <string>
 #include <variant>
+
+
+#include "Type/kStringBoolType.hpp"
+#include "Type/kStringStringTypes.hpp"
 
 
 namespace klib {
@@ -131,56 +134,42 @@ namespace klib {
 					{
 						const auto data = std::any_cast<const CharType* const*>(val);
 						currentSection.append(*data);
-						finalString.append(currentSection);
 					}
 					else
 					{
-						auto data = std::any_cast<const void* const*>(val);
+						const auto data = std::any_cast<const void* const*>(val);
 						currentSection.append(stringify::StringifyPointer<CharType>(*data, specifier));
-						finalString.append(currentSection);
 					}
 				}
-				else if (Contains(type, "basic_string_view"))
+				else if (type::IsSTLString(type))
 				{
-					const auto data = std::any_cast<const std::basic_string_view<CharType>*>(val);
-					currentSection.append(*data);
-					finalString.append(currentSection);
+					type::HandleStringType<CharType>(currentSection, type, val, specifier);
 				}
-				else if (Contains(type, "basic_string"))
+				else if (type::IsUnsigned(type))
 				{
-					const auto data = std::any_cast<const std::basic_string<CharType>*>(val);
-					currentSection.append(*data);
-					finalString.append(currentSection);
+					type::HandleUnsignedType<CharType>(currentSection, type, val, specifier);
 				}
-				else if (Contains(type, "unsigned"))
+				else if (type::IsFloatingPoint(type))
 				{
-					stringify::HandleUnsignedType<CharType>(finalString, currentSection, type, val, specifier);
+					type::HandleFloatingPointType<CharType>(currentSection, type, val, specifier);
 				}
-				else if (Contains(type, "long"))
+				else if (type::IsSimpleInteger(type))
 				{
-					stringify::HandleLongType<CharType>(finalString, currentSection, type, val, specifier);
+					type::HandleSimpleIntegerType<CharType>(currentSection, type, val, specifier);
 				}
-				else if (stringify::IsFloatingPoint(type))
+				else if (type::IsBool(type))
 				{
-					stringify::HandleFloatingPointType<CharType>(finalString, currentSection, type, val, specifier);
-				}
-				else if (stringify::IsSimpleInteger(type))
-				{
-					stringify::HandleSimpleIntegerType<CharType>(finalString, currentSection, type, val, specifier);
-				}
-				else if (Contains(type, "bool"))
-				{
-					const auto res = std::any_cast<const bool*>(val);
-					currentSection.append(stringify::StringBool<CharType>(*res));
-					finalString.append(currentSection);
+					type::HandleBoolType<CharType>(currentSection, type, val, specifier);
 				}
 				else
 				{
-					const auto msg = stringify::SprintfWrapper("Type \"%s\" is not recognised/supported by " __FUNCTION__
+					const auto msg = stringify::SprintfWrapper(
+						"Type \"%s\" is not recognised/supported by " __FUNCTION__
 						, type);
 					throw kDebug::FormatError(msg);
 				}
 
+				finalString.append(currentSection);
 				prevIndex = inputPos;
 				markers.pop_front();
 			}
@@ -229,4 +218,4 @@ namespace klib {
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kString;
 #endif
-	}
+}
