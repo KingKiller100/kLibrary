@@ -2,12 +2,78 @@
 
 #include "../../../HelperMacros.hpp"
 #include "../../../TypeTraits/StringTraits.hpp"
+#include "../../../TypeTraits/CustomTraits.hpp"
 
 #include <type_traits>
 #include <vector>
 
+
 namespace klib::kString::stringify
 {
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	/// Non-primitive custom types - Must have a function ToString that returns an object with a 
+	/// "data()" function which returns a const CharType pointer
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	//template<typename Char_t, typename T, bool IsCustom>
+	//struct IdentityBase { IdentityBase() = delete; };
+
+	//template<typename Char_t, typename T>
+	//struct IdentityBase<T, Char_t, type_trait::Is_Custom_V<T>>
+	//{
+	//	constexpr IdentityBase() {}
+	//};
+
+	//template<typename Char_t, typename T>
+	//struct Identity : public IdentityBase<Char_t, T, true>
+	//{
+	//	constexpr Identity() = default;
+
+	//	
+	//};
+	
+	template<typename CharType, typename T>
+	constexpr const std::basic_string<CharType>& GetObjectString(const T& obj)
+	{
+		static std::vector<std::basic_string<CharType>> storage =
+			decltype(storage)();
+
+		const auto string = Convert<CharType>(obj.ToString());
+
+		static_assert(std::is_same_v<ONLY_TYPE(decltype(string)), std::basic_string<CharType>>
+			, "Custom class's ToString func result type must be a string type that contains the"
+			" same character types as CharType i.e. std::string -> char, std::u16string -> char16_t, etc");
+
+		auto iter = std::find(storage.begin(), storage.end(), string);
+		if (iter != storage.end())
+			return (*iter);
+
+		const std::basic_string<CharType>& value = storage.emplace_back(string);
+		return value;
+	}
+
+	template<typename CharType, typename T>
+	constexpr
+		std::enable_if_t<
+		type_trait::Is_Custom_V<T>
+		, const CharType*
+		>
+		Identity(const T& obj)
+	{
+		const std::basic_string<CharType>& string = GetObjectString<CharType>(obj);
+		return string.data();
+	}
+
+	template<typename CharType, typename T>
+	constexpr
+		std::enable_if_t <
+		type_trait::Is_Custom_V<T>
+		, const std::basic_string<CharType>*>
+		IdentityPtr(const T& obj)
+	{
+		const std::basic_string<CharType>& string = GetObjectString<CharType>(obj);
+		return std::addressof(string);
+	}
+	
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	/// C++ STL string/string_view
 	/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -142,58 +208,4 @@ namespace klib::kString::stringify
 		return std::addressof(ptr);
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Non-primitive custom types - Must have a function ToString that returns an object with a 
-	/// "data()" function which returns a const CharType pointer
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-	template<typename CharType, typename T>
-	constexpr const std::basic_string<CharType>& GetObjectString(const T& obj)
-	{
-		static std::vector<std::basic_string<CharType>> storage =
-			decltype(storage)();
-		
-		static_assert(std::is_same_v<decltype(obj.ToString()), std::basic_string<CharType>>
-			, "Custom class's ToString func result type must be a string type that contains the"
-			" same character types as CharType i.e. std::string -> char, std::u16string -> char16_t, etc");
-		
-		const auto string = obj.ToString();
-
-		auto iter = std::find(storage.begin(), storage.end(), string);
-		if (iter != storage.end())
-			return (*iter);
-
-		const std::basic_string<CharType>& value = storage.emplace_back(string);
-		return value;
-	}
-	
-	template<typename CharType, typename T>
-	constexpr
-		std::enable_if_t<
-		type_trait::Is_CharType_V<CharType>
-		&& !std::is_arithmetic_v<T>
-		&& !type_trait::Is_StringType_V<T>
-		&& !std::is_pointer_v<T>
-		&& !std::is_array_v<T>
-		, const CharType*
-		>
-		Identity(const T& obj)
-	{
-		const std::basic_string<CharType>& string = GetObjectString<CharType>(obj);
-		return string.data();
-	}
-
-	template<typename CharType, typename T>
-	constexpr
-		std::enable_if_t <
-		type_trait::Is_CharType_V<CharType>
-		&& !std::is_arithmetic_v<T>
-		&& !type_trait::Is_StringType_V<T>
-		&& !std::is_pointer_v<T>
-		&& !std::is_array_v<T>
-		, const std::basic_string<CharType>*>
-		IdentityPtr(const T& obj)
-	{
-		const std::basic_string<CharType>& string = GetObjectString<CharType>(obj);
-		return std::addressof(string);
-	}
 }

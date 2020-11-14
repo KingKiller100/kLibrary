@@ -102,7 +102,7 @@ namespace klib::kString::stringify
 		>>
 		USE_RESULT constexpr StringWriter<CharType> StringIntegralHex(Integral_t val, size_t minCharacters, CharType placeHolder = defaultPlaceHolder<CharType>)
 	{
-		static constexpr auto& hexMap = s_GeneralHexMap<CharType>;
+		constexpr auto& hexMap = s_GeneralHexMap<CharType>;
 
 		if (minCharacters == nPrecision)
 			minCharacters = sizeof(uintptr_t) * 2;

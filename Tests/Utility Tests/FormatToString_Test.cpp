@@ -4,6 +4,33 @@
 #include "../../Source Files/Utility/String/kToString.hpp"
 
 #ifdef TESTING_ENABLED
+
+
+struct ObjectWithoutToString
+{
+	std::string str = "String made using identity overloading";
+};
+
+namespace klib::kString::stringify
+{
+	template<typename CharType>
+	constexpr const CharType*
+		Identity(const ObjectWithoutToString& obj)
+	{
+		return obj.str.data();
+	}
+
+	template<typename CharType, typename T>
+	constexpr
+		std::enable_if_t<
+		std::is_same_v<ONLY_TYPE(T), ObjectWithoutToString>
+		, const std::basic_string<CharType>*
+		> IdentityPtr(const ObjectWithoutToString& obj)
+	{
+		return std::addressof(obj.str);
+	}
+}
+
 namespace kTest::utility
 {
 	FormatToStringTester::FormatToStringTester()
@@ -24,6 +51,9 @@ namespace kTest::utility
 		VERIFY_MULTI(DirectToStringTest());
 		VERIFY_MULTI_END();
 	}
+
+	
+	using namespace klib;
 	using namespace klib::kString;
 
 	bool FormatToStringTester::SprintfWrapperTest()
@@ -37,27 +67,27 @@ namespace kTest::utility
 
 			const std::u32string str = U"klib::SprintfWrapper using object with ToString func";
 		} example;
-		
+
 		{
 			const auto input = std::string("STL strings can be handled by klib::SprintfWrapper");
 			const auto result = stringify::SprintfWrapper("%s", input);
 			constexpr auto expected = "STL strings can be handled by klib::SprintfWrapper";
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			const auto input = 100;
 			const auto result = stringify::SprintfWrapper(L"%d", input);
 			constexpr auto expected = L"100";
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			const auto result = stringify::SprintfWrapper(U"%s", example);
 			constexpr auto expected = U"klib::SprintfWrapper using object with ToString func";
 			VERIFY(result == expected);
 		}
-		
+
 		return success;
 	}
 
@@ -66,13 +96,43 @@ namespace kTest::utility
 		{
 			constexpr auto input = 1000;
 			const auto result = stringify::StringIntegralHex<char>(input, 8);
+			constexpr auto expected = "000003e8";
+			VERIFY(expected == result);
 		}
-		
+
+		{
+			constexpr auto input = -1000;
+			const auto result = stringify::StringIntegralHex<char16_t>(input, 8);
+			constexpr auto expected = u"000003e8";
+			VERIFY(expected == result);
+		}
+
 		return success;
 	}
 
 	bool FormatToStringTester::StringifyBinaryTest()
 	{
+		{
+			constexpr auto input = 2ull;
+			const auto result = stringify::StringIntegralBinary<char>(input, 4);
+			constexpr auto expected = "0010";
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto input = 64;
+			const auto result = stringify::StringIntegralBinary<char>(input, 8);
+			constexpr auto expected = "00100000";
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto input = 1000;
+			const auto result = stringify::StringIntegralBinary<char8_t>(input, 8);
+			constexpr auto expected = u8"1111101000";
+			VERIFY(result == expected);
+		}
+
 		return success;
 	}
 
@@ -87,13 +147,21 @@ namespace kTest::utility
 
 			const std::string str = "Bitches ain't shit but hoes and tricks";
 		} example;
-		const auto testStr7 = ToString("{0}", example);
+		const auto result = ToString<char>(example);
+		constexpr auto expected = "Bitches ain't shit but hoes and tricks";
+		VERIFY(result == expected);
 
 		return success;
 	}
 
 	bool FormatToStringTester::CustomTypeWithoutToStringTest()
 	{
+		/*ObjectWithoutToString owts;
+
+		const auto result = ToString<char>(owts);
+		constexpr auto expected = "String made using identity overloading";
+		VERIFY(expected == result);*/
+
 		return success;
 	}
 
@@ -125,7 +193,7 @@ namespace kTest::utility
 		VERIFY(testStr9 == "1101010000110001");
 		VERIFY(testStr10 == "0000d431");
 		VERIFY(hex == "0x03e8");
-		VERIFY(binary == "0x03e8");
+		VERIFY(binary == "1111101000");
 
 		return success;
 	}

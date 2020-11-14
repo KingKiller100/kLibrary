@@ -1,9 +1,7 @@
 ﻿#pragma once
 
-#include "../HelperMacros.hpp"
-
 #include <string>
-#include <xtr1common>
+#include <type_traits>
 
 namespace klib::type_trait
 {
