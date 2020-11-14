@@ -4,7 +4,7 @@
 
 #include "../Utility/String/kToString.hpp"
 
-#include "../Type Traits/Constexpr.hpp"
+#include "../TypeTraits/Constexpr.hpp"
 
 #include <string>
 

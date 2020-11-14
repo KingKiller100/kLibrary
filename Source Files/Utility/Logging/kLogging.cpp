@@ -6,7 +6,7 @@
 #include "Destinations/kConsoleLogger.hpp"
 #include "kLogDescriptor.hpp"
 
-#include "../../Type Traits/ToImpl.hpp"
+#include "../../TypeTraits/ToImpl.hpp"
 #include "../String/kToString.hpp"
 
 

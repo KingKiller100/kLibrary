@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "kStringifyInteger.hpp"
-#include "../../../Type Traits/StringTraits.hpp"
+#include "../../../TypeTraits/StringTraits.hpp"
 #include "../../String/kStringTypes.hpp"
 
 namespace klib::kString::stringify

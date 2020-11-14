@@ -2,8 +2,6 @@
 
 #include "kiLoggerDestination.hpp"
 
-#include "../../EnumHelper/EnumHelper.hpp"
-
 #include "../../Misc/ConsoleColour.hpp"
 
 namespace klib

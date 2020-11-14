@@ -8,14 +8,14 @@
 #include "Stringify/kStringifyInteger.hpp"
 #include "Stringify/kStringifyPointer.hpp"
 
-#include "../../Type Traits/StringTraits.hpp"
+#include "../../TypeTraits/StringTraits.hpp"
 #include "../../Utility/String/kStringConverter.hpp"
 
 #include "Type/kStringLongType.hpp"
 #include "Type/kStringUnsignedType.hpp"
 #include "Type/kStringFloatingPointType.hpp"
 #include "Type/kStringSimpleIntegerType.hpp"
-#include "../Debug Helper/Exceptions/StringExceptions.hpp"
+#include "../Debug/Exceptions/StringExceptions.hpp"
 
 #include <any>
 #include <array>

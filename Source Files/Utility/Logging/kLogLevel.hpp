@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../EnumHelper/EnumHelper.hpp"
+#include "../Enum/Enum.hpp"
 
 #include <string_view>
 #include <cstdint>

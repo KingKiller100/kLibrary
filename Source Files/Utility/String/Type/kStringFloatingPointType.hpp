@@ -11,8 +11,8 @@ namespace klib::kString::stringify
 {
 	inline bool IsFloatingPoint(const StringReader<char>& type)
 	{
-		return type == "double"
-			|| type == "float";
+		return Contains(type, "double")
+			|| Contains(type, "float");
 	}
 	
 	template<typename CharT>

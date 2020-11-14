@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "DebugHelp_Test.hpp"
 
-#include "../../Source Files/Utility/Debug Helper/kDebugger.hpp"
+#include "../../Source Files/Utility/Debug/kDebugger.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility

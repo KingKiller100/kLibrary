@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "../kStringTypes.hpp"
-#include "../../../Type Traits/StringTraits.hpp"
+#include "../../../TypeTraits/StringTraits.hpp"
 
 namespace klib::kString::stringify
 {

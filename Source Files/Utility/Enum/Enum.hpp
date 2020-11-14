@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../HelperMacros.hpp"
+
 #include <array>
 #include <memory>
 #include <string>
@@ -124,17 +126,17 @@ public:																					\
 		return static_cast<enum_t>(value);												\
 	}																					\
 																						\
-	[[nodiscard]] constexpr enum_t ToEnum() const										\
+	USE_RESULT constexpr enum_t ToEnum() const											\
 	{																					\
 		return static_cast<enum_t>(value);												\
 	}																					\
 																						\
-	[[nodiscard]] constexpr underlying_t ToUnderlying() const							\
+	USE_RESULT constexpr underlying_t ToUnderlying() const								\
 	{																					\
 		return value;																	\
 	}																					\
 																						\
-	[[nodiscard]] std::string_view ToString() const										\
+	USE_RESULT std::string_view ToString() const										\
 	{																					\
 		const auto name = ToStringImpl(static_cast<enum_t>(value));						\
 		return name;																	\
@@ -143,7 +145,7 @@ public:																					\
 	template<typename T1, typename T2, typename = std::enable_if_t<						\
 	std::is_convertible_v<T2, T1>														\
 	>>																					\
-	[[nodiscard]] constexpr T1 Compare(enum_t target									\
+	USE_RESULT constexpr T1 Compare(enum_t target										\
 		, T1 successState, T2 failState) const											\
 	{																					\
 		if (target == value)															\
@@ -152,7 +154,7 @@ public:																					\
 			return failState;															\
 	}																					\
 																						\
-	[[nodiscard]] constexpr bool Compare(enum_t target) const							\
+	USE_RESULT constexpr bool Compare(enum_t target) const								\
 	{																					\
 		return Compare(target, true, false);											\
 	}																					\
@@ -173,13 +175,13 @@ public:																					\
 		return ret;																		\
 	}																					\
 																						\
-	[[nodiscard]]																		\
+	USE_RESULT																			\
 	static constexpr std::string_view PrettyType()										\
 	{																					\
 		return "enum " #enumName;														\
 	}																					\
 																						\
-	[[nodiscard]]																		\
+	USE_RESULT																			\
 	static std::string PrettyType(const enumName input)									\
 	{																					\
 		const auto type = std::string(PrettyType());									\
@@ -188,7 +190,7 @@ public:																					\
 	}																					\
 																						\
 	private:																			\
-	[[nodiscard]] static std::string_view ToStringImpl(enumName input)					\
+	USE_RESULT static std::string_view ToStringImpl(enumName input)						\
 	{																					\
 		const auto name = TrimmedNames(static_cast<enum_t>(input));						\
 		return name;																	\

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "kStringTypes.hpp"
-#include "../Debug Helper/Exceptions/StringExceptions.hpp"
-#include "../../Type Traits/StringTraits.hpp"
+#include "../Enum/Enum.hpp"
+#include "../Debug/Exceptions/StringExceptions.hpp"
+#include "../../TypeTraits/StringTraits.hpp"
 
 #include <algorithm>
 #include <vector>
@@ -24,9 +25,9 @@ namespace klib
 			|| std::is_array_v<Stringish>;
 #endif
 		
-		enum class PreserveToken { YES, NO, };
-		enum class PreserveEmpty { YES, NO, };
-		enum class CaseSensitive { YES, NO, };
+		ENUM_CLASS(PreserveToken, std::uint8_t, YES, NO);
+		ENUM_CLASS(PreserveEmpty, std::uint8_t, YES, NO);
+		ENUM_CLASS(CaseSensitive, std::uint8_t, YES, NO);
 
 		template<class CharT = char>
 		USE_RESULT constexpr StringWriter<CharT> Replace(const StringReader<CharT>& str, const ONLY_TYPE(CharT) oldChar, const ONLY_TYPE(CharT) newChar) noexcept
@@ -56,12 +57,12 @@ namespace klib
 
 		template<class CharT = char>
 		USE_RESULT constexpr std::vector<StringWriter<CharT>> Split(const StringWriter<CharT>& str, const CharT* tokens,
-			const PreserveToken preserveToken = PreserveToken::NO, const PreserveEmpty preserveEmpty = PreserveEmpty::NO)
+			const PreserveToken preserveToken = PreserveToken::NO, PreserveEmpty preserveEmpty = PreserveEmpty::NO)
 		{
 			using StrW = StringWriter<CharT>;
 
-			const auto keepToken = (preserveToken == PreserveToken::YES);
-			const auto keepEmpty = (preserveEmpty == PreserveEmpty::YES);
+			const auto keepToken = preserveToken.Compare(PreserveToken::YES);
+			const auto keepEmpty = preserveEmpty.Compare(PreserveEmpty::YES);
 
 			std::vector<StrW> lines;
 
@@ -98,7 +99,7 @@ namespace klib
 
 		template<class CharT = char>
 		USE_RESULT constexpr std::vector<StringWriter<CharT>> Split(const StringWriter<CharT>& str, const StringReader<CharT>& tokens,
-			const PreserveToken preserveToken = PreserveToken::NO, const PreserveEmpty preserveEmpty = PreserveEmpty::NO)
+			const PreserveToken preserveToken = PreserveToken::NO, PreserveEmpty preserveEmpty = PreserveEmpty::NO)
 		{
 			return Split(str, tokens.data(), preserveToken, preserveEmpty);
 		}
@@ -211,9 +212,7 @@ namespace klib
 		{
 			size_t count = 0;
 
-			const auto hayStack = cs == CaseSensitive::YES
-				? ToWriter(str)
-				: ToLower(str);
+			const auto hayStack = cs.Compare(CaseSensitive::YES, ToWriter(str), ToLower(str));
 
 			const auto needle = cs == CaseSensitive::YES
 				? search

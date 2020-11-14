@@ -2,7 +2,7 @@
 
 #include "../../HelperMacros.hpp"
 
-#include "../Debug Helper/kAssert.hpp"
+#include "../Debug/kAssert.hpp"
 
 #include <limits>
 #include <string>
@@ -250,8 +250,8 @@ namespace klib
 				{
 					if (*myString == *otherString)
 					{
-						myString++;
-						otherString++;
+						++myString;
+						++otherString;
 					}
 					else
 					{
@@ -361,7 +361,7 @@ namespace klib
 						return count;
 
 					++count;
-					currentChar++;
+					++currentChar;
 				}
 
 				return npos;
@@ -383,7 +383,7 @@ namespace klib
 						return count;
 
 					++count;
-					currentChar++;
+					++currentChar;
 					idx++;
 				}
 
@@ -404,7 +404,7 @@ namespace klib
 						return pos;
 
 					--pos;
-					currentChar--;
+					--currentChar;
 				}
 				return npos;
 			}
@@ -420,7 +420,7 @@ namespace klib
 						return pos;
 
 					--pos;
-					currentChar--;
+					--currentChar;
 				}
 				return npos;
 			}
@@ -535,7 +535,7 @@ namespace klib
 				while (*currentChar != null_terminater)
 				{
 					++size;
-					currentChar++;
+					++currentChar;
 				}
 
 				return size;
@@ -602,7 +602,7 @@ namespace klib
 		Ptr_Type operator++(int)
 		{
 			const auto increment = ptr;
-			ptr++;
+			++ptr;
 			return increment;
 		}
 
@@ -614,7 +614,7 @@ namespace klib
 		Ptr_Type operator--(int)
 		{
 			const auto increment = ptr;
-			ptr--;
+			--ptr;
 			return increment;
 		}
 

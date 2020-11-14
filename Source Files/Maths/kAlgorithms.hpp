@@ -7,7 +7,7 @@
 #include "Constants.hpp"
 #include "Length_Type.hpp"
 
-#include "../Utility/Debug Helper/Exceptions/MathsExceptions.hpp"
+#include "../Utility/Debug/Exceptions/MathsExceptions.hpp"
 
 #if MSVC_PLATFORM_TOOLSET > 142
 #	include <cmath>
@@ -26,15 +26,11 @@
 #	undef min
 #endif
 
-
 namespace kmaths
 {
 	template<typename T>
 	USE_RESULT constexpr T LogGamma(T);
-}
-
-namespace kmaths
-{
+	
 	template<typename T>
 	USE_RESULT constexpr bool IsNegative(T x) noexcept
 	{

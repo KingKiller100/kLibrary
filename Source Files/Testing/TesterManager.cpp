@@ -29,7 +29,7 @@
 #include "../../Tests/Performance Tests/PerformanceTestManager.hpp"
 
 // File System to output test results
-#include "../Utility/File System/kFileSystem.hpp"
+#include "../Utility/FileSystem/kFileSystem.hpp"
 
 // Times the length of the test
 #include "../Utility/Stopwatch/kStopwatch.hpp"

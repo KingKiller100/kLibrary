@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "../../../HelperMacros.hpp"
-#include "../../../Type Traits/StringTraits.hpp"
+#include "../../../TypeTraits/StringTraits.hpp"
 
 #include <type_traits>
 #include <vector>

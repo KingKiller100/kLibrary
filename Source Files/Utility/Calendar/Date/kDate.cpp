@@ -5,9 +5,9 @@
 #include "../Secret/kiCalendarInfoSource.hpp"
 
 #include "../../String/kToString.hpp"
-#include "../../Debug Helper/Exceptions/CalenderExceptions.hpp"
+#include "../../Debug/Exceptions/CalenderExceptions.hpp"
 
-#include "../../../Type Traits/StringTraits.hpp"
+#include "../../../TypeTraits/StringTraits.hpp"
 
 #include <set>
 
