@@ -38,7 +38,7 @@ namespace klib::kString::stringify
 		, typename = std::enable_if_t<std::is_integral_v<Signed_t>
 		|| type_trait::Is_CharType_V<CharType>>
 		>
-		kString::StringWriter<CharType> StringSignedIntegral(const Signed_t val, size_t minDigits, CharType placeHolder)
+		kString::StringWriter<CharType> StringSignedIntegral(Signed_t val, size_t minDigits, CharType placeHolder = defaultPlaceHolder<CharType>)
 	{
 		if (minDigits == nPrecision)
 			minDigits = 1;
@@ -68,7 +68,7 @@ namespace klib::kString::stringify
 		, typename = std::enable_if_t<std::is_integral_v<Unsigned_t>
 		|| type_trait::Is_CharType_V<CharType>>
 		>
-		StringWriter<CharType> StringUnsignedIntegral(const Unsigned_t val, size_t minDigits, CharType placeHolder)
+		StringWriter<CharType> StringUnsignedIntegral(Unsigned_t val, size_t minDigits, CharType placeHolder = defaultPlaceHolder<CharType>)
 	{
 		if (minDigits == nPrecision)
 			minDigits = 1;
@@ -88,7 +88,7 @@ namespace klib::kString::stringify
 	template<class CharType, typename Integral_t
 		, typename = std::enable_if_t < std::is_integral_v<Integral_t>
 	>>
-		StringWriter<CharType> StringIntegral(const Integral_t val, size_t minDigits, CharType placeHolder)
+		StringWriter<CharType> StringIntegral(Integral_t val, size_t minDigits, CharType placeHolder = defaultPlaceHolder<CharType>)
 	{
 		if constexpr (std::is_unsigned_v<Integral_t>)
 			return StringUnsignedIntegral<CharType, Integral_t>(val, minDigits, placeHolder);
@@ -100,7 +100,7 @@ namespace klib::kString::stringify
 	template<class CharType, typename Integral_t, typename = std::enable_if_t < 
 		std::is_integral_v<Integral_t>
 	>>
-	StringWriter<CharType> StringIntegralHex(const Integral_t val, size_t minCharacters, CharType placeHolder)
+	StringWriter<CharType> StringIntegralHex(Integral_t val, size_t minCharacters, CharType placeHolder = defaultPlaceHolder<CharType>)
 	{
 		static constexpr auto& hexMap = s_GeneralHexMap<CharType>;
 
@@ -127,7 +127,7 @@ namespace klib::kString::stringify
 	template<class CharType, typename Integral_t, typename = std::enable_if_t <
 		std::is_integral_v<Integral_t>
 		>> 
-		StringWriter<CharType> StringIntegralBinary(Integral_t val, size_t minCharacters, CharType placeHolder)
+		StringWriter<CharType> StringIntegralBinary(Integral_t val, size_t minCharacters, CharType placeHolder = defaultPlaceHolder<CharType>)
 	{
 		StringWriter<CharType> binary;
 		binary.reserve(std::numeric_limits<Integral_t>::digits);
@@ -135,7 +135,8 @@ namespace klib::kString::stringify
 		while(val > 0)
 		{
 			const auto binVal = val % 2;
-			binary.push_back(CharType('0') + binVal);
+			const CharType digit = static_cast<CharType>(CharType('0') + binVal);
+			binary.push_back(digit);
 			val >>= 1;
 		}
 

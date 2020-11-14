@@ -47,8 +47,8 @@ namespace kTest::utility
 		const auto testStr8 = stringify::SprintfWrapper("%s", std::string("STL strings can be handled by klib SprintfWrapper"));
 
 		constexpr auto num = 1000;
-		const auto hex = "0x" + stringify::StringIntegralHex<char>(num, 4);
-		const auto binary = "0b" + stringify::StringIntegralBinary<char>(num, 4);
+		const auto hex = "0x" + stringify::StringIntegralHex<char>(num, 4, '0');
+		const auto binary = "0b" + stringify::StringIntegralBinary<char>(num, 4, '0');
 		
 		VERIFY(testStr == "This test 1 ");
 		VERIFY(testStr2 == "will all work printf function format specifiers like with string literals ");

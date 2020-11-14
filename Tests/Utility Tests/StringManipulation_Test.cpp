@@ -20,6 +20,8 @@ namespace kTest::utility
 		VERIFY_MULTI(ToLower());
 		VERIFY_MULTI(ToUpper());
 		VERIFY_MULTI(RemoveTest());
+		VERIFY_MULTI(StrToTest());
+		VERIFY_MULTI(CountTest());
 		VERIFY_MULTI(ReplaceTest());
 		VERIFY_MULTI(SplitTest());
 		VERIFY_MULTI_END();
@@ -36,6 +38,34 @@ namespace kTest::utility
 			VERIFY(expected == res);
 		}
 		
+		{
+			const std::string str = "750";
+			const auto res = StrTo<int>(str);
+			constexpr auto expected = 750;
+			VERIFY(expected == res);
+		}
+		
+		{
+			const std::wstring str = L"650";
+			const auto res = StrTo<int>(str);
+			constexpr auto expected = 650;
+			VERIFY(expected == res);
+		}
+		
+		{
+			const std::u16string str = u"8000000000";
+			const auto res = StrTo<size_t>(str);
+			constexpr auto expected = 8000000000;
+			VERIFY(expected == res);
+		}
+		
+		{ // Won't compile due to StrTo only taking integral types
+			// const std::u16string str = u"80.5";
+			//const auto res = StrTo<double>(str);
+			// constexpr auto expected = 1000;
+			// VERIFY(expected == res);
+		}
+		
 		return success;
 	}
 
@@ -43,7 +73,7 @@ namespace kTest::utility
 	{
 		{
 			constexpr std::string_view test("Aquarium");
-			constexpr auto count = Count(test, 'a');
+			const auto count = Count(test, 'a');
 			VERIFY(count == 2);
 		}
 		
@@ -67,6 +97,14 @@ namespace kTest::utility
 			VERIFY(removed);
 			VERIFY(test == "tst");
 		}
+		
+		{
+			std::string test("Boy, why do you have to be such a huge dick");
+			const auto removed = Remove(test, "to be");
+			VERIFY(removed);
+			VERIFY(test == "Boy, why do you have such a huge dick");
+		}
+		
 		return success;
 	}
 

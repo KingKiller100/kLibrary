@@ -1,7 +1,8 @@
 ﻿#pragma once
 
-#include "../kStringTypes.hpp"
+#include "kStringExtract.hpp"
 
+#include "../kStringTypes.hpp"
 #include "../Stringify/kStringifyInteger.hpp"
 
 #include <any>

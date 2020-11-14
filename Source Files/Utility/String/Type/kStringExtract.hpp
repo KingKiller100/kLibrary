@@ -16,16 +16,16 @@ namespace klib::kString::stringify
 		auto data = std::any_cast<T*>(container);
 		const auto hexMode = Remove(specifier, 'h');
 		const auto binaryMode = Remove(specifier, 'b');
-		const auto padding = StrTo<std::int64_t>(specifier);
+		const auto padding = StrTo<size_t>(specifier);
 		
 		StringWriter<CharT> toAdd;
 		
 		if (hexMode)
 			toAdd = stringify::StringIntegralHex<CharT>(*data, padding, CharT('0'));
 		else if (binaryMode)
-			toAdd = stringify::StringIntegralBinary<CharT>(*data, padding, CharT('0'));
+			toAdd = stringify::StringIntegralBinary<CharT, ONLY_TYPE(T)>(*data, padding, CharT('0'));
 		else
-			toAdd = stringify::StringIntegral<CharT>(*data, padding, CharT('0'));
+			toAdd = stringify::StringIntegral<CharT, ONLY_TYPE(T)>(*data, padding, CharT('0'));
 
 		
 		outCurrentSection.append(toAdd);

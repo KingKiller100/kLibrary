@@ -12,9 +12,10 @@ namespace klib
 	namespace kString
 	{
 		template<typename Stringish>
-		concept ValidStringT = type_trait::Is_StringType_V<Stringish>
-			|| (type_trait::Is_CharType_V<ONLY_TYPE(Stringish)>
-				&& std::is_pointer_v<Stringish>);
+		concept ValidStringT = type_trait::Is_StringType_V<Stringish> // STL string
+			|| (type_trait::Is_CharType_V<ONLY_TYPE(Stringish)> // C string
+				&& std::is_pointer_v<Stringish>)
+			|| std::is_array_v<Stringish>;
 
 		enum class PreserveToken { YES, NO, };
 		enum class PreserveEmpty { YES, NO, };
@@ -68,6 +69,23 @@ namespace klib
 			}
 
 			return lines;
+		}
+		
+		template<typename StringType, typename Stringish>
+		requires ValidStringT<Stringish> || type_trait::Is_CharType_V<Stringish>
+			constexpr bool Remove(StringType & str, const Stringish & search)
+		{
+			bool removed = false;
+			auto pos = str.find(search);
+
+			while (pos != StringType::npos)
+			{
+				const auto endPos = str.find_first_not_of(search, pos);
+				str.erase(pos, endPos - pos);
+				pos = str.find(search);
+				removed = true;
+			}
+			return removed;
 		}
 
 		template<class CharT = char>
@@ -198,15 +216,14 @@ namespace klib
 			>>
 			constexpr Integer_t StrTo(StringT string)
 		{
-			static_assert(std::is_integral_v<Integer_t>, "Can only be used with integer types "
+			static_assert(std::is_integral_v<Integer_t>, __FUNCTION__ " can only be used with integer types "
 				"(char, int, long, unsigned short, etc..");
 
 			using CharType = typename StringT::value_type;
 
 			const auto CrashFunc = [](const std::string& errMsg) { throw std::runtime_error(errMsg); };
 
-			std::regex r("\\s+");
-			string = std::regex_replace(string, r, "");
+			Remove(string, ' ');
 
 			if (string.empty())
 				CrashFunc("Cannot convert empty string to integer number");
@@ -250,26 +267,9 @@ namespace klib
 			return result;
 		}
 
-		template<typename StringType, typename Stringish>
-		requires ValidStringT<Stringish> || type_trait::Is_CharType_V<Stringish>
-			constexpr bool Remove(StringType & str, const Stringish & search)
-		{
-			bool removed = false;
-			auto pos = str.find_first_of(search);
-
-			while (pos != StringType::npos)
-			{
-				const auto endPos = str.find_first_not_of(search, pos);
-				str.erase(str.begin() + pos, str.begin() + endPos);
-				pos = str.find(search);
-				removed = true;
-			}
-			return removed;
-		}
-
 	}
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kString;
 #endif
-	}
+}
 

@@ -15,7 +15,7 @@ namespace klib::kString::stringify
 		const auto padding = StrTo<long long>(specifier);
 		const auto asUint = reinterpret_cast<uintptr_t>(ptr);
 		const auto address =
-			StringIntegralHex<CharType>(asUint, padding);
+			StringIntegralHex<CharType>(asUint, padding, CharType('0'));
 		return address;
 	}
 }

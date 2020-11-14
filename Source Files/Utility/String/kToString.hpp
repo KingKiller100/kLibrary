@@ -108,7 +108,7 @@ namespace klib {
 			size_t prevIndex = 0;
 			for (const auto& marker : markers)
 			{
-				const auto& val = elems[marker.objIndex];
+				const std::any& val = elems[marker.objIndex];
 				const auto& type = marker.type;
 				const auto inputPos = fmt.find_first_of(closerSymbol, prevIndex) + 1;
 				const auto endPos = inputPos - prevIndex;
@@ -154,7 +154,7 @@ namespace klib {
 				}
 				else if (Contains(type, "long"))
 				{
-					stringify::HandleLongType(finalString, currentSection, type, val, specifier);
+					stringify::HandleLongType<CharType>(finalString, currentSection, type, val, specifier);
 				}
 				else if (stringify::IsFloatingPoint(type))
 				{

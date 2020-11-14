@@ -2,7 +2,8 @@
 
 #include "../kStringTypes.hpp"
 
-#include "../Stringify/kStringifyFloatingPoint.hpp"
+
+#include "kStringExtract.hpp"
 
 #include <any>
 
