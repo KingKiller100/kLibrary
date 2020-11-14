@@ -15,13 +15,12 @@
 #include "Type/kStringUnsignedType.hpp"
 #include "Type/kStringFloatingPointType.hpp"
 #include "Type/kStringSimpleIntegerType.hpp"
+#include "../Debug Helper/Exceptions/StringExceptions.hpp"
 
 #include <any>
 #include <array>
 #include <string>
 #include <variant>
-
-
 
 
 namespace klib {
@@ -34,7 +33,7 @@ namespace klib {
 
 			static constexpr auto openerSymbol = CharType('{');
 			static constexpr auto closerSymbol = CharType('}');
-			static constexpr auto precisionSymbol = CharType(':');
+			static constexpr auto specifierSymbol = CharType(':');
 			static constexpr auto nullTerminator = type_trait::s_NullTerminator<CharType>;
 			static constexpr auto npos = std::basic_string<CharType>::npos;
 
@@ -59,7 +58,7 @@ namespace klib {
 				const auto current = fmt.substr(openerPos + 1, digits);
 				std::string bracketContents = kString::Convert<char>(current);
 
-				const auto relativeColonPos = bracketContents.find_first_of(precisionSymbol);
+				const auto relativeColonPos = bracketContents.find_first_of(specifierSymbol);
 				const auto optionIndex = bracketContents.substr(0, relativeColonPos);
 				const auto idx = kString::StrTo<FormatMarker::IndexType>(optionIndex);
 				if (elems.size() <= idx)
@@ -86,12 +85,12 @@ namespace klib {
 			using namespace secret::helper;
 			using DataTypes = std::variant<std::monostate, T, Ts...>;
 
-			static constexpr auto printfSymbol = CharType('%');
-			static constexpr auto openerSymbol = CharType('{');
-			static constexpr auto closerSymbol = CharType('}');
-			static constexpr auto precisionSymbol = CharType(':');
-			static constexpr auto nullTerminator = type_trait::s_NullTerminator<CharType>;
-			static constexpr auto npos = std::basic_string_view<CharType>::npos;
+			constexpr auto printfSymbol = CharType('%');
+			constexpr auto openerSymbol = CharType('{');
+			constexpr auto closerSymbol = CharType('}');
+			constexpr auto specifierSymbol = CharType(':');
+			constexpr auto nullTerminator = type_trait::s_NullTerminator<CharType>;
+			constexpr auto npos = std::basic_string_view<CharType>::npos;
 
 			if (auto pfSymPos = format.find(printfSymbol); pfSymPos != npos)
 			{
@@ -114,13 +113,15 @@ namespace klib {
 				const auto endPos = inputPos - prevIndex;
 				auto currentSection = fmt.substr(prevIndex, endPos);
 				const auto replacePos = marker.position - prevIndex;
-				const auto colonPos = currentSection.find(precisionSymbol, replacePos);
-				const auto startPos = colonPos + 1;
-				const auto count = (inputPos - 1) - startPos;
+				const auto colonPos = currentSection.find(specifierSymbol, replacePos);
 
 				std::basic_string<CharType> specifier;
 				if (colonPos != npos)
+				{
+					const auto startPos = colonPos + 1;
+					const auto count = (inputPos - 1) - startPos;
 					specifier = currentSection.substr(colonPos + 1, count);
+				}
 
 				currentSection.erase(replacePos);
 
@@ -175,7 +176,9 @@ namespace klib {
 				}
 				else
 				{
-					throw std::runtime_error("Type entered not recognised/supported");
+					const auto msg = stringify::SprintfWrapper("Type \"%s\" is not recognised/supported by " __FUNCTION__
+						, type);
+					throw kDebug::FormatError(msg);
 				}
 
 				prevIndex = inputPos;
@@ -226,4 +229,4 @@ namespace klib {
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kString;
 #endif
-}
+	}

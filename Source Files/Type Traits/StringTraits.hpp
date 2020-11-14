@@ -49,7 +49,7 @@ namespace klib::type_trait
 	constexpr bool Is_CharType_V = Is_CharType<T>::value;
 
 	template<typename T>
-	concept IsChar_t = Is_CharType_V<T> == true;
+	concept Is_Char_t = Is_CharType_V<T> == true;
 
 	template<typename T>
 	struct Is_StringTypeBase : std::false_type
@@ -107,7 +107,7 @@ namespace klib::type_trait
 	constexpr bool Is_StringType_V = Is_StringType<T>::value;
 
 	template<typename T>
-	concept IsString_t = Is_StringType_V<T> == true;
+	concept Is_String_t = Is_StringType_V<T> == true;
 
 	template<typename CharType, typename = std::enable_if_t<Is_CharType_V<CharType>>>
 	constexpr auto s_NullTerminator = CharType();

@@ -1,11 +1,12 @@
 #pragma once
 
 #include "kStringTypes.hpp"
+#include "../Debug Helper/Exceptions/StringExceptions.hpp"
 #include "../../Type Traits/StringTraits.hpp"
 
 #include <algorithm>
 #include <vector>
-#include <regex>
+
 
 #ifdef max
 #	undef max
@@ -15,12 +16,14 @@ namespace klib
 {
 	namespace kString
 	{
+#if MSVC_PLATFORM_TOOLSET >= 142
 		template<typename Stringish>
 		concept ValidStringT = type_trait::Is_StringType_V<Stringish> // STL string
 			|| (type_trait::Is_CharType_V<ONLY_TYPE(Stringish)> // C string
 				&& std::is_pointer_v<Stringish>)
 			|| std::is_array_v<Stringish>;
-
+#endif
+		
 		enum class PreserveToken { YES, NO, };
 		enum class PreserveEmpty { YES, NO, };
 		enum class CaseSensitive { YES, NO, };
@@ -162,30 +165,32 @@ namespace klib
 		template<class CharT, size_t Size, typename = std::enable_if_t<
 			type_trait::Is_CharType_V<CharT>
 			&& std::is_array_v<CharT[Size]>
-			>>
+			>> 
 			USE_RESULT constexpr auto ToLower(const CharT(&input)[Size])
 		{
 			return ToLower(StringReader<std::remove_all_extents_t<CharT>>(input));
 		}
 
+#if MSVC_PLATFORM_TOOLSET < 142
 		template<typename StringType, typename = std::enable_if_t<type_trait::Is_StringType_V<StringType>>>
+#else
+		template<typename StringType> requires type_trait::Is_String_t<StringType>
+#endif
 		USE_RESULT constexpr bool Contains(const StringType& str, const typename StringType::value_type* search
 			, const size_t offset = 0)
 		{
 			return str.find(search, offset) != StringType::npos;
 		}
 
-		template<typename StringType, typename = std::enable_if_t<type_trait::Is_StringType_V<StringType>>>
+		template<typename StringType> requires type_trait::Is_String_t<StringType>
 		USE_RESULT constexpr bool Contains(const StringType& str, typename StringType::value_type search
 			, const size_t offset = 0)
 		{
 			return str.find(search, offset) != StringType::npos;
 		}
 
-		template<typename StringA, typename StringB, typename = std::enable_if_t<
-			type_trait::Is_StringType_V<StringA>
-			&& type_trait::Is_StringType_V<StringB>
-			>>
+		template<typename StringA, typename StringB>
+		requires type_trait::Is_String_t<StringA> && type_trait::Is_String_t<StringB>
 			USE_RESULT constexpr bool Contains(const StringA& str, const StringB& search
 				, const size_t offset = 0)
 		{
@@ -235,7 +240,7 @@ namespace klib
 
 			using CharType = typename StringT::value_type;
 
-			const auto CrashFunc = [](const std::string& errMsg) { throw std::runtime_error(errMsg); };
+			const auto CrashFunc = [](const std::string& errMsg) { throw kDebug::StringError(errMsg); };
 			const auto MaxDigitsFunc = []()
 			{
 				auto maxNum = std::numeric_limits<Integer_t>::max();
@@ -293,8 +298,6 @@ namespace klib
 
 			return result;
 		}
-
-
 
 		template<class Integer_t, typename StringT
 			, typename = std::enable_if_t<

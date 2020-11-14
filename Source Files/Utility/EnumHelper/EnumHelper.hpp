@@ -140,6 +140,23 @@ public:																					\
 		return name;																	\
 	}																					\
 																						\
+	template<typename T1, typename T2, typename = std::enable_if_t<						\
+	std::is_convertible_v<T2, T1>														\
+	>>																					\
+	[[nodiscard]] constexpr T1 Compare(enum_t target									\
+		, T1 successState, T2 failState) const											\
+	{																					\
+		if (target == value)															\
+			return successState;														\
+		else																			\
+			return failState;															\
+	}																					\
+																						\
+	[[nodiscard]] constexpr bool Compare(enum_t target) const							\
+	{																					\
+		return Compare(target, true, false);											\
+	}																					\
+																						\
 	static constexpr enum_t FromString(const std::string_view& s, size_t index = 0)		\
 	{																					\
 		using namespace klib::kEnum::secret::helper;									\

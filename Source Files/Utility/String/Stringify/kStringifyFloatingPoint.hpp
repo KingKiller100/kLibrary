@@ -4,7 +4,10 @@
 #include <stdexcept>
 #include <typeinfo>
 
-#include "kSprintf.hpp"
+#if defined(_HAS_COMPLETE_CHARCONV) && (_HAS_COMPLETE_CHARCONV == FALSE)
+#	include "kSprintf.hpp"
+#endif
+
 #include "kStringifyHelper.hpp"
 #include "kStringifyInteger.hpp"
 #include "../kStringConverter.hpp"
