@@ -294,6 +294,24 @@ namespace klib
 			return result;
 		}
 
+
+
+		template<class Integer_t, typename StringT
+			, typename = std::enable_if_t<
+			std::_Is_specialization_v<StringT, std::basic_string>
+			>>
+			USE_RESULT constexpr Integer_t StrTo(StringT string, Integer_t defaultValue)
+		{
+			try
+			{
+				return StrTo<Integer_t>(string);
+			}
+			catch (...)
+			{
+				return defaultValue;
+			}
+		}
+		
 	}
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kString;

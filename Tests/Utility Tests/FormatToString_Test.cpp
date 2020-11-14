@@ -67,8 +67,8 @@ namespace kTest::utility
 	bool FormatToStringTester::SingleObjectToStringTest()
 	{
 #ifdef __cpp_char8_t
-		const auto test = klib::kString::ToString<char8_t>(980u);
-		VERIFY(test == u8"980");
+		const auto test = klib::kString::ToString<char8_t>(980u, 123);
+		VERIFY(test == u8"980123");
 #else
 		const auto test = klib::kString::ToString<char16_t>(980u);
 		VERIFY(test == u"980");

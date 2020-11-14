@@ -12,7 +12,9 @@ namespace klib::kString::stringify
 		>
 		StringWriter<CharType> StringifyPointer(const T* ptr, const StringWriter<CharType>& specifier)
 	{
-		const auto padding = StrTo<long long>(specifier);
+		constexpr auto defaultPadding = sizeof(intptr_t) * 2;
+		
+		const auto padding = StrTo<size_t>(specifier, defaultPadding);
 		const auto asUint = reinterpret_cast<uintptr_t>(ptr);
 		const auto address =
 			StringIntegralHex<CharType>(asUint, padding, CharType('0'));
