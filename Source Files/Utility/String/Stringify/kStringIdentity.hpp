@@ -56,7 +56,6 @@ namespace klib::kString::stringify
 		return obj;
 	}
 
-	// Character pointer types returned as pointer type
 	template<typename CharType, typename T>
 	constexpr
 		std::enable_if_t<
@@ -148,10 +147,14 @@ namespace klib::kString::stringify
 	/// "data()" function which returns a const CharType pointer
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename CharType, typename T>
-	const std::basic_string<CharType>& GetObjectString(const T& obj)
+	constexpr const std::basic_string<CharType>& GetObjectString(const T& obj)
 	{
 		static std::vector<std::basic_string<CharType>> storage =
 			decltype(storage)();
+		
+		static_assert(std::is_same_v<decltype(obj.ToString()), std::basic_string<CharType>>
+			, "Custom class's ToString func result type must be a string type that contains the"
+			" same character types as CharType i.e. std::string -> char, std::u16string -> char16_t, etc");
 		
 		const auto string = obj.ToString();
 

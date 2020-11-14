@@ -30,12 +30,12 @@ namespace kTest::utility
 	{
 		const struct ObjectWithToString
 		{
-			USE_RESULT const std::string& ToString() const
+			USE_RESULT const auto& ToString() const
 			{
 				return str;
 			}
 
-			const std::string str = "klib::SprintfWrapper using object with ToString func";
+			const std::u32string str = U"klib::SprintfWrapper using object with ToString func";
 		} example;
 		
 		{
@@ -47,14 +47,14 @@ namespace kTest::utility
 		
 		{
 			const auto input = 100;
-			const auto result = stringify::SprintfWrapper("%d", input);
-			constexpr auto expected = "100";
+			const auto result = stringify::SprintfWrapper(L"%d", input);
+			constexpr auto expected = L"100";
 			VERIFY(result == expected);
 		}
 		
 		{
-			const auto result = stringify::SprintfWrapper("%s", example);
-			constexpr auto expected = "klib::SprintfWrapper using object with ToString func";
+			const auto result = stringify::SprintfWrapper(U"%s", example);
+			constexpr auto expected = U"klib::SprintfWrapper using object with ToString func";
 			VERIFY(result == expected);
 		}
 		
@@ -63,6 +63,11 @@ namespace kTest::utility
 
 	bool FormatToStringTester::StringifyHexTest()
 	{
+		{
+			constexpr auto input = 1000;
+			const auto result = stringify::StringIntegralHex<char>(input, 8);
+		}
+		
 		return success;
 	}
 

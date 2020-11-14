@@ -13,8 +13,13 @@ namespace kTest::utility
 	private:
 		void Test() override;
 
+		bool SprintfWrapperTest();
+		bool StringifyHexTest();
+		bool StringifyBinaryTest();
+		bool CustomTypeWithToStringTest();
+		bool CustomTypeWithoutToStringTest();
 		bool FormatToStringTest();
-		bool SingleObjectToStringTest();
+		bool DirectToStringTest();
 	};
 }
 #endif

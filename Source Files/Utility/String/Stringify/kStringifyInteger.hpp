@@ -14,7 +14,7 @@ namespace klib::kString::stringify
 		static_cast<CharType>('8'), static_cast<CharType>('9'), static_cast<CharType>('a'), static_cast<CharType>('b'),
 		static_cast<CharType>('c'), static_cast<CharType>('d'), static_cast<CharType>('e'), static_cast<CharType>('f'),
 	};
-	
+
 	/// Digits of largest conceivable number for any integral type
 	/// plus a null terminator + possible minus symbol
 	template<class T, typename = std::enable_if_t<std::is_integral_v<T>>>
@@ -24,7 +24,7 @@ namespace klib::kString::stringify
 		, typename = std::enable_if_t<std::is_unsigned_v<Uint_t>
 		|| type_trait::Is_CharType_V<CharType>>
 		>
-		constexpr CharType* UintToStr(CharType* current, Uint_t uVal)
+		USE_RESULT constexpr CharType* UintToStr(CharType* current, Uint_t uVal)
 	{
 		do {
 			const auto mod = uVal % 10;
@@ -38,7 +38,7 @@ namespace klib::kString::stringify
 		, typename = std::enable_if_t<std::is_integral_v<Signed_t>
 		|| type_trait::Is_CharType_V<CharType>>
 		>
-		kString::StringWriter<CharType> StringSignedIntegral(Signed_t val, size_t minDigits, CharType placeHolder = defaultPlaceHolder<CharType>)
+		USE_RESULT constexpr StringWriter<CharType> StringSignedIntegral(Signed_t val, size_t minDigits, CharType placeHolder = defaultPlaceHolder<CharType>)
 	{
 		if (minDigits == nPrecision)
 			minDigits = 1;
@@ -57,7 +57,7 @@ namespace klib::kString::stringify
 		{
 			current = UintToStr(current, uVal);
 		}
-		
+
 		kString::StringWriter<CharType> str(current, end);
 		PrependPadding(str, minDigits, placeHolder);
 
@@ -68,11 +68,11 @@ namespace klib::kString::stringify
 		, typename = std::enable_if_t<std::is_integral_v<Unsigned_t>
 		|| type_trait::Is_CharType_V<CharType>>
 		>
-		StringWriter<CharType> StringUnsignedIntegral(Unsigned_t val, size_t minDigits, CharType placeHolder = defaultPlaceHolder<CharType>)
+		USE_RESULT constexpr StringWriter<CharType> StringUnsignedIntegral(Unsigned_t val, size_t minDigits, CharType placeHolder = defaultPlaceHolder<CharType>)
 	{
 		if (minDigits == nPrecision)
 			minDigits = 1;
-		
+
 		CharType buff[max_digits<Unsigned_t>]{};
 		CharType* const end = std::end(buff);
 		CharType* current = UintToStr(end, val);
@@ -87,8 +87,8 @@ namespace klib::kString::stringify
 
 	template<class CharType, typename Integral_t
 		, typename = std::enable_if_t < std::is_integral_v<Integral_t>
-	>>
-		StringWriter<CharType> StringIntegral(Integral_t val, size_t minDigits, CharType placeHolder = defaultPlaceHolder<CharType>)
+		>>
+		USE_RESULT constexpr StringWriter<CharType> StringIntegral(Integral_t val, size_t minDigits, CharType placeHolder = defaultPlaceHolder<CharType>)
 	{
 		if constexpr (std::is_unsigned_v<Integral_t>)
 			return StringUnsignedIntegral<CharType, Integral_t>(val, minDigits, placeHolder);
@@ -97,10 +97,10 @@ namespace klib::kString::stringify
 	}
 
 	// Big endian format
-	template<class CharType, typename Integral_t, typename = std::enable_if_t < 
+	template<class CharType, typename Integral_t, typename = std::enable_if_t <
 		std::is_integral_v<Integral_t>
-	>>
-	StringWriter<CharType> StringIntegralHex(Integral_t val, size_t minCharacters, CharType placeHolder = defaultPlaceHolder<CharType>)
+		>>
+		USE_RESULT constexpr StringWriter<CharType> StringIntegralHex(Integral_t val, size_t minCharacters, CharType placeHolder = defaultPlaceHolder<CharType>)
 	{
 		static constexpr auto& hexMap = s_GeneralHexMap<CharType>;
 
@@ -126,13 +126,13 @@ namespace klib::kString::stringify
 	// Big endian format
 	template<class CharType, typename Integral_t, typename = std::enable_if_t <
 		std::is_integral_v<Integral_t>
-		>> 
-		StringWriter<CharType> StringIntegralBinary(Integral_t val, size_t minCharacters, CharType placeHolder = defaultPlaceHolder<CharType>)
+		>>
+		USE_RESULT constexpr StringWriter<CharType> StringIntegralBinary(Integral_t val, size_t minCharacters, CharType placeHolder = defaultPlaceHolder<CharType>)
 	{
 		StringWriter<CharType> binary;
 		binary.reserve(std::numeric_limits<Integral_t>::digits);
-		
-		while(val > 0)
+
+		while (val > 0)
 		{
 			const auto binVal = val % 2;
 			const CharType digit = static_cast<CharType>(CharType('0') + binVal);
@@ -141,11 +141,11 @@ namespace klib::kString::stringify
 		}
 
 		std::reverse(binary.begin(), binary.end());
-		
+
 		AppendPadding(binary, minCharacters, placeHolder);
-		
+
 		return binary;
 	}
 }
 
-	
+
