@@ -16,7 +16,7 @@ namespace klib::kString::stringify
 		auto data = std::any_cast<T*>(container);
 		const auto hexMode = Remove(specifier, 'h');
 		const auto binaryMode = Remove(specifier, 'b');
-		const auto padding = StrTo<size_t>(specifier);
+		const auto padding = StrTo<size_t>(specifier, 0);
 
 		StringWriter<CharT> toAdd;
 
@@ -26,7 +26,6 @@ namespace klib::kString::stringify
 			toAdd = stringify::StringIntegralBinary<CharT, ONLY_TYPE(T)>(*data, padding, CharT('0'));
 		else
 			toAdd = stringify::StringIntegral<CharT, ONLY_TYPE(T)>(*data, padding, CharT('0'));
-
 
 		outCurrentSection.append(toAdd);
 		outFinalString.append(outCurrentSection);
@@ -69,7 +68,7 @@ namespace klib::kString::stringify
 			specified = true;
 		}
 
-		const auto padding = StrTo<std::int64_t>(specifier);
+		const auto padding = StrTo<std::int64_t>(specifier, 0);
 
 		outCurrentSection.append(stringify::StringFloatingPoint<CharT>(*data, padding, fmt));
 		outFinalString.append(outCurrentSection);

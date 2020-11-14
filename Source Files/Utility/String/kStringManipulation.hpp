@@ -252,7 +252,7 @@ namespace klib
 			Remove(string, ' ');
 
 			if (string.empty())
-				return 0;
+				CrashFunc("Cannot convert empty string to integer number");
 			
 			if (Contains(string, CharType('.')))
 				CrashFunc("string must contain only one integer number");

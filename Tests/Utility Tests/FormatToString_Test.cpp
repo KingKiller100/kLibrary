@@ -37,15 +37,18 @@ namespace kTest::utility
 		Object o;
 		const auto tempIntPtr = std::make_unique<int>(76);
 
-		const auto testStr  = ToString("This test %d ", 1U);
+		const auto testStr  = ToString("This test {0} ", 1U);
 		const auto testStr2 = ToString("will all %s printf function format specifiers like with string literals ", "work");
-		const auto testStr3W = ToString(L"and with different numerical types such as float %.03f, ", static_cast<float>(kmaths::constants::TAU));
+		const auto testStr3W = ToString(L"and with different numerical types such as float {0}, ", static_cast<float>(kmaths::constants::TAU));
 		const auto testStr4 = ToString("doubles {0:7}, ", kmaths::constants::E);
-		const auto testStr5 = ToString("signed (%d) or unsigned integers (%u), ", -50, 200U);
+		const auto testStr5 = ToString("unsigned ({1}) or signed integers ({0}), ", -50, 200U);
 		const auto testStr6 = ToString("pointer addresses i.e. 0x{0} (random int ptr address)", tempIntPtr.get());
-		const auto testStr7 = ToString("%s", o);
-		const auto testStr8 = stringify::SprintfWrapper("%s", std::string("STL strings can be handled by klib SprintfWrapper"));
+		const auto testStr7 = ToString("{0}", o);
+		const auto testStr8 = stringify::SprintfWrapper("%s", std::string("STL strings can be handled by klibSprintfWrapper"));
+		const auto testStr9 = ToString("{0:b10}", 54321);
+		const auto testStr19 = ToString("{0:h8}", 54321);
 
+		
 		constexpr auto num = 1000;
 		const auto hex = "0x" + stringify::StringIntegralHex<char>(num, 4, '0');
 		const auto binary = "0b" + stringify::StringIntegralBinary<char>(num, 4, '0');
