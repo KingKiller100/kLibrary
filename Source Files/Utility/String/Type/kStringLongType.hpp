@@ -20,6 +20,10 @@ namespace klib::kString::stringify
 		{
 			ExtractAndInsertInOutput<CharT, const long long int>(container, specifier, outFinalString, outCurrentSection);
 		}
+		else if (Contains(type, "double"))
+		{
+			ExtractFloatAndInsertInOutput<CharT, const long double>(container, specifier, outFinalString, outCurrentSection);
+		}
 		else
 		{
 			ExtractAndInsertInOutput<CharT, const long int>(container, specifier, outFinalString, outCurrentSection);

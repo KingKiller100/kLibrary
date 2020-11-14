@@ -11,8 +11,7 @@ namespace klib::kString::stringify
 {
 	inline bool IsFloatingPoint(const StringReader<char>& type)
 	{
-		return type == "long double"
-			|| type == "double"
+		return type == "double"
 			|| type == "float";
 	}
 	
@@ -22,9 +21,6 @@ namespace klib::kString::stringify
 	{
 		if (Contains(type, "double"))
 		{
-			if (Contains(type, "long"))
-				ExtractFloatAndInsertInOutput<CharT, const long double>(container, specifier, outFinalString, outCurrentSection);
-			else
 				ExtractFloatAndInsertInOutput<CharT, const double>(container, specifier, outFinalString, outCurrentSection);
 		}
 		else

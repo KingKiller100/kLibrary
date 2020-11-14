@@ -37,35 +37,74 @@ namespace kTest::utility
 			constexpr auto expected = 1000;
 			VERIFY(expected == res);
 		}
-		
+
 		{
 			const std::string str = "750";
 			const auto res = StrTo<int>(str);
 			constexpr auto expected = 750;
 			VERIFY(expected == res);
 		}
-		
+
 		{
-			const std::wstring str = L"650";
+			const std::wstring str = L"-650";
 			const auto res = StrTo<int>(str);
-			constexpr auto expected = 650;
+			constexpr auto expected = -650;
 			VERIFY(expected == res);
 		}
-		
+
 		{
 			const std::u16string str = u"8000000000";
 			const auto res = StrTo<size_t>(str);
 			constexpr auto expected = 8000000000;
 			VERIFY(expected == res);
 		}
-		
+
+		{
+			const std::u16string str = u"27";
+			const auto res = StrTo<unsigned char>(str);
+			constexpr auto expected = 27;
+			VERIFY(expected == res);
+		}
+
+		{
+			using Int_t = unsigned short;
+			const std::u16string str = u"65536"; // 1 more than ushort max
+			const auto res = StrTo<Int_t>(str);
+			constexpr Int_t expected = std::numeric_limits<Int_t>::max() + 1;
+			VERIFY(expected == res);
+		}
+
+		{
+			using Int_t = unsigned char;
+			const std::u16string str = u"300"; // 255 + 45
+			const auto res = StrTo<Int_t>(str);
+			constexpr Int_t expected = std::numeric_limits<Int_t>::max() + 45;
+			VERIFY(expected == res);
+		}
+
+		{
+			success = false;
+			try
+			{
+				using Int_t = unsigned short;
+				const std::u16string str = u"300000";
+				const auto res = StrTo<Int_t>(str);
+				constexpr Int_t expected = std::numeric_limits<Int_t>::max();
+				VERIFY(expected == res);
+			}
+			catch (...)
+			{
+				VERIFY(true);
+			}
+		}
+
 		{ // Won't compile due to StrTo only taking integral types
 			// const std::u16string str = u"80.5";
 			//const auto res = StrTo<double>(str);
 			// constexpr auto expected = 1000;
 			// VERIFY(expected == res);
 		}
-		
+
 		return success;
 	}
 
@@ -73,10 +112,10 @@ namespace kTest::utility
 	{
 		{
 			constexpr std::string_view test("Aquarium");
-			const auto count = Count(test, 'a');
+			constexpr auto count = Count(test, 'a');
 			VERIFY(count == 2);
 		}
-		
+
 		return success;
 	}
 
@@ -97,14 +136,21 @@ namespace kTest::utility
 			VERIFY(removed);
 			VERIFY(test == "tst");
 		}
-		
+
 		{
 			std::string test("Boy, why do you have to be such a huge dick");
 			const auto removed = Remove(test, "to be");
 			VERIFY(removed);
 			VERIFY(test == "Boy, why do you have such a huge dick");
 		}
-		
+
+		{
+			std::string test("the brown fox jumped over black the zoo fence");
+			const auto removed = Remove(test, "zoom");
+			VERIFY(!removed);
+			VERIFY(test == "the brown fox jumped over the black zoo fence");
+		}
+
 		return success;
 	}
 

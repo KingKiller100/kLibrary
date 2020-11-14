@@ -7,6 +7,10 @@
 #include <vector>
 #include <regex>
 
+#ifdef max
+#	undef max
+#endif
+
 namespace klib
 {
 	namespace kString
@@ -200,9 +204,9 @@ namespace klib
 		{
 			size_t count = 0;
 
-			for (auto currentPos = str.find_first_of(search);
+			for (auto currentPos = str.find(search);
 				currentPos != StringType::npos;
-				currentPos = str.find_first_of(search, currentPos + 1))
+				currentPos = str.find(search, currentPos + 1))
 			{
 				++count;
 			}
@@ -222,7 +226,19 @@ namespace klib
 			using CharType = typename StringT::value_type;
 
 			const auto CrashFunc = [](const std::string& errMsg) { throw std::runtime_error(errMsg); };
+			const auto MaxDigitsFunc = []()
+			{
+				auto maxNum = std::numeric_limits<Integer_t>::max();
+				size_t count = 0;
+				do {
+					++count;
+					maxNum /= 10;
+				}
+				while (maxNum);
+				return count;
+			};
 
+			
 			Remove(string, ' ');
 
 			if (string.empty())
@@ -240,7 +256,7 @@ namespace klib
 			size_t size = string.size();
 			auto magnitude = static_cast<size_t>(std::pow(10, size - 1));
 
-			if (size > std::numeric_limits<Integer_t>::digits10)
+			if (size > MaxDigitsFunc())
 			{
 				const std::string type = typeid(result).name();
 				const auto msg = "String contains more digits than largest number of type: "
