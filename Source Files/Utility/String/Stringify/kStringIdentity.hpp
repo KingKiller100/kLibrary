@@ -25,10 +25,12 @@ namespace klib::kString::stringify
 		constexpr Identity(const T& obj)
 			: data(Convert<Char_t>(obj.ToString()))
 		{}
-		USE_RESULT constexpr decltype(auto) Get() const
+
+		USE_RESULT constexpr decltype(auto) Get() const
 		{
 			return data.data();
-		}
+		}
+
 		USE_RESULT constexpr decltype(auto) GetPtr()
 		{
 			return std::addressof(data);
@@ -52,10 +54,12 @@ namespace klib::kString::stringify
 		constexpr Identity(const T& str)
 			: data(str)
 		{}
-		USE_RESULT constexpr auto Get() const
+
+		USE_RESULT constexpr auto Get() const
 		{
 			return data.data();
-		}
+		}
+
 		USE_RESULT constexpr auto GetPtr() const
 		{
 			return std::addressof(data);
@@ -80,10 +84,12 @@ namespace klib::kString::stringify
 		constexpr Identity(const T& str)
 			: data(str)
 		{}
-		USE_RESULT constexpr auto Get() const
+
+		USE_RESULT constexpr auto Get() const
 		{
 			return data;
-		}
+		}
+
 		USE_RESULT constexpr auto GetPtr() const
 		{
 			return std::addressof(data);
@@ -108,10 +114,12 @@ namespace klib::kString::stringify
 		constexpr Identity(const T& str)
 			: data(str)
 		{}
-		USE_RESULT constexpr auto Get() const
+
+		USE_RESULT constexpr auto Get() const
 		{
 			return data;
-		}
+		}
+
 		USE_RESULT constexpr auto GetPtr() const
 		{
 			return reinterpret_cast<const void* const*>(std::addressof(data));
@@ -134,10 +142,12 @@ namespace klib::kString::stringify
 		constexpr Identity(const T& str)
 			: data(str)
 		{}
-		USE_RESULT constexpr decltype(auto) Get() const
+
+		USE_RESULT constexpr decltype(auto) Get() const
 		{
 			return data;
-		}
+		}
+
 		USE_RESULT constexpr decltype(auto) GetPtr() const
 		{
 			return std::addressof(data);
