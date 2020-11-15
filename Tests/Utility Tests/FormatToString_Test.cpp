@@ -51,6 +51,7 @@ namespace kTest::utility
 		VERIFY_MULTI(SprintfWrapperTest());
 		VERIFY_MULTI(StringifyBinaryTest());
 		VERIFY_MULTI(StringifyHexTest());
+		VERIFY_MULTI(IdentityTest());
 		VERIFY_MULTI(CustomTypeWithToStringTest());
 		VERIFY_MULTI(CustomTypeWithoutToStringTest());
 		VERIFY_MULTI(FormatToStringTest());
@@ -66,6 +67,36 @@ namespace kTest::utility
 		{
 			const auto input = std::u8string();
 			const auto result = stringify::Identity<char8_t, decltype(input)>(input).Get();
+			const auto expected = std::is_same_v<decltype(result), const char8_t* const>;
+			VERIFY_COMPILE_TIME(expected);
+		}
+		
+		{
+			const auto input = "quarantine";
+			const auto result = stringify::Identity<char, decltype(input)>(input).Get();
+			const auto expected = std::is_same_v<decltype(result), const char* const>;
+			VERIFY_COMPILE_TIME(expected);
+		}
+		
+		{
+			const auto input = "quarantine";
+			const auto result = stringify::Identity<char, decltype(input)>(input).GetPtr();
+			const auto expected = std::is_same_v<decltype(result), const char* const* const>;
+			VERIFY_COMPILE_TIME(expected);
+		}
+		
+		{
+			const auto input = 5.6;
+			const auto result = stringify::Identity<char, decltype(input)>(input).GetPtr();
+			const auto expected = std::is_same_v<decltype(result), const double* const>;
+			VERIFY_COMPILE_TIME(expected);
+		}
+		
+		{
+			const auto input = 5.6;
+			const auto result = stringify::Identity<char, decltype(input)>(input).Get();
+			const auto expected = std::is_same_v<decltype(result), const double>;
+			VERIFY_COMPILE_TIME(expected);
 		}
 		
 		return success;
@@ -131,22 +162,31 @@ namespace kTest::utility
 		{
 			constexpr auto input = 2ull;
 			const auto result = stringify::StringIntegralBinary<char>(input, 4);
-			constexpr auto expected = "0010";
-			VERIFY(result == expected);
+			VERIFY(result == "0010");
 		}
 
-		{
+		{ // Prints minimum digit of binary string, will fill remaining characters with '0' unless specified differently
 			constexpr auto input = 64;
-			const auto result = stringify::StringIntegralBinary<char>(input, 8);
-			constexpr auto expected = "0100000";
-			VERIFY(result == expected);
+			const auto result = stringify::StringIntegralBinary<char16_t>(input, 8);
+			VERIFY(result == u"01000000");
 		}
 
-		{
+		{ // Prints as many characters as necessary to represent the number, if min digits is less than the expected binary characters
 			constexpr auto input = 1000;
 			const auto result = stringify::StringIntegralBinary<char8_t>(input, 8);
-			constexpr auto expected = u8"1111101000";
-			VERIFY(result == expected);
+			VERIFY(result == u8"1111101000");
+		}
+
+		{
+			constexpr auto input = 4;
+			const auto result = stringify::StringIntegralBinary<char32_t>(input, 0);
+			VERIFY(result == U"100");
+		}
+
+		{ // if smaller than remaining characters, newly specified placeholder is used
+			constexpr auto input = 4;
+			const auto result = stringify::StringIntegralBinary<char16_t>(input, 5, 'a');
+			VERIFY(result == u"aa100");
 		}
 
 		return success;

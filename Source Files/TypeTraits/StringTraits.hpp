@@ -52,19 +52,22 @@ namespace klib::type_trait
 	template<typename T>
 	concept Is_Char_t = Is_CharType_V<T> == true;
 
-	// Determines whether type is an STL string class type
-	template<typename T>
-	constexpr bool Is_StringType_V = 
-		Is_Specialization_V<T, std::basic_string>
-		|| Is_Specialization_V<T, std::basic_string_view>;
 	
 	template<typename T>
-	struct Is_StringTypeBase : std::bool_constant<Is_StringType_V<T>>
+	struct Is_StringTypeBase : std::bool_constant<
+		Is_Specialization_V< T, std::basic_string>
+		|| Is_Specialization_V<T, std::basic_string_view>
+	>
 	{};
 
-	template<typename T>
+	// Determines whether type is an STL string class type
+	template<typename T> 
 	struct Is_StringType : Is_StringTypeBase<std::remove_cv_t<T>>
 	{};
+	
+	// Determines whether type is an STL string class type
+	template<typename T>
+	constexpr bool Is_StringType_V = Is_StringType<T>::value;
 	
 	template<typename T>
 	concept Is_String_t = Is_StringType_V<T> == true;

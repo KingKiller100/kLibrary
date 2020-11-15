@@ -149,10 +149,10 @@ namespace kTest
 			= WriteResults(pass, testTime);
 		
 		const auto resultTest = pass
-			? ToString("Success: Test Name: {0} {1}\n\n", 
+			? stringify::SprintfWrapper("Success: Test Name: %s %s\n\n",
 				test.GetName(),
 				runtimeResultStr) // Success Case
-			: ToString("Failure: Test Name: {0} {1}\n{2}",
+			: stringify::SprintfWrapper("Failure: Test Name: %s %s\n%s",
 				test.GetName(), 
 				runtimeResultStr, 
 				test.GetFailureData()); // Fail Case
@@ -172,14 +172,14 @@ namespace kTest
 			? kMisc::ConsoleColour::LIGHT_GREEN
 			: kMisc::ConsoleColour::SCARLET_RED);
 		
-		auto resultStr = ToString<char>((pass ? "Pass" : "Fail"));
+		auto resultStr = stringify::SprintfWrapper("%s", (pass ? "Pass" : "Fail"));
 		std::cout << resultStr;
 		SetConsoleTextAttribute(hConsole, 7);
 
 		resultStr.insert(0, "| ");
 
-		auto runtimeResultStr = ToString(
-			"| Runtime: %.fus (microseconds)", resTime);
+		auto runtimeResultStr = stringify::SprintfWrapper("| Runtime: %.fus (microseconds)"
+			, resTime);
 		std::cout << " " << runtimeResultStr << "\n";
 
 		runtimeResultStr.insert(0, resultStr + " ");
@@ -202,7 +202,7 @@ namespace kTest
 		const unsigned millis = CAST(unsigned
 			, std::chrono::milliseconds::period::den * remainder);
 
-		const auto finalTimeStr = ToString("Total Runtime: {0}s  {1}ms", secs, millis);
+		const auto finalTimeStr = stringify::SprintfWrapper("Total Runtime: %us  %ums", secs, millis);
 		kFileSystem::WriteFile(path, finalTimeStr);
 
 		std::cout << "\n" << finalTimeStr << "\n";

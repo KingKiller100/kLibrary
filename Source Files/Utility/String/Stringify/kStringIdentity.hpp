@@ -37,7 +37,7 @@ namespace klib::kString::stringify
 		}
 
 	private:
-		const StringWriter<Char_t>& data;
+		const StringWriter<Char_t> data;
 	};
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,7 +154,7 @@ namespace klib::kString::stringify
 		}
 
 	private:
-		const T& data;
+		const T data;
 	};
 
 	
