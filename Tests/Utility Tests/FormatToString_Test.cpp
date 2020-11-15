@@ -11,25 +11,6 @@ struct ObjectWithoutToString
 	std::string str = "String made using identity overloading";
 };
 
-namespace klib::kString::stringify
-{
-	template<typename CharType>
-	constexpr const CharType*
-		Identity(const ObjectWithoutToString& obj)
-	{
-		return obj.str.data();
-	}
-
-	template<typename CharType, typename T>
-	constexpr
-		std::enable_if_t<
-		std::is_same_v<ONLY_TYPE(T), ObjectWithoutToString>
-		, const std::basic_string<CharType>*
-		> IdentityPtr(const ObjectWithoutToString& obj)
-	{
-		return std::addressof(obj.str);
-	}
-}
 
 namespace kTest::utility
 {
@@ -52,9 +33,19 @@ namespace kTest::utility
 		VERIFY_MULTI_END();
 	}
 
-	
 	using namespace klib;
 	using namespace klib::kString;
+
+	bool FormatToStringTester::IdentityTest()
+	{
+		{
+			const auto input = std::u8string();
+			const auto result = stringify::Identity<char8_t, decltype(input)>(input).Get();
+		}
+		
+		return success;
+	}
+
 
 	bool FormatToStringTester::SprintfWrapperTest()
 	{
@@ -156,11 +147,11 @@ namespace kTest::utility
 
 	bool FormatToStringTester::CustomTypeWithoutToStringTest()
 	{
-		/*ObjectWithoutToString owts;
+		ObjectWithoutToString owts;
 
 		const auto result = ToString<char>(owts);
 		constexpr auto expected = "String made using identity overloading";
-		VERIFY(expected == result);*/
+		VERIFY(expected == result);
 
 		return success;
 	}

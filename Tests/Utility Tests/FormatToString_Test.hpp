@@ -13,6 +13,7 @@ namespace kTest::utility
 	private:
 		void Test() override;
 
+		bool IdentityTest();
 		bool SprintfWrapperTest();
 		bool StringifyHexTest();
 		bool StringifyBinaryTest();

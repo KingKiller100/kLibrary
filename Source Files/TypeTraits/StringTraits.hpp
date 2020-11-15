@@ -43,6 +43,7 @@ namespace klib::type_trait
 	struct Is_CharType : Is_CharTypeBase<std::remove_cv_t<T>>
 	{};
 
+	// Determines whether type is a character type
 	template<typename T>
 	constexpr bool Is_CharType_V = Is_CharType<T>::value;
 
@@ -101,6 +102,7 @@ namespace klib::type_trait
 	struct Is_StringType : Is_StringTypeBase<std::remove_cv_t<T>>
 	{};
 
+	// Determines whether type is an STL string class type
 	template<typename T>
 	constexpr bool Is_StringType_V = Is_StringType<T>::value;
 

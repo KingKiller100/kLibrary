@@ -100,8 +100,8 @@ namespace klib {
 				return stringify::SprintfWrapper<CharType>(format, arg, argPack...);
 			}
 
-			std::array<std::any, std::variant_size_v<DataTypes> -1> elems = { stringify::IdentityPtr<CharType, T>(arg)
-				, stringify::IdentityPtr<CharType, Ts>(argPack)... };
+			std::array<std::any, std::variant_size_v<DataTypes> -1> elems = { stringify::Identity<CharType, T>(arg).GetPtr()
+				, stringify::Identity<CharType, Ts>(argPack).GetPtr()... };
 
 			std::basic_string<CharType> fmt(format);
 			FormatMarkerQueue markers = CreateIdentifiers(ToWriter(format), elems);
