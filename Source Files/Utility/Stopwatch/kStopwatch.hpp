@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../HelperMacros.hpp"
+#include "../../TypeTraits/TemplateTraits.hpp"
 
 #include "../Calendar/Time/kTimeComponentBase.hpp"
 
@@ -43,7 +44,7 @@ namespace klib
 			}
 
 			template<typename Units, typename = std::enable_if_t<
-				std::_Is_specialization_v<Units, kCalendar::TimeComponentBase>
+				type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
 				>>
 				USE_RESULT constexpr RepT GetLifeTime() const noexcept(std::is_arithmetic_v<RepT>)
 			{
@@ -54,7 +55,7 @@ namespace klib
 			}
 
 			template<typename Units, typename = std::enable_if_t<
-				std::_Is_specialization_v<Units, kCalendar::TimeComponentBase>
+				type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
 				>>
 				USE_RESULT constexpr RepT GetDeltaTime() noexcept(std::is_arithmetic_v<RepT>)
 			{
@@ -70,7 +71,7 @@ namespace klib
 			}
 
 			template<typename Units, typename = std::enable_if_t<
-				std::_Is_specialization_v<Units, kCalendar::TimeComponentBase>
+				type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
 				>>
 				USE_RESULT constexpr RepT GetStartTime() noexcept(std::is_arithmetic_v<RepT>)
 			{
@@ -79,7 +80,7 @@ namespace klib
 			}
 
 			template<typename Units, typename = std::enable_if_t<
-				std::_Is_specialization_v<Units, kCalendar::TimeComponentBase>
+				type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
 				>>
 				USE_RESULT constexpr RepT Now() const noexcept(std::is_arithmetic_v<RepT>)
 			{
@@ -90,7 +91,7 @@ namespace klib
 
 		protected:
 			template<typename Units, typename = std::enable_if_t<
-				std::_Is_specialization_v<Units, kCalendar::TimeComponentBase>
+				type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
 				>>
 				USE_RESULT constexpr RepT ConvertToUsableValue(const TimePointT& now
 					, const TimePointT& prev) const noexcept(std::is_arithmetic_v<RepT>)
@@ -124,9 +125,7 @@ namespace klib
 		using SystemStopwatch = Stopwatch<double, std::chrono::system_clock>;
 		using MonotonicStopwatch = Stopwatch<double, std::chrono::steady_clock>;
 
-		using HighAccuracyTimerf = Stopwatch<float>;
-		using SystemTimerf = Stopwatch<float, std::chrono::system_clock>;
-		using MonotonicTimerf = Stopwatch<float, std::chrono::steady_clock>;
+		using AccurateStopwatch = Stopwatch<float>;
 	}
 
 #ifdef KLIB_SHORT_NAMESPACE

@@ -20,10 +20,12 @@ namespace klib::kString::stringify
 		constexpr Identity(const ObjectWithoutToString& obj)
 			: data(Convert<Char_t>(obj.str))
 		{}
-		USE_RESULT constexpr decltype(auto) Get() const
+
+		USE_RESULT constexpr decltype(auto) Get() const
 		{
 			return data.data();
-		}
+		}
+
 		USE_RESULT constexpr decltype(auto) GetPtr()
 		{
 			return std::addressof(data);
@@ -48,8 +50,9 @@ namespace kTest::utility
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(SprintfWrapperTest());
 		VERIFY_MULTI(StringifyBinaryTest());
-		VERIFY_MULTI(DirectToStringTest());
-		VERIFY_MULTI(DirectToStringTest());
+		VERIFY_MULTI(StringifyHexTest());
+		VERIFY_MULTI(CustomTypeWithToStringTest());
+		VERIFY_MULTI(CustomTypeWithoutToStringTest());
 		VERIFY_MULTI(FormatToStringTest());
 		VERIFY_MULTI(DirectToStringTest());
 		VERIFY_MULTI_END();

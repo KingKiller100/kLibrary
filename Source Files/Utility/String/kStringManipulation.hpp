@@ -230,7 +230,7 @@ namespace klib
 
 		template<class Integer_t, typename StringT
 			, typename = std::enable_if_t<
-			std::_Is_specialization_v<StringT, std::basic_string>
+			type_trait::Is_Specialization_V<StringT, std::basic_string>
 			>>
 			USE_RESULT constexpr Integer_t StrTo(StringT string)
 		{
@@ -300,7 +300,7 @@ namespace klib
 
 		template<class Integer_t, typename StringT
 			, typename = std::enable_if_t<
-			std::_Is_specialization_v<StringT, std::basic_string>
+			type_trait::Is_Specialization_V<StringT, std::basic_string>
 			>>
 			USE_RESULT constexpr Integer_t StrTo(StringT string, Integer_t defaultValue)
 		{

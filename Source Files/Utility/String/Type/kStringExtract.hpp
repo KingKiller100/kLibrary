@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "../kStringTypes.hpp"
+#include "../Stringify/kStringifyHelper.hpp"
 
 #include "../Stringify/kStringifyFloatingPoint.hpp"
 #include "../Stringify/kStringifyInteger.hpp"
@@ -9,6 +10,21 @@
 
 namespace klib::kString::type
 {
+	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
+	constexpr CharType s_BinaryModeToken = CharType('b');
+
+	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
+	constexpr CharType s_HexModeToken = CharType('h');
+
+	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
+	constexpr CharType s_GeneralFloatModeToken = CharType('g');
+
+	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
+	constexpr CharType s_FixedFloatModeToken = CharType('f');
+
+	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
+	constexpr CharType s_ScientificFloatModeToken = CharType('e');
+
 	template<typename T>
 	decltype(auto) ExtractPtrFromAny(const std::any& container)
 	{
@@ -19,9 +35,9 @@ namespace klib::kString::type
 	void ExtractIntegerAndInsertInOutput(const std::any& container, StringWriter<CharT>& specifier, StringWriter<CharT>& outCurrentSection)
 	{
 		auto data = ExtractPtrFromAny<T>(container);
-		const auto hexMode = Remove(specifier, 'h');
-		const auto binaryMode = Remove(specifier, 'b');
-		const auto padding = StrTo<size_t>(specifier, stringify::nPrecision);
+		const auto hexMode = Remove(specifier, s_HexModeToken<CharT>);
+		const auto binaryMode = Remove(specifier, s_BinaryModeToken<CharT>);
+		const auto padding = StrTo<size_t>(specifier, stringify::s_NoSpecifier);
 
 		StringWriter<CharT> toAppend;
 
@@ -59,26 +75,26 @@ namespace klib::kString::type
 		StringWriter<CharT> toAppend;
 		auto data = ExtractPtrFromAny<T>(container);
 
-		std::chars_format fmt = std::chars_format::fixed;
-		if (Remove(specifier, CharT('e')))
+		std::chars_format fmt = std::chars_format::general;
+		if (Remove(specifier, s_ScientificFloatModeToken<CharT>))
 		{
 			fmt = std::chars_format::scientific;
 		}
-		else if (Remove(specifier, CharT('h')))
+		else if (Remove(specifier, s_HexModeToken<CharT>))
 		{
 			fmt = std::chars_format::hex;
 		}
-		else if (Remove(specifier, CharT('g')))
+		else if (Remove(specifier, s_FixedFloatModeToken<CharT>))
 		{
-			fmt = std::chars_format::general;
+			fmt = std::chars_format::fixed;
 		}
 
-		const auto binaryMode = Remove(specifier, CharT('b'));
+		const auto binaryMode = Remove(specifier, s_BinaryModeToken<CharT>);
 
-		const auto padding = StrTo<std::int64_t>(specifier, stringify::nPrecision);
+		const auto padding = StrTo<std::int64_t>(specifier, stringify::s_NoSpecifier);
 		
 		if (binaryMode)
-			toAppend = stringify::StringIntegralBinary<CharT, size_t>(*(size_t*)data, padding, CharT('0'));
+			toAppend = stringify::StringIntegralBinary<CharT, size_t>(*reinterpret_cast<const size_t*>(data), padding, CharT('0'));
 		else
 			toAppend = stringify::StringFloatingPoint<CharT>(*data, padding, fmt);
 
@@ -99,9 +115,9 @@ namespace klib::kString::type
 		
 		dummy.real = *data;
 
-		const auto hexMode = Remove(specifier, 'h');
-		const auto binaryMode = Remove(specifier, 'b');
-		const auto padding = StrTo<size_t>(specifier, stringify::nPrecision);
+		const auto hexMode = Remove(specifier, s_HexModeToken<CharT>);
+		const auto binaryMode = Remove(specifier, s_BinaryModeToken<CharT>);
+		const auto padding = StrTo<size_t>(specifier, stringify::s_NoSpecifier);
 
 		StringWriter<CharT> toAppend;
 

@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "TemplateTraits.hpp"
+
 #include <string>
 #include <type_traits>
 
@@ -50,62 +52,20 @@ namespace klib::type_trait
 	template<typename T>
 	concept Is_Char_t = Is_CharType_V<T> == true;
 
+	// Determines whether type is an STL string class type
 	template<typename T>
-	struct Is_StringTypeBase : std::false_type
+	constexpr bool Is_StringType_V = 
+		Is_Specialization_V<T, std::basic_string>
+		|| Is_Specialization_V<T, std::basic_string_view>;
+	
+	template<typename T>
+	struct Is_StringTypeBase : std::bool_constant<Is_StringType_V<T>>
 	{};
-
-	template<>
-	struct Is_StringTypeBase<std::string> : Is_CharType<char>
-	{};
-
-	template<>
-	struct Is_StringTypeBase<std::wstring> : Is_CharType<wchar_t>
-	{};
-
-	template<>
-	struct Is_StringTypeBase<std::u16string> : Is_CharType<char16_t>
-	{};
-
-	template<>
-	struct Is_StringTypeBase<std::u32string> : Is_CharType<char32_t>
-	{};
-
-#ifdef __cpp_char8_t
-	template<>
-	struct Is_StringTypeBase<std::basic_string<char8_t>> : Is_CharType<char8_t>
-	{};
-#endif
-
-	template<>
-	struct Is_StringTypeBase<std::string_view> : Is_CharType<char>
-	{};
-
-	template<>
-	struct Is_StringTypeBase<std::wstring_view> : Is_CharType<wchar_t>
-	{};
-
-	template<>
-	struct Is_StringTypeBase<std::u16string_view> : Is_CharType<char16_t>
-	{};
-
-	template<>
-	struct Is_StringTypeBase<std::u32string_view> : Is_CharType<char32_t>
-	{};
-
-#ifdef __cpp_char8_t
-	template<>
-	struct Is_StringTypeBase<std::basic_string_view<char8_t>> : Is_CharType<char8_t>
-	{};
-#endif
 
 	template<typename T>
 	struct Is_StringType : Is_StringTypeBase<std::remove_cv_t<T>>
 	{};
-
-	// Determines whether type is an STL string class type
-	template<typename T>
-	constexpr bool Is_StringType_V = Is_StringType<T>::value;
-
+	
 	template<typename T>
 	concept Is_String_t = Is_StringType_V<T> == true;
 

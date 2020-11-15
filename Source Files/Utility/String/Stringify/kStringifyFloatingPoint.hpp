@@ -20,7 +20,7 @@ namespace klib::kString::stringify
 		>
 		kString::StringWriter<CharType> StringFloatingPoint(const T val, size_t precision, std::chars_format fmt = std::chars_format::fixed)
 	{
-		if (precision == nPrecision)
+		if (precision == s_NoSpecifier)
 			precision = 6;
 		
 #if defined(_HAS_COMPLETE_CHARCONV) && (_HAS_COMPLETE_CHARCONV == FALSE)

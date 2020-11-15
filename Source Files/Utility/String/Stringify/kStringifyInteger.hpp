@@ -7,14 +7,6 @@
 
 namespace klib::kString::stringify
 {
-	template<class CharType>
-	constexpr std::array<CharType, 16> s_GeneralHexMap = {
-		static_cast<CharType>('0'), static_cast<CharType>('1'), static_cast<CharType>('2'), static_cast<CharType>('3'),
-		static_cast<CharType>('4'), static_cast<CharType>('5'), static_cast<CharType>('6'), static_cast<CharType>('7'),
-		static_cast<CharType>('8'), static_cast<CharType>('9'), static_cast<CharType>('a'), static_cast<CharType>('b'),
-		static_cast<CharType>('c'), static_cast<CharType>('d'), static_cast<CharType>('e'), static_cast<CharType>('f'),
-	};
-
 	/// Digits of largest conceivable number for any integral type
 	/// plus a null terminator + possible minus symbol
 	template<class T, typename = std::enable_if_t<std::is_integral_v<T>>>
@@ -38,9 +30,9 @@ namespace klib::kString::stringify
 		, typename = std::enable_if_t<std::is_integral_v<Signed_t>
 		|| type_trait::Is_CharType_V<CharType>>
 		>
-		USE_RESULT constexpr StringWriter<CharType> StringSignedIntegral(Signed_t val, size_t minDigits, CharType placeHolder = defaultPlaceHolder<CharType>)
+		USE_RESULT constexpr StringWriter<CharType> StringSignedIntegral(Signed_t val, size_t minDigits, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
 	{
-		if (minDigits == nPrecision)
+		if (minDigits == s_NoSpecifier)
 			minDigits = 1;
 		using unsigned_t = std::make_unsigned_t<Signed_t>;
 		CharType buff[max_digits<Signed_t>]{};
@@ -68,9 +60,9 @@ namespace klib::kString::stringify
 		, typename = std::enable_if_t<std::is_integral_v<Unsigned_t>
 		|| type_trait::Is_CharType_V<CharType>>
 		>
-		USE_RESULT constexpr StringWriter<CharType> StringUnsignedIntegral(Unsigned_t val, size_t minDigits, CharType placeHolder = defaultPlaceHolder<CharType>)
+		USE_RESULT constexpr StringWriter<CharType> StringUnsignedIntegral(Unsigned_t val, size_t minDigits, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
 	{
-		if (minDigits == nPrecision)
+		if (minDigits == s_NoSpecifier)
 			minDigits = 1;
 
 		CharType buff[max_digits<Unsigned_t>]{};
@@ -88,7 +80,7 @@ namespace klib::kString::stringify
 	template<class CharType, typename Integral_t
 		, typename = std::enable_if_t < std::is_integral_v<Integral_t>
 		>>
-		USE_RESULT constexpr StringWriter<CharType> StringIntegral(Integral_t val, size_t minDigits, CharType placeHolder = defaultPlaceHolder<CharType>)
+		USE_RESULT constexpr StringWriter<CharType> StringIntegral(Integral_t val, size_t minDigits, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
 	{
 		if constexpr (std::is_unsigned_v<Integral_t>)
 			return StringUnsignedIntegral<CharType, Integral_t>(val, minDigits, placeHolder);
@@ -100,11 +92,11 @@ namespace klib::kString::stringify
 	template<class CharType, typename Integral_t, typename = std::enable_if_t <
 		std::is_integral_v<Integral_t>
 		>>
-		USE_RESULT constexpr StringWriter<CharType> StringIntegralHex(Integral_t val, size_t minCharacters, CharType placeHolder = defaultPlaceHolder<CharType>)
+		USE_RESULT constexpr StringWriter<CharType> StringIntegralHex(Integral_t val, size_t minCharacters, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
 	{
 		constexpr auto& hexMap = s_GeneralHexMap<CharType>;
 
-		if (minCharacters == nPrecision)
+		if (minCharacters == s_NoSpecifier)
 			minCharacters = sizeof(uintptr_t) * 2;
 
 		StringWriter<CharType> address;
@@ -127,7 +119,7 @@ namespace klib::kString::stringify
 	template<class CharType, typename Integral_t, typename = std::enable_if_t <
 		std::is_integral_v<Integral_t>
 		>>
-		USE_RESULT constexpr StringWriter<CharType> StringIntegralBinary(Integral_t val, size_t minCharacters, CharType placeHolder = defaultPlaceHolder<CharType>)
+		USE_RESULT constexpr StringWriter<CharType> StringIntegralBinary(Integral_t val, size_t minCharacters, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
 	{
 		StringWriter<CharType> binary;
 		binary.reserve(std::numeric_limits<Integral_t>::digits);
