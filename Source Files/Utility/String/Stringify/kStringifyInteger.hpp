@@ -30,7 +30,7 @@ namespace klib::kString::stringify
 		, typename = std::enable_if_t<std::is_integral_v<Signed_t>
 		|| type_trait::Is_CharType_V<CharType>>
 		>
-		USE_RESULT constexpr StringWriter<CharType> StringSignedIntegral(Signed_t val, size_t minDigits, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
+		USE_RESULT constexpr StringWriter<CharType> StringSignedIntegral(Signed_t val, size_t minDigits = s_NoSpecifier, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
 	{
 		if (minDigits == s_NoSpecifier)
 			minDigits = 1;
@@ -60,7 +60,7 @@ namespace klib::kString::stringify
 		, typename = std::enable_if_t<std::is_integral_v<Unsigned_t>
 		|| type_trait::Is_CharType_V<CharType>>
 		>
-		USE_RESULT constexpr StringWriter<CharType> StringUnsignedIntegral(Unsigned_t val, size_t minDigits, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
+		USE_RESULT constexpr StringWriter<CharType> StringUnsignedIntegral(Unsigned_t val, size_t minDigits = s_NoSpecifier, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
 	{
 		if (minDigits == s_NoSpecifier)
 			minDigits = 1;
@@ -80,7 +80,7 @@ namespace klib::kString::stringify
 	template<class CharType, typename Integral_t
 		, typename = std::enable_if_t < std::is_integral_v<Integral_t>
 		>>
-		USE_RESULT constexpr StringWriter<CharType> StringIntegral(Integral_t val, size_t minDigits, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
+		USE_RESULT constexpr StringWriter<CharType> StringIntegral(Integral_t val, size_t minDigits = s_NoSpecifier, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
 	{
 		if constexpr (std::is_unsigned_v<Integral_t>)
 			return StringUnsignedIntegral<CharType, Integral_t>(val, minDigits, placeHolder);
@@ -92,7 +92,7 @@ namespace klib::kString::stringify
 	template<class CharType, typename Integral_t, typename = std::enable_if_t <
 		std::is_integral_v<Integral_t>
 		>>
-		USE_RESULT constexpr StringWriter<CharType> StringIntegralHex(Integral_t val, size_t minCharacters, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
+		USE_RESULT constexpr StringWriter<CharType> StringIntegralHex(Integral_t val, size_t minCharacters = s_NoSpecifier, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
 	{
 		constexpr auto& hexMap = s_GeneralHexMap<CharType>;
 
@@ -109,7 +109,15 @@ namespace klib::kString::stringify
 			address.insert(address.begin(), hexMap.at(index));
 			asUint /= hexMap.size();
 		}
-
+		
+		if (val < 0 && address.front() == hexMap[15])
+		{
+			const auto notFpos = address.find_first_not_of(hexMap[15]);
+			address = address.substr(notFpos - 1);
+			if (placeHolder == s_DefaultPlaceHolder<CharType>)
+				placeHolder = hexMap[15];
+		}
+		
 		PrependPadding(address, minCharacters, placeHolder);
 
 		return address;

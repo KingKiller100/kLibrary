@@ -18,7 +18,7 @@ namespace klib::kString::stringify
 		, typename = std::enable_if_t<std::is_floating_point_v<T>
 		|| type_trait::Is_CharType_V<CharType>>
 		>
-		kString::StringWriter<CharType> StringFloatingPoint(const T val, size_t precision, std::chars_format fmt = std::chars_format::fixed)
+		kString::StringWriter<CharType> StringFloatingPoint(const T val, size_t precision = s_NoSpecifier, std::chars_format fmt = std::chars_format::fixed)
 	{
 		if (precision == s_NoSpecifier)
 			precision = 6;

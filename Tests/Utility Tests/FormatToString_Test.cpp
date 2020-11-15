@@ -150,7 +150,21 @@ namespace kTest::utility
 		{
 			constexpr auto input = -1000;
 			const auto result = stringify::StringIntegralHex<char16_t>(input, 8);
-			constexpr auto expected = u"000003e8";
+			constexpr auto expected = u"fffffc18";
+			VERIFY(expected == result);
+		}
+
+		{
+			constexpr auto input = 4;
+			const auto result = stringify::StringIntegralHex<char16_t>(input, 2);
+			constexpr auto expected = u"04";
+			VERIFY(expected == result);
+		}
+
+		{
+			constexpr auto input = 24;
+			const auto result = stringify::StringIntegralHex<char16_t>(input);
+			constexpr auto expected = u"0000000000000018";
 			VERIFY(expected == result);
 		}
 
