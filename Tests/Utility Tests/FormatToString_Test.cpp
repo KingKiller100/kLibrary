@@ -135,7 +135,7 @@ namespace kTest::utility
 		{
 			constexpr auto input = 64;
 			const auto result = stringify::StringIntegralBinary<char>(input, 8);
-			constexpr auto expected = "00100000";
+			constexpr auto expected = "0100000";
 			VERIFY(result == expected);
 		}
 
