@@ -140,9 +140,9 @@ namespace klib::kString::stringify
 			val >>= 1;
 		}
 
-		std::reverse(binary.begin(), binary.end());
-
 		AppendPadding(binary, minCharacters, placeHolder);
+
+		std::reverse(binary.begin(), binary.end());
 
 		return binary;
 	}

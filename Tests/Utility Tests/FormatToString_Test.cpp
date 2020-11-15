@@ -11,6 +11,28 @@ struct ObjectWithoutToString
 	std::string str = "String made using identity overloading";
 };
 
+namespace klib::kString::stringify
+{
+	template<typename Char_t>
+	class Identity<Char_t, ObjectWithoutToString>
+	{
+	public:
+		constexpr Identity(const ObjectWithoutToString& obj)
+			: data(Convert<Char_t>(obj.str))
+		{}
+		USE_RESULT constexpr decltype(auto) Get() const
+		{
+			return data.data();
+		}
+		USE_RESULT constexpr decltype(auto) GetPtr()
+		{
+			return std::addressof(data);
+		}
+
+	private:
+		const StringWriter<Char_t>& data;
+	};
+}
 
 namespace kTest::utility
 {

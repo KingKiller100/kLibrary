@@ -114,7 +114,7 @@ namespace klib::kString::stringify
 		}
 		USE_RESULT constexpr auto GetPtr() const
 		{
-			return (const void* const*)std::addressof(data);
+			return reinterpret_cast<const void* const*>(std::addressof(data));
 		}
 
 	private:
