@@ -23,7 +23,7 @@ namespace klib::kCalendar
 		static constexpr auto FormatToken = 'h';
 
 	public:
-		constexpr explicit Hour(const RepT hour, const CycleType cycleType = CYCLE_24)
+		constexpr explicit Hour(const Rep_t hour, const CycleType cycleType = CYCLE_24)
 			: TimeComponentBase(hour)
 			, cycleType(cycleType)
 		{}
@@ -56,6 +56,6 @@ namespace klib::kCalendar
 
 	constexpr Hour operator ""_hh(unsigned long long hours)
 	{
-		return Hour(static_cast<Hour::RepT>(hours), Hour::CYCLE_24);
+		return Hour(static_cast<Hour::Rep_t>(hours), Hour::CYCLE_24);
 	}
 }

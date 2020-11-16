@@ -2,11 +2,13 @@
 #include "PerformanceTestManager.hpp"
 
 #include "PerformanceTestBase.hpp"
-#include "SetUpPerformanceTests.hpp"
+#include "../SetUpTests.hpp"
 
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+
+#include "../../Utility/Stopwatch/kClock.hpp"
 
 
 #ifdef TESTING_ENABLED
@@ -99,7 +101,7 @@ namespace kTest::performance
 
 	void PerformanceTestManager::InitializeTests()
 	{
-		SetUpTests();
+		SetUpPerformanceTests();
 	}
 
 	void PerformanceTestManager::OutputResult(const std::string& name)

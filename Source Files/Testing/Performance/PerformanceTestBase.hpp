@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../Source Files/HelperMacros.hpp"
+#include "../../HelperMacros.hpp"
 
-#include "../../Source Files/Utility/Profiler/kProfiler.hpp"
+#include "../../Utility/Profiler/kProfiler.hpp"
 
 #include <map>
 #include <string>

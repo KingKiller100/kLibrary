@@ -17,7 +17,7 @@ namespace klib::kCalendar
 		static constexpr char FormatToken = 'm';
 
 	public:
-		constexpr explicit Minute(const RepT minute)
+		constexpr explicit Minute(const Rep_t minute)
 			: TimeComponentBase( minute )
 		{}
 
@@ -41,7 +41,7 @@ namespace klib::kCalendar
 
 	constexpr Minute operator ""_mm(unsigned long long mins)
 	{
-		return Minute(static_cast<Minute::RepT>(mins));
+		return Minute(static_cast<Minute::Rep_t>(mins));
 	}
 }
 

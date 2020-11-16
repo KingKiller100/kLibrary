@@ -1,7 +1,6 @@
 ﻿#pragma once
 
-
-#include "../../Source Files/Testing/Tester.hpp"
+#include "../Tester.hpp"
 
 #include <filesystem>
 #include <string>
@@ -17,6 +16,8 @@ namespace kTest::performance
 	{
 		struct Token {};
 	public:
+		using Test_t = PerformanceTestBase;
+		
 		PerformanceTestManager(const Token&);
 		~PerformanceTestManager();
 

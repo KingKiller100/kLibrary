@@ -16,7 +16,7 @@ namespace klib::kCalendar
 		static constexpr auto FormatToken = 'c';
 		
 	public:
-		constexpr Millisecond(const RepT mills)
+		constexpr Millisecond(const Rep_t mills)
 			: TimeComponentBase(mills)
 		{}
 
@@ -24,12 +24,12 @@ namespace klib::kCalendar
 
 		USE_RESULT constexpr bool Verify() const
 		{
-			return VerifyImpl(UnderlyingT::period::den);
+			return VerifyImpl(Duration_t::period::den);
 		}
 
 		USE_RESULT constexpr void Limit()
 		{
-			LimitImpl(UnderlyingT::period::den);
+			LimitImpl(Duration_t::period::den);
 		}
 		
 		friend class Time;
@@ -40,6 +40,6 @@ namespace klib::kCalendar
 
 	constexpr Millisecond operator"" _ms(unsigned long long millisecond)
 	{
-		return Millisecond(static_cast<Millisecond::RepT>(millisecond));
+		return Millisecond(static_cast<Millisecond::Rep_t>(millisecond));
 	}
 }

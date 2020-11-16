@@ -1,40 +1,28 @@
 #pragma once
 
+#include "kClock.hpp"
+
 #include "../../HelperMacros.hpp"
 #include "../../TypeTraits/TemplateTraits.hpp"
 
-#include "../Calendar/Time/kTimeComponentBase.hpp"
-
 #include <atomic>
-#include <chrono>
-#include <ratio>
 
 namespace klib
 {
 	namespace kStopwatch
 	{
-		namespace units
-		{
-			using Hours  = kCalendar::TimeComponentBase<std::chrono::minutes>;
-			using Mins   = kCalendar::TimeComponentBase<std::chrono::seconds>;
-			using Secs   = kCalendar::TimeComponentBase<std::chrono::milliseconds>;
-			using Millis = kCalendar::TimeComponentBase<std::chrono::microseconds>;
-			using Micros = kCalendar::TimeComponentBase<std::chrono::nanoseconds>;
-			using Nanos  = kCalendar::TimeComponentBase<std::chrono::duration<long long, std::pico>>;
-		}
-
-		template<typename RepresentationType = double, typename ClockType = std::chrono::high_resolution_clock>
+		template<typename RepresentationType = double, class Units = units::Micros, class ClockType = HighAccuracyClock<Units>>
 		class Stopwatch
 		{
-			using RepT = RepresentationType;
-			using ClockT = ClockType;
-			using TimePointT = typename ClockType::time_point;
+			using Clock_t = ClockType;
+			using Units_t = Units;
+			using Rep_t = RepresentationType;
+			using TimePoint_t = typename ClockType::TimePoint_t;
 
 		public:
-
 			constexpr Stopwatch(const char* name) noexcept
 				: name(name)
-				, startTimePoint(ClockT::now())
+				, startTimePoint(Clock_t::Now())
 				, lastTimePoint(startTimePoint)
 			{ }
 
@@ -43,26 +31,26 @@ namespace klib
 				return name;
 			}
 
-			template<typename Units, typename = std::enable_if_t<
-				type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
+			template<typename Units2 = Units_t, typename = std::enable_if_t<
+				type_trait::Is_Specialization_V<Units2, kCalendar::TimeComponentBase>
 				>>
-				USE_RESULT constexpr RepT GetLifeTime() const noexcept(std::is_arithmetic_v<RepT>)
+				USE_RESULT constexpr Rep_t GetLifeTime() const noexcept(std::is_arithmetic_v<Rep_t>)
 			{
 				std::atomic_thread_fence(std::memory_order_relaxed);
-				const auto lifeTime = ConvertToUsableValue<Units>(ClockT::now(), startTimePoint);
+				const auto lifeTime = ConvertToUsableValue<Units2>(Clock_t::Now(), startTimePoint);
 				std::atomic_thread_fence(std::memory_order_relaxed);
 				return lifeTime;
 			}
 
-			template<typename Units, typename = std::enable_if_t<
-				type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
+			template<typename Units2 = Units_t, typename = std::enable_if_t<
+				type_trait::Is_Specialization_V<Units2, kCalendar::TimeComponentBase>
 				>>
-				USE_RESULT constexpr RepT GetDeltaTime() noexcept(std::is_arithmetic_v<RepT>)
+				USE_RESULT constexpr Rep_t GetDeltaTime() noexcept(std::is_arithmetic_v<Rep_t>)
 			{
 				std::atomic_thread_fence(std::memory_order_relaxed);
 
-				const auto currentTimePoint = ClockT::now();
-				const auto deltaTime = ConvertToUsableValue<Units>(currentTimePoint, lastTimePoint);
+				const auto currentTimePoint = Clock_t::Now();
+				const auto deltaTime = ConvertToUsableValue<Units2>(currentTimePoint, lastTimePoint);
 				lastTimePoint = currentTimePoint;
 
 				std::atomic_thread_fence(std::memory_order_relaxed);
@@ -70,66 +58,70 @@ namespace klib
 				return deltaTime;
 			}
 
-			template<typename Units, typename = std::enable_if_t<
-				type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
+			template<typename Units2 = Units_t, typename = std::enable_if_t<
+				type_trait::Is_Specialization_V<Units2, kCalendar::TimeComponentBase>
 				>>
-				USE_RESULT constexpr RepT GetStartTime() noexcept(std::is_arithmetic_v<RepT>)
+				USE_RESULT constexpr Rep_t GetStartTime() noexcept(std::is_arithmetic_v<Rep_t>)
 			{
-				using UnitsUnderlyingT = typename Units::UnderlyingT;
-				return std::chrono::time_point_cast<UnitsUnderlyingT>(startTimePoint).time_since_epoch().count();
+				using UnitsDuration_t = typename Units2::Duration_t;
+				return std::chrono::time_point_cast<UnitsDuration_t>(startTimePoint).time_since_epoch().count();
 			}
 
-			template<typename Units, typename = std::enable_if_t<
-				type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
+			template<typename Units2 = Units_t, typename = std::enable_if_t<
+				type_trait::Is_Specialization_V<Units2, kCalendar::TimeComponentBase>
 				>>
-				USE_RESULT constexpr RepT Now() const noexcept(std::is_arithmetic_v<RepT>)
+				USE_RESULT constexpr Rep_t Now() const noexcept(std::is_arithmetic_v<Rep_t>)
 			{
-				using UnitsUnderlyingT = typename Units::UnderlyingT;
-				const auto currentTimePoint = ClockT::now();
-				return std::chrono::time_point_cast<UnitsUnderlyingT>(currentTimePoint).time_since_epoch().count();
+				using UnitsDuration_t = typename Units2::Duration_t;
+				const auto currentTimePoint = Clock_t::Now();
+				return std::chrono::time_point_cast<UnitsDuration_t>(currentTimePoint).time_since_epoch().count();
 			}
 
 		protected:
 			/**
-			 * \brief 
-			 * \tparam Units 
-			 * \param now 
+			 * \brief
+			 *		Converts stopwatch delta time recording to a type of time
+			 *		i.e. converts stopwatch time to seconds
+			 * \tparam Units2
+			 *		Desired time units (if left blank, the initialized time unit type is used
+			 * \param now
+			 *		Time point now
 			 * \param prev 
-			 * \return 
+			 *		Time point before
+			 * \return
+			 *		Time in the desired form, represented as your RepresentationType
 			 */
-			template<typename Units, typename = std::enable_if_t<
-				type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
-				>>
-				USE_RESULT constexpr RepT ConvertToUsableValue(const TimePointT& now
-					, const TimePointT& prev) const noexcept(std::is_arithmetic_v<RepT>)
+			template<typename Units2>
+				USE_RESULT constexpr Rep_t ConvertToUsableValue(const TimePoint_t& now
+					, const TimePoint_t& prev) const noexcept(std::is_arithmetic_v<Rep_t>)
 			{
-				using UnitsUnderlyingT = typename Units::UnderlyingT;
+				using UnitsDuration_t = typename Units2::Duration_t;
 
 				static constexpr double sixtieth = (CAST(long double, 1) / 60);
 				static constexpr double thousandth = (CAST(long double, 1) / 1000);
 
-				const auto diff = std::chrono::duration_cast<UnitsUnderlyingT>(now - prev);
+				const auto diff = std::chrono::duration_cast<UnitsDuration_t>(now - prev);
 
 				long double finalDuration;
 
-				if _CONSTEXPR_IF(std::_Is_any_of_v<Units, units::Hours, units::Mins>)
+				if _CONSTEXPR_IF(std::_Is_any_of_v<Units2, units::Hours, units::Mins>)
 					finalDuration = sixtieth * diff.count();
 				else
 					finalDuration = thousandth * diff.count();
 
-				return static_cast<RepT>(finalDuration);
+				return static_cast<Rep_t>(finalDuration);
 			}
 
 		private:
 			const char* name;
 
-			const TimePointT startTimePoint;
-			TimePointT lastTimePoint;
+			const TimePoint_t startTimePoint;
+			TimePoint_t lastTimePoint;
 		};
 
 		using HighAccuracyStopwatch = Stopwatch<>;
-		using SystemStopwatch = Stopwatch<double, std::chrono::system_clock>;
-		using MonotonicStopwatch = Stopwatch<double, std::chrono::steady_clock>;
+		using SystemStopwatch = Stopwatch<double, SystemClock<>>;
+		using MonotonicStopwatch = Stopwatch<double, SteadyClock<>>;
 
 		using AccurateStopwatch = Stopwatch<float>;
 	}

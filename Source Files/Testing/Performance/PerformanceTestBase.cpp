@@ -3,7 +3,7 @@
 
 #include "PerformanceTestManager.hpp"
 
-#include "../../Source Files/Utility/String/kToString.hpp"
+#include "../../Utility/String/kToString.hpp"
 
 #include <iostream>
 

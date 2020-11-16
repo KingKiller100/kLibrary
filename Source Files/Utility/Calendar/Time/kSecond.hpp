@@ -16,7 +16,7 @@ namespace klib::kCalendar
 		static constexpr auto FormatToken = 's';
 		
 	public:
-		constexpr Second(const RepT second)
+		constexpr Second(const Rep_t second)
 			: TimeComponentBase( second )
 		{}
 
@@ -40,6 +40,6 @@ namespace klib::kCalendar
 
 	constexpr Second operator"" _ss(unsigned long long second)
 	{
-		return Second(static_cast<Second::RepT>(second));
+		return Second(static_cast<Second::Rep_t>(second));
 	}
 }
