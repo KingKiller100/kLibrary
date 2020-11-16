@@ -20,7 +20,7 @@ namespace klib
 			: name(newName)
 			, directory(dir)
 			, extension(ext)
-			, filename(AppendFileExtension(fName, extension))
+			, filename(fName)
 
 		{}
 
@@ -56,7 +56,7 @@ namespace klib
 
 		void FileLogger::SetExtension(const std::string_view& newExtension)
 		{
-			extension = kFileSystem::GetExtension(newExtension);
+			extension = newExtension;
 		}
 
 		std::string_view FileLogger::GetDirectory() const
@@ -73,7 +73,7 @@ namespace klib
 
 		std::string FileLogger::GetPath() const
 		{
-			return directory + filename + extension;
+			return directory + AppendFileExtension(filename, extension);
 		}
 
 		void FileLogger::SetPath(const std::filesystem::path& path)

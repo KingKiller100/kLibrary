@@ -1,15 +1,14 @@
 #pragma once
 
-#include "../../HelperMacros.hpp"
+#include "kFileSystemTypes.hpp"
 
 #include "../String/kStringConverter.hpp"
-#include "../String/kStringManipulation.hpp"
+#include"../String/kStringManipulation.hpp"
+
+#include "../../HelperMacros.hpp"
 
 #include <cstdio>
 #include <filesystem>
-#include <fstream>
-#include <string>
-#include <vector>
 
 #ifdef KLIB_WINDOWS_OS
 #	include <corecrt_wdirect.h>
@@ -23,25 +22,6 @@
 
 namespace klib::kFileSystem
 {
-	//Type aliases for STL containers --------------------------------------------------------
-
-	// STL filesystem::path
-	using Path = std::filesystem::path;
-
-	// STL basic_ifstream
-	template<class Char>
-	using FileReader = std::basic_ifstream<ONLY_TYPE(Char), std::char_traits<ONLY_TYPE(Char)>>;
-
-	// STL basic_ofstream
-	template<class Char>
-	using FileWriter = std::basic_ofstream<ONLY_TYPE(Char), std::char_traits<ONLY_TYPE(Char)>>;
-
-	// STL vector of StringWriters
-	template<typename Char>
-	using FileLines = std::vector<kString::StringWriter<Char>>;
-
-	// --------------------------------------------------------------------------------------
-
 	template<class CharType, class = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
 	constexpr auto pathSeparator = CharType('\\');
 
@@ -112,7 +92,7 @@ namespace klib::kFileSystem
 		}
 
 		throw std::runtime_error("Unable to write to file: " + kString::Convert<char>(filePath));
-#endif // DEBUG
+#endif // DEBUG || KLIB_DEBUG
 
 
 		return false;

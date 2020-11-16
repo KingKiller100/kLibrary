@@ -363,8 +363,8 @@ namespace kTest::utility
 			VERIFY(hour.Verify());
 			VERIFY(hour.ToString("h") == "12");
 			VERIFY(hour.ToString("hh") == "12");
-			VERIFY(hour.ToString("hhh") == "12m");
-			VERIFY(hour.ToString("hhhh") == "12m");
+			VERIFY(hour.ToString("hhh") == "12h");
+			VERIFY(hour.ToString("hhhh") == "12h");
 		}
 		
 		{
@@ -373,8 +373,8 @@ namespace kTest::utility
 			VERIFY(hour.Verify());
 			VERIFY(hour.ToString("h") == "2");
 			VERIFY(hour.ToString("hh") == "02");
-			VERIFY(hour.ToString("hhh") == "2m");
-			VERIFY(hour.ToString("hhhh") == "02m");
+			VERIFY(hour.ToString("hhh") == "2h");
+			VERIFY(hour.ToString("hhhh") == "02h");
 		}
 		
 		{
@@ -383,8 +383,8 @@ namespace kTest::utility
 			VERIFY(!hour.Verify());
 			VERIFY(hour.ToString("h") == "30");
 			VERIFY(hour.ToString("hh") == "30");
-			VERIFY(hour.ToString("hhh") == "30m");
-			VERIFY(hour.ToString("hhhh") == "30m");
+			VERIFY(hour.ToString("hhh") == "30h");
+			VERIFY(hour.ToString("hhhh") == "30h");
 		}
 		
 		return success;
@@ -526,7 +526,7 @@ namespace kTest::utility
 
 		{
 			const Date date(Day::WEDNESDAY, 1, Month::APR, 2004);
-			const auto result = date.ToString("dddd, ddd mmmm yyyy");
+			const auto result = date.ToString("dddd, ddd mmm yyyy");
 			const char expected[] = "Wed, 1st Apr 2004";
 			VERIFY(expected == result);
 		}

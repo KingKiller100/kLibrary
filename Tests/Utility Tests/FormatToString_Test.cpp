@@ -179,13 +179,15 @@ namespace kTest::utility
 			VERIFY(result == "0010");
 		}
 
-		{ // Prints minimum digit of binary string, will fill remaining characters with '0' unless specified differently
+		// Prints minimum digit of binary string, will fill remaining characters with '0' unless specified differently
+		{ 
 			constexpr auto input = 64;
 			const auto result = stringify::StringIntegralBinary<char16_t>(input, 8);
 			VERIFY(result == u"01000000");
 		}
 
-		{ // Prints as many characters as necessary to represent the number, if min digits is less than the expected binary characters
+		// Prints as many characters as necessary to represent the number, if min digits is less than the expected binary characters
+		{
 			constexpr auto input = 1000;
 			const auto result = stringify::StringIntegralBinary<char8_t>(input, 8);
 			VERIFY(result == u8"1111101000");
@@ -197,7 +199,8 @@ namespace kTest::utility
 			VERIFY(result == U"100");
 		}
 
-		{ // if smaller than remaining characters, newly specified placeholder is used
+		// if smaller than remaining characters, newly specified placeholder is used
+		{
 			constexpr auto input = 4;
 			const auto result = stringify::StringIntegralBinary<char16_t>(input, 5, 'a');
 			VERIFY(result == u"aa100");
@@ -249,7 +252,6 @@ namespace kTest::utility
 		const auto testStr7 = ToString("{0:b10}", 54321);
 		const auto testStr8 = ToString("{0:h}", 54321);
 
-
 		constexpr auto num = 1000;
 		const auto hex = "0x" + stringify::StringIntegralHex<char>(num, 4, '0');
 		const auto binary = u8"0b" + stringify::StringIntegralBinary<char8_t>(num, 4, '0');
@@ -259,7 +261,7 @@ namespace kTest::utility
 		VERIFY(testStr3W == L"and with different numerical types such as float 6.283, ");
 		VERIFY(testStr4 == "doubles 2.7182818, ");
 		VERIFY(testStr5 == "unsigned (200) or signed integers (-50), ");
-		VERIFY(testStr6 == "pointer addresses i.e. 0x00");
+		VERIFY(testStr6.find("pointer addresses i.e. 0x00") != std::string::npos);
 		VERIFY(testStr7 == "1101010000110001");
 		VERIFY(testStr8 == "000000000000d431");
 		VERIFY(hex == "0x03e8");
