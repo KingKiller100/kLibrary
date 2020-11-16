@@ -55,7 +55,7 @@ namespace klib::kFileSystem
 	 *		File mode i.e. out/append/binary/etc...
 	 */
 	template<class CharType = char>
-	constexpr bool WriteFile(const kString::StringWriter<CharType>& filePath,
+	constexpr bool WriteFile(const Path& filePath,
 		const kString::StringReader<CharType>& content, std::ios::openmode mode = std::ios::out | std::ios::app)
 	{
 		FileWriter<CharType> outFile(filePath, mode);
@@ -76,22 +76,21 @@ namespace klib::kFileSystem
 #if defined(_DEBUG) || defined(KLIB_DEBUG)
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 		{
-			const auto failMsg = filePath + "Cannot create/open file: ";
+			const auto failMsg = "Cannot create/open file: " + filePath.string();
 			OutputDebugStringA(failMsg.c_str());
 		}
 		else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 		{
-			const auto failMsg = filePath + L"Cannot create/open file: ";
+			const auto failMsg = L"Cannot create/open file: " + filePath.wstring();
 			OutputDebugStringW(failMsg.c_str());
 		}
 		else
 		{
-			const auto wFileName = kString::Convert<wchar_t>(filePath);
-			const auto failMsg = L"Cannot create/open file: " + wFileName;
+			const auto failMsg = L"Cannot create/open file: " + filePath.generic_wstring();
 			OutputDebugStringW(failMsg.c_str());
 		}
 
-		throw std::runtime_error("Unable to write to file: " + kString::Convert<char>(filePath));
+		throw std::runtime_error("Unable to write to file: " + kString::Convert<char>(filePath.string()));
 #endif // DEBUG || KLIB_DEBUG
 
 

@@ -24,7 +24,7 @@ namespace klib
 				&& std::is_pointer_v<Stringish>)
 			|| std::is_array_v<Stringish>;
 #endif
-		
+
 		ENUM_CLASS(PreserveToken, std::uint8_t, YES, NO);
 		ENUM_CLASS(PreserveEmpty, std::uint8_t, YES, NO);
 		ENUM_CLASS(CaseSensitive, std::uint8_t, YES, NO);
@@ -79,7 +79,7 @@ namespace klib
 
 			return lines;
 		}
-		
+
 		template<typename StringType, typename Stringish>
 		requires ValidStringT<Stringish> || type_trait::Is_CharType_V<Stringish>
 			constexpr bool Remove(StringType & str, const Stringish & search)
@@ -166,7 +166,7 @@ namespace klib
 		template<class CharT, size_t Size, typename = std::enable_if_t<
 			type_trait::Is_CharType_V<CharT>
 			&& std::is_array_v<CharT[Size]>
-			>> 
+			>>
 			USE_RESULT constexpr auto ToLower(const CharT(&input)[Size])
 		{
 			return ToLower(StringReader<std::remove_all_extents_t<CharT>>(input));
@@ -177,143 +177,160 @@ namespace klib
 #else
 		template<typename StringType> requires type_trait::Is_String_t<StringType>
 #endif
-		USE_RESULT constexpr bool Contains(const StringType& str, const typename StringType::value_type* search
-			, const size_t offset = 0)
-		{
-			return str.find(search, offset) != StringType::npos;
-		}
-
-		template<typename StringType> requires type_trait::Is_String_t<StringType>
-		USE_RESULT constexpr bool Contains(const StringType& str, typename StringType::value_type search
-			, const size_t offset = 0)
-		{
-			return str.find(search, offset) != StringType::npos;
-		}
-
-		template<typename StringA, typename StringB>
-		requires type_trait::Is_String_t<StringA> && type_trait::Is_String_t<StringB>
-			USE_RESULT constexpr bool Contains(const StringA& str, const StringB& search
+			USE_RESULT constexpr bool Contains(const StringType& str, const typename StringType::value_type* search
 				, const size_t offset = 0)
-		{
-			return str.find(search.data(), offset) != StringA::npos;
-		}
-
-		template<typename StringType, typename Stringish
-			, typename = std::enable_if_t<
-			type_trait::Is_StringType_V<StringType>
-			&& (type_trait::Is_StringType_V<StringType>
-				|| (type_trait::Is_CharType_V<ONLY_TYPE(Stringish)>
-					&& std::is_same_v<typename StringType::value_type, Stringish>
-					&& std::is_pointer_v<Stringish>)
-				)
-			>>
-			USE_RESULT constexpr size_t Count(const StringType& str, const Stringish search
-				, const size_t offset = 0, CaseSensitive cs = CaseSensitive::NO)
-		{
-			size_t count = 0;
-
-			const auto hayStack = cs.Compare(CaseSensitive::YES, ToWriter(str), ToLower(str));
-
-			const auto needle = cs == CaseSensitive::YES
-				? search
-				: ToLower(search);
-			
-			for (auto currentPos = hayStack.find(needle, offset);
-				currentPos != StringType::npos;
-				currentPos = hayStack.find(needle, currentPos + 1))
 			{
-				++count;
+				return str.find(search, offset) != StringType::npos;
 			}
 
-			return count;
-		}
-
-		template<class Integer_t, typename StringT
-			, typename = std::enable_if_t<
-			type_trait::Is_Specialization_V<StringT, std::basic_string>
-			>>
-			USE_RESULT constexpr Integer_t StrTo(StringT string)
-		{
-			static_assert(std::is_integral_v<Integer_t>, __FUNCTION__ " can only be used with integer types "
-				"(char, int, long, unsigned short, etc..");
-
-			using CharType = typename StringT::value_type;
-
-			const auto CrashFunc = [](const std::string& errMsg) { throw kDebug::StringError(errMsg); };
-			const auto MaxDigitsFunc = []()
-			{
-				auto maxNum = std::numeric_limits<Integer_t>::max();
-				size_t count = 0;
-				do {
-					++count;
-					maxNum /= 10;
+			template<typename StringType> requires type_trait::Is_String_t<StringType>
+				USE_RESULT constexpr bool Contains(const StringType& str, typename StringType::value_type search
+					, const size_t offset = 0)
+				{
+					return str.find(search, offset) != StringType::npos;
 				}
-				while (maxNum);
-				return count;
-			};
 
-			
-			Remove(string, ' ');
+				template<typename StringA, typename StringB>
+				requires type_trait::Is_String_t<StringA>&& type_trait::Is_String_t<StringB>
+					USE_RESULT constexpr bool Contains(const StringA& str, const StringB& search
+						, const size_t offset = 0)
+				{
+					return str.find(search.data(), offset) != StringA::npos;
+				}
 
-			if (string.empty())
-				CrashFunc("Cannot convert empty string to integer number");
-			
-			if (Contains(string, CharType('.')))
-				CrashFunc("string must contain only one integer number");
+				template<typename StringType, typename Stringish
+					, typename = std::enable_if_t<
+					type_trait::Is_StringType_V<StringType>
+					&& (type_trait::Is_StringType_V<StringType>
+						|| (type_trait::Is_CharType_V<ONLY_TYPE(Stringish)>
+							&& std::is_same_v<typename StringType::value_type, Stringish>
+							&& std::is_pointer_v<Stringish>)
+						)
+					>>
+					USE_RESULT constexpr size_t Count(const StringType& str, const Stringish search
+						, const size_t offset = 0, CaseSensitive cs = CaseSensitive::NO)
+				{
+					size_t count = 0;
 
-			const auto isNeg = std::is_signed_v<Integer_t>
-				&& string[0] == CharType('-');
+					const auto hayStack = cs.Compare(CaseSensitive::YES, ToWriter(str), ToLower(str));
 
-			if (isNeg)
-				string.erase(string.begin(), string.begin() + 1);
+					const auto needle = cs == CaseSensitive::YES
+						? search
+						: ToLower(search);
 
-			Integer_t result = 0;
-			size_t size = string.size();
-			auto magnitude = static_cast<size_t>(std::pow(10, size - 1));
+					for (auto currentPos = hayStack.find(needle, offset);
+						currentPos != StringType::npos;
+						currentPos = hayStack.find(needle, currentPos + 1))
+					{
+						++count;
+					}
 
-			if (size > MaxDigitsFunc())
-			{
-				const std::string type = typeid(result).name();
-				const auto msg = "String contains more digits than largest number of type: "
-					+ type;
-				CrashFunc(msg);
-			}
+					return count;
+				}
 
-			for (const auto& digitChr : string)
-			{
-				if (CharType('0') > digitChr
-					|| CharType('9') < digitChr)
-					CrashFunc("String must only contain digits");
+				// Converts strings containing text for an integer value into the integer type with that value 
+				template<class Integer_t, typename StringT
+					, typename = std::enable_if_t<
+					type_trait::Is_Specialization_V<StringT, std::basic_string>
+					>>
+					USE_RESULT constexpr Integer_t StrTo(StringT string)
+				{
+					static_assert(std::is_integral_v<Integer_t>, __FUNCTION__ " can only be used with integer types "
+						"(char, int, long, unsigned short, etc..");
 
-				const auto digit = static_cast<size_t>(digitChr - CharType('0'));
-				const auto asInt = digit * magnitude;
+					using CharType = typename StringT::value_type;
 
-				result += static_cast<Integer_t>(asInt);
-				magnitude /= 10;
-			}
+					const auto CrashFunc = [](const std::string& errMsg) { throw kDebug::StringError(errMsg); };
+					const auto MaxDigitsFunc = []()
+					{
+						auto maxNum = std::numeric_limits<Integer_t>::max();
+						size_t count = 0;
+						do {
+							++count;
+							maxNum /= 10;
+						} while (maxNum);
+						return count;
+					};
 
-			if (isNeg)
-				result *= -1;
 
-			return result;
-		}
+					Remove(string, ' ');
 
-		template<class Integer_t, typename StringT
-			, typename = std::enable_if_t<
-			type_trait::Is_Specialization_V<StringT, std::basic_string>
-			>>
-			USE_RESULT constexpr Integer_t StrTo(StringT string, Integer_t defaultValue)
-		{
-			try
-			{
-				return StrTo<Integer_t>(string);
-			}
-			catch (...)
-			{
-				return defaultValue;
-			}
-		}
-		
+					if (string.empty())
+						static_cast<Integer_t>(0);
+
+					if (Contains(string, CharType('.')))
+						CrashFunc("string must contain only one integer number");
+
+					const auto isNeg = std::is_signed_v<Integer_t>
+						&& string[0] == CharType('-');
+
+					if (isNeg)
+						string.erase(string.begin(), string.begin() + 1);
+
+					Integer_t result = 0;
+					size_t size = string.size();
+					auto magnitude = static_cast<size_t>(std::pow(10, size - 1));
+
+					if (size > MaxDigitsFunc())
+					{
+						const std::string type = typeid(result).name();
+						const auto msg = "String contains more digits than largest number of type: "
+							+ type;
+						CrashFunc(msg);
+					}
+
+					for (const auto& digitChr : string)
+					{
+						if (CharType('0') > digitChr
+							|| CharType('9') < digitChr)
+							CrashFunc("String must only contain digits");
+
+						const auto digit = static_cast<size_t>(digitChr - CharType('0'));
+						const auto asInt = digit * magnitude;
+
+						result += static_cast<Integer_t>(asInt);
+						magnitude /= 10;
+					}
+
+					if (isNeg)
+						result *= -1;
+
+					return result;
+				}
+
+				// Converts strings containing text for an integer value into the integer type with that value.
+				// But if zero results are unwanted, a default value can be returned instead
+				template<class Integer_t, typename StringT
+					, typename = std::enable_if_t<
+					type_trait::Is_Specialization_V<StringT, std::basic_string>
+					>>
+					USE_RESULT constexpr Integer_t StrTo(StringT string, Integer_t defaultValue)
+				{
+					const auto val = StrTo<Integer_t>(string);
+					if (val == 0)
+						return defaultValue;
+					return val;
+				}
+
+
+				// Converts strings containing text for an integer value into the integer type with that value.
+				// But bad string inputs are likely, ignore the exception and return a default value
+				template<class Integer_t, typename StringT
+					, typename = std::enable_if_t<
+					type_trait::Is_Specialization_V<StringT, std::basic_string>
+					>>
+					USE_RESULT constexpr Integer_t TryStrTo(StringT string, Integer_t defaultValue)
+				{
+					try
+					{
+						return StrTo<Integer_t>(string);
+					}
+					catch (...)
+					{
+						return defaultValue;
+					}
+				}
+
 	}
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kString;

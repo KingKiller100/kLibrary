@@ -19,7 +19,8 @@ namespace klib::kLogs
 
 	bool LogEntry::HasDescription(const LogDescriptor& desc) const
 	{
-		return  (descriptor.lvl == desc.lvl) | (descriptor.info == desc.info);
+		return  descriptor.lvl == desc.lvl
+			|| descriptor.info == desc.info;
 	}
 
 	bool LogEntry::HasDescription(const std::string_view& desc) const
