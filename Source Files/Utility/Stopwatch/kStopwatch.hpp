@@ -11,11 +11,11 @@ namespace klib
 {
 	namespace kStopwatch
 	{
-		template<typename RepresentationType = double, class Units = units::Micros, class ClockType = HighAccuracyClock<Units>>
+		template<typename RepresentationType = double, class UnitsType = units::Micros, class ClockType = HighAccuracyClock<UnitsType>>
 		class Stopwatch
 		{
 			using Clock_t = ClockType;
-			using Units_t = Units;
+			using Units_t = UnitsType;
 			using Rep_t = RepresentationType;
 			using TimePoint_t = typename ClockType::TimePoint_t;
 
@@ -120,8 +120,8 @@ namespace klib
 		};
 
 		using HighAccuracyStopwatch = Stopwatch<>;
-		using SystemStopwatch = Stopwatch<double, SystemClock<>>;
-		using MonotonicStopwatch = Stopwatch<double, SteadyClock<>>;
+		using SystemStopwatch = Stopwatch<double, units::Micros, SystemClock<units::Micros>>;
+		using MonotonicStopwatch = Stopwatch<double, units::Micros, SteadyClock<units::Micros>>;
 
 		using AccurateStopwatch = Stopwatch<float>;
 	}
