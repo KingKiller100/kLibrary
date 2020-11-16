@@ -107,23 +107,23 @@ namespace klib {
 			FormatMarkerQueue markers = CreateIdentifiers(ToWriter(format), elems);
 
 			std::basic_string<CharType> finalString;
-			size_t prevIndex = 0;
+			size_t prevCloserIndex = 0;
 			for (const auto& marker : markers)
 			{
 				const std::any& val = elems[marker.objIndex];
 				const auto& type = marker.type;
-				const auto inputPos = fmt.find_first_of(closerSymbol, prevIndex) + 1;
-				const auto endPos = inputPos - prevIndex;
-				auto currentSection = fmt.substr(prevIndex, endPos);
-				const auto replacePos = marker.position - prevIndex;
+				const auto closerPos = fmt.find_first_of(closerSymbol, prevCloserIndex) + 1;
+				const auto infoSize = closerPos - prevCloserIndex;
+				auto currentSection = fmt.substr(prevCloserIndex, infoSize);
+				const auto replacePos = marker.position - prevCloserIndex;
 				const auto colonPos = currentSection.find(specifierSymbol, replacePos);
 
 				std::basic_string<CharType> specifier;
 				if (colonPos != npos)
 				{
 					const auto startPos = colonPos + 1;
-					const auto count = (inputPos - 1) - startPos;
-					specifier = currentSection.substr(colonPos + 1, count);
+					const auto count = (currentSection.size() - 1) - startPos;
+					specifier = currentSection.substr(startPos, count);
 				}
 
 				currentSection.erase(replacePos);
@@ -170,12 +170,12 @@ namespace klib {
 				}
 
 				finalString.append(currentSection);
-				prevIndex = inputPos;
+				prevCloserIndex = closerPos;
 				markers.pop_front();
 			}
 
-			if (fmt.size() - 1 >= prevIndex)
-				finalString.append(fmt.substr(prevIndex));
+			if (fmt.size() - 1 >= prevCloserIndex)
+				finalString.append(fmt.substr(prevCloserIndex));
 
 			return finalString;
 		}
