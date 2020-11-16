@@ -33,9 +33,11 @@ namespace kTest::performance::maths
 		CONST_GETTER_CONSTEXPR(T, W, ((T*)&vec)[3])
 
 	public:
-		kmaths::Big_Int_Type vec[sizeof(kmaths::Big_Int_Type) == sizeof(T) ? 4
+		kmaths::Big_Int_Type vec[
+			sizeof(kmaths::Big_Int_Type) == sizeof(T) ? 4
 			: (sizeof(kmaths::Big_Int_Type) / 2) == sizeof(T) ? 2
-			: 1]{};
+			: 1
+		]{};
 	};
 
 	VectorSpeedTest::VectorSpeedTest()

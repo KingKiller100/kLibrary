@@ -100,10 +100,10 @@ namespace kTest::utility
 		const auto fileData = klib::kFileSystem::ReadFile((exeDir + "Create Directory Test\\Test.txt").c_str());
 		VERIFY(fileData.front().compare("Success") == 0);
 
-		const auto isFileDeleted = RemoveFile((exeDir + "Create Directory Test\\Test.txt").c_str());
+		const auto isFileDeleted = Remove((exeDir + "Create Directory Test\\Test.txt").c_str());
 		VERIFY(isFileDeleted == true);
 
-		VERIFY(RemoveFile((exeDir + "FS_File_Test").c_str()) == true);
+		VERIFY(Remove((exeDir + "FS_File_Test").c_str()) == true);
 		VERIFY(DeleteDirectory((exeDir + "Create Directory Test\\").c_str()) == true);
 		VERIFY(DeleteDirectory((exeDir + "Create Directories Test\\Success1\\").c_str()) == true);
 		VERIFY(DeleteDirectory((exeDir + "Create Directories Test\\").c_str()) == true);

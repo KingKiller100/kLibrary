@@ -2,20 +2,18 @@
 #include "PerformanceTestManager.hpp"
 
 #include "PerformanceTestBase.hpp"
-
-#include "Maths/Vector_SpeedTest.hpp"
-#include "Maths/Algorithms_SpeedTest.hpp"
-
-// File System to output test results
-#include "../../Source Files/Utility/FileSystem/kFileSystem.hpp"
+#include "SetUpPerformanceTests.hpp"
 
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 
 
 #ifdef TESTING_ENABLED
 namespace kTest::performance
 {
+	namespace fs = std::filesystem;
+	
 	PerformanceTestManager::PerformanceTestManager(const Token&)
 		: Tester("Performance Tests")
 	{}
@@ -26,11 +24,11 @@ namespace kTest::performance
 	void PerformanceTestManager::Initialize()
 	{
 		using namespace klib;
-		path = kFileSystem::GetExeDirectory<char>();
+		path = fs::current_path();
 		path += "Speed Results\\";
-		const auto isMade = kFileSystem::CreateNewDirectory(path);
+		const auto isMade = fs::create_directory(path);
 
-		if (!kFileSystem::CheckDirectoryExists(path.string()))
+		if (!fs::exists(path))
 		{
 			throw std::runtime_error("Test Results path could not be created/found. Please check why!");
 		}
@@ -43,12 +41,11 @@ namespace kTest::performance
 			const auto isFile = dir.is_regular_file();
 			if (isFile)
 			{
-				const auto currentPath = dir.path().string();
-				kFileSystem::RemoveFile(currentPath);
+				fs::remove(dir);
 			}
 		}
 
-		InitializeMaths();
+		InitializeTests();
 	}
 
 	void PerformanceTestManager::ShutDown()
@@ -100,19 +97,21 @@ namespace kTest::performance
 		results.append(result);
 	}
 
-	void PerformanceTestManager::InitializeMaths()
+	void PerformanceTestManager::InitializeTests()
 	{
-		Add(new maths::AlgorithmsSpeedTest());
-		Add(new maths::VectorSpeedTest());
+		SetUpTests();
 	}
 
 	void PerformanceTestManager::OutputResult(const std::string& name)
 	{
 		using namespace klib;
-		const auto filename = kFileSystem::AppendFileExtension(name, "txt");
+		const auto filename = name + ".txt";
 		const auto fullPath = path / filename;
 
-		kFileSystem::WriteFile(fullPath.string(), results);
+		std::ofstream file(fullPath, std::ios::out | std::ios::app);
+		file << results;
+		file.close();
+		
 		results.clear();
 	}
 

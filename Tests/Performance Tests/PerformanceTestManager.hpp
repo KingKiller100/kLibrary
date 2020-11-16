@@ -36,7 +36,7 @@ namespace kTest::performance
 		void RunAll();
 		void RunTest(PerformanceTestBase* test);
 
-		void InitializeMaths();
+		void InitializeTests();
 
 		void OutputResult(const std::string& name);
 

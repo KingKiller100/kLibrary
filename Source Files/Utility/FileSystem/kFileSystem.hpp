@@ -142,17 +142,29 @@ namespace klib::kFileSystem
 
 	/**
 	* \brief
-	*		Deletes file from system
-	* \tparam CharType
-	*		Char type i.e. must be char/wchar_t/u32char_t/etc...
+	*		Deletes folder/file from system
 	* \param[in] filepath
-	*		Full file path of the file to delete
+	*		Full file path of the folder/file to delete
 	* \return
 	*		TRUE if file is found and deleted, else FALSE if file cannot be found or deleted
 	*/
-	inline bool RemoveFile(const Path& filepath)
+	inline bool Remove(const Path& filepath)
 	{
 		return std::filesystem::remove(filepath);
+	}
+
+
+	/**
+	* \brief
+	*		Deletes everything in folder
+	* \param[in] filepath
+	*		Full file path of the folder to delete
+	* \return
+	*		TRUE if folder is found and deleted, else FALSE if folder cannot be found or deleted
+	*/
+	inline bool RemoveAll(const Path& filepath)
+	{
+		return std::filesystem::remove_all(filepath);
 	}
 
 	/**
