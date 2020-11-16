@@ -25,7 +25,7 @@ namespace kTest::performance
 	{
 		using namespace klib;
 		path = fs::current_path();
-		path += "Speed Results\\";
+		path += "\\Speed Results\\";
 		const auto isMade = fs::create_directory(path);
 
 		if (!fs::exists(path))

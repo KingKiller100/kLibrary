@@ -12,7 +12,7 @@ namespace kTest::performance::util
 	constexpr auto maxIter = static_cast<size_t>(1e3);
 	
 	ToStringSpeedTest::ToStringSpeedTest() noexcept
-		: PerformanceTestBase("ToString Performance Test")
+		: PerformanceTestBase("ToString Speed Test")
 	{}
 
 	ToStringSpeedTest::~ToStringSpeedTest() noexcept
@@ -104,8 +104,8 @@ namespace kTest::performance::util
 
 			{
 				START_TEST(participants[1]);
-				const auto length = _snprintf(nullptr,0, "string: %s - string_view: %s - double: %.f"
-					" - float: %.f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s"
+				const auto length = _snprintf(nullptr,0, "string: %s - string_view: %s - double: %.5f"
+					" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s"
 					, string.data()
 					, string_view.data()
 					, f64
@@ -117,8 +117,8 @@ namespace kTest::performance::util
 					, boolean ? "true" : "false"
 				);
 				buffer.reset(new char[length + 1]);
-				std::sprintf(buffer.get(), "string: %s - string_view: %s - double: %.f"
-					" - float: %.f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s"
+				std::sprintf(buffer.get(), "string: %s - string_view: %s - double: %.5f"
+					" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s"
 					, string.data()
 					, string_view.data()
 					, f64

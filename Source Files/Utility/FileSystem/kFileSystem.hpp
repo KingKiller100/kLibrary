@@ -105,10 +105,7 @@ namespace klib::kFileSystem
 	 * \return
 	 *		Boolean representing whether the directory has been created (TRUE) or not (FALSE)
 	 */
-	inline bool CreateNewDirectory(const Path& directory) noexcept
-	{
-		return _wmkdir(directory.wstring().data()) == 0; // 0 == SUCCESS
-	}
+	bool CreateNewDirectory(const Path& directory) noexcept;
 
 	/**
 	 * \brief
@@ -122,22 +119,7 @@ namespace klib::kFileSystem
 	 *		The path must be completely unique otherwise the path will not be created. If parts of the
 	 *		path already exist, only
 	 */
-	inline bool CreateNewDirectories(const Path& directory)
-	{
-		using Char = wchar_t;
-
-		Path dir(directory);
-
-		if (dir.wstring().back() != pathSeparator<Char>)
-			dir += pathSeparator<Char>; // Final suffix of directory char type must end with '\\'
-
-		bool isDirCreated = std::filesystem::create_directories(dir);
-
-		if (!isDirCreated)
-			isDirCreated = std::filesystem::exists(dir);
-
-		return isDirCreated;
-	}
+	bool CreateNewDirectories(const Path& directory);
 
 
 	/**
@@ -148,10 +130,7 @@ namespace klib::kFileSystem
 	* \return
 	*		TRUE if file is found and deleted, else FALSE if file cannot be found or deleted
 	*/
-	inline bool Remove(const Path& filepath)
-	{
-		return std::filesystem::remove(filepath);
-	}
+	bool Remove(const Path& filepath);
 
 
 	/**
@@ -162,10 +141,7 @@ namespace klib::kFileSystem
 	* \return
 	*		TRUE if folder is found and deleted, else FALSE if folder cannot be found or deleted
 	*/
-	inline bool RemoveAll(const Path& filepath)
-	{
-		return std::filesystem::remove_all(filepath);
-	}
+	bool RemoveAll(const Path& filepath);
 
 	/**
 	 * \brief
@@ -426,7 +402,7 @@ namespace klib::kFileSystem
 	USE_RESULT constexpr kString::StringWriter<CharType> GetFileName(const kString::StringReader<CharType>& path) noexcept
 	{
 		using Char = std::decay_t<std::remove_pointer_t<CharType>>;
-		const auto p = kString::Replace<Char>(path, Char('/'), pathSeparator<Char>);
+		const auto p = CorrectFilePathSeparators(path);
 		const auto filename = p.substr(p.find_last_of(pathSeparator<Char>) + 1);
 		return filename;
 	}

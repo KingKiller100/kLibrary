@@ -90,6 +90,13 @@ namespace klib
 			}
 
 		protected:
+			/**
+			 * \brief 
+			 * \tparam Units 
+			 * \param now 
+			 * \param prev 
+			 * \return 
+			 */
 			template<typename Units, typename = std::enable_if_t<
 				type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
 				>>
@@ -105,11 +112,10 @@ namespace klib
 
 				long double finalDuration;
 
-				if _CONSTEXPR_IF(std::is_same_v<Units, units::Hours>
-					|| std::is_same_v<Units, units::Mins>)
-					finalDuration = diff.count() * sixtieth;
+				if _CONSTEXPR_IF(std::_Is_any_of_v<Units, units::Hours, units::Mins>)
+					finalDuration = sixtieth * diff.count();
 				else
-					finalDuration = diff.count() * thousandth;
+					finalDuration = thousandth * diff.count();
 
 				return static_cast<RepT>(finalDuration);
 			}

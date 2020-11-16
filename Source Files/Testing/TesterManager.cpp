@@ -140,7 +140,7 @@ namespace kTest
 		std::cout << "Now running: " << test.GetName();
 		
 		const auto pass = test.Run();
-		const auto testTime = timer.GetLifeTime<units::Micros>();
+		const auto testTime = timer.GetLifeTime<units::Millis>();
 		
 		if (!pass)
 			success = false;
@@ -178,7 +178,7 @@ namespace kTest
 
 		resultStr.insert(0, "| ");
 
-		auto runtimeResultStr = stringify::SprintfWrapper("| Runtime: %.fus (microseconds)"
+		auto runtimeResultStr = stringify::SprintfWrapper("| Runtime: %.fms (milliseconds)"
 			, resTime);
 		std::cout << " " << runtimeResultStr << "\n";
 
