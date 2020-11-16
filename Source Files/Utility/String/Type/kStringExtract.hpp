@@ -65,6 +65,7 @@ namespace klib::kString::type
 	{
 		const auto size = StrTo<long long>(specifier, StringT::npos);
 		auto data = ExtractPtrFromAny<StringT>(container);
+
 		outCurrentSection.append(*data);
 	}
 
@@ -75,7 +76,7 @@ namespace klib::kString::type
 		StringWriter<CharT> toAppend;
 		auto data = ExtractPtrFromAny<T>(container);
 
-		std::chars_format fmt = std::chars_format::general;
+		std::chars_format fmt = std::chars_format::fixed;
 		if (Remove(specifier, s_ScientificFloatModeToken<CharT>))
 		{
 			fmt = std::chars_format::scientific;
@@ -84,9 +85,13 @@ namespace klib::kString::type
 		{
 			fmt = std::chars_format::hex;
 		}
-		else if (Remove(specifier, s_FixedFloatModeToken<CharT>))
+		/*else if (Remove(specifier, s_FixedFloatModeToken<CharT>))
 		{
 			fmt = std::chars_format::fixed;
+		}*/
+		else if (Remove(specifier, s_GeneralFloatModeToken<CharT>))
+		{
+			fmt = std::chars_format::general;
 		}
 
 		const auto binaryMode = Remove(specifier, s_BinaryModeToken<CharT>);

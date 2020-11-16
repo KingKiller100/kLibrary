@@ -7,7 +7,7 @@
 #include "../kStringTypes.hpp"
 
 #include <type_traits>
-
+#include <vector>
 
 namespace klib::kString::stringify
 {
@@ -19,25 +19,43 @@ namespace klib::kString::stringify
 	/// "data()" function which returns a const CharType pointer
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename Char_t, typename T>
+	const StringWriter<Char_t>& GetObjectString(const T& obj)
+	{
+		static std::vector<StringWriter<Char_t>> storage =
+			decltype(storage)();
+
+		const auto temp = Convert<Char_t>(obj.ToString());
+
+		auto iter = std::find(storage.begin(), storage.end(), temp);
+		if (iter != storage.end())
+			return (*iter);
+
+		const auto& value = storage.emplace_back(temp);
+		return value;
+	}
+
+	template<typename Char_t, typename T>
 	class Identity<Char_t, T, std::enable_if_t<type_trait::Is_CustomType_V<T>>>
 	{
 	public:
 		constexpr Identity(const T& obj)
-			: data(Convert<Char_t>(obj.ToString()))
+			: data(obj)
 		{}
 
 		USE_RESULT constexpr decltype(auto) Get() const
 		{
-			return data.data();
+			const std::basic_string<Char_t>& string = GetObjectString<Char_t>(data);
+			return string.data();
 		}
 
-		USE_RESULT constexpr decltype(auto) GetPtr()
+		USE_RESULT constexpr decltype(auto) GetPtr() const
 		{
-			return std::addressof(data);
+			const std::basic_string<Char_t>& string = GetObjectString<Char_t>(data);
+			return std::addressof(string);
 		}
 
 	private:
-		const StringWriter<Char_t> data;
+		const T& data;
 	};
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////

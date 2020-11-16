@@ -18,21 +18,21 @@ namespace klib::kString::stringify
 	{
 	public:
 		constexpr Identity(const ObjectWithoutToString& obj)
-			: data(Convert<Char_t>(obj.str))
+			: data(obj)
 		{}
 
 		USE_RESULT constexpr decltype(auto) Get() const
 		{
-			return data.data();
+			return data.str.data();
 		}
 
-		USE_RESULT constexpr decltype(auto) GetPtr()
+		USE_RESULT constexpr decltype(auto) GetPtr() const
 		{
-			return std::addressof(data);
+			return std::addressof(data.str);
 		}
 
 	private:
-		const StringWriter<Char_t>& data;
+		const ObjectWithoutToString& data;
 	};
 }
 
@@ -246,30 +246,31 @@ namespace kTest::utility
 		const auto testStr4 = ToString("doubles {0:7}, ", 2.7182818);
 		const auto testStr5 = ToString("unsigned ({1}) or signed integers ({0}), ", -50, 200U);
 		const auto testStr6 = ToString("pointer addresses i.e. 0x{0} (random int ptr address)", tempIntPtr.get());
-		const auto testStr9 = ToString("{0:b10}", 54321);
-		const auto testStr10 = ToString("{0:h}", 54321);
+		const auto testStr7 = ToString("{0:b10}", 54321);
+		const auto testStr8 = ToString("{0:h}", 54321);
 
 
 		constexpr auto num = 1000;
 		const auto hex = "0x" + stringify::StringIntegralHex<char>(num, 4, '0');
-		const auto binary = "0b" + stringify::StringIntegralBinary<char>(num, 4, '0');
+		const auto binary = u8"0b" + stringify::StringIntegralBinary<char8_t>(num, 4, '0');
 
 		VERIFY(testStr == "This test 1 ");
 		VERIFY(testStr2 == "will all work printf function format specifiers like with string literals ");
 		VERIFY(testStr3W == L"and with different numerical types such as float 6.283, ");
 		VERIFY(testStr4 == "doubles 2.7182818, ");
-		VERIFY(testStr5 == "signed (-50) or unsigned integers (200), ");
-		VERIFY(testStr6.find("pointer addresses i.e. 0x00") != std::string::npos);
-		VERIFY(testStr9 == "1101010000110001");
-		VERIFY(testStr10 == "0000d431");
+		VERIFY(testStr5 == "unsigned (200) or signed integers (-50), ");
+		VERIFY(testStr6 == "pointer addresses i.e. 0x00");
+		VERIFY(testStr7 == "1101010000110001");
+		VERIFY(testStr8 == "000000000000d431");
 		VERIFY(hex == "0x03e8");
-		VERIFY(binary == "1111101000");
+		VERIFY(binary == u8"0b1111101000");
 
 		return success;
 	}
 
 	bool FormatToStringTester::DirectToStringTest()
 	{
+		{
 #ifdef __cpp_char8_t
 		const auto test = klib::kString::ToString<char8_t>(980u, 123);
 		VERIFY(test == u8"980123");
@@ -277,6 +278,14 @@ namespace kTest::utility
 		const auto test = klib::kString::ToString<char16_t>(980u);
 		VERIFY(test == u"980");
 #endif
+		}
+
+		{
+			const auto result = ToString<char>(1, 2, 3, 4, "five", 6, 7, 8, 9, "ten", 11, 12, 13, 14, "fifteen");
+			const auto expected = "1234five6789ten11121314fifteen";
+			VERIFY(result == expected);
+		}
+		
 		return success;
 	}
 }
