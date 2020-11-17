@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "kDebugger.hpp"
 
-#include "../File System/kFileSystem.hpp"
+#include "../FileSystem/kFileSystem.hpp"
 
 namespace klib::kDebug
 {

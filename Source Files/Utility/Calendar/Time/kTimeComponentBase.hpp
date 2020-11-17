@@ -45,7 +45,7 @@ namespace klib::kCalendar
 		
 		constexpr void LimitImpl(const Rep_t& limit)
 		{
-			value %= Duration_t::period::num;
+			value %= limit;
 		}
 
 	protected:

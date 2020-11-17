@@ -8,13 +8,16 @@
 #include "Stringify/kStringifyInteger.hpp"
 #include "Stringify/kStringifyPointer.hpp"
 
-#include "../../TypeTraits/StringTraits.hpp"
-#include "../../Utility/String/kStringConverter.hpp"
-
+#include "Type/kStringBoolType.hpp"
+#include "Type/kStringStringTypes.hpp"
 #include "Type/kStringUnsignedType.hpp"
 #include "Type/kStringFloatingPointType.hpp"
 #include "Type/kStringSimpleIntegerType.hpp"
+
 #include "../Debug/Exceptions/StringExceptions.hpp"
+
+#include "../../TypeTraits/StringTraits.hpp"
+#include "../../Utility/String/kStringConverter.hpp"
 
 #include <any>
 #include <array>
@@ -22,14 +25,10 @@
 #include <variant>
 
 
-#include "Type/kStringBoolType.hpp"
-#include "Type/kStringStringTypes.hpp"
-
-
 namespace klib {
 	namespace kString
 	{
-		template<typename CharType, std::size_t Size>
+		template<typename CharType, size_t Size>
 		secret::helper::FormatMarkerQueue CreateIdentifiers(const std::basic_string<CharType>& fmt, std::array<std::any, Size>& elems)
 		{
 			using namespace secret::helper;

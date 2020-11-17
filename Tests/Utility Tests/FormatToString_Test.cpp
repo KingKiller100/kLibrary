@@ -64,12 +64,14 @@ namespace kTest::utility
 
 	bool FormatToStringTester::IdentityTest()
 	{
+#ifdef __cpp_char8_t
 		{
 			const auto input = std::u8string();
 			const auto result = stringify::Identity<char8_t, decltype(input)>(input).Get();
 			const auto expected = std::is_same_v<decltype(result), const char8_t* const>;
 			VERIFY_COMPILE_TIME(expected);
 		}
+#endif
 		
 		{
 			const auto input = "quarantine";
@@ -186,13 +188,15 @@ namespace kTest::utility
 			VERIFY(result == u"01000000");
 		}
 
+#ifdef __cpp_char8_t
 		// Prints as many characters as necessary to represent the number, if min digits is less than the expected binary characters
 		{
 			constexpr auto input = 1000;
 			const auto result = stringify::StringIntegralBinary<char8_t>(input, 8);
 			VERIFY(result == u8"1111101000");
 		}
-
+#endif
+		
 		{
 			constexpr auto input = 4;
 			const auto result = stringify::StringIntegralBinary<char32_t>(input, 0);
@@ -254,7 +258,10 @@ namespace kTest::utility
 
 		constexpr auto num = 1000;
 		const auto hex = "0x" + stringify::StringIntegralHex<char>(num, 4, '0');
+			
+#ifdef __cpp_char8_t
 		const auto binary = u8"0b" + stringify::StringIntegralBinary<char8_t>(num, 4, '0');
+#endif
 
 		VERIFY(testStr == "This test 1 ");
 		VERIFY(testStr2 == "will all work printf function format specifiers like with string literals ");
@@ -265,7 +272,10 @@ namespace kTest::utility
 		VERIFY(testStr7 == "1101010000110001");
 		VERIFY(testStr8 == "000000000000d431");
 		VERIFY(hex == "0x03e8");
+
+#ifdef __cpp_char8_t
 		VERIFY(binary == u8"0b1111101000");
+#endif
 
 		return success;
 	}
@@ -284,7 +294,7 @@ namespace kTest::utility
 
 		{
 			const auto result = ToString<char>(1, 2, 3, 4, "five", 6, 7, 8, 9, "ten", 11, 12, 13, 14, "fifteen");
-			const auto expected = "1234five6789ten11121314fifteen";
+			const char expected[] = "1234five6789ten11121314fifteen";
 			VERIFY(result == expected);
 		}
 		
