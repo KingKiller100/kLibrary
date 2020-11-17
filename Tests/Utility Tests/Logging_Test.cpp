@@ -1,8 +1,6 @@
 #include "pch.hpp"
 #include "Logging_Test.hpp"
 
-
-#include "../../Source Files/Utility/FileSystem/kFileSystem.hpp"
 #include "../../Source Files/Utility/Logging/kLogging.hpp"
 
 #ifdef TESTING_ENABLED
@@ -20,16 +18,22 @@ namespace kTest::utility
 		VERIFY(LogTest() == true);
 
 		std::filesystem::remove_all(fullFilePathToDelete);
+		const auto stem = fullFilePathToDelete.stem();
+		const auto ext = fullFilePathToDelete.extension();
+		std::filesystem::remove(fullFilePathToDelete.parent_path());
+		
 	}
 
 	bool LoggingTester::LogTest()
 	{
 		using namespace klib::kLogs;
 
-		const auto filename = "DiffFileName";
+		const char* filename = "DiffFileName";
 		const auto dir = std::filesystem::current_path().string() + "\\Test Results\\Log Test Dir\\";
-
-		auto testLogger = std::make_unique<Logging>(dir, filename);
+		const auto* const extension = ".log";
+		const std::filesystem::path path = dir + filename + extension;
+		
+		auto testLogger = std::make_unique<Logging>(path);
 
 		testLogger->ToggleConsoleEnabled();
 		testLogger->OutputInitialized("Welcome to logging test");
@@ -123,7 +127,7 @@ namespace kTest::utility
 
 		testLogger->FinalOutput();
 
-		fullFilePathToDelete = dir + filename + ".log";
+		fullFilePathToDelete = dir + filename + extension;
 		VERIFY(std::filesystem::exists(fullFilePathToDelete.c_str()) == true);
 
 		{

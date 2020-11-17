@@ -1,5 +1,7 @@
 #pragma once
+
 #include "../../Source Files/Testing/Tester.hpp"
+#include <filesystem>
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility
@@ -15,7 +17,7 @@ namespace kTest::utility
 		bool LogTest();
 
 	private:
-		std::string fullFilePathToDelete;
+		std::filesystem::path fullFilePathToDelete;
 	};
 }
 #endif

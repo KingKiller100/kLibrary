@@ -121,13 +121,13 @@ namespace kTest
 
 	void TesterManager::RunPerformanceTests() const
 	{
-		if (success)
-		{
-			std::cout << std::endl;
-			auto& test = performance::PerformanceTestManager::Get();
-			std::cout << "Now Testing: " << test.GetName() << " ";
-			test.Run();
-		}
+		if (!success)
+			return;
+
+		std::cout << std::endl;
+		auto& test = performance::PerformanceTestManager::Get();
+		std::cout << "Now Testing: " << test.GetName() << " ";
+		test.Run();
 	}
 
 	void TesterManager::Run(Tester& test)
@@ -177,7 +177,7 @@ namespace kTest
 
 		resultStr.insert(0, "| ");
 
-		auto runtimeResultStr = stringify::SprintfWrapper("| Runtime: %.fms (milliseconds)"
+		auto runtimeResultStr = stringify::SprintfWrapper("| Runtime: %.3fms"
 			, resTime);
 		std::cout << " " << runtimeResultStr << "\n";
 

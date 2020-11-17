@@ -15,13 +15,9 @@ namespace klib
 
 	namespace kLogs
 	{
-		FileLogger::FileLogger(const std::string_view& newName, const std::string_view& dir, const std::string_view& fName
-			, const std::string_view& ext)
+		FileLogger::FileLogger(const std::string_view& newName, const std::filesystem::path& path)
 			: name(newName)
-			, directory(dir)
-			, extension(ext)
-			, filename(fName)
-
+			, path( path )
 		{}
 
 		FileLogger::~FileLogger() noexcept
@@ -39,47 +35,49 @@ namespace klib
 
 		std::string_view FileLogger::GetFileName() const
 		{
-			return filename;
+			return path.stem().string();
 		}
 
 		void FileLogger::SetFileName(const std::string_view& newFilename)
 		{
 			Close(true);
-			filename = GetFileNameWithoutExtension(newFilename);
+			path.replace_filename( GetFileNameWithoutExtension(newFilename) );
 			Open();
 		}
 
 		std::string_view FileLogger::GetExtension() const
 		{
-			return extension;
+			return path.extension().string();
 		}
 
 		void FileLogger::SetExtension(const std::string_view& newExtension)
 		{
-			extension = newExtension;
+			path.replace_extension(  newExtension );
 		}
 
 		std::string_view FileLogger::GetDirectory() const
 		{
-			return directory;
+			return path.parent_path().string();
 		}
 
 		void FileLogger::SetDirectory(const std::string_view& newDir)
 		{
 			Close(true);
-			directory = newDir;
+			const auto filename = kFileSystem::AppendFileExtension( GetFileName(), GetExtension() );
+			const auto pathSep = kFileSystem::pathSeparator<char>;
+			path.clear();
+			path.assign(ToString(newDir, pathSep, filename));
 			Open();
 		}
 
-		std::string FileLogger::GetPath() const
+		std::string_view FileLogger::GetPath() const
 		{
-			return directory + AppendFileExtension(filename, extension);
+			return path.string();
 		}
 
 		void FileLogger::SetPath(const std::filesystem::path& path)
 		{
-			directory = path.parent_path().string();
-			filename = path.filename().string();
+			this->path = path;
 		}
 
 		void FileLogger::OutputInitialized(const std::string_view& openingMsg)
@@ -107,8 +105,7 @@ namespace klib
 		{
 			if (!IsOpen())
 			{
-				const auto path = GetPath();
-				CreateNewDirectories(directory);
+				CreateNewDirectories(path.parent_path());
 				fileStream.open(path, std::ios::out | std::ios::in | std::ios::app);
 			}
 

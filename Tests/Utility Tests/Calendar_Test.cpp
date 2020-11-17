@@ -80,9 +80,9 @@ namespace kTest::utility
 		}
 		
 		{
-			constexpr Day day(9, Day::SATURDAY);
-			VERIFY_COMPILE_TIME(day.GetValue() == 9);
-			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::SATURDAY);
+			const Day day(9, Day::SATURDAY);
+			VERIFY (day.GetValue() == 9);
+			VERIFY (day.GetDayOfTheWeek() == Day::SATURDAY);
 			VERIFY(day.Verify());
 			VERIFY(day.ToString("d") == "9"
 				&& day.ToString("dd") == "09");
@@ -92,9 +92,9 @@ namespace kTest::utility
 		}
 		
 		{
-			constexpr Day day(32, Day::THURSDAY);
-			VERIFY_COMPILE_TIME(day.GetValue() == 32);
-			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::THURSDAY);
+			const Day day(32, Day::THURSDAY);
+			VERIFY(day.GetValue() == 32);
+			VERIFY(day.GetDayOfTheWeek() == Day::THURSDAY);
 			VERIFY(!day.Verify());
 			VERIFY(day.ToString("d") == "32"
 				&& day.ToString("dd") == "32");
@@ -104,9 +104,9 @@ namespace kTest::utility
 		}
 		
 		{
-			constexpr auto day = 30_d;
-			VERIFY_COMPILE_TIME(day.GetValue() == 30);
-			VERIFY_COMPILE_TIME(day.GetDayOfTheWeek() == Day::MONDAY);
+			const auto day = 30_d;
+			VERIFY(day.GetValue() == 30);
+			VERIFY(day.GetDayOfTheWeek() == Day::MONDAY);
 			VERIFY(day.Verify());
 			VERIFY(day.ToString("d") == "30"
 				&& day.ToString("dd") == "30");
@@ -132,10 +132,10 @@ namespace kTest::utility
 		}
 
 		{
-			constexpr Year year(1862);
-			VERIFY_COMPILE_TIME(!year.IsLeapYear());
-			VERIFY_COMPILE_TIME(year.GetValue() == 1862);
-			VERIFY_COMPILE_TIME(year.TotalDays() == 365);
+			const Year year(1862);
+			VERIFY(!year.IsLeapYear());
+			VERIFY(year.GetValue() == 1862);
+			VERIFY(year.TotalDays() == 365);
 			VERIFY(year.ToString("y") == "62"
 				&& year.ToString("yy") == "62");
 			VERIFY(year.ToString("yyy") == "1862");
@@ -143,10 +143,10 @@ namespace kTest::utility
 		}
 
 		{
-			constexpr auto year = 2000_y;
-			VERIFY_COMPILE_TIME(year.IsLeapYear());
-			VERIFY_COMPILE_TIME(year.GetValue() == 2000);
-			VERIFY_COMPILE_TIME(year.TotalDays() == 366);
+			const auto year = 2000_y;
+			VERIFY(year.IsLeapYear());
+			VERIFY(year.GetValue() == 2000);
+			VERIFY(year.TotalDays() == 366);
 			VERIFY(year.ToString("y") == "00"
 				&& year.ToString("yy") == "00");
 			VERIFY(year.ToString("yyy") == "2000");
@@ -187,11 +187,11 @@ namespace kTest::utility
 		}
 
 		{
-			constexpr Month month(Month::DEC);
-			constexpr Day day(20);
-			constexpr Year year(1999);
-			VERIFY_COMPILE_TIME(month.GetMonthNumber() == 12);
-			VERIFY_COMPILE_TIME(month.GetValue() == Month::DEC);
+			const Month month(Month::DEC);
+			const Day day(20);
+			const Year year(1999);
+			VERIFY(month.GetMonthNumber() == 12);
+			VERIFY(month.GetValue() == Month::DEC);
 			VERIFY(month.Verify(day, year));
 			VERIFY(month.ToString("m") == "12"
 				&& month.ToString("mm") == "12");
@@ -200,11 +200,11 @@ namespace kTest::utility
 		}
 
 		{
-			constexpr auto month = 2_m;
-			constexpr auto day = 29_d;
-			constexpr auto year = 1999_y;
-			VERIFY_COMPILE_TIME(month.GetMonthNumber() == 2);
-			VERIFY_COMPILE_TIME(month.GetValue() == Month::FEB);
+			const auto month = 2_m;
+			const auto day = 29_d;
+			const auto year = 1999_y;
+			VERIFY (month.GetMonthNumber() == 2);
+			VERIFY (month.GetValue() == Month::FEB);
 			VERIFY(!month.Verify(day, year));
 			VERIFY(month.ToString("m") == "2"
 				&& month.ToString("mm") == "02");
@@ -226,7 +226,7 @@ namespace kTest::utility
 	bool CalendarTester::MillisecondTest()
 	{
 		{
-			constexpr Millisecond millis(300);
+			const Millisecond millis(300);
 			VERIFY_COMPILE_TIME(millis.GetValue() == 300);
 			VERIFY(millis.Verify());
 			VERIFY(millis.ToString("c") == "300");
@@ -237,8 +237,8 @@ namespace kTest::utility
 		}
 		
 		{
-			constexpr Millisecond millis { 3 };
-			VERIFY_COMPILE_TIME(millis.GetValue() == 3);
+			const Millisecond millis { 3 };
+			VERIFY(millis.GetValue() == 3);
 			VERIFY(millis.Verify());
 			VERIFY(millis.ToString("c") == "3");
 			VERIFY(millis.ToString("cc") == "03");
@@ -248,8 +248,8 @@ namespace kTest::utility
 		}
 		
 		{
-			constexpr Millisecond millis(75);
-			VERIFY_COMPILE_TIME(millis.GetValue() == 75);
+			const Millisecond millis(75);
+			VERIFY(millis.GetValue() == 75);
 			VERIFY(millis.Verify());
 			VERIFY(millis.ToString("c") == "75");
 			VERIFY(millis.ToString("cc") == "75");
@@ -288,8 +288,8 @@ namespace kTest::utility
 	bool CalendarTester::SecondTest()
 	{
 		{
-			constexpr Second sec(30);
-			VERIFY_COMPILE_TIME(sec.GetValue() == 30);
+			const Second sec (30);
+			VERIFY(sec.GetValue() == 30);
 			VERIFY(sec.Verify());
 			VERIFY(sec.ToString("s") == "30");
 			VERIFY(sec.ToString("ss") == "30");
@@ -298,8 +298,9 @@ namespace kTest::utility
 		}
 		
 		{
-			constexpr Second sec(4);
-			VERIFY_COMPILE_TIME(sec.GetValue() == 4);
+			constexpr auto size = sizeof Second;
+			const Second sec(4);
+			VERIFY(sec.GetValue() == 4);
 			VERIFY(sec.Verify());
 			VERIFY(sec.ToString("s") == "4");
 			VERIFY(sec.ToString("ss") == "04");
@@ -308,8 +309,8 @@ namespace kTest::utility
 		}
 		
 		{
-			constexpr auto sec(100_ss);
-			VERIFY_COMPILE_TIME(sec.GetValue() == 100);
+			const auto sec(100_ss);
+			VERIFY(sec.GetValue() == 100);
 			VERIFY(!sec.Verify());
 			VERIFY(sec.ToString("s") == "100");
 			VERIFY(sec.ToString("ss") == "100");
@@ -323,8 +324,8 @@ namespace kTest::utility
 	bool CalendarTester::MinuteTest()
 	{
 		{
-			constexpr Minute minute(30);
-			VERIFY_COMPILE_TIME(minute.GetValue() == 30);
+			const Minute minute(30);
+			VERIFY(minute.GetValue() == 30);
 			VERIFY(minute.Verify());
 			VERIFY(minute.ToString("m") == "30");
 			VERIFY(minute.ToString("mm") == "30");
@@ -333,8 +334,8 @@ namespace kTest::utility
 		}
 		
 		{
-			constexpr Minute minute(1);
-			VERIFY_COMPILE_TIME(minute.GetValue() == 1);
+			const Minute minute(1);
+			VERIFY(minute.GetValue() == 1);
 			VERIFY(minute.Verify());
 			VERIFY(minute.ToString("m") == "1");
 			VERIFY(minute.ToString("mm") == "01");
@@ -343,8 +344,8 @@ namespace kTest::utility
 		}
 		
 		{
-			constexpr auto minute(1000_mm);
-			VERIFY_COMPILE_TIME(minute.GetValue() == 1000);
+			const auto minute(1000_mm);
+			VERIFY(minute.GetValue() == 1000);
 			VERIFY(!minute.Verify());
 			VERIFY(minute.ToString("m") == "1000");
 			VERIFY(minute.ToString("mm") == "1000");
@@ -358,8 +359,8 @@ namespace kTest::utility
 	bool CalendarTester::HourTest()
 	{
 		{
-			constexpr Hour hour(12);
-			VERIFY_COMPILE_TIME(hour.GetValue() == 12);
+			const Hour hour(12);
+			VERIFY(hour.GetValue() == 12);
 			VERIFY(hour.Verify());
 			VERIFY(hour.ToString("h") == "12");
 			VERIFY(hour.ToString("hh") == "12");
@@ -368,8 +369,8 @@ namespace kTest::utility
 		}
 		
 		{
-			constexpr Hour hour(2);
-			VERIFY_COMPILE_TIME(hour.GetValue() == 2);
+			const Hour hour(2);
+			VERIFY(hour.GetValue() == 2);
 			VERIFY(hour.Verify());
 			VERIFY(hour.ToString("h") == "2");
 			VERIFY(hour.ToString("hh") == "02");
@@ -378,8 +379,8 @@ namespace kTest::utility
 		}
 		
 		{
-			constexpr auto hour(30_hh);
-			VERIFY_COMPILE_TIME(hour.GetValue() == 30);
+			const auto hour(30_hh);
+			VERIFY(hour.GetValue() == 30);
 			VERIFY(!hour.Verify());
 			VERIFY(hour.ToString("h") == "30");
 			VERIFY(hour.ToString("hh") == "30");

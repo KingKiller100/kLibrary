@@ -11,8 +11,7 @@ namespace klib
 		class FileLogger final : public iLoggerDestination
 		{
 		public:
-			FileLogger(const std::string_view& newName, const std::string_view& dir, const std::string_view& fName
-			, const std::string_view& ext = ".log");
+			FileLogger(const std::string_view& newName, const std::filesystem::path& path);
 			~FileLogger() noexcept;
 
 			USE_RESULT std::string_view GetName() const override;
@@ -27,7 +26,7 @@ namespace klib
 			USE_RESULT std::string_view GetDirectory() const;
 			void SetDirectory(const std::string_view& newDir);
 
-			USE_RESULT std::string GetPath() const;
+			USE_RESULT std::string_view GetPath() const;
 			void SetPath(const std::filesystem::path& path);
 			
 			void OutputInitialized(const std::string_view& openingMsg) override;
@@ -46,9 +45,7 @@ namespace klib
 		private:
 			std::string name;
 
-			std::string directory;
-			std::string extension;
-			std::string filename;
+			std::filesystem::path path;
 			std::fstream fileStream;
 		};
 		

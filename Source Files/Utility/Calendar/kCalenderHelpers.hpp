@@ -38,11 +38,10 @@ namespace klib::kCalendar
 		>>
 		USE_RESULT constexpr DestTimeT TimeConverter(const TimeComponentBase<SourceTimeT>& source)
 	{
-		using namespace std::chrono;
 		using DestUnderlying_t = typename DestTimeT::Duration_t;
 
 		const auto val =
-			duration_cast<DestUnderlying_t>(source.GetUnderlying());
+			std::chrono::duration_cast<DestUnderlying_t>(source.GetDuration());
 		const DestTimeT dest = DestTimeT(val.count());
 		return dest;
 	}

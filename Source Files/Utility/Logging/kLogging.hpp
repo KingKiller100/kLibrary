@@ -9,6 +9,12 @@
 #include <string>
 #include <cstdint>
 
+namespace std {
+	namespace filesystem {
+		class path;
+	}
+}
+
 namespace klib
 {
 	namespace kLogs
@@ -28,9 +34,11 @@ namespace klib
 
 		public:
 			Logging(const std::string_view& directory, const std::string_view& filename
-				, const std::string_view& extension = ".log"
+				, const std::string_view& extension
 				, const std::string_view& name = "Logger");
 
+			Logging(const std::filesystem::path& path, const std::string_view& name = "Logger");
+			
 			~Logging();
 
 			/**
@@ -217,7 +225,7 @@ namespace klib
 			bool ErasePrevious(size_t count);
 
 		private:
-			void Initialize(const std::string_view& directory, const std::string_view& filename, const std::string_view& extension);
+			void Initialize( const std::filesystem::path& path );
 
 			/**
 			 * \brief

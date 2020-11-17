@@ -8,6 +8,7 @@
 
 #include "../../TypeTraits/ToImpl.hpp"
 #include "../String/kToString.hpp"
+#include "../FileSystem/kFileSystem.hpp"
 
 
 namespace klib::kLogs
@@ -18,16 +19,25 @@ namespace klib::kLogs
 
 	const LogEntry kLogs_Empty("NO ENTRIES! CACHE IS EMPTY", LogDescriptor("Empty"));
 
-	Logging::Logging(const std::string_view& directory, const std::string_view& filename
+	Logging::Logging(const std::string_view& directory
+		, const std::string_view& filename
 		, const std::string_view& extension
 		, const std::string_view& name)
+			: Logging( std::filesystem::path(
+				ToString( directory, klib::kFileSystem::AppendFileExtension(filename, extension)))
+				, name )
+		
+	{
+	}
+
+	Logging::Logging( const std::filesystem::path& path, const std::string_view& name )
 		: minimumLoggingLevel(LogLevel::DBUG),
 		name(name),
 		isEnabled(false),
 		cacheMode(false),
 		constantFlushing(false)
 	{
-		Initialize(directory, filename, extension);
+		Initialize(path);
 	}
 
 	Logging::~Logging()
@@ -36,9 +46,9 @@ namespace klib::kLogs
 			FinalOutput();
 	}
 
-	void Logging::Initialize(const std::string_view& directory, const std::string_view& filename, const std::string_view& extension)
+	void Logging::Initialize( const std::filesystem::path& path )
 	{
-		destinations[DestionationType::FILE].reset(new FileLogger(name, directory, filename, extension));
+		destinations[DestionationType::FILE].reset(new FileLogger(name, path));
 		destinations[DestionationType::CONSOLE].reset(new ConsoleLogger(name));
 		
 		ToggleLoggingEnabled();
@@ -133,7 +143,7 @@ namespace klib::kLogs
 	std::string Logging::GetOutputPath() const
 	{
 		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(DestionationType::FILE));
-		const auto path = fLogger.GetPath();
+		const auto path = std::string(fLogger.GetPath());
 		return path;
 	}
 

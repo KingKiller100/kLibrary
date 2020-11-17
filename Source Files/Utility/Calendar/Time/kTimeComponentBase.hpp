@@ -16,12 +16,12 @@ namespace klib::kCalendar
 			: value(val)
 		{}
 
-		USE_RESULT constexpr const Duration_t& GetUnderlying() const
+		USE_RESULT constexpr const Duration_t& GetDuration() const
 		{
 			return value;
 		}
 
-		USE_RESULT constexpr Duration_t& GetUnderlying()
+		USE_RESULT constexpr Duration_t& GetDuration()
 		{
 			return value;
 		}

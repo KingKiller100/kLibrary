@@ -77,14 +77,6 @@ namespace kmaths
 		}
 
 		template<class T>
-		USE_RESULT constexpr bool ApproximatelyEpsilon(T&& value) noexcept
-		{
-			constexpr auto epsilon = Epsilon<T>();
-
-			return (value >= -epsilon) && (value <= epsilon);
-		}
-
-		template<class T>
 		USE_RESULT constexpr T Zero() noexcept
 		{
 			return T();
@@ -116,6 +108,13 @@ namespace kmaths
 		USE_RESULT constexpr bool ApproximatelyOne(T value) noexcept
 		{
 			return Approximately(value, One<T>());
+		}
+
+		template<class T>
+		USE_RESULT constexpr bool ApproximatelyEpsilon(T&& value) noexcept
+		{
+			constexpr auto epsilon = Epsilon<T>();
+			return (value >= -epsilon) && (value <= epsilon);
 		}
 
 		template<class T>
