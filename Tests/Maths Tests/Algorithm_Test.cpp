@@ -835,7 +835,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr Big_Int_Type power = 5;
+			constexpr BigInt_t power = 5;
 			constexpr auto num = 4;
 			const auto value = PowerOf(num, power);
 			const auto expectedVal = CAST(decltype(value), std::powf(num, power));

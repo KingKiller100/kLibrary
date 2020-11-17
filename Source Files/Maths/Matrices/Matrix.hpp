@@ -6,14 +6,14 @@
 
 namespace kmaths
 {
-	template<typename T, Length_Type Rows, Length_Type Columns>
+	template<typename T, Length_t Rows, Length_t Columns>
 	struct Matrix;
 
-	template<typename Type, Length_Type R, Length_Type C>
+	template<typename Type, Length_t R, Length_t C>
 	USE_RESULT constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> IdentityMatrix() noexcept;
 
 	// Row Major Matrix
-	template<typename T, Length_Type Rows, Length_Type Columns>
+	template<typename T, Length_t Rows, Length_t Columns>
 	struct Matrix
 	{
 	public:
@@ -23,7 +23,7 @@ namespace kmaths
 		using Type = T;
 		using Column_Type = Vector<T, Rows>;
 		using Row_Type = Vector<T, Columns>;
-		inline static constexpr Length_Type Length = (Rows * Columns);
+		inline static constexpr Length_t Length = (Rows * Columns);
 		inline static constexpr size_t TypeSize = sizeof(T);
 		inline static constexpr size_t TotalBytes = Length * TypeSize;
 
@@ -109,7 +109,7 @@ namespace kmaths
 			return transposeMat;
 		}
 
-		template<Length_Type R = Rows, Length_Type C = Columns>
+		template<Length_t R = Rows, Length_t C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> Inverse() const
 		{
 			if (IsZero() || !ValidColumns())
@@ -166,7 +166,7 @@ namespace kmaths
 		}
 
 		// Draws a mirror line down a square matrix through the identical row-column indices and swaps values
-		template<Length_Type R = Rows, Length_Type C = Columns>
+		template<Length_t R = Rows, Length_t C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> Mirror() const noexcept
 		{
 			Matrix temp = *this;
@@ -184,7 +184,7 @@ namespace kmaths
 			return temp;
 		}
 
-		template<Length_Type R = Rows, Length_Type C = Columns>
+		template<Length_t R = Rows, Length_t C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C && R == 2, Type> GetDeterminant() const noexcept
 		{
 			if (IsZero() || !ValidColumns())
@@ -202,7 +202,7 @@ namespace kmaths
 		}
 
 		// Rule of Sarrus Impl
-		template<Length_Type R = Rows, Length_Type C = Columns>
+		template<Length_t R = Rows, Length_t C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C && R == 3, Type> GetDeterminant() const noexcept
 		{
 			if (IsZero() || !ValidColumns())
@@ -242,7 +242,7 @@ namespace kmaths
 			return determinant;
 		}
 
-		template<Length_Type R = Rows, Length_Type C = Columns>
+		template<Length_t R = Rows, Length_t C = Columns>
 		USE_RESULT constexpr std::enable_if_t < R == C && R >= 4, Type> GetDeterminant() const
 		{
 			if (IsZero() || !ValidColumns())
@@ -264,7 +264,7 @@ namespace kmaths
 			return determinant;
 		}
 
-		USE_RESULT constexpr Matrix<Type, Rows - 1, Columns - 1> CreateMinorMatrix(Length_Type rowToSkip, Length_Type colToSkip) const
+		USE_RESULT constexpr Matrix<Type, Rows - 1, Columns - 1> CreateMinorMatrix(Length_t rowToSkip, Length_t colToSkip) const
 		{
 			constexpr auto newSize = Rows - 1;
 			if (rowToSkip > newSize || colToSkip > newSize)
@@ -292,7 +292,7 @@ namespace kmaths
 			return minorMatrix;
 		}
 
-		template<Length_Type R = Rows, Length_Type C = Columns>
+		template<Length_t R = Rows, Length_t C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C, Matrix> PowerOf(unsigned power) const
 		{
 			if (power == 0)
@@ -318,8 +318,8 @@ namespace kmaths
 			return Rows == Columns;
 		}
 
-		template<Length_Type R = Rows, Length_Type C = Columns>
-		USE_RESULT constexpr std::enable_if_t<R == C, Length_Type> Rank() const noexcept
+		template<Length_t R = Rows, Length_t C = Columns>
+		USE_RESULT constexpr std::enable_if_t<R == C, Length_t> Rank() const noexcept
 		{
 			if (IsIdentity())
 				return Rows;
@@ -330,7 +330,7 @@ namespace kmaths
 			return 0;
 		}
 
-		template<Length_Type R = Rows, Length_Type C = Columns>
+		template<Length_t R = Rows, Length_t C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R == C, bool> IsIdentity() const noexcept
 		{
 			for (auto row = 0; row < Rows; ++row)
@@ -340,7 +340,7 @@ namespace kmaths
 			return true;
 		}
 
-		template<Length_Type R = Rows, Length_Type C = Columns>
+		template<Length_t R = Rows, Length_t C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
 			bool> IsIdentity() const noexcept
 		{
@@ -407,7 +407,7 @@ namespace kmaths
 			return *this;
 		}
 
-		template<typename U, Length_Type C, Length_Type R = Columns>
+		template<typename U, Length_t C, Length_t R = Columns>
 		USE_RESULT constexpr Matrix<Type, Rows, C> operator*(const Matrix<U, R, C>& other) const noexcept
 		{
 			Matrix<Type, Rows, C> m;
@@ -493,7 +493,7 @@ namespace kmaths
 			//}
 		}
 
-		template<Length_Type C, Length_Type R = Columns>
+		template<Length_t C, Length_t R = Columns>
 		constexpr Matrix<Type, Rows, C> operator*=(const Matrix<Type, R, C>& other) noexcept
 		{
 			*this = *this * other;
@@ -571,23 +571,23 @@ namespace kmaths
 			return *this;
 		}
 
-		template<Length_Type R = Rows, Length_Type C = Columns>
+		template<Length_t R = Rows, Length_t C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
 			Matrix> Mirror() const noexcept
 			= delete;
 
 		// Deleted version of functions (under certain conditions)
-		template<Length_Type R = Rows, Length_Type C = Columns>
+		template<Length_t R = Rows, Length_t C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
 			Type> GetDeterminant() const noexcept
 			= delete;
 
-		template<Length_Type R = Rows, Length_Type C = Columns>
+		template<Length_t R = Rows, Length_t C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
 			Matrix> Inverse() const noexcept
 			= delete;
 
-		template<Length_Type R = Rows, Length_Type C = Columns>
+		template<Length_t R = Rows, Length_t C = Columns>
 		USE_RESULT constexpr std::enable_if_t<R != C,
 			Matrix> PowerOf(unsigned power)  const noexcept
 			= delete;
@@ -679,7 +679,7 @@ namespace kmaths
 		Row_Type elems[Rows]{ {} };
 	};
 
-	template<typename Type, Length_Type R, Length_Type C>
+	template<typename Type, Length_t R, Length_t C>
 	USE_RESULT constexpr std::enable_if_t<R == C, Matrix<Type, R, C>> IdentityMatrix() noexcept
 	{
 		Matrix<Type, R, C> identity;
@@ -688,7 +688,7 @@ namespace kmaths
 		return identity;
 	}
 
-	template<typename Type, Length_Type R, Length_Type C>
+	template<typename Type, Length_t R, Length_t C>
 	USE_RESULT constexpr Vector<Type, C> operator*(const Vector<Type, R>& v, const Matrix<Type, R, C>& m) noexcept
 	{
 		Vector<Type, C> result;
@@ -712,7 +712,7 @@ namespace kmaths
 		return result;
 	}
 
-	template<typename Type, Length_Type R, Length_Type C>
+	template<typename Type, Length_t R, Length_t C>
 	USE_RESULT constexpr Vector<Type, C> operator/(const Vector<Type, R>& v, const Matrix<Type, R, C>& m) noexcept
 	{
 		return operator*(v, m.Inverse());

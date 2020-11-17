@@ -9,20 +9,20 @@ namespace kmaths
 	{
 	public:
 		using Type = T;
-		inline static constexpr Length_Type Length = 3;
+		inline static constexpr Length_t Length = 3;
 		inline static constexpr size_t TypeSize = sizeof(T);
 		inline static constexpr size_t TotalBytes = Length * TypeSize;
 
 		constexpr Vector() noexcept
 			= default;
 
-		template< typename U, Length_Type C>
+		template< typename U, Length_t C>
 		constexpr Vector(const Vector<U, C>& other) noexcept
 		{
 			*this = other;
 		}
 
-		template< typename U, Length_Type C>
+		template< typename U, Length_t C>
 		constexpr Vector(Vector&& other) noexcept
 		{
 			*this = std::move(other);
@@ -75,10 +75,10 @@ namespace kmaths
 			return mag;
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr T DotProduct(const Vector<U, C>& other) const noexcept
 		{
-			constexpr Length_Type size = C < Length ? C : Length;
+			constexpr Length_t size = C < Length ? C : Length;
 
 			Type dp = Type();
 			for (size_t i = 0; i < size; ++i)
@@ -118,7 +118,7 @@ namespace kmaths
 		}
 
 		// Calculates distance between two 3D objects
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr T Distance(const Vector<U, C>& v) const noexcept
 		{
 			const auto distanceVec = v - *this;
@@ -206,7 +206,7 @@ namespace kmaths
 			return Reverse();
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr Vector operator+(const Vector<U, C>& other) const noexcept
 		{
 			Type temp[Length]{ Type() };
@@ -219,7 +219,7 @@ namespace kmaths
 			return Vector(temp);
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr Vector operator-(const Vector<U, C>& other) const noexcept
 		{
 			Type temp[Length]{ Type() };
@@ -232,7 +232,7 @@ namespace kmaths
 			return Vector(temp);
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr Vector operator*(const Vector<U, C>& other) const noexcept
 		{
 			Type temp[Length]{ Type() };
@@ -245,7 +245,7 @@ namespace kmaths
 			return Vector(temp);
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr Vector operator/(const Vector<U, C>& other) const noexcept
 		{
 			Type temp[Length]{ Type() };
@@ -278,14 +278,14 @@ namespace kmaths
 			);
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		constexpr Vector& operator+=(const Vector<U, C>& other) noexcept
 		{
 			*this = *this + other;
 			return *this;
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		constexpr Vector operator-=(const Vector<U, C>& other) noexcept
 		{
 			*this = *this - other;
@@ -299,7 +299,7 @@ namespace kmaths
 			return *this;
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		constexpr Vector operator*=(const Vector<U, C>& other) noexcept
 		{
 			*this = *this * other;
@@ -313,32 +313,32 @@ namespace kmaths
 			return *this;
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		constexpr Vector operator/=(const Vector<U, C>& other) noexcept
 		{
 			*this = *this / other;
 			return *this;
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr bool operator<(const Vector<U, C>& other) const noexcept
 		{
 			return MagnitudeSQ() < other.MagnitudeSQ();
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr bool operator>(const Vector<U, C>& other) const noexcept
 		{
 			return MagnitudeSQ() > other.MagnitudeSQ();
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr bool operator<=(const Vector<U, C>& other) const noexcept
 		{
 			return MagnitudeSQ() <= other.MagnitudeSQ();
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr bool operator>=(const Vector<U, C>& other) const noexcept
 		{
 			return MagnitudeSQ() >= other.MagnitudeSQ();
@@ -363,7 +363,7 @@ namespace kmaths
 			return !(*this == v);
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		constexpr Vector& operator=(const Vector<U, C>& other) noexcept // Copy
 		{
 			constexpr size_t size = C < Length ? C : Length;
@@ -372,7 +372,7 @@ namespace kmaths
 			return *this;
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		constexpr Vector& operator=(Vector<U, C>&& other) noexcept // Move
 		{
 			constexpr size_t size = C < Length ? C : Length;

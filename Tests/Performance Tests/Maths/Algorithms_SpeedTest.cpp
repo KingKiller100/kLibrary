@@ -31,7 +31,7 @@ namespace kTest::performance::maths
 		TanTest();
 	}
 
-	constexpr auto maxIter = kmaths::Big_Int_Type(1e3);
+	constexpr auto maxIter = kmaths::BigInt_t(1e3);
 
 	void AlgorithmsSpeedTest::PowerOfFractionsTest()
 	{
@@ -75,7 +75,7 @@ namespace kTest::performance::maths
 		constexpr auto size = kmaths::SizeOfCArray(set);
 		constexpr int valueBeforeIteration = 1000;
 
-		kmaths::Big_Int_Type power = 0;
+		kmaths::BigInt_t power = 0;
 		for (auto i = 0; i < maxIter; ++i)
 		{
 			const auto idx = kmaths::Modulus<int>(i, size);
@@ -111,7 +111,7 @@ namespace kTest::performance::maths
 		const std::vector<std::string_view> participants = { "kmaths::Square", "kmaths::PowerOfImpl", "std::pow" };
 		SetUpParticipants(participants);
 
-		constexpr kmaths::Big_Int_Type power = 2;
+		constexpr kmaths::BigInt_t power = 2;
 
 		for (auto i = 0; i < maxIter; ++i)
 		{
@@ -306,7 +306,7 @@ namespace kTest::performance::maths
 			"kmaths::Abs<long double>", "std::fabsl",
 			"kmaths::Abs<double>", "std::fabs",
 			"kmaths::Abs<float>", "std::fabsf",
-			"kmaths::Abs<kmaths::Big_Int_Type>", "std::fabsf<kmaths::Big_Int_Type>",
+			"kmaths::Abs<kmaths::BigInt_t>", "std::fabsf<kmaths::BigInt_t>",
 		};
 		SetUpParticipants(participants);
 
@@ -350,12 +350,12 @@ namespace kTest::performance::maths
 
 			{
 				START_TEST(participants[6]);
-				const auto value = kmaths::Abs<kmaths::Big_Int_Type>(CAST(kmaths::Big_Int_Type, num));
+				const auto value = kmaths::Abs<kmaths::BigInt_t>(CAST(kmaths::BigInt_t, num));
 			}
 
 			{
 				START_TEST(participants[7]);
-				const auto value = std::fabs<kmaths::Big_Int_Type>(CAST(kmaths::Big_Int_Type, num));
+				const auto value = std::fabs<kmaths::BigInt_t>(CAST(kmaths::BigInt_t, num));
 			}
 		}
 	}

@@ -6,30 +6,30 @@
 
 namespace kmaths
 {
-	template<typename T, Length_Type Rows, Length_Type Columns>
+	template<typename T, Length_t Rows, Length_t Columns>
 	struct Matrix;
 
-	template<typename T, Length_Type N>
+	template<typename T, Length_t N>
 	struct Vector
 	{
 	public:
 		static_assert(N > 0, "Must have at least one dimension to use mathematical vectors");
 
 		using Type = T;
-		inline static constexpr Length_Type Length = N;
+		inline static constexpr Length_t Length = N;
 		inline static constexpr size_t TypeSize = sizeof(T);
 		inline static constexpr size_t TotalBytes = Length * TypeSize;
 		
 		constexpr Vector() noexcept
 			= default;
 
-		template< typename U, Length_Type C>
+		template< typename U, Length_t C>
 		constexpr Vector(const Vector<U, C>& other) noexcept
 		{
 			*this = other;
 		}
 
-		template< typename U, Length_Type C>
+		template< typename U, Length_t C>
 		constexpr Vector(Vector&& other) noexcept
 		{
 			*this = std::move(other);
@@ -128,7 +128,7 @@ namespace kmaths
 			return mag;
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr T DotProduct(const Vector<U, C>& other) const noexcept
 		{
 			const auto size = (N < C) ? N : C;
@@ -173,7 +173,7 @@ namespace kmaths
 		}
 
 		// Calculates distance between two 3D objects
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr T Distance(const Vector<U, C>& v) const noexcept
 		{
 			const auto distanceVec = v - *this;
@@ -284,7 +284,7 @@ namespace kmaths
 			return Reverse();
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr Vector operator+(const Vector<U, C>& other) const noexcept
 		{
 			T copy[N]{ Type() };
@@ -297,7 +297,7 @@ namespace kmaths
 			return Vector(copy);
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr Vector operator-(const Vector<U, C>& other) const noexcept
 		{
 			Type copy[N]{ Type() };
@@ -310,7 +310,7 @@ namespace kmaths
 			return Vector(copy);
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr Vector operator*(const Vector<U, C>& other) const noexcept
 		{
 			Type copy[N]{ Type() };
@@ -323,7 +323,7 @@ namespace kmaths
 			return Vector(copy);
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr Vector operator/(const Vector<U, C>& other) const noexcept
 		{
 			Type copy[N]{ Type() };
@@ -354,14 +354,14 @@ namespace kmaths
 			return Vector(copy);
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		constexpr Vector& operator+=(const Vector<U, C>& other) noexcept
 		{
 			*this = *this + other;
 			return *this;
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		constexpr Vector operator-=(const Vector<U, C>& other) noexcept
 		{
 			*this = *this - other;
@@ -375,7 +375,7 @@ namespace kmaths
 			return *this;
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		constexpr Vector operator*=(const Vector<U, C>& other) noexcept
 		{
 			*this = *this * other;
@@ -389,32 +389,32 @@ namespace kmaths
 			return *this;
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		constexpr Vector operator/=(const Vector<U, C>& other) noexcept
 		{
 			*this = *this / other;
 			return *this;
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr bool operator<(const Vector<U, C>& other) const noexcept
 		{
 			return MagnitudeSQ() < other.MagnitudeSQ();
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr bool operator>(const Vector<U, C>& other) const noexcept
 		{
 			return MagnitudeSQ() > other.MagnitudeSQ();
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr bool operator<=(const Vector<U, C>& other) const noexcept
 		{
 			return MagnitudeSQ() <= other.MagnitudeSQ();
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		USE_RESULT constexpr bool operator>=(const Vector<U, C>& other) const noexcept
 		{
 			return MagnitudeSQ() >= other.MagnitudeSQ();
@@ -459,7 +459,7 @@ namespace kmaths
 			return !(*this == scalar);
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		constexpr Vector& operator=(const Vector<U, C>& other) noexcept // Copy
 		{
 			constexpr auto size = (N < C) ? N : C;
@@ -470,7 +470,7 @@ namespace kmaths
 			return *this;
 		}
 
-		template<typename U, Length_Type C>
+		template<typename U, Length_t C>
 		constexpr Vector& operator=(Vector<U, C>&& other) noexcept // Move
 		{
 			if (this == &other)
@@ -511,83 +511,83 @@ namespace kmaths
 			Vector> CrossProduct(const Vector& v) const noexcept
 			= delete;
 
-		template<typename Type, Length_Type C>
+		template<typename Type, Length_t C>
 		friend constexpr Vector<Type, C> operator*(const Vector<Type, N>& v, const Matrix<Type, N, C>& m) noexcept;
 
-		template<typename Type, Length_Type C>
+		template<typename Type, Length_t C>
 		friend constexpr Vector<Type, C> operator/(const Vector<Type, N>& v, const Matrix<Type, N, C>& m) noexcept;
 
 	private:
 		Type dimensions[N]{};
 	};
 
-	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	template<typename T, typename U, Length_t C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 	USE_RESULT constexpr bool operator>(const Vector<T, C>& lhs, const U& rhs) noexcept
 	{
 		return (lhs.MagnitudeSQ()) > (rhs*rhs);
 	}
 
-	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	template<typename T, typename U, Length_t C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 	USE_RESULT constexpr bool operator>=(const Vector<T, C>& lhs, const U& rhs) noexcept
 	{
 		return (lhs.MagnitudeSQ()) >= (rhs*rhs);
 	}
 
-	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	template<typename T, typename U, Length_t C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 	USE_RESULT constexpr bool operator<(const Vector<T, C>& lhs, const U& rhs) noexcept
 	{
 		return (lhs.MagnitudeSQ()) < (rhs*rhs);
 	}
 
-	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	template<typename T, typename U, Length_t C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 	USE_RESULT constexpr bool operator<=(const Vector<T, C>& lhs, const U& rhs) noexcept
 	{
 		return (lhs.MagnitudeSQ()) <= (rhs*rhs);
 	}
 
-	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	template<typename T, typename U, Length_t C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 	USE_RESULT constexpr bool operator==(const Vector<T, C>& lhs, const U& rhs) noexcept
 	{
 		return (lhs.MagnitudeSQ()) == (rhs*rhs);
 	}
 
-	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	template<typename T, typename U, Length_t C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 	USE_RESULT constexpr bool operator!=(const Vector<T, C>& lhs, const U& rhs) noexcept
 	{
 		return !(lhs == rhs);
 	}
 
-	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	template<typename T, typename U, Length_t C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 	USE_RESULT constexpr bool operator>(const U& rhs, const Vector<T, C>& lhs) noexcept
 	{
 		return (lhs.MagnitudeSQ()) > (rhs*rhs);
 	}
 
-	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	template<typename T, typename U, Length_t C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 	USE_RESULT constexpr bool operator<(const U& rhs, const Vector<T, C>& lhs) noexcept
 	{
 		return (lhs.MagnitudeSQ()) < (rhs*rhs);
 	}
 
-	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	template<typename T, typename U, Length_t C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 	USE_RESULT constexpr bool operator>=(const U& rhs, const Vector<T, C>& lhs) noexcept
 	{
 		return (lhs.MagnitudeSQ()) >= (rhs*rhs);
 	}
 
-	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	template<typename T, typename U, Length_t C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 	USE_RESULT constexpr bool operator<=(const U& rhs, const Vector<T, C>& lhs) noexcept
 	{
 		return (lhs.MagnitudeSQ()) <= (rhs*rhs);
 	}
 
-	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	template<typename T, typename U, Length_t C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 	USE_RESULT constexpr bool operator==(const U& rhs, const Vector<T, C>& lhs) noexcept
 	{
 		return (rhs*rhs) == lhs.MagnitudeSQ();
 	}
 
-	template<typename T, typename U, Length_Type C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
+	template<typename T, typename U, Length_t C, class = std::enable_if_t<std::is_arithmetic_v<U>>>
 	USE_RESULT constexpr bool operator!=(const U& rhs, const Vector<T, C>& lhs) noexcept
 	{
 		return (rhs*rhs) != lhs.MagnitudeSQ();

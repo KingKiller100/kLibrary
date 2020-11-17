@@ -27,8 +27,8 @@ namespace kmaths
 	{
 		T arr[Rows * Columns];
 
-		for (Length_Type row = 0; row < Rows; ++row)
-			for (Length_Type col = 0; col < Columns; ++col)
+		for (Length_t row = 0; row < Rows; ++row)
+			for (Length_t col = 0; col < Columns; ++col)
 				arr[(row * Columns) + col] = mat[row][col];
 		return arr;
 	}

@@ -35,8 +35,8 @@ namespace kTest::maths
 		using namespace std::chrono_literals;
 
 		{
-			constexpr Big_Int_Type lb = 0;
-			constexpr Big_Int_Type ub = 100;
+			constexpr BigInt_t lb = 0;
+			constexpr BigInt_t ub = 100;
 
 			auto rng = Rng32(GenericSeedingSource::BCRYPT);
 
@@ -49,8 +49,8 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr Big_Int_Type lb = 0;
-			constexpr Big_Int_Type ub = 100;
+			constexpr BigInt_t lb = 0;
+			constexpr BigInt_t ub = 100;
 
 			auto rng = Rng64(GenericSeedingSource::BCRYPT);
 
@@ -69,8 +69,8 @@ namespace kTest::maths
 	{
 		using namespace std::chrono_literals;
 		{
-			constexpr Big_Int_Type lb = 0;
-			constexpr Big_Int_Type ub = 100;
+			constexpr BigInt_t lb = 0;
+			constexpr BigInt_t ub = 100;
 
 			auto rng = Rng32(GenericSeedingSource::TIME);
 
@@ -85,8 +85,8 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr Big_Int_Type lb = 0;
-			constexpr Big_Int_Type ub = 100;
+			constexpr BigInt_t lb = 0;
+			constexpr BigInt_t ub = 100;
 
 			auto rng = Rng64(GenericSeedingSource::TIME);
 

@@ -26,7 +26,7 @@ namespace kTest::performance::maths
 		void Vec3d();
 		void Vec4d();
 		
-		// Big_Int_Type
+		// BigInt_t
 		void Vec2bit();
 		void Vec3bit();
 		void Vec4bit();

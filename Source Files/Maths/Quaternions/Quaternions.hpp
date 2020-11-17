@@ -35,7 +35,7 @@ namespace kmaths
 		static_assert(std::is_floating_point_v<T>, "Must be instantiated with a floating point type");
 
 		using Type = T;
-		inline static constexpr Length_Type Length = 4;
+		inline static constexpr Length_t Length = 4;
 		inline static constexpr size_t TypeBytes = sizeof(T);
 		inline static constexpr size_t TotalBytes = Length * TypeBytes;
 

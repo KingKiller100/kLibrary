@@ -2,14 +2,14 @@
 
 #include "../HelperMacros.hpp"
 
-#include <limits>
+#include <cstdint>
 #include <type_traits>
 
 namespace kmaths
 {
-	using Length_Type = unsigned short;
+	using Length_t = std::uint16_t;
 
-	using Big_Int_Type = std::make_signed_t<size_t>;
+	using BigInt_t = std::make_signed_t<size_t>;
 
 	template<typename T>
 	struct _Max_Decimal_Precision

@@ -65,7 +65,7 @@ namespace kmaths
 	}
 	
 	template<typename List, typename T>
-	USE_RESULT constexpr Big_Int_Type BinarySearchImpl(const List& list, T&& value, size_t lbIdx, size_t ubIdx, size_t size)
+	USE_RESULT constexpr BigInt_t BinarySearchImpl(const List& list, T&& value, size_t lbIdx, size_t ubIdx, size_t size)
 	{
 		if (lbIdx > ubIdx
 			|| value < list[0]
@@ -84,19 +84,19 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr Big_Int_Type BinarySearch(const T* const list, T&& value, size_t size) noexcept
+	USE_RESULT constexpr BigInt_t BinarySearch(const T* const list, T&& value, size_t size) noexcept
 	{
 		return BinarySearchImpl(list, value, 0, size - 1, size);
 	}
 
 	template< typename T, size_t N, class = std::enable_if_t<!std::is_pointer_v<T>>>
-	USE_RESULT constexpr Big_Int_Type BinarySearch(const T(&list)[N], T&& value) noexcept
+	USE_RESULT constexpr BigInt_t BinarySearch(const T(&list)[N], T&& value) noexcept
 	{
 		return BinarySearchImpl(list, value, 0, N - 1, N);
 	}
 
 	template<typename List, typename T>
-	USE_RESULT constexpr Big_Int_Type BinarySearchClosestImpl(const List& list, T&& value, size_t lbIdx, size_t ubIdx, size_t size)
+	USE_RESULT constexpr BigInt_t BinarySearchClosestImpl(const List& list, T&& value, size_t lbIdx, size_t ubIdx, size_t size)
 	{
 		if (lbIdx > ubIdx
 			|| value < list[0]
@@ -122,13 +122,13 @@ namespace kmaths
 	}
 
 	template< typename T>
-	USE_RESULT constexpr Big_Int_Type BinarySearchClosest(const T* const list, T&& value, size_t size)
+	USE_RESULT constexpr BigInt_t BinarySearchClosest(const T* const list, T&& value, size_t size)
 	{
 		return BinarySearchClosestImpl(list, value, 0, size - 1, size);
 	};
 
 	template< typename T, size_t N, class = std::enable_if_t<!std::is_pointer_v<T>>>
-	USE_RESULT constexpr Big_Int_Type BinarySearchClosest(const T(&list)[N], T&& value)
+	USE_RESULT constexpr BigInt_t BinarySearchClosest(const T(&list)[N], T&& value)
 	{
 		return BinarySearchClosestImpl(list, value, 0, N - 1, N);
 	};
@@ -136,7 +136,7 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr bool IsInteger(T value) noexcept
 	{
-		return CAST(Big_Int_Type, value) == value;
+		return CAST(BigInt_t, value) == value;
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
@@ -220,13 +220,13 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T Floor(const T value) noexcept
 	{
-		constexpr auto maxVal = std::numeric_limits<Big_Int_Type>::max();
-		constexpr auto minVal = std::numeric_limits<Big_Int_Type>::min();
+		constexpr auto maxVal = std::numeric_limits<BigInt_t>::max();
+		constexpr auto minVal = std::numeric_limits<BigInt_t>::min();
 
 		if (value > maxVal || value < minVal)
 			return value;
 
-		const auto integer = CAST(T, CAST(Big_Int_Type, value));
+		const auto integer = CAST(T, CAST(BigInt_t, value));
 
 		return integer > value ? integer - CAST(T, 1) : integer;
 	}
@@ -307,7 +307,7 @@ namespace kmaths
 
 		const auto one_over_base = constants::OneOver<constants::AccuracyType>(b);
 		const auto num_over_base = n * one_over_base;
-		const auto int_n_over_b = CAST(Big_Int_Type, num_over_base);
+		const auto int_n_over_b = CAST(BigInt_t, num_over_base);
 
 		if (num_over_base == int_n_over_b)
 			return constants::Zero<T>();
@@ -411,7 +411,7 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T PowerOfImpl(T base, Big_Int_Type power) noexcept
+	USE_RESULT constexpr T PowerOfImpl(T base, BigInt_t power) noexcept
 	{
 #if MSVC_PLATFORM_TOOLSET > 142
 		return CAST(T, pow(base, power));
@@ -441,8 +441,8 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr Fraction RealToFraction(T x, const uint8_t dpAccuracy = 10) noexcept
 	{
-		constexpr auto maxIterations = Big_Int_Type(1e6);
-		Big_Int_Type iter = 0;
+		constexpr auto maxIterations = BigInt_t(1e6);
+		BigInt_t iter = 0;
 
 		const auto isNegative = x < 0;
 		if (isNegative) x = -x;
@@ -906,7 +906,7 @@ namespace kmaths
 	}
 
 	template<typename T, class = std::enable_if_t<!std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T PowerOf(T base, Big_Int_Type power) noexcept
+	USE_RESULT constexpr T PowerOf(T base, BigInt_t power) noexcept
 	{
 		const auto pow = PowerOfImpl<T>(base, power);
 		return pow;
@@ -1030,7 +1030,7 @@ namespace kmaths
 			// reduction identities to reduce other arguments to this interval.
 
 			double y = z;
-			Big_Int_Type n = 0;
+			BigInt_t n = 0;
 			const bool arg_was_less_than_one = (y < 1.0);
 
 			// Add or subtract integers as necessary to bring y into (1,2)
@@ -1041,7 +1041,7 @@ namespace kmaths
 			}
 			else
 			{
-				n = CAST(Big_Int_Type, (Floor(y))) - 1;  // will use n later
+				n = CAST(BigInt_t, (Floor(y))) - 1;  // will use n later
 				y -= n;
 			}
 

@@ -33,9 +33,9 @@ namespace kTest::performance::maths
 		CONST_GETTER_CONSTEXPR(T, W, ((T*)&vec)[3])
 
 	public:
-		kmaths::Big_Int_Type vec[
-			sizeof(kmaths::Big_Int_Type) == sizeof(T) ? 4
-			: (sizeof(kmaths::Big_Int_Type) / 2) == sizeof(T) ? 2
+		kmaths::BigInt_t vec[
+			sizeof(kmaths::BigInt_t) == sizeof(T) ? 4
+			: (sizeof(kmaths::BigInt_t) / 2) == sizeof(T) ? 2
 			: 1
 		]{};
 	};
@@ -47,7 +47,7 @@ namespace kTest::performance::maths
 	VectorSpeedTest::~VectorSpeedTest()
 		= default;
 
-	constexpr auto maxIter = kmaths::Big_Int_Type(1e3);
+	constexpr auto maxIter = kmaths::BigInt_t(1e3);
 
 	using namespace kmaths;
 	void VectorSpeedTest::Test()
@@ -223,11 +223,11 @@ namespace kTest::performance::maths
 
 	void VectorSpeedTest::Vec2bit()
 	{
-		const std::vector<std::string_view> participants = { "kmaths::Vector2<Big_Int_Type>", "Tightly Packed Vector" };
+		const std::vector<std::string_view> participants = { "kmaths::Vector2<BigInt_t>", "Tightly Packed Vector" };
 		SetUpParticipants(participants);
 
-		Vec<Big_Int_Type> v2(5, 10);
-		Vector2<Big_Int_Type> kv2(5, 10);
+		Vec<BigInt_t> v2(5, 10);
+		Vector2<BigInt_t> kv2(5, 10);
 
 		for (auto i = 0; i < maxIter; ++i)
 		{
@@ -247,11 +247,11 @@ namespace kTest::performance::maths
 
 	void VectorSpeedTest::Vec3bit()
 	{
-		const std::vector<std::string_view> participants = { "kmaths::Vector3<Big_Int_Type>", "Tightly Packed Vector" };
+		const std::vector<std::string_view> participants = { "kmaths::Vector3<BigInt_t>", "Tightly Packed Vector" };
 		SetUpParticipants(participants);
 
-		Vec<Big_Int_Type> v2(5, 10, 15);
-		Vector3<Big_Int_Type> kv2(5, 10, 15);
+		Vec<BigInt_t> v2(5, 10, 15);
+		Vector3<BigInt_t> kv2(5, 10, 15);
 
 		for (auto i = 0; i < maxIter; ++i)
 		{
@@ -274,11 +274,11 @@ namespace kTest::performance::maths
 
 	void VectorSpeedTest::Vec4bit()
 	{
-		const std::vector<std::string_view> participants = { "kmaths::Vector4<Big_Int_Type>", "Tightly Packed Vector" };
+		const std::vector<std::string_view> participants = { "kmaths::Vector4<BigInt_t>", "Tightly Packed Vector" };
 		SetUpParticipants(participants);
 
-		Vec<Big_Int_Type> v2(5, 10, 15, 20);
-		Vector4<Big_Int_Type> kv2(5, 10, 15, 20);
+		Vec<BigInt_t> v2(5, 10, 15, 20);
+		Vector4<BigInt_t> kv2(5, 10, 15, 20);
 
 		for (auto i = 0; i < maxIter; ++i)
 		{
