@@ -10,8 +10,11 @@ namespace kTest
 	
 	namespace performance
 	{
-		void SetUpPerformanceTests();
+		void InitializeAlPerformanceTests();
 	}
 
-	void SetUpTests();
+	void InitializeMathsTests();
+	void InitializeUtilityTests();
+	void InitializeTemplateTests();
+	void InitializeAllTests();
 }

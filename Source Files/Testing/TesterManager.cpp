@@ -36,25 +36,33 @@ namespace kTest
 
 		if (!dirChanged)
 			std::runtime_error("Failed to change current directory");
-		
+
 		const auto after = kFileSystem::GetCurrentWorkingDirectory();
-		
+
 		if (before == after)
 			std::runtime_error("no change occurred");
 	}
 
 	TesterManager::~TesterManager()
-		= default;
+	{
+		Shutdown();
+	}
 
 	void TesterManager::Shutdown()
 	{
 		ClearAllTests();
 	}
 
+	void TesterManager::ClearAllTests()
+	{
+		if (!testsSet.empty())
+			testsSet.clear();
+	}
+
 	void TesterManager::Initialize()
 	{
 		using namespace klib;
-		
+
 		path = std::filesystem::current_path().string() + "\\Test Results\\";
 		const auto isMade = std::filesystem::create_directory(path.c_str());
 
@@ -65,80 +73,26 @@ namespace kTest
 
 		path += "Results.txt";
 		std::filesystem::remove(path.c_str());
-
-		SetUpTests();
 	}
 
-	void TesterManager::RunPerformanceTests() const
+	void TesterManager::InitializeMaths() const
 	{
-		if (success)
-		{
-			std::cout << std::endl;
-			auto& test = performance::PerformanceTestManager::Get();
-			std::cout << "Now Testing: " << test.GetName() << " ";
-			test.Run();
-		}
+		InitializeMathsTests();
+	}
+
+	void TesterManager::InitializeUtility() const
+	{
+		InitializeUtilityTests();
+	}
+
+	void TesterManager::InitializeTemplates() const
+	{
+		InitializeTemplateTests();
 	}
 
 	void TesterManager::Add(Tester* test)
 	{
 		testsSet.insert(std::unique_ptr<Tester>(std::move(test)));
-	}
-
-	void TesterManager::Run(Tester& test)
-	{
-		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
-		const HighAccuracyStopwatch timer("Test Run Time");
-
-		std::cout << "Now running: " << test.GetName();
-		
-		const auto pass = test.Run();
-		const auto testTime = timer.GetLifeTime<units::Millis>();
-		
-		if (!pass)
-			success = false;
-
-		const auto runtimeResultStr
-			= WriteResults(pass, testTime);
-		
-		const auto resultTest = pass
-			? stringify::SprintfWrapper("Success: Test Name: %s %s\n\n",
-				test.GetName(),
-				runtimeResultStr) // Success Case
-			: stringify::SprintfWrapper("Failure: Test Name: %s %s\n%s",
-				test.GetName(), 
-				runtimeResultStr, 
-				test.GetFailureData()); // Fail Case
-
-		kFileSystem::WriteFile(path.c_str(), resultTest.c_str());
-	}
-
-	std::string TesterManager::WriteResults(const bool pass, const double resTime) const
-	{
-		using namespace kString;
-				
-		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
-		std::cout << " | ";
-		
-		SetConsoleTextAttribute(hConsole, pass 
-			? kMisc::ConsoleColour::LIGHT_GREEN
-			: kMisc::ConsoleColour::SCARLET_RED);
-		
-		auto resultStr = stringify::SprintfWrapper("%s", (pass ? "Pass" : "Fail"));
-		std::cout << resultStr;
-		SetConsoleTextAttribute(hConsole, 7);
-
-		resultStr.insert(0, "| ");
-
-		auto runtimeResultStr = stringify::SprintfWrapper("| Runtime: %.fms (milliseconds)"
-			, resTime);
-		std::cout << " " << runtimeResultStr << "\n";
-
-		runtimeResultStr.insert(0, resultStr + " ");
-
-		return runtimeResultStr;
 	}
 
 	void TesterManager::RunAll()
@@ -154,7 +108,7 @@ namespace kTest
 		const auto secs = CAST(unsigned, finalTime);
 		const auto remainder = finalTime - secs;
 		const unsigned millis = CAST(unsigned
-			, std::chrono::milliseconds::period::den * remainder);
+			, units::Secs::Period_t::den * remainder);
 
 		const auto finalTimeStr = stringify::SprintfWrapper("Total Runtime: %us  %ums", secs, millis);
 		kFileSystem::WriteFile(path, finalTimeStr);
@@ -165,9 +119,71 @@ namespace kTest
 		std::cin.get();
 	}
 
-	void TesterManager::ClearAllTests()
+	void TesterManager::RunPerformanceTests() const
 	{
-		testsSet.clear();
+		if (success)
+		{
+			std::cout << std::endl;
+			auto& test = performance::PerformanceTestManager::Get();
+			std::cout << "Now Testing: " << test.GetName() << " ";
+			test.Run();
+		}
+	}
+
+	void TesterManager::Run(Tester& test)
+	{
+		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+		const HighAccuracyStopwatch timer("Test Run Time");
+
+		std::cout << "Now running: " << test.GetName();
+
+		const auto pass = test.Run();
+		const auto testTime = timer.GetLifeTime<units::Millis>();
+
+		if (!pass)
+			success = false;
+
+		const auto runtimeResultStr
+			= WriteResults(pass, testTime);
+
+		const auto resultTest = pass
+			? stringify::SprintfWrapper("Success: Test Name: %s %s\n\n",
+				test.GetName(),
+				runtimeResultStr) // Success Case
+			: stringify::SprintfWrapper("Failure: Test Name: %s %s\n%s",
+				test.GetName(),
+				runtimeResultStr,
+				test.GetFailureData()); // Fail Case
+
+		kFileSystem::WriteFile(path.c_str(), resultTest.c_str());
+	}
+
+	std::string TesterManager::WriteResults(const bool pass, const double resTime) const
+	{
+		using namespace kString;
+
+		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+		std::cout << " | ";
+
+		SetConsoleTextAttribute(hConsole, pass
+			? kMisc::ConsoleColour::LIGHT_GREEN
+			: kMisc::ConsoleColour::SCARLET_RED);
+
+		auto resultStr = stringify::SprintfWrapper("%s", (pass ? "Pass" : "Fail"));
+		std::cout << resultStr;
+		SetConsoleTextAttribute(hConsole, 7);
+
+		resultStr.insert(0, "| ");
+
+		auto runtimeResultStr = stringify::SprintfWrapper("| Runtime: %.fms (milliseconds)"
+			, resTime);
+		std::cout << " " << runtimeResultStr << "\n";
+
+		runtimeResultStr.insert(0, resultStr + " ");
+
+		return runtimeResultStr;
 	}
 
 	TesterManager& TesterManager::Get()

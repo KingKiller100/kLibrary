@@ -52,45 +52,43 @@ namespace kTest
 			}
 		}
 
-		void SetUpPerformanceTests()
+		void InitializeAlPerformanceTests()
 		{
 			AddUtilityPerformanceTests();
 			AddMathsPerformanceTests();
 		}
 	}
 
-	namespace
+	void InitializeMathsTests()
 	{
-		void InitializeMathsTests()
-		{
-			AddTest<TesterManager>(new maths::FractionTester());
-			AddTest<TesterManager>(new maths::AlgorithmsTester());
-			AddTest<TesterManager>(new maths::VectorsTester());
-			AddTest<TesterManager>(new maths::MatricesTester());
-			AddTest<TesterManager>(new maths::QuaternionsTester());
-			AddTest<TesterManager>(new maths::RandomTester());
-		}
-
-		void InitializeUtilityTests()
-		{
-			AddTest<TesterManager>(new utility::UTFConverterTester());
-			AddTest<TesterManager>(new utility::StringManipulationTester());
-			AddTest<TesterManager>(new utility::FormatToStringTester());
-			AddTest<TesterManager>(new utility::CalendarTester());
-			AddTest<TesterManager>(new utility::FileSystemTester());
-			AddTest<TesterManager>(new utility::DebugHelpTester());
-			AddTest<TesterManager>(new utility::LoggingTester());
-			AddTest<TesterManager>(new utility::StringViewTester());
-			AddTest<TesterManager>(new utility::StopWatchTester());
-		}
-
-		void InitializeTemplateTests()
-		{
-			AddTest<TesterManager>(new templates::BytesStorageTester());
-		}
+		AddTest<TesterManager>(new maths::FractionTester());
+		AddTest<TesterManager>(new maths::AlgorithmsTester());
+		AddTest<TesterManager>(new maths::VectorsTester());
+		AddTest<TesterManager>(new maths::MatricesTester());
+		AddTest<TesterManager>(new maths::QuaternionsTester());
+		AddTest<TesterManager>(new maths::RandomTester());
 	}
 
-	void SetUpTests()
+	void InitializeUtilityTests()
+	{
+		AddTest<TesterManager>(new utility::UTFConverterTester());
+		AddTest<TesterManager>(new utility::StringManipulationTester());
+		AddTest<TesterManager>(new utility::FormatToStringTester());
+		AddTest<TesterManager>(new utility::CalendarTester());
+		AddTest<TesterManager>(new utility::FileSystemTester());
+		AddTest<TesterManager>(new utility::DebugHelpTester());
+		AddTest<TesterManager>(new utility::LoggingTester());
+		AddTest<TesterManager>(new utility::StringViewTester());
+		AddTest<TesterManager>(new utility::StopWatchTester());
+	}
+
+	void InitializeTemplateTests()
+	{
+		AddTest<TesterManager>(new templates::BytesStorageTester());
+	}
+
+
+	void InitializeAllTests()
 	{
 		InitializeMathsTests();
 		InitializeUtilityTests();

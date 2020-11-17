@@ -20,6 +20,9 @@ namespace kTest
 		~TesterManager();
 
 		void Initialize();
+		void InitializeMaths() const;
+		void InitializeUtility() const;
+		void InitializeTemplates() const;
 		void Shutdown();
 		void RunPerformanceTests() const;
 		void Add(Tester* test);

@@ -4,11 +4,11 @@
 #include "PerformanceTestBase.hpp"
 #include "../SetUpTests.hpp"
 
+#include "../../Utility/Stopwatch/kClock.hpp"
+
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-
-#include "../../Utility/Stopwatch/kClock.hpp"
 
 
 #ifdef TESTING_ENABLED
@@ -25,7 +25,6 @@ namespace kTest::performance
 
 	void PerformanceTestManager::Initialize()
 	{
-		using namespace klib;
 		path = fs::current_path();
 		path += "\\Speed Results\\";
 		const auto isMade = fs::create_directory(path);
@@ -101,7 +100,7 @@ namespace kTest::performance
 
 	void PerformanceTestManager::InitializeTests()
 	{
-		SetUpPerformanceTests();
+		InitializeAlPerformanceTests();
 	}
 
 	void PerformanceTestManager::OutputResult(const std::string& name)
