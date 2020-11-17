@@ -227,7 +227,7 @@ namespace kTest::utility
 	{
 		{
 			const Millisecond millis(300);
-			VERIFY_COMPILE_TIME(millis.GetValue() == 300);
+			VERIFY(millis.GetValue() == 300);
 			VERIFY(millis.Verify());
 			VERIFY(millis.ToString("c") == "300");
 			VERIFY(millis.ToString("cc") == "300");

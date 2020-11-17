@@ -82,16 +82,16 @@ namespace klib
 
 		template<typename StringType, typename Stringish
 #if MSVC_PLATFORM_TOOLSET >= 142
-			requires ValidStringT<Stringish> || type_trait::Is_CharType_V<Stringish>
+			> requires ValidStringT<Stringish> || type_trait::Is_CharType_V<Stringish>
 #else
 			, typename = std::enable_if_t<type_trait::Is_StringType_V<Stringish> // STL string
 			|| (type_trait::Is_CharType_V<ONLY_TYPE(Stringish)> // C string
 				&& std::is_pointer_v<Stringish>)
 			|| std::is_array_v<Stringish>
 			|| type_trait::Is_CharType_V<Stringish>
-			>
+			>>
 #endif
-		>
+		
 			constexpr bool Remove(StringType & str, const Stringish & search)
 		{
 			bool removed = false;
@@ -195,11 +195,11 @@ namespace klib
 
 			template<typename StringType
 #if MSVC_PLATFORM_TOOLSET >= 142
-				requires type_trait::Is_String_t<StringType>
+				> requires type_trait::Is_String_t<StringType>
 #else
-				, typename = std::enable_if_t<type_trait::Is_StringType_V<StringType>>
+				, typename = std::enable_if_t<type_trait::Is_StringType_V<StringType>>>
 #endif
-			>
+			
 				USE_RESULT constexpr bool Contains(const StringType& str, typename StringType::value_type search
 					, const size_t offset = 0)
 			{
@@ -208,14 +208,14 @@ namespace klib
 
 			template<typename StringA, typename StringB
 #if MSVC_PLATFORM_TOOLSET >= 142
-				requires type_trait::Is_String_t<StringA> && type_trait::Is_String_t<StringB>
+				> requires type_trait::Is_String_t<StringA> && type_trait::Is_String_t<StringB>
 #else
 				, typename = std::enable_if_t<
 				type_trait::Is_StringType_V<StringA>
 				&& type_trait::Is_StringType_V<StringB>
-				>
+				>>
 #endif
-			>
+			
 				USE_RESULT constexpr bool Contains(const StringA& str, const StringB& search
 					, const size_t offset = 0)
 			{
