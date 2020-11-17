@@ -22,42 +22,151 @@ namespace kTest::maths
 	void RandomTester::Test()
 	{
 		VERIFY_MULTI_INIT();
-		VERIFY_MULTI(IntegerTest());
-		VERIFY_MULTI(FloatingPointTest());
+		VERIFY_MULTI(IntegerBCryptTest());
+		VERIFY_MULTI(FloatingBCryptPointTest());
+
+		VERIFY_MULTI(IntegerTimeTest());
+		VERIFY_MULTI(FloatingTimePointTest());
 		VERIFY_MULTI_END();
 	}
 
-	bool RandomTester::IntegerTest()
+	bool RandomTester::IntegerBCryptTest()
 	{
 		using namespace std::chrono_literals;
-		
-		constexpr Big_Int_Type lb = 0;
-		constexpr Big_Int_Type ub = 100;
 
-		const auto a = RNG(lb, ub);
-		std::this_thread::sleep_for(1s);
-		const auto b = RNG(lb, ub);
+		{
+			constexpr Big_Int_Type lb = 0;
+			constexpr Big_Int_Type ub = 100;
 
-		VERIFY(a != b);
-		VERIFY(lb < a && a < ub);
-		VERIFY(lb < b && b < ub);
+			auto rng = Rng32(GenericSeedingSource::BCRYPT);
+
+			const auto a = rng(lb, ub);
+			const auto b = rng(lb, ub);
+
+			VERIFY(a != b);
+			VERIFY(lb < a&& a < ub);
+			VERIFY(lb < b&& b < ub);
+		}
+
+		{
+			constexpr Big_Int_Type lb = 0;
+			constexpr Big_Int_Type ub = 100;
+
+			auto rng = Rng64(GenericSeedingSource::BCRYPT);
+
+			const auto a = rng(lb, ub);
+			const auto b = rng(lb, ub);
+
+			VERIFY(a != b);
+			VERIFY(lb < a&& a < ub);
+			VERIFY(lb < b&& b < ub);
+		}
 
 		return success;
 	}
 
-	bool RandomTester::FloatingPointTest()
+	bool RandomTester::IntegerTimeTest()
 	{
 		using namespace std::chrono_literals;
-		constexpr float lb = 0.25f;
-		constexpr float ub = 0.5f;
+		{
+			constexpr Big_Int_Type lb = 0;
+			constexpr Big_Int_Type ub = 100;
 
-		const auto a = RNG(lb, ub, kRng::RngSeedSource::TIME);
-		std::this_thread::sleep_for(1s);
-		const auto b = RNG(lb, ub, kRng::RngSeedSource::BCRYPT);
+			auto rng = Rng32(GenericSeedingSource::TIME);
 
-		VERIFY(a != b);
-		VERIFY(lb < a && a < ub);
-		VERIFY(lb < b && b < ub);
+			const auto a = rng.Generate(lb, ub);
+			//std::this_thread::sleep_for(1s);
+			const auto b = rng.Generate(lb, ub);
+
+
+			VERIFY(a != b);
+			VERIFY(lb < a&& a < ub);
+			VERIFY(lb < b&& b < ub);
+		}
+
+		{
+			constexpr Big_Int_Type lb = 0;
+			constexpr Big_Int_Type ub = 100;
+
+			auto rng = Rng64(GenericSeedingSource::TIME);
+
+			const auto a = rng.Generate(lb, ub);
+			//std::this_thread::sleep_for(1s);
+			const auto b = rng.Generate(lb, ub);
+
+
+			VERIFY(a != b);
+			VERIFY(lb < a&& a < ub);
+			VERIFY(lb < b&& b < ub);
+		}
+
+		return success;
+
+	}
+
+	bool RandomTester::FloatingBCryptPointTest()
+	{
+		using namespace std::chrono_literals;
+
+		{
+			constexpr float lb = 0.25f;
+			constexpr float ub = 0.5f;
+
+			auto rng = Rng32(GenericSeedingSource::BCRYPT);
+			const auto a = rng(lb, ub);
+			const auto b = rng(lb, ub);
+
+			VERIFY(a != b);
+			VERIFY(lb < a&& a < ub);
+			VERIFY(lb < b&& b < ub);
+		}
+
+		{
+			constexpr auto lb = 18.25;
+			constexpr auto ub = 50.75;
+
+			auto rng = Rng64(GenericSeedingSource::BCRYPT);
+			const auto a = rng(lb, ub);
+			const auto b = rng(lb, ub);
+
+			VERIFY(a != b);
+			VERIFY(lb < a&& a < ub);
+			VERIFY(lb < b&& b < ub);
+		}
+
+		return success;
+	}
+
+
+	bool RandomTester::FloatingTimePointTest()
+	{
+		using namespace std::chrono_literals;
+
+		{
+			constexpr float lb = 0.25f;
+			constexpr float ub = 0.5f;
+
+			auto rng = Rng32(GenericSeedingSource::TIME);
+			const auto a = rng(lb, ub);
+			const auto b = rng(lb, ub);
+
+			VERIFY(a != b);
+			VERIFY(lb < a&& a < ub);
+			VERIFY(lb < b&& b < ub);
+		}
+
+		{
+			constexpr auto lb = 18.25;
+			constexpr auto ub = 50.75;
+
+			auto rng = Rng64(GenericSeedingSource::TIME);
+			const auto a = rng(lb, ub);
+			const auto b = rng(lb, ub);
+
+			VERIFY(a != b);
+			VERIFY(lb < a&& a < ub);
+			VERIFY(lb < b&& b < ub);
+		}
 
 		return success;
 	}

@@ -480,7 +480,7 @@ namespace klib::kFileSystem
 		return newFilename;
 	}
 
-	namespace fs = kFileSystem;
+	//namespace kfs = kFileSystem;
 	
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kFileSystem;

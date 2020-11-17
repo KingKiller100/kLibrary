@@ -1,21 +1,21 @@
 ﻿#include "pch.hpp"
-#include "Random.hpp"
+#include "GenericSeeding.hpp"
+
+#include "../../Utility/Debug/Exceptions/MathsExceptions.hpp"
+#include "../../Utility/String/kToString.hpp"
 
 #include <Windows.h>
-#include <winnt.h>
 #include <bcrypt.h>
-
-#include "../Utility/String/kToString.hpp"
-
+#include <ctime>
 #include <iostream>
 
 namespace kmaths::kRng
 {
-	using namespace klib::kString;
 	namespace 
 	{
 		void LogBCryptError(const std::int64_t ret)
 		{
+		using namespace klib::kString;
 			const auto binary =
 				stringify::StringIntegralHex<char>(ret, 8);
 			std::string error;
@@ -60,11 +60,11 @@ namespace kmaths::kRng
 		Integral_t GenerateRandomNumber(BCRYPT_ALG_HANDLE algHandle)
 		{
 			static_assert(std::is_integral_v<Integral_t>, "Type Integral_t must be an integral type");
-			
+
 			constexpr auto bufferSize = std::numeric_limits<Integral_t>::digits;
 			const auto buf = std::make_unique<BYTE[]>(bufferSize);
 			const auto ret = ::BCryptGenRandom(algHandle, buf.get(), bufferSize, 0l);
-			
+
 			if (ret != 0)
 			{
 				LogBCryptError(ret);
@@ -81,18 +81,46 @@ namespace kmaths::kRng
 			if (ret != 0)
 				LogBCryptError(ret);
 		}
-	}
 		
-	std::uint64_t UInt64FromThermalNoise()
-	{
-		const auto algHandle = OpenCryptHandle();
-		const auto value = GenerateRandomNumber<std::uint64_t>(algHandle);
-		CloseBCryptHandle(algHandle);
-		return value;
+		template<class Integral_t>
+		Integral_t GetBCryptSeed()
+		{
+			const auto algHandle = OpenCryptHandle();
+			const auto value = GenerateRandomNumber<Integral_t>(algHandle);
+			CloseBCryptHandle(algHandle);
+			return value;
+		}
+		
+		std::time_t SeedFromTime()
+		{
+			return std::time(nullptr);
+		}
 	}
 	
-	std::time_t SeedFromTime()
+	std::uint64_t U64Seed(GenericSeedingSource sourceType)
 	{
-		return std::time(nullptr);
+		switch (sourceType) {
+		case GenericSeedingSource::TIME: 
+			return static_cast<std::uint64_t>(SeedFromTime());
+		case GenericSeedingSource::BCRYPT: 
+			return GetBCryptSeed<std::uint64_t>();
+		default:
+			throw klib::kDebug::MathsError("Unknown seeding source type");
+			break;
+		}
+	}
+
+	std::uint32_t U32Seed(GenericSeedingSource sourceType)
+	{
+		switch (sourceType) {
+		case GenericSeedingSource::TIME:
+			return static_cast<std::uint32_t>(SeedFromTime());
+		case GenericSeedingSource::BCRYPT:
+			return GetBCryptSeed<std::uint32_t>();
+		default:
+			throw klib::kDebug::MathsError("Unknown seeding source type");
+			break;
+		}
 	}
 }
+		

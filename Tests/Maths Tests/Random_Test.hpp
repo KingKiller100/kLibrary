@@ -15,8 +15,10 @@ namespace kTest::maths
 		void Test() override;
 
 	private:
-		bool IntegerTest();
-		bool FloatingPointTest();
+		bool IntegerBCryptTest();
+		bool IntegerTimeTest();
+		bool FloatingBCryptPointTest();
+		bool FloatingTimePointTest();
 	};
 }
 #endif
