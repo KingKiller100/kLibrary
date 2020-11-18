@@ -109,7 +109,7 @@ namespace klib {
 
 			std::basic_string<CharType> finalString;
 
-			Handler<CharType, T, Ts>(fmt, finalString, arg, argPack...);
+			ToStringImpl<CharType, T, Ts>(fmt, finalString, arg, argPack...);
 			
 			/*size_t prevCloserIndex = 0;
 			for (const auto& marker : markers)
