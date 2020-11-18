@@ -7,14 +7,19 @@
 
 namespace klib::kString::impl
 {
+	template<class Char_t, typename T>
+	StringWriter<Char_t> Stringify(T arg, StringWriter<Char_t>& specifier)
+	{
+		return StringWriter<Char_t>();
+	}
+
 	template<class Char_t>
-	void ToStringImpl(const std::basic_string<Char_t>& fmt, std::basic_string<Char_t>& finalString, size_t currentIndex)
+	void ToStringImpl(const std::basic_string<Char_t>& fmt, size_t currentIndex)
 	{}
 
 
 	template<class Char_t, typename T, typename ...Ts>
-	void ToStringImpl(std::basic_string<Char_t>& fmt, std::basic_string<Char_t>& finalString, size_t textPos
-		, T arg, Ts ...args)
+	void ToStringImpl(std::basic_string<Char_t>& outFmt, size_t textPos, T arg, Ts ...argPack)
 	{
 		constexpr Char_t printfSymbol = Char_t('%');
 		constexpr Char_t openerSymbol = Char_t('{');
@@ -23,38 +28,52 @@ namespace klib::kString::impl
 		constexpr Char_t nullTerminator = type_trait::s_NullTerminator<Char_t>;
 		constexpr size_t npos = std::basic_string_view<Char_t>::npos;
 
-		auto openerPos = fmt.find_first_of(openerSymbol, textPos);
-		auto closerPos = fmt.find_first_of(closerSymbol, openerSymbol);
+		auto openerPos = outFmt.find_first_of(openerSymbol, textPos);
+		auto closerPos = outFmt.find_first_of(closerSymbol, openerPos);
 		if (openerPos == npos
 			|| closerPos == npos)
 			return;
 
-		while (openerPos != npos)
+		if (outFmt[openerPos + 1] == openerSymbol || // Escape
+			outFmt[openerPos + 1] == Char_t(' ') ||
+			outFmt[openerPos + 1] == Char_t('\t') ||
+			outFmt[openerPos + 1] == Char_t('\n') ||
+			outFmt[openerPos + 1] == Char_t('\r') ||
+			outFmt[openerPos + 1] == nullTerminator)
 		{
-			const auto infoSize = closerPos - textPos;
-			//std::basic_string<Char_t> currentSection = fmt.substr(textPos, infoSize);
-
-			const auto replacePos = openerPos - textPos;
-			const auto colonPos = fmt.find_first_of(specifierSymbol, replacePos);
-			const auto objIndexSize = colonPos - openerPos;
-
-			const auto objIndex = StrTo<long long>(fmt.substr(openerPos, objIndexSize));
-
-			std::basic_string<Char_t> specifier;
-			if (colonPos != npos)
-			{
-				const auto startPos = colonPos + 1;
-				const auto count = (fmt.find_first_of(clos) - 1) - startPos;
-				specifier = currentSection.substr(startPos, count);
-			}
-
-			//currentSection.erase(replacePos);
-			const auto replacement = Stringify<Char_t, T>(arg, specifier);
-
+			ToStringImpl<Char_t, Ts...>(outFmt, openerPos + 2, argPack...);
 		}
 
-		if (fmt.size() - 1 >= prevCloserIndex)
-			finalString.append(fmt.substr(prevCloserIndex));
+		const auto infoSize = closerPos - openerPos;
+		StringWriter<Char_t> objIndexStr;
+		StringWriter<Char_t> specifier;
 
+		const auto replacePos = openerPos - textPos;
+		const auto colonPos = outFmt.find_first_of(specifierSymbol, replacePos);
+
+		if (colonPos != npos)
+		{
+			const auto objIndexSize = colonPos - openerPos;
+			objIndexStr = outFmt.substr(openerPos, objIndexSize);
+
+			const auto startPos = colonPos + 1;
+			const auto count = (closerPos - 1) - startPos;
+			specifier = outFmt.substr(startPos, count);
+		}
+		else
+		{
+			objIndexStr = outFmt.substr(openerPos + 1, infoSize - 1);
+		}
+		
+		const auto objIndex = StrTo<long long>(objIndexStr);
+
+		while (outFmt.find(openerSymbol + objIndexStr) != npos)
+		{
+			const auto replacement = Stringify<Char_t, T>(arg, specifier);
+			outFmt.erase(openerPos, infoSize + 1);
+			outFmt.insert(openerPos, replacement);
+		}
+
+		ToStringImpl<Char_t, Ts...>(outFmt, closerPos + 1, argPack...);
 	}
 }

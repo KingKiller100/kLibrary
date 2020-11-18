@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Impl/ToStringImpl.hpp"
+
 #include "Stringify/kSprintf.hpp"
 #include "Stringify/kFormatMarkers.hpp"
 #include "Stringify/kStringIdentity.hpp"
@@ -96,7 +98,7 @@ namespace klib {
 			constexpr auto nullTerminator = type_trait::s_NullTerminator<CharType>;
 			constexpr auto npos = std::basic_string_view<CharType>::npos;
 
-			if (auto pfSymPos = format.find(printfSymbol); pfSymPos != npos)
+			if (format.find(printfSymbol) != npos)
 			{
 				return stringify::SprintfWrapper<CharType>(format, arg, argPack...);
 			}
@@ -104,12 +106,11 @@ namespace klib {
 			/*std::array<void*, std::variant_size_v<DataTypes> -1> elems = { (void*)stringify::Identity<CharType, T>(arg).GetPtr()
 				, (void*)stringify::Identity<CharType, Ts>(argPack).GetPtr()... };*/
 
-			std::basic_string<CharType> fmt(format);
 			//FormatMarkerQueue markers = CreateIdentifiers(ToWriter(format), elems);
 
-			std::basic_string<CharType> finalString;
+			std::basic_string<CharType> finalString(format);
 
-			ToStringImpl<CharType, T, Ts>(fmt, finalString, arg, argPack...);
+			impl::ToStringImpl<CharType, T, Ts...>(finalString, 0, arg, argPack...);
 			
 			/*size_t prevCloserIndex = 0;
 			for (const auto& marker : markers)
