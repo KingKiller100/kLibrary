@@ -4,11 +4,12 @@
 #include "../Stringify/kStringifyHelper.hpp"
 
 #include "../Stringify/kStringifyFloatingPoint.hpp"
+#include "../Stringify/kStringifyPointer.hpp"
 #include "../Stringify/kStringifyInteger.hpp"
+#include "../Stringify/kStringifyBool.hpp"
 
-#include <any>
 
-namespace klib::kString::type
+namespace klib::kString::impl
 {
 	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
 	constexpr CharType s_BinaryModeToken = CharType('b');
@@ -24,57 +25,59 @@ namespace klib::kString::type
 
 	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
 	constexpr CharType s_ScientificFloatModeToken = CharType('e');
-
-	template<typename T>
-	decltype(auto) ExtractPtrFromAny(const std::any& container)
-	{
-		return std::any_cast<T*>(container);
-	}
-
+	
 	template<typename CharT, typename T>
-	void ExtractIntegerAndInsertInOutput(const std::any& container, StringWriter<CharT>& specifier, StringWriter<CharT>& outCurrentSection)
+	StringWriter<CharT> HandleInteger(T value, StringWriter<CharT>& specifier)
 	{
-		auto data = ExtractPtrFromAny<T>(container);
 		const auto hexMode = Remove(specifier, s_HexModeToken<CharT>);
 		const auto binaryMode = Remove(specifier, s_BinaryModeToken<CharT>);
 		const auto padding = StrTo<size_t>(specifier, stringify::s_NoSpecifier);
 
-		StringWriter<CharT> toAppend;
+		StringWriter<CharT> str;
 
 		if (hexMode)
-			toAppend = stringify::StringIntegralHex<CharT>(*data, padding, CharT('0'));
+			str = stringify::StringIntegralHex<CharT>(value, padding, CharT('0'));
 		else if (binaryMode)
-			toAppend = stringify::StringIntegralBinary<CharT, ONLY_TYPE(T)>(*data, padding, CharT('0'));
+			str = stringify::StringIntegralBinary<CharT, ONLY_TYPE(T)>(value, padding, CharT('0'));
 		else
-			toAppend = stringify::StringIntegral<CharT, ONLY_TYPE(T)>(*data, padding, CharT('0'));
-
-		outCurrentSection.append(toAppend);
+			str = stringify::StringIntegral<CharT, ONLY_TYPE(T)>(value, padding, CharT('0'));
+		return str;
 	}
 
 	template<typename CharT>
-	void ExtractCharAndInsertInOutput(const std::any& container, [[maybe_unused]] const StringWriter<CharT>& specifier
-		, StringWriter<CharT>& outCurrentSection)
+	decltype(auto) HandleCharacter(const CharT value, [[maybe_unused]] const StringWriter<CharT>& specifier)
 	{
-		auto data = ExtractPtrFromAny<CharT>(container);
-		outCurrentSection.push_back(*data);
+		return value;
+	}
+
+	template<typename CharT>
+	StringWriter<CharT> HandleCharPointer(const CharT* value, [[maybe_unused]] const StringWriter<CharT>& specifier)
+	{
+		return value;
+	}
+
+	template<typename CharT, class T>
+	decltype(auto) HandlePointer(T* value, [[maybe_unused]] StringWriter<CharT>& specifier)
+	{
+		return stringify::StringifyPointer<CharT>(value, specifier);
+	}
+
+	template<typename CharT, class T>
+	decltype(auto) HandlePointer(const T* value, [[maybe_unused]] const StringWriter<CharT>& specifier)
+	{
+		return stringify::StringifyPointer<CharT>(value, specifier);
 	}
 
 	template<typename StringT>
-	void ExtractStringAndInsertInOutput(const std::any& container, [[maybe_unused]] const StringWriter<typename StringT::value_type>& specifier
-		, StringWriter<typename StringT::value_type>& outCurrentSection)
+	decltype(auto) HandleStringAndInsertInOutput(const StringT& value, [[maybe_unused]] const StringWriter<typename StringT::value_type>& specifier)
 	{
-		const auto size = StrTo<long long>(specifier, StringT::npos);
-		auto data = ExtractPtrFromAny<StringT>(container);
-
-		outCurrentSection.append(*data);
+		return value;
 	}
 
 	template<typename CharT, typename T>
-	void ExtractFloatAndInsertInOutput(const std::any& container, StringWriter<CharT>& specifier
-		, StringWriter<CharT>& outCurrentSection)
+	StringWriter<CharT> HandleFloat(T value, StringWriter<CharT>& specifier)
 	{
-		StringWriter<CharT> toAppend;
-		auto data = ExtractPtrFromAny<T>(container);
+		StringWriter<CharT> str;
 
 		std::chars_format fmt = std::chars_format::fixed;
 		if (Remove(specifier, s_ScientificFloatModeToken<CharT>))
@@ -99,40 +102,35 @@ namespace klib::kString::type
 		const auto padding = StrTo<std::int64_t>(specifier, stringify::s_NoSpecifier);
 		
 		if (binaryMode)
-			toAppend = stringify::StringIntegralBinary<CharT, size_t>(*reinterpret_cast<const size_t*>(data), padding, CharT('0'));
+			str = stringify::StringIntegralBinary<CharT, size_t>(*(size_t*)&value, padding, CharT('0'));
 		else
-			toAppend = stringify::StringFloatingPoint<CharT>(*data, padding, fmt);
-
-		outCurrentSection.append(toAppend);
+			str = stringify::StringFloatingPoint<CharT>(value, padding, fmt);
+		return str;
 	}
 
 	template<typename CharT>
-	void ExtractBoolAndInsertInOutput(const std::any& container, StringWriter<CharT>& specifier
-		, StringWriter<CharT>& outCurrentSection)
+	StringWriter<CharT> HandleBool(bool value, StringWriter<CharT>& specifier)
 	{
-		const auto data = ExtractPtrFromAny<const bool>(container);
-
 		union DummyUnion
 		{
 			bool real;
 			size_t uint;
 		} dummy;
 		
-		dummy.real = *data;
+		dummy.real = value;
 
 		const auto hexMode = Remove(specifier, s_HexModeToken<CharT>);
 		const auto binaryMode = Remove(specifier, s_BinaryModeToken<CharT>);
 		const auto padding = StrTo<size_t>(specifier, stringify::s_NoSpecifier);
 
-		StringWriter<CharT> toAppend;
+		StringWriter<CharT> str;
 
 		if (hexMode)
-			toAppend = stringify::StringIntegralHex<CharT>(dummy.uint, padding, CharT('0'));
+			str = stringify::StringIntegralHex<CharT>(dummy.uint, padding, CharT('0'));
 		else if (binaryMode)
-			toAppend = stringify::StringIntegralBinary<CharT, size_t>(dummy.uint, padding, CharT('0'));
+			str = stringify::StringIntegralBinary<CharT, size_t>(dummy.uint, padding, CharT('0'));
 		else
-			toAppend = stringify::StringBool<CharT>(dummy.real);
-
-		outCurrentSection.append(toAppend);
+			str = stringify::StringBool<CharT>(dummy.real);
+		return str;
 	}
 }

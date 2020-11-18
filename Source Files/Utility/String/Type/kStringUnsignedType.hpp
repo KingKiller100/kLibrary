@@ -7,7 +7,7 @@
 #include <any>
 
 
-namespace klib::kString::type
+namespace klib::kString::impl
 {
 	constexpr bool IsUnsigned(const StringReader<char>& type)
 	{

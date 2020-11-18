@@ -9,6 +9,8 @@
 #include <type_traits>
 #include <vector>
 
+#include "../Type/kStringExtract.hpp"
+
 namespace klib::kString::stringify
 {
 	template<typename Char_t, typename T, typename Enabled_t = void>
@@ -59,6 +61,12 @@ namespace klib::kString::stringify
 			return typeid(T).name();
 		}
 
+		USE_RESULT static decltype(auto) MakeStr(const T& arg, StringWriter<Char_t>& specifier)
+		{
+			const std::basic_string<Char_t>& string = GetObjectString<Char_t>(arg);
+			return string.data();
+		}
+
 	private:
 		const T& data;
 	};
@@ -86,6 +94,11 @@ namespace klib::kString::stringify
 		USE_RESULT constexpr auto GetPtr() const
 		{
 			return std::addressof(data);
+		}
+
+		USE_RESULT static decltype(auto) MakeStr(const T& arg, StringWriter<Char_t>& specifier)
+		{
+			return impl::HandleStringAndInsertInOutput(arg, specifier);
 		}
 
 	private:
@@ -118,13 +131,18 @@ namespace klib::kString::stringify
 			return std::addressof(data);
 		}
 
+		USE_RESULT static decltype(auto) MakeStr(const T arg, StringWriter<Char_t>& specifier)
+		{
+			return impl::HandleCharPointer(arg, specifier);
+		}
+
 	private:
 		const T& data;
 	};
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
-	///// Mon-Character Pointers
+	///// Any Non-Character Pointers
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename Char_t, typename T>
 	class Identity<Char_t, T, std::enable_if_t<
@@ -146,6 +164,11 @@ namespace klib::kString::stringify
 		USE_RESULT constexpr auto GetPtr() const
 		{
 			return reinterpret_cast<const void* const*>(std::addressof(data));
+		}
+
+		USE_RESULT static decltype(auto) MakeStr(T arg, StringWriter<Char_t>& specifier)
+		{
+			return impl::HandlePointer<Char_t>((void*)arg, specifier);
 		}
 
 	private:
@@ -176,11 +199,21 @@ namespace klib::kString::stringify
 			return std::addressof(data);
 		}
 
+		USE_RESULT static decltype(auto) MakeStr(T value, StringWriter<Char_t>& specifier)
+		{
+			if constexpr (std::is_floating_point_v<T>)
+				return  impl::HandleFloat<Char_t>(value, specifier);
+			else if (std::is_same_v<ONLY_TYPE(T), bool>)
+				return impl::HandleBool<Char_t>(value, specifier);
+			else
+				return impl::HandleInteger<Char_t>(value, specifier);
+		}
+
 	private:
 		const T data;
 	};
 
-	
+
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	///// Primitive array types (char, int, double, unsigned long long,...)
 	///////////////////////////////////////////////////////////////////////////////////////////////////

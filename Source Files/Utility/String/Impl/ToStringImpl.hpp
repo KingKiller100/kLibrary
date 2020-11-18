@@ -2,17 +2,13 @@
 
 #include <string>
 
+#include "Stringify.hpp"
+
 #include "../../../TypeTraits/StringTraits.hpp"
 #include "../kStringManipulation.hpp"
 
 namespace klib::kString::impl
 {
-	template<class Char_t, typename T>
-	StringWriter<Char_t> Stringify(T arg, StringWriter<Char_t>& specifier)
-	{
-		return StringWriter<Char_t>();
-	}
-
 	template<class Char_t>
 	void ToStringImpl(const std::basic_string<Char_t>& fmt, size_t currentIndex)
 	{}
@@ -28,8 +24,8 @@ namespace klib::kString::impl
 		constexpr Char_t nullTerminator = type_trait::s_NullTerminator<Char_t>;
 		constexpr size_t npos = std::basic_string_view<Char_t>::npos;
 
-		auto openerPos = outFmt.find_first_of(openerSymbol, textPos);
-		auto closerPos = outFmt.find_first_of(closerSymbol, openerPos);
+		size_t openerPos = outFmt.find_first_of(openerSymbol, textPos);
+		size_t closerPos = outFmt.find_first_of(closerSymbol, openerPos);
 		if (openerPos == npos
 			|| closerPos == npos)
 			return;
@@ -49,11 +45,11 @@ namespace klib::kString::impl
 		StringWriter<Char_t> specifier;
 
 		const auto replacePos = openerPos - textPos;
-		const auto colonPos = outFmt.find_first_of(specifierSymbol, replacePos);
+		const size_t colonPos = outFmt.find_first_of(specifierSymbol, replacePos);
 
 		if (colonPos != npos)
 		{
-			const auto objIndexSize = colonPos - openerPos;
+			const auto objIndexSize = (colonPos - 1) - (openerPos + 1);
 			objIndexStr = outFmt.substr(openerPos, objIndexSize);
 
 			const auto startPos = colonPos + 1;

@@ -31,6 +31,11 @@ namespace klib::kString::stringify
 			return std::addressof(data.str);
 		}
 
+		USE_RESULT static decltype(auto) MakeStr(const ObjectWithoutToString& obj, StringWriter<Char_t>& specifier)
+		{
+			return obj.str;
+		}
+
 	private:
 		const ObjectWithoutToString& data;
 	};

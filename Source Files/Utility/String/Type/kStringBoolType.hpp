@@ -5,7 +5,7 @@
 #include "../kStringManipulation.hpp"
 #include <any>
 
-namespace klib::kString::type
+namespace klib::kString::impl
 {
 	constexpr bool IsBool(const StringReader<char>& type)
 	{
