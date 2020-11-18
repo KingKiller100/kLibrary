@@ -4,6 +4,7 @@
 #include "../../../Source Files/Utility/String/kToString.hpp"
 
 #include <sstream>
+#include <iomanip>
 
 namespace kTest::performance::util
 {
@@ -20,9 +21,124 @@ namespace kTest::performance::util
 
 	void ToStringSpeedTest::Test()
 	{
+		IntTest();
+		DoubleTest();
+		StringTest();
 		OstreamTest();
 		SprintfTest();
 	}
+
+	void ToStringSpeedTest::IntTest()
+	{
+		const std::vector<std::string_view> participants = { "klib::kString::ToString int", "std::stringstream int", "std::sprintf int" };
+		SetUpParticipants(participants);
+		
+		const int sint = -50;
+		
+		std::unique_ptr<char[]> buffer;
+		std::stringstream ss;
+
+		for (auto i = 0; i < maxIter; ++i)
+		{
+			{
+				START_TEST(participants[0]);
+				const auto output = kString::ToString("{0}", sint);
+			}
+
+			{
+				START_TEST(participants[1]);
+				ss << sint;
+			}
+
+			{
+				//START_TEST(participants[2]);
+				const auto length = _snprintf(nullptr, 0, "sint: %d"
+					, sint
+				);
+				buffer.reset(new char[length + 1]);
+				std::sprintf(buffer.get(), "sint: %d", sint);
+			}
+			
+			ss.clear();
+			buffer.release();
+		}
+	}
+
+	void ToStringSpeedTest::DoubleTest()
+	{
+		const std::vector<std::string_view> participants = { "klib::kString::ToString double", "std::stringstream double", "std::sprintf double" };
+		SetUpParticipants(participants);
+		
+		const auto f64 = 125.625;
+		
+		std::unique_ptr<char[]> buffer;
+		std::stringstream ss;
+
+		for (auto i = 0; i < maxIter; ++i)
+		{
+			{
+				START_TEST(participants[0]);
+				const auto output = kString::ToString("{0:3}", f64);
+			}
+
+			{
+				START_TEST(participants[1]);
+				
+				ss <<std::setprecision(3) << f64;
+			}
+
+			{
+				//START_TEST(participants[2]);
+				constexpr auto format = "f64: %.3f";
+				
+				const auto length = _snprintf(nullptr, 0, format
+					, f64
+				);
+				buffer.reset(new char[length + 1]);
+				std::sprintf(buffer.get(), format, f64);
+			}
+			
+			ss.clear();
+			buffer.release();
+		}
+	}
+
+	void ToStringSpeedTest::StringTest()
+	{
+		const std::vector<std::string_view> participants = { "klib::kString::ToString string", "std::stringstream string", "std::sprintf string" };
+		SetUpParticipants(participants);
+		
+		const auto str = "string";
+		
+		std::unique_ptr<char[]> buffer;
+		std::stringstream ss;
+
+		for (auto i = 0; i < maxIter; ++i)
+		{
+			{
+				START_TEST(participants[0]);
+				const auto output = kString::ToString("{0}", str);
+			}
+
+			{
+				START_TEST(participants[1]);
+				ss << str;
+			}
+
+			{
+				//START_TEST(participants[2]);
+				constexpr auto format = "string: %s";
+				
+				const auto length = _snprintf(nullptr, 0, format, str);
+				buffer.reset(new char[length + 1]);
+				std::sprintf(buffer.get(), format, str);
+			}
+			
+			ss.clear();
+			buffer.release();
+		}
+	}
+	
 
 	void ToStringSpeedTest::OstreamTest()
 	{

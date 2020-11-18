@@ -12,6 +12,9 @@ namespace kTest::performance::util
 		
 	protected:
 		void Test() override;
+		void IntTest();
+		void DoubleTest();
+		void StringTest();
 
 	private:
 		void OstreamTest();
