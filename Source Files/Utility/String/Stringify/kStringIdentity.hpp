@@ -14,7 +14,18 @@
 namespace klib::kString::stringify
 {
 	template<typename Char_t, typename T, typename Enabled_t = void>
-	class Identity { constexpr Identity() = delete; };
+	class Identity
+	{
+		constexpr Identity() = delete;
+
+		USE_RESULT static decltype(auto) MakeStr(const T& arg, StringWriter<Char_t>& specifier)
+		{
+			const auto msg = stringify::SprintfWrapper(
+				"Type \"%s\" is not recognised/supported by " __FUNCTION__
+				, typeid(T).name());
+			throw kDebug::FormatError(msg);
+		}
+	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	/// User made Custom types - Must have a function ToString that returns an object with a 
@@ -203,7 +214,7 @@ namespace klib::kString::stringify
 		{
 			if constexpr (std::is_floating_point_v<T>)
 				return  impl::HandleFloat<Char_t>(value, specifier);
-			else if (std::is_same_v<ONLY_TYPE(T), bool>)
+			else if constexpr (std::is_same_v<ONLY_TYPE(T), bool>)
 				return impl::HandleBool<Char_t>(value, specifier);
 			else
 				return impl::HandleInteger<Char_t>(value, specifier);

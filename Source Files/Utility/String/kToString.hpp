@@ -10,11 +10,6 @@
 #include "Stringify/kStringifyInteger.hpp"
 #include "Stringify/kStringifyPointer.hpp"
 
-#include "Type/kStringBoolType.hpp"
-#include "Type/kStringStringTypes.hpp"
-#include "Type/kStringUnsignedType.hpp"
-#include "Type/kStringFloatingPointType.hpp"
-#include "Type/kStringSimpleIntegerType.hpp"
 
 #include "../Debug/Exceptions/StringExceptions.hpp"
 
