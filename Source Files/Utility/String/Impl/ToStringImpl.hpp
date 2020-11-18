@@ -34,12 +34,12 @@ namespace klib::kString::impl
 			|| closerPos == npos)
 			return;
 
-		if (outFmt[openerPos + 1] == openerSymbol || // Escape
-			outFmt[openerPos + 1] == Char_t(' ') ||
-			outFmt[openerPos + 1] == Char_t('\t') ||
-			outFmt[openerPos + 1] == Char_t('\n') ||
-			outFmt[openerPos + 1] == Char_t('\r') ||
-			outFmt[openerPos + 1] == nullTerminator)
+		if (outFmt[openerPos + 1] == openerSymbol // Escape
+			|| outFmt[openerPos + 1] == Char_t(' ')
+			|| outFmt[openerPos + 1] == Char_t('\t')
+			|| outFmt[openerPos + 1] == Char_t('\n')
+			|| outFmt[openerPos + 1] == Char_t('\r')
+			|| outFmt[openerPos + 1] == nullTerminator)
 		{
 			ToStringImpl<Char_t, Ts...>(outFmt, openerPos + 2, argPack...);
 		}
