@@ -54,6 +54,11 @@ namespace klib::kString::stringify
 			return std::addressof(string);
 		}
 
+		USE_RESULT static constexpr decltype(auto) Type()
+		{
+			return typeid(T).name();
+		}
+
 	private:
 		const T& data;
 	};

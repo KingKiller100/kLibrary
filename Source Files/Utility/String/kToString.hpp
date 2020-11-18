@@ -27,58 +27,60 @@
 
 namespace klib {
 	namespace kString
-	{
-		template<typename CharType, size_t Size>
-		secret::helper::FormatMarkerQueue CreateIdentifiers(const std::basic_string<CharType>& fmt, std::array<std::any, Size>& elems)
-		{
-			using namespace secret::helper;
-
-			static constexpr auto openerSymbol = CharType('{');
-			static constexpr auto closerSymbol = CharType('}');
-			static constexpr auto specifierSymbol = CharType(':');
-			static constexpr auto nullTerminator = type_trait::s_NullTerminator<CharType>;
-			static constexpr auto npos = std::basic_string<CharType>::npos;
-
-			FormatMarkerQueue identifiers;
-			for (FormatMarker::PositionType openerPos = fmt.find_first_of(openerSymbol);
-				openerPos != npos;
-				openerPos = fmt.find_first_of(openerSymbol, openerPos + 1))
-			{
-				if (fmt[openerPos + 1] == openerSymbol ||
-					fmt[openerPos + 1] == CharType(' ') ||
-					fmt[openerPos + 1] == CharType('\t') ||
-					fmt[openerPos + 1] == CharType('\n') ||
-					fmt[openerPos + 1] == CharType('\r') ||
-					fmt[openerPos + 1] == nullTerminator)
-				{
-					openerPos += 2;
-					continue;
-				}
-
-				const auto closePos = fmt.find_first_of(closerSymbol, openerPos);
-				const auto digits = closePos - openerPos - 1;
-				const auto current = fmt.substr(openerPos + 1, digits);
-				std::string bracketContents = kString::Convert<char>(current);
-
-				const auto relativeColonPos = bracketContents.find_first_of(specifierSymbol);
-				const auto optionIndex = bracketContents.substr(0, relativeColonPos);
-				const auto idx = kString::StrTo<FormatMarker::IndexType>(optionIndex);
-				if (elems.size() <= idx)
-				{
-					const auto convertedFmt = kString::Convert<char>(fmt);
-					const auto errMsg = "Index given is larger than the number of objects given for string formatting\n"
-						"Please check your format again: " + convertedFmt + "\n" "Index: " + optionIndex;
-					throw std::out_of_range(errMsg);
-				}
-
-				const FormatMarker::NameType type = elems[idx].type().name();
-
-				identifiers.push_back(FormatMarker(idx, openerPos, type));
-			}
-			identifiers.shrink_to_fit();
-
-			return identifiers;
-		}
+	{		
+		// template<typename CharType, size_t Size, typename ...Ts>
+		// secret::helper::FormatMarkerQueue CreateIdentifiers(const std::basic_string<CharType>& fmt, secret::helper::FormatMarkerQueue& identifiers
+		// 	, size_t currentIndex = 0)
+		// {
+		// 	using namespace secret::helper;
+		//
+		// 	static constexpr auto openerSymbol = CharType('{');
+		// 	static constexpr auto closerSymbol = CharType('}');
+		// 	static constexpr auto specifierSymbol = CharType(':');
+		// 	static constexpr auto nullTerminator = type_trait::s_NullTerminator<CharType>;
+		// 	static constexpr auto npos = std::basic_string<CharType>::npos;
+		//
+		// 	FormatMarker::PositionType openerPos = fmt.find_first_of(openerSymbol, currentIndex);
+		//
+		// 	if (openerPos == npos)
+		// 		return identifiers;
+		// 	
+		// 	if (fmt[openerPos + 1] == openerSymbol ||
+		// 		fmt[openerPos + 1] == CharType(' ') ||
+		// 		fmt[openerPos + 1] == CharType('\t') ||
+		// 		fmt[openerPos + 1] == CharType('\n') ||
+		// 		fmt[openerPos + 1] == CharType('\r') ||
+		// 		fmt[openerPos + 1] == nullTerminator)
+		// 	{
+		// 		openerPos += 2;
+		// 		return CreateIdentifiers<CharType, Size, T, Ts...>(fmt, identifiers, currentIndex);
+		// 	}
+		//
+		// 	const auto closePos = fmt.find_first_of(closerSymbol, openerPos);
+		// 	const auto digits = closePos - openerPos - 1;
+		// 	const auto current = fmt.substr(openerPos + 1, digits);
+		// 	std::string bracketContents = kString::Convert<char>(current);
+		//
+		// 	const auto relativeColonPos = bracketContents.find_first_of(specifierSymbol);
+		// 	const auto optionIndex = bracketContents.substr(0, relativeColonPos);
+		// 	const auto idx = kString::StrTo<FormatMarker::IndexType>(optionIndex);
+		// 	const FormatMarker::NameType type = typeid(Ts).name();
+		//
+		// 	if (Size <= idx)
+		// 	{
+		// 		const auto convertedFmt = kString::Convert<char>(fmt);
+		// 		const auto errMsg = "Index given is larger than the number of objects given for string formatting\n"
+		// 			"Please check your format again: " + convertedFmt + "\n" "Index: " + optionIndex + "Type: " + type;
+		// 		throw kDebug::FormatError(errMsg);
+		// 	}
+		//
+		// 	identifiers.push_back(FormatMarker(idx, openerPos, type));
+		//
+		// 	if (fmt.find_first_of(openerSymbol, openerPos + 1) != npos)
+		// 		 CreateIdentifiers<CharType, Size, Ts...>(fmt, identifiers, currentIndex, args...);
+		//
+		// 	return identifiers;
+		// }
 
 		// Outputs a interpolated string with data given for all string types. NOTE: Best performance with char and wchar_t type strings
 		template<class CharType, typename T, typename ...Ts>
@@ -99,14 +101,17 @@ namespace klib {
 				return stringify::SprintfWrapper<CharType>(format, arg, argPack...);
 			}
 
-			std::array<std::any, std::variant_size_v<DataTypes> -1> elems = { stringify::Identity<CharType, T>(arg).GetPtr()
-				, stringify::Identity<CharType, Ts>(argPack).GetPtr()... };
+			/*std::array<void*, std::variant_size_v<DataTypes> -1> elems = { (void*)stringify::Identity<CharType, T>(arg).GetPtr()
+				, (void*)stringify::Identity<CharType, Ts>(argPack).GetPtr()... };*/
 
 			std::basic_string<CharType> fmt(format);
-			FormatMarkerQueue markers = CreateIdentifiers(ToWriter(format), elems);
+			//FormatMarkerQueue markers = CreateIdentifiers(ToWriter(format), elems);
 
 			std::basic_string<CharType> finalString;
-			size_t prevCloserIndex = 0;
+
+			Handler<CharType, T, Ts>(fmt, finalString, arg, argPack...);
+			
+			/*size_t prevCloserIndex = 0;
 			for (const auto& marker : markers)
 			{
 				const std::any& val = elems[marker.objIndex];
@@ -171,10 +176,10 @@ namespace klib {
 				finalString.append(currentSection);
 				prevCloserIndex = closerPos;
 				markers.pop_front();
-			}
+			}*/
 
-			if (fmt.size() - 1 >= prevCloserIndex)
-				finalString.append(fmt.substr(prevCloserIndex));
+			/*if (fmt.size() - 1 >= prevCloserIndex)
+				finalString.append(fmt.substr(prevCloserIndex));*/
 
 			return finalString;
 		}

@@ -10,14 +10,12 @@ namespace klib::kString::secret::helper
 	{
 		using IndexType = std::uint16_t;
 		using PositionType = size_t;
-		using NameType = std::string;
 		
 		IndexType objIndex;
 		PositionType position;
-		NameType type;
 
-		FormatMarker(IndexType objIndex, PositionType position, NameType type)
-			: objIndex(objIndex), position(position), type(type)
+		FormatMarker(IndexType objIndex, PositionType position)
+			: objIndex(objIndex), position(position)
 		{}
 	};
 
