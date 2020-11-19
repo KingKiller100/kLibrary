@@ -74,7 +74,7 @@ namespace klib::kString::impl
 	}
 
 	template<typename StringT>
-	decltype(auto) HandleStringAndInsertInOutput(const StringT& value, [[maybe_unused]] const StringWriter<typename StringT::value_type>& specifier)
+	const StringT& HandleStringAndInsertInOutput(const StringT& value, [[maybe_unused]] const StringWriter<typename StringT::value_type>& specifier)
 	{
 		return value;
 	}

@@ -116,9 +116,10 @@ namespace klib::kString::stringify
 			return std::addressof(data);
 		}
 
-		USE_RESULT static decltype(auto) MakeStr(const T& arg, StringWriter<Char_t>& specifier)
+		USE_RESULT static const typename T::value_type* MakeStr(const T& arg, StringWriter<Char_t>& specifier)
 		{
-			return impl::HandleStringAndInsertInOutput(arg, specifier);
+			const auto& str = impl::HandleStringAndInsertInOutput(arg, specifier);
+			return str.data();
 		}
 
 	private:

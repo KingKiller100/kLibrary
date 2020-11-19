@@ -24,7 +24,7 @@ namespace klib::kString::impl
 
 		size_t openerPos = outFmt.find_first_of(openerSymbol, textPos);
 		size_t closerPos = outFmt.find_first_of(closerSymbol, openerPos);
-		
+
 		if (openerPos == npos
 			|| closerPos == npos)
 			return;
@@ -39,6 +39,8 @@ namespace klib::kString::impl
 			ToStringImpl<Char_t, T, Ts...>(outFmt, openerPos + 2, arg, argPack...);
 		}
 
+		const size_t origOpenerPos = openerPos;
+
 		const auto infoSize = closerPos - openerPos;
 		StringWriter<Char_t> objIndexStr;
 		StringWriter<Char_t> specifier;
@@ -46,7 +48,8 @@ namespace klib::kString::impl
 		const auto replacePos = openerPos - textPos;
 		const size_t colonPos = outFmt.find_first_of(specifierSymbol, replacePos);
 
-		if (colonPos != npos)
+		if (openerPos < colonPos
+			&& closerPos > colonPos)
 		{
 			const auto objIndexSize = (colonPos - 1) - (openerPos + 1);
 			objIndexStr = outFmt.substr(openerPos, objIndexSize);
@@ -59,16 +62,25 @@ namespace klib::kString::impl
 		{
 			objIndexStr = outFmt.substr(openerPos + 1, infoSize - 1);
 		}
-		
+
 		const auto objIndex = StrTo<long long>(objIndexStr);
 
-		while (outFmt.find(openerSymbol + objIndexStr) != npos)
+		size_t spacesToSkip = 0;
+		bool skipSet = false;
+		while (openerPos != npos && closerPos != npos)
 		{
 			const auto replacement = Stringify<Char_t, T>(arg, specifier);
+			if (!skipSet)
+			{
+				spacesToSkip = GetSize(replacement);
+				skipSet = true;
+			}
 			outFmt.erase(openerPos, infoSize + 1);
 			outFmt.insert(openerPos, replacement);
+			openerPos = outFmt.find(openerSymbol + objIndexStr);
+			closerPos = outFmt.find_first_of(closerSymbol, openerPos);
 		}
 
-		ToStringImpl<Char_t, Ts...>(outFmt, closerPos + 1, argPack...);
+		ToStringImpl<Char_t, Ts...>(outFmt, origOpenerPos + spacesToSkip, argPack...);
 	}
 }

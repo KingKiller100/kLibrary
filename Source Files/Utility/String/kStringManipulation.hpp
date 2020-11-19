@@ -91,7 +91,7 @@ namespace klib
 			|| type_trait::Is_CharType_V<Stringish>
 			>>
 #endif
-		
+
 			constexpr bool Remove(StringType & str, const Stringish & search)
 		{
 			bool removed = false;
@@ -197,9 +197,9 @@ namespace klib
 #if MSVC_PLATFORM_TOOLSET >= 142
 				> requires type_trait::Is_String_t<StringType>
 #else
-				, typename = std::enable_if_t<type_trait::Is_StringType_V<StringType>>>
+				, typename = std::enable_if_t<type_trait::Is_StringType_V<StringType>> >
 #endif
-			
+
 				USE_RESULT constexpr bool Contains(const StringType& str, typename StringType::value_type search
 					, const size_t offset = 0)
 			{
@@ -215,7 +215,7 @@ namespace klib
 				&& type_trait::Is_StringType_V<StringB>
 				>>
 #endif
-			
+
 				USE_RESULT constexpr bool Contains(const StringA& str, const StringB& search
 					, const size_t offset = 0)
 			{
@@ -354,6 +354,35 @@ namespace klib
 					return defaultValue;
 				}
 			}
+
+			template<typename StringType
+#if MSVC_PLATFORM_TOOLSET >= 142
+				> requires type_trait::Is_String_t<StringType>
+#else
+				, typename = std::enable_if_t<type_trait::Is_StringType_V<StringType>> >
+#endif
+				USE_RESULT constexpr size_t GetSize(const StringType& str)
+			{
+				return str.size();
+			}
+
+			template<typename CharT
+#if MSVC_PLATFORM_TOOLSET >= 142
+				> requires type_trait::Is_Char_t<StringType>
+#else
+				, typename = std::enable_if_t<type_trait::Is_CharType_V<CharT>> >
+#endif
+				USE_RESULT constexpr size_t GetSize(const CharT* str)
+			{
+				size_t count = 0;
+				while ( *str != type_trait::s_NullTerminator<CharT> )
+				{
+					++str;
+					++count;
+				}
+				return count;
+			}
+
 
 	}
 #ifdef KLIB_SHORT_NAMESPACE

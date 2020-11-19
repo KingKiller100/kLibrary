@@ -55,7 +55,7 @@ namespace kTest
 		void InitializeAlPerformanceTests()
 		{
 			AddUtilityPerformanceTests();
-			AddMathsPerformanceTests();
+			//AddMathsPerformanceTests();
 		}
 	}
 

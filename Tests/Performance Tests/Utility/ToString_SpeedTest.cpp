@@ -21,14 +21,10 @@ namespace kTest::performance::util
 
 	void ToStringSpeedTest::Test()
 	{
-		auto i = std::make_unique<int>( 50 );
-
-		const auto res = kString::ToString<char>(i.get());
-		
+		OstreamTest();
 		IntTest();
 		DoubleTest();
 		StringTest();
-		OstreamTest();
 		SprintfTest();
 	}
 
@@ -88,7 +84,7 @@ namespace kTest::performance::util
 			{
 				START_TEST(participants[1]);
 				
-				ss <<std::setprecision(3) << f64;
+				ss << std::setprecision(3) << f64;
 			}
 
 			{
@@ -180,8 +176,8 @@ namespace kTest::performance::util
 
 			{
 				START_TEST(participants[1]);
-				ss << "string: " << string << " - string_view: " << string_view << " - double: " << f64 <<
-					" - float: " << f32 << " - ulong: " << ulong << " - slong: " << slong << " - uint: " << uint << " - sint: " << sint << " - boolean: " << boolean;
+				ss << "string: " << string << " - string_view: " << string_view << " - double: " << std::setprecision(5) << f64 <<
+					" - float: " << std::setprecision(5) << f32 << " - ulong: " << ulong << " - slong: " << slong << " - uint: " << uint << " - sint: " << sint << " - boolean: " << boolean;
 			}
 			ss.clear();
 		}

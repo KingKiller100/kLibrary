@@ -7,8 +7,9 @@ namespace klib::kString::impl
 {
 	// Integral but not character types
 	template<class Char_t, typename T>
-	decltype(auto) Stringify(T arg, StringWriter<Char_t>& specifier)
+	StringWriter<Char_t> Stringify(T arg, StringWriter<Char_t>& specifier)
 	{
-		return stringify::Identity<Char_t, T>::MakeStr(arg, specifier);
+		const auto str = stringify::Identity<Char_t, T>::MakeStr(arg, specifier);
+		return str;
 	}
 }
