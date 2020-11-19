@@ -149,8 +149,8 @@ namespace kTest::performance
 
 		const auto output = klib::kString::stringify::SprintfWrapper(R"(%s: 
 	%s is the fastest on average by %.3f%%
-	Fastest Instance: %s Time: %d%s %s
-	Slowest Instance: %s Time: %d%s %s
+	Fastest Instance: %s Time: %d%s (%s)
+	Slowest Instance: %s Time: %d%s (%s)
 
 )",
 subTestName,

@@ -15,9 +15,7 @@ namespace klib::kString::stringify
 	template<typename Char_t, typename T, typename Enabled_t = void>
 	class Identity
 	{
-		constexpr Identity() = delete;
-
-		USE_RESULT static decltype(auto) MakeStr(const T& arg, StringWriter<Char_t>& specifier)
+		static void CrashUnknownObject()
 		{
 			constexpr auto format =
 				"Type \"%s\" is not recognised/supported by " __FUNCTION__;
@@ -25,14 +23,27 @@ namespace klib::kString::stringify
 			const auto length = _snprintf(nullptr, 0, format
 				, typeid(T).name());
 
-			auto buf = std::make_unique<char[]>(length + 1);
+			const auto buf = std::make_unique<char[]>(length + 1);
 
 			std::sprintf(buf.get(), format
 				, typeid(T).name());
-			
+
 			const auto msg = std::string(buf.get(), buf.get() + length - 1);
-			
+
 			throw kDebug::FormatError(msg);
+		}
+		
+	public:
+		constexpr Identity() = delete;
+
+		USE_RESULT static decltype(auto) Get(const T& val) noexcept
+		{
+			CrashUnknownObject();
+		}
+
+		USE_RESULT static decltype(auto) MakeStr(const T& arg, StringWriter<Char_t>& specifier)
+		{
+			CrashUnknownObject();
 		}
 	};
 
@@ -60,35 +71,17 @@ namespace klib::kString::stringify
 	class Identity<Char_t, T, std::enable_if_t<type_trait::Is_CustomType_V<T>>>
 	{
 	public:
-		constexpr Identity(const T& obj)
-			: data(obj)
-		{}
-
-		USE_RESULT constexpr decltype(auto) Get() const
+		USE_RESULT static decltype(auto) Get(const T& val) noexcept
 		{
-			const std::basic_string<Char_t>& string = GetObjectString<Char_t>(data);
+			const std::basic_string<Char_t>& string = GetObjectString<Char_t>(val);
 			return string.data();
 		}
-
-		USE_RESULT constexpr decltype(auto) GetPtr() const
-		{
-			const std::basic_string<Char_t>& string = GetObjectString<Char_t>(data);
-			return std::addressof(string);
-		}
-
-		USE_RESULT static constexpr decltype(auto) Type()
-		{
-			return typeid(T).name();
-		}
-
-		USE_RESULT static decltype(auto) MakeStr(const T& arg, StringWriter<Char_t>& specifier)
+		
+		USE_RESULT static decltype(auto) MakeStr(const T& arg, UNUSED StringWriter<Char_t>& specifier)
 		{
 			const std::basic_string<Char_t>& string = GetObjectString<Char_t>(arg);
 			return string.data();
 		}
-
-	private:
-		const T& data;
 	};
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -102,28 +95,16 @@ namespace klib::kString::stringify
 		>>
 	{
 	public:
-		constexpr Identity(const T& str)
-			: data(str)
-		{}
-
-		USE_RESULT constexpr auto Get() const
+		USE_RESULT static decltype(auto) Get(const T& str) noexcept
 		{
-			return data.data();
-		}
-
-		USE_RESULT constexpr auto GetPtr() const
-		{
-			return std::addressof(data);
+			return str.data();
 		}
 
 		USE_RESULT static const typename T::value_type* MakeStr(const T& arg, StringWriter<Char_t>& specifier)
 		{
-			const auto& str = impl::HandleStringAndInsertInOutput(arg, specifier);
+			const auto& str = impl::HandleSTLString(arg, specifier);
 			return str.data();
 		}
-
-	private:
-		const T& data;
 	};
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,27 +119,15 @@ namespace klib::kString::stringify
 		>>
 	{
 	public:
-		constexpr Identity(const T& str)
-			: data(str)
-		{}
-
-		USE_RESULT constexpr auto Get() const
+		USE_RESULT static decltype(auto) Get(const T val) noexcept
 		{
-			return data;
-		}
-
-		USE_RESULT constexpr auto GetPtr() const
-		{
-			return std::addressof(data);
+			return val;
 		}
 
 		USE_RESULT static decltype(auto) MakeStr(const T arg, StringWriter<Char_t>& specifier)
 		{
 			return impl::HandleCharPointer(arg, specifier);
 		}
-
-	private:
-		const T& data;
 	};
 
 
@@ -173,27 +142,15 @@ namespace klib::kString::stringify
 		>>
 	{
 	public:
-		constexpr Identity(const T& str)
-			: data(str)
-		{}
-
-		USE_RESULT constexpr auto Get() const
+		USE_RESULT static decltype(auto) Get(T val) noexcept
 		{
-			return data;
-		}
-
-		USE_RESULT constexpr auto GetPtr() const
-		{
-			return reinterpret_cast<const void* const*>(std::addressof(data));
+			return val;
 		}
 
 		USE_RESULT static decltype(auto) MakeStr(T arg, StringWriter<Char_t>& specifier)
 		{
 			return impl::HandlePointer<Char_t>(arg, specifier);
 		}
-
-	private:
-		const T& data;
 	};
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -206,18 +163,9 @@ namespace klib::kString::stringify
 		>>
 	{
 	public:
-		constexpr Identity(const T& str)
-			: data(str)
-		{}
-
-		USE_RESULT constexpr decltype(auto) Get() const
+		USE_RESULT static decltype(auto) Get(T val) noexcept
 		{
-			return data;
-		}
-
-		USE_RESULT constexpr decltype(auto) GetPtr() const
-		{
-			return std::addressof(data);
+			return val;
 		}
 
 		USE_RESULT static decltype(auto) MakeStr(T value, StringWriter<Char_t>& specifier)

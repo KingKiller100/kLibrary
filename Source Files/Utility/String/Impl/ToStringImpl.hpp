@@ -9,7 +9,7 @@
 namespace klib::kString::impl
 {
 	template<class Char_t>
-	void ToStringImpl(const std::basic_string<Char_t>& fmt, size_t currentIndex)
+	void ToStringImpl(UNUSED const std::basic_string<Char_t>& fmt, UNUSED size_t currentIndex)
 	{}
 
 	template<class Char_t, typename T, typename ...Ts>

@@ -17,27 +17,15 @@ namespace klib::kString::stringify
 	class Identity<Char_t, ObjectWithoutToString>
 	{
 	public:
-		constexpr Identity(const ObjectWithoutToString& obj)
-			: data(obj)
-		{}
-
-		USE_RESULT constexpr decltype(auto) Get() const
+		USE_RESULT static decltype(auto) Get(const ObjectWithoutToString& val) noexcept
 		{
-			return data.str.data();
-		}
-
-		USE_RESULT constexpr decltype(auto) GetPtr() const
-		{
-			return std::addressof(data.str);
+			return val.str.data();
 		}
 
 		USE_RESULT static decltype(auto) MakeStr(const ObjectWithoutToString& obj, StringWriter<Char_t>& specifier)
 		{
 			return obj.str;
 		}
-
-	private:
-		const ObjectWithoutToString& data;
 	};
 }
 
@@ -72,7 +60,7 @@ namespace kTest::utility
 #ifdef __cpp_char8_t
 		{
 			const auto input = std::u8string();
-			const auto result = stringify::Identity<char8_t, decltype(input)>(input).Get();
+			const auto result = stringify::Identity<char8_t, decltype(input)>::Get(input);
 			const auto expected = std::is_same_v<decltype(result), const char8_t* const>;
 			VERIFY_COMPILE_TIME(expected);
 		}
@@ -80,29 +68,29 @@ namespace kTest::utility
 		
 		{
 			const auto input = "quarantine";
-			const auto result = stringify::Identity<char, decltype(input)>(input).Get();
+			const auto result = stringify::Identity<char, decltype(input)>::Get(input);
 			const auto expected = std::is_same_v<decltype(result), const char* const>;
 			VERIFY_COMPILE_TIME(expected);
 		}
 		
 		{
-			const auto input = "quarantine";
-			const auto result = stringify::Identity<char, decltype(input)>(input).GetPtr();
-			const auto expected = std::is_same_v<decltype(result), const char* const* const>;
+			const auto input = std::string_view("quarantine");
+			const auto result = stringify::Identity<char, decltype(input)>::Get(input);
+			const auto expected = std::is_same_v<decltype(result), const char* const>;
 			VERIFY_COMPILE_TIME(expected);
 		}
 		
 		{
 			const auto input = 5.6;
-			const auto result = stringify::Identity<char, decltype(input)>(input).GetPtr();
-			const auto expected = std::is_same_v<decltype(result), const double* const>;
-			VERIFY_COMPILE_TIME(expected);
-		}
-		
-		{
-			const auto input = 5.6;
-			const auto result = stringify::Identity<char, decltype(input)>(input).Get();
+			const auto result = stringify::Identity<char, decltype(input)>::Get(input);
 			const auto expected = std::is_same_v<decltype(result), const double>;
+			VERIFY_COMPILE_TIME(expected);
+		}
+		
+		{
+			const auto input = 5.6f;
+			const auto result = stringify::Identity<char, decltype(input)>::Get(input);
+			const auto expected = std::is_same_v<decltype(result), const float>;
 			VERIFY_COMPILE_TIME(expected);
 		}
 		

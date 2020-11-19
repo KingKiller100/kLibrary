@@ -44,13 +44,13 @@ namespace klib::kString::impl
 	}
 
 	template<typename CharT>
-	decltype(auto) HandleCharacter(const CharT value, [[maybe_unused]] const StringWriter<CharT>& specifier)
+	decltype(auto) HandleCharacter(const CharT value, UNUSED const StringWriter<CharT>& specifier)
 	{
 		return value;
 	}
 
 	template<typename CharT>
-	StringWriter<CharT> HandleCharPointer(const CharT* value, [[maybe_unused]] const StringWriter<CharT>& specifier)
+	StringWriter<CharT> HandleCharPointer(const CharT* value, UNUSED const StringWriter<CharT>& specifier)
 	{
 		return value;
 	}
@@ -74,7 +74,7 @@ namespace klib::kString::impl
 	}
 
 	template<typename StringT>
-	const StringT& HandleStringAndInsertInOutput(const StringT& value, [[maybe_unused]] const StringWriter<typename StringT::value_type>& specifier)
+	const StringT& HandleSTLString(const StringT& value, UNUSED const StringWriter<typename StringT::value_type>& specifier)
 	{
 		return value;
 	}
