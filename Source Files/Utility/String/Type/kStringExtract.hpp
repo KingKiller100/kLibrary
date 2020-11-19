@@ -56,7 +56,7 @@ namespace klib::kString::impl
 	}
 
 	template<typename CharT, typename T>
-	decltype(auto) HandlePointer(const T* ptr, [[maybe_unused]] const StringWriter<CharT>& specifier)
+	decltype(auto) HandlePointer(T* ptr, StringWriter<CharT>& specifier)
 	{
 		constexpr auto defaultPadding = sizeof(intptr_t) * 2;
 
@@ -67,18 +67,18 @@ namespace klib::kString::impl
 
 		StringWriter<CharT> address;
 		if (binaryMode)
-			address = StringIntegral<CharT>(asUint, padding);
+			address = StringIntegral<CharT, uintptr_t>(asUint, padding);
 		else
-			address = StringIntegralHex<CharT>(asUint, padding);
+			address = StringIntegralHex<CharT, uintptr_t>(asUint, padding);
 
 		return address;
 	}
 
-	template<typename CharT, typename T>
-	decltype(auto) HandlePointer(T* ptr, [[maybe_unused]] StringWriter<CharT>& specifier)
-	{
-		return HandlePointer<CharT, T>((const T*)ptr, specifier);
-	}
+	//template<typename CharT, typename T>
+	//decltype(auto) HandlePointer(T* ptr, StringWriter<CharT>& specifier)
+	//{
+	//	return HandlePointer<CharT, T>((const T*)ptr, specifier);
+	//}
 
 	template<typename StringT>
 	decltype(auto) HandleStringAndInsertInOutput(const StringT& value, [[maybe_unused]] const StringWriter<typename StringT::value_type>& specifier)

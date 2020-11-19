@@ -20,10 +20,11 @@ namespace klib::kString::impl
 		constexpr Char_t closerSymbol = Char_t('}');
 		constexpr Char_t specifierSymbol = Char_t(':');
 		constexpr Char_t nullTerminator = type_trait::s_NullTerminator<Char_t>;
-		constexpr size_t npos = std::basic_string_view<Char_t>::npos;
+		constexpr size_t npos = std::basic_string<Char_t>::npos;
 
 		size_t openerPos = outFmt.find_first_of(openerSymbol, textPos);
 		size_t closerPos = outFmt.find_first_of(closerSymbol, openerPos);
+		
 		if (openerPos == npos
 			|| closerPos == npos)
 			return;

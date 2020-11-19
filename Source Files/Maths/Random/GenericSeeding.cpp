@@ -11,11 +11,11 @@
 
 namespace kmaths::kRng
 {
-	namespace 
+	namespace
 	{
 		void LogBCryptError(const std::int64_t ret)
 		{
-		using namespace klib::kString;
+			using namespace klib::kString;
 			const auto binary =
 				stringify::StringIntegralHex<char>(ret, 8);
 			std::string error;
@@ -81,7 +81,7 @@ namespace kmaths::kRng
 			if (ret != 0)
 				LogBCryptError(ret);
 		}
-		
+
 		template<class Integral_t>
 		Integral_t GetBCryptSeed()
 		{
@@ -90,19 +90,19 @@ namespace kmaths::kRng
 			CloseBCryptHandle(algHandle);
 			return value;
 		}
-		
+
 		std::time_t SeedFromTime()
 		{
 			return std::time(nullptr);
 		}
 	}
-	
+
 	std::uint64_t U64Seed(GenericSeedingSource sourceType)
 	{
 		switch (sourceType) {
-		case GenericSeedingSource::TIME: 
+		case GenericSeedingSource::TIME:
 			return static_cast<std::uint64_t>(SeedFromTime());
-		case GenericSeedingSource::BCRYPT: 
+		case GenericSeedingSource::BCRYPT:
 			return GetBCryptSeed<std::uint64_t>();
 		default:
 			throw klib::kDebug::MathsError("Unknown seeding source type");
@@ -123,4 +123,4 @@ namespace kmaths::kRng
 		}
 	}
 }
-		
+

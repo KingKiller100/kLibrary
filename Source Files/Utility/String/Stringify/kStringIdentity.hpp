@@ -1,16 +1,14 @@
 ﻿#pragma once
 
+#include "../kStringTypes.hpp"
+#include "../Type/kStringExtract.hpp"
+
 #include "../../../HelperMacros.hpp"
 #include "../../../TypeTraits/StringTraits.hpp"
 #include "../../../TypeTraits/CustomTraits.hpp"
 
-#include "../kStringTypes.hpp"
-#include "../Stringify/kSprintf.hpp"
-
 #include <type_traits>
 #include <vector>
-
-#include "../Type/kStringExtract.hpp"
 
 namespace klib::kString::stringify
 {
@@ -21,9 +19,19 @@ namespace klib::kString::stringify
 
 		USE_RESULT static decltype(auto) MakeStr(const T& arg, StringWriter<Char_t>& specifier)
 		{
-			const auto msg = stringify::SprintfWrapper(
-				"Type \"%s\" is not recognised/supported by " __FUNCTION__
+			constexpr auto format =
+				"Type \"%s\" is not recognised/supported by " __FUNCTION__;
+
+			const auto length = _snprintf(nullptr, 0, format
 				, typeid(T).name());
+
+			auto buf = std::make_unique<char[]>(length + 1);
+
+			std::sprintf(buf.get(), format
+				, typeid(T).name());
+			
+			const auto msg = std::string(buf.get(), buf.get() + length - 1);
+			
 			throw kDebug::FormatError(msg);
 		}
 	};
@@ -180,7 +188,7 @@ namespace klib::kString::stringify
 
 		USE_RESULT static decltype(auto) MakeStr(T arg, StringWriter<Char_t>& specifier)
 		{
-			return impl::HandlePointer<Char_t>((void*)arg, specifier);
+			return impl::HandlePointer<Char_t, ONLY_TYPE(T)>(arg, specifier);
 		}
 
 	private:
