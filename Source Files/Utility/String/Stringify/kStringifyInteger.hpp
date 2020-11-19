@@ -92,7 +92,7 @@ namespace klib::kString::stringify
 	template<class CharType, typename Integral_t, typename = std::enable_if_t <
 		std::is_integral_v<Integral_t>
 		>>
-		USE_RESULT constexpr StringWriter<CharType> StringIntegralHex(Integral_t val, size_t minCharacters = s_NoSpecifier, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
+		USE_RESULT StringWriter<CharType> StringIntegralHex(Integral_t val, size_t minCharacters = s_NoSpecifier, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
 	{
 		constexpr auto& hexMap = s_GeneralHexMap<CharType>;
 

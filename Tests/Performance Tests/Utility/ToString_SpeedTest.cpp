@@ -21,6 +21,10 @@ namespace kTest::performance::util
 
 	void ToStringSpeedTest::Test()
 	{
+		auto i = std::make_unique<int>( 50 );
+
+		const auto res = kString::ToString<char>(i.get());
+		
 		IntTest();
 		DoubleTest();
 		StringTest();

@@ -63,22 +63,15 @@ namespace klib::kString::impl
 		const auto binaryMode = Remove(specifier, s_BinaryModeToken<CharT>);
 
 		const auto padding = StrTo<size_t>(specifier, defaultPadding);
-		const auto asUint = reinterpret_cast<uintptr_t>(ptr);
+		auto asUint = reinterpret_cast<uintptr_t>(ptr);
 
 		StringWriter<CharT> address;
 		if (binaryMode)
-			address = StringIntegral<CharT, uintptr_t>(asUint, padding);
+			address = stringify::StringIntegral<CharT>(asUint, padding);
 		else
-			address = StringIntegralHex<CharT, uintptr_t>(asUint, padding);
-
+			address = stringify::StringIntegralHex<CharT>(asUint, padding);
 		return address;
 	}
-
-	//template<typename CharT, typename T>
-	//decltype(auto) HandlePointer(T* ptr, StringWriter<CharT>& specifier)
-	//{
-	//	return HandlePointer<CharT, T>((const T*)ptr, specifier);
-	//}
 
 	template<typename StringT>
 	decltype(auto) HandleStringAndInsertInOutput(const StringT& value, [[maybe_unused]] const StringWriter<typename StringT::value_type>& specifier)

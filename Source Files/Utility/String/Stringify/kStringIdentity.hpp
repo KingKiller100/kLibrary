@@ -188,7 +188,7 @@ namespace klib::kString::stringify
 
 		USE_RESULT static decltype(auto) MakeStr(T arg, StringWriter<Char_t>& specifier)
 		{
-			return impl::HandlePointer<Char_t, ONLY_TYPE(T)>(arg, specifier);
+			return impl::HandlePointer<Char_t>(arg, specifier);
 		}
 
 	private:
