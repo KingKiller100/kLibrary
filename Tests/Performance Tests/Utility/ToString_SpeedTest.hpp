@@ -12,6 +12,7 @@ namespace kTest::performance::util
 		
 	protected:
 		void Test() override;
+		void kSprintfTest();
 		void IntTest();
 		void DoubleTest();
 		void StringTest();

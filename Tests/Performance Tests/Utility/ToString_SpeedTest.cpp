@@ -21,6 +21,7 @@ namespace kTest::performance::util
 
 	void ToStringSpeedTest::Test()
 	{
+		kSprintfTest();
 		OstreamTest();
 		IntTest();
 		DoubleTest();
@@ -28,6 +29,27 @@ namespace kTest::performance::util
 		SprintfTest();
 	}
 
+	void ToStringSpeedTest::kSprintfTest()
+	{
+		const std::vector<std::string_view> participants = { "klib::kString::ToString double", "klib::kString::SprintfWrapper" };
+		SetUpParticipants(participants);
+
+		constexpr auto num = 6.015625;
+
+		for (auto i = 0; i < maxIter; ++i)
+		{
+			{
+				START_TEST(participants[0]);
+				(void)kString::ToString("{0:3}", num);
+			}
+
+			{
+				START_TEST(participants[1]);
+				(void)kString::stringify::SprintfWrapper("%.3f", num);
+			}
+		}
+	}
+	
 	void ToStringSpeedTest::IntTest()
 	{
 		const std::vector<std::string_view> participants = { "klib::kString::ToString int", "std::stringstream int", "std::sprintf int" };
@@ -51,7 +73,7 @@ namespace kTest::performance::util
 			}
 
 			{
-				//START_TEST(participants[2]);
+				START_TEST(participants[2]);
 				const auto length = _snprintf(nullptr, 0, "sint: %d"
 					, sint
 				);
@@ -66,7 +88,8 @@ namespace kTest::performance::util
 
 	void ToStringSpeedTest::DoubleTest()
 	{
-		const std::vector<std::string_view> participants = { "klib::kString::ToString double", "std::stringstream double", "std::sprintf double" };
+		const std::vector<std::string_view> participants = { "klib::kString::ToString double", "std::stringstream double"
+			, "std::sprintf double", "klib::kString::stringify::SprintfWrapper" };
 		SetUpParticipants(participants);
 		
 		const auto f64 = 125.625;
@@ -78,7 +101,7 @@ namespace kTest::performance::util
 		{
 			{
 				START_TEST(participants[0]);
-				const auto output = kString::ToString("{0:3}", f64);
+				(void)kString::ToString("{0:3}", f64);
 			}
 
 			{
@@ -87,15 +110,21 @@ namespace kTest::performance::util
 				ss << std::setprecision(3) << f64;
 			}
 
-			{
-				//START_TEST(participants[2]);
 				constexpr auto format = "f64: %.3f";
+			{
+				START_TEST(participants[2]);
 				
 				const auto length = _snprintf(nullptr, 0, format
 					, f64
 				);
 				buffer.reset(new char[length + 1]);
 				std::sprintf(buffer.get(), format, f64);
+			}
+
+			{
+				START_TEST(participants[3]);
+				
+				(void)kString::stringify::SprintfWrapper(format, f64);
 			}
 			
 			ss.clear();
@@ -105,7 +134,8 @@ namespace kTest::performance::util
 
 	void ToStringSpeedTest::StringTest()
 	{
-		const std::vector<std::string_view> participants = { "klib::kString::ToString string", "std::stringstream string", "std::sprintf string" };
+		const std::vector<std::string_view> participants = { "klib::kString::ToString double", "std::stringstream double"
+			, "std::sprintf double", "klib::kString::stringify::SprintfWrapper" };
 		SetUpParticipants(participants);
 		
 		const auto str = "string";
@@ -125,13 +155,19 @@ namespace kTest::performance::util
 				ss << str;
 			}
 
-			{
-				//START_TEST(participants[2]);
 				constexpr auto format = "string: %s";
+			{
+				START_TEST(participants[2]);
 				
 				const auto length = _snprintf(nullptr, 0, format, str);
 				buffer.reset(new char[length + 1]);
 				std::sprintf(buffer.get(), format, str);
+			}
+
+			{
+				START_TEST(participants[3]);
+
+				(void)kString::stringify::SprintfWrapper(format, str);
 			}
 			
 			ss.clear();
@@ -186,7 +222,7 @@ namespace kTest::performance::util
 
 	void ToStringSpeedTest::SprintfTest()
 	{
-		const std::vector<std::string_view> participants = { "klib::kString::ToString", "std::sprintf" };
+		const std::vector<std::string_view> participants = { "klib::kString::ToString", "std::sprintf", "klib::kString::stringify::kSprintfWrapper" };
 		SetUpParticipants(participants);
 
 		const std::string string = "Input1";
@@ -246,6 +282,25 @@ namespace kTest::performance::util
 					, boolean ? "true" : "false"
 				);
 			}
+
+
+
+			{
+				START_TEST(participants[2]);
+
+				(void)kString::stringify::SprintfWrapper("string: %s - string_view: %s - double: %.5f"
+					" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s"
+					, string.data()
+					, string_view.data()
+					, f64
+					, f32
+					, ulong
+					, slong
+					, uint
+					, sint
+					, boolean ? "true" : "false");
+			}
+			
 			buffer.release();
 		}
 	}
