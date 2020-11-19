@@ -3,6 +3,8 @@
 
 #include "Tester.hpp"
 
+#include "SetUpTests.hpp"
+
 // Speed Testing
 #include "Performance/PerformanceTestManager.hpp"
 
@@ -16,8 +18,6 @@
 #include "../Utility/Misc/ConsoleColour.hpp"
 
 #include <iostream>
-
-#include "SetUpTests.hpp"
 
 
 #ifdef TESTING_ENABLED

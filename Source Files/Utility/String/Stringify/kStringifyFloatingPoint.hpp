@@ -1,16 +1,18 @@
 #pragma once
 
-#include <charconv>
-#include <stdexcept>
-#include <typeinfo>
 
 #if defined(_HAS_COMPLETE_CHARCONV) && (_HAS_COMPLETE_CHARCONV == FALSE)
 #	include "kSprintf.hpp"
+#else
+#	include <charconv>
 #endif
 
 #include "kStringifyHelper.hpp"
 #include "kStringifyInteger.hpp"
 #include "../kStringConverter.hpp"
+#include "../../Debug/Exceptions/StringExceptions.hpp"
+
+#include <typeinfo>
 
 namespace klib::kString::stringify
 {
@@ -44,7 +46,7 @@ namespace klib::kString::stringify
 			auto err = "Bad " __FUNCSIG__ " floating point cast: " + type + " - " + n;
 			err += "\n";
 			err += "Error - " + ptr;
-			throw std::runtime_error(err);
+			throw kDebug::FormatError(err);
 		}
 
 		const StringWriter<CharType> str(kString::Convert<ONLY_TYPE(CharType)>(buff));

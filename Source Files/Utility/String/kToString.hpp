@@ -98,85 +98,8 @@ namespace klib {
 				return stringify::SprintfWrapper<CharType>(format, arg, argPack...);
 			}
 
-			/*std::array<void*, std::variant_size_v<DataTypes> -1> elems = { (void*)stringify::Identity<CharType, T>(arg).GetPtr()
-				, (void*)stringify::Identity<CharType, Ts>(argPack).GetPtr()... };*/
-
-			//FormatMarkerQueue markers = CreateIdentifiers(ToWriter(format), elems);
-
 			std::basic_string<CharType> finalString(format);
-
 			impl::ToStringImpl<CharType, T, Ts...>(finalString, 0, arg, argPack...);
-			
-			/*size_t prevCloserIndex = 0;
-			for (const auto& marker : markers)
-			{
-				const std::any& val = elems[marker.objIndex];
-				const auto& type = marker.type;
-				const auto closerPos = fmt.find_first_of(closerSymbol, prevCloserIndex) + 1;
-				const auto infoSize = closerPos - prevCloserIndex;
-				auto currentSection = fmt.substr(prevCloserIndex, infoSize);
-				const auto replacePos = marker.position - prevCloserIndex;
-				const auto colonPos = currentSection.find(specifierSymbol, replacePos);
-
-				std::basic_string<CharType> specifier;
-				if (colonPos != npos)
-				{
-					const auto startPos = colonPos + 1;
-					const auto count = (currentSection.size() - 1) - startPos;
-					specifier = currentSection.substr(startPos, count);
-				}
-
-				currentSection.erase(replacePos);
-
-				if (Count(type, '*') > 1)
-				{
-					if (Contains(type, "char"))
-					{
-						const auto data = std::any_cast<const CharType* const*>(val);
-						currentSection.append(*data);
-					}
-					else
-					{
-						const auto data = std::any_cast<const void* const*>(val);
-						currentSection.append(stringify::StringifyPointer<CharType>(*data, specifier));
-					}
-				}
-				else if (type::IsSTLString(type))
-				{
-					type::HandleStringType<CharType>(currentSection, type, val, specifier);
-				}
-				else if (type::IsUnsigned(type))
-				{
-					type::HandleUnsignedType<CharType>(currentSection, type, val, specifier);
-				}
-				else if (type::IsFloatingPoint(type))
-				{
-					type::HandleFloatingPointType<CharType>(currentSection, type, val, specifier);
-				}
-				else if (type::IsSimpleInteger(type))
-				{
-					type::HandleSimpleIntegerType<CharType>(currentSection, type, val, specifier);
-				}
-				else if (type::IsBool(type))
-				{
-					type::HandleBoolType<CharType>(currentSection, type, val, specifier);
-				}
-				else
-				{
-					const auto msg = stringify::SprintfWrapper(
-						"Type \"%s\" is not recognised/supported by " __FUNCTION__
-						, type);
-					throw kDebug::FormatError(msg);
-				}
-
-				finalString.append(currentSection);
-				prevCloserIndex = closerPos;
-				markers.pop_front();
-			}*/
-
-			/*if (fmt.size() - 1 >= prevCloserIndex)
-				finalString.append(fmt.substr(prevCloserIndex));*/
-
 			return finalString;
 		}
 

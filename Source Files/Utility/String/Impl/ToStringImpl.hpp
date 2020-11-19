@@ -1,18 +1,16 @@
 #pragma once
 
-#include <string>
 
 #include "Stringify.hpp"
-
-#include "../../../TypeTraits/StringTraits.hpp"
 #include "../kStringManipulation.hpp"
+#include "../../../TypeTraits/StringTraits.hpp"
+#include <string>
 
 namespace klib::kString::impl
 {
 	template<class Char_t>
 	void ToStringImpl(const std::basic_string<Char_t>& fmt, size_t currentIndex)
 	{}
-
 
 	template<class Char_t, typename T, typename ...Ts>
 	void ToStringImpl(std::basic_string<Char_t>& outFmt, size_t textPos, T arg, Ts ...argPack)

@@ -5,6 +5,7 @@
 #include "../../../TypeTraits/CustomTraits.hpp"
 
 #include "../kStringTypes.hpp"
+#include "../Stringify/kSprintf.hpp"
 
 #include <type_traits>
 #include <vector>

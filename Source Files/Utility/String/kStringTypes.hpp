@@ -1,8 +1,10 @@
 ﻿#pragma once
 
 #include "../../HelperMacros.hpp"
+#include "../../TypeTraits/StringTraits.hpp"
 
 #include <string>
+
 
 namespace klib
 {

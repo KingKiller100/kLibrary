@@ -1,8 +1,6 @@
 ﻿#include "pch.hpp"
 #include "StringExceptions.hpp"
 
-#include <string>
-
 namespace klib::kDebug
 {
 	StringError::StringError(const std::string_view& msg)
