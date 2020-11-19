@@ -2,7 +2,7 @@
 
 #include "../HelperMacros.hpp"
 
-#include "../Utility/String/kToString.hpp"
+#include "../Utility/String/Stringify/kSprintf.hpp"
 
 #include "../TypeTraits/Constexpr.hpp"
 

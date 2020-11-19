@@ -14,8 +14,6 @@
 #ifdef TESTING_ENABLED
 namespace kTest::performance
 {
-	namespace fs = std::filesystem;
-	
 	PerformanceTestManager::PerformanceTestManager(const Token&)
 		: Tester("Performance Tests")
 	{}
@@ -25,6 +23,8 @@ namespace kTest::performance
 
 	void PerformanceTestManager::Initialize()
 	{
+		namespace fs = std::filesystem;
+
 		path = fs::current_path();
 		path += "\\Speed Results\\";
 		const auto isMade = fs::create_directory(path);
@@ -112,7 +112,7 @@ namespace kTest::performance
 		std::ofstream file(fullPath, std::ios::out | std::ios::app);
 		file << results;
 		file.close();
-		
+
 		results.clear();
 	}
 

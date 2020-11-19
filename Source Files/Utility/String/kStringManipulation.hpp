@@ -107,6 +107,34 @@ namespace klib
 			return removed;
 		}
 
+		template<typename StringType
+#if MSVC_PLATFORM_TOOLSET >= 142
+				> requires type_trait::Is_String_t<StringType>
+#else
+			, typename = std::enable_if_t<type_trait::Is_StringType_V<StringType>> >
+#endif
+			USE_RESULT constexpr size_t GetSize(const StringType& str)
+		{
+			return str.size();
+		}
+
+		template<typename CharT
+#if MSVC_PLATFORM_TOOLSET >= 142
+				> requires type_trait::Is_Char_t<StringType>
+#else
+			, typename = std::enable_if_t<type_trait::Is_CharType_V<CharT>> >
+#endif
+			USE_RESULT constexpr size_t GetSize(const CharT* str)
+		{
+			size_t count = 0;
+			while (*str != type_trait::s_NullTerminator<CharT>)
+			{
+				++str;
+				++count;
+			}
+			return count;
+		}
+
 		template<class CharT = char>
 		USE_RESULT constexpr std::vector<StringWriter<CharT>> Split(const StringWriter<CharT>& str, const StringReader<CharT>& tokens,
 			const PreserveToken preserveToken = PreserveToken::NO, PreserveEmpty preserveEmpty = PreserveEmpty::NO)
@@ -252,6 +280,67 @@ namespace klib
 				return count;
 			}
 
+			template<class Integer_t, class Char_t, class = std::enable_if_t<
+				type_trait::Is_CharType_V<Char_t>
+				>>
+				USE_RESULT constexpr Integer_t CStrTo(const Char_t* const str)
+			{
+				static_assert(std::is_integral_v<Integer_t>, __FUNCTION__ " can only be used with integer types "
+					"(char, int, long, unsigned short, etc..");
+			
+				const auto CrashFunc = [](const std::string& errMsg) { throw kDebug::StringError(errMsg); };
+				const auto MaxDigitsFunc = []()
+				{
+
+					auto maxNum = std::numeric_limits<Integer_t>::max();
+					size_t count = 0;
+					do {
+						++count;
+						maxNum /= 10;
+					} while (maxNum);
+					return count;
+				};
+
+				if (str == nullptr
+					|| str[0] == type_trait::s_NullTerminator<Char_t>)
+					return static_cast<Integer_t>(0);
+
+				const auto isNeg = std::is_signed_v<Integer_t>
+					&& str[0] == Char_t('-');
+
+				Integer_t result = 0;
+				auto currentPos = isNeg ? 1 : 0;
+				size_t size = GetSize(str);
+				auto magnitude = static_cast<size_t>(std::pow(10, size - 1));
+
+				if (size > MaxDigitsFunc())
+				{
+					const std::string type = typeid(Integer_t).name();
+					const auto msg = "String contains more digits than largest number of type: "
+						+ type;
+					CrashFunc(msg);
+				}
+
+				while (str[currentPos] != type_trait::s_NullTerminator<Char_t>)
+				{
+					if (Char_t('0') > str[currentPos]
+						|| Char_t('9') < str[currentPos])
+						CrashFunc("String must only contain digits");
+
+					const auto digit = static_cast<size_t>(str[currentPos] - Char_t('0'));
+					const auto asInt = digit * magnitude;
+
+					result += static_cast<Integer_t>(asInt);
+					magnitude /= 10;
+					++currentPos;
+				}
+
+				if (isNeg)
+					result *= -1;
+
+				return result;
+			}
+
 			// Converts strings containing text for an integer value into the integer type with that value 
 			template<class Integer_t, typename StringT
 				, typename = std::enable_if_t<
@@ -265,59 +354,16 @@ namespace klib
 				using CharType = typename StringT::value_type;
 
 				const auto CrashFunc = [](const std::string& errMsg) { throw kDebug::StringError(errMsg); };
-				const auto MaxDigitsFunc = []()
-				{
-					auto maxNum = std::numeric_limits<Integer_t>::max();
-					size_t count = 0;
-					do {
-						++count;
-						maxNum /= 10;
-					} while (maxNum);
-					return count;
-				};
-
 
 				Remove(string, ' ');
 
 				if (string.empty())
-					static_cast<Integer_t>(0);
+					return static_cast<Integer_t>(0);
 
 				if (Contains(string, CharType('.')))
 					CrashFunc("string must contain only one integer number");
 
-				const auto isNeg = std::is_signed_v<Integer_t>
-					&& string[0] == CharType('-');
-
-				if (isNeg)
-					string.erase(string.begin(), string.begin() + 1);
-
-				Integer_t result = 0;
-				size_t size = string.size();
-				auto magnitude = static_cast<size_t>(std::pow(10, size - 1));
-
-				if (size > MaxDigitsFunc())
-				{
-					const std::string type = typeid(result).name();
-					const auto msg = "String contains more digits than largest number of type: "
-						+ type;
-					CrashFunc(msg);
-				}
-
-				for (const auto& digitChr : string)
-				{
-					if (CharType('0') > digitChr
-						|| CharType('9') < digitChr)
-						CrashFunc("String must only contain digits");
-
-					const auto digit = static_cast<size_t>(digitChr - CharType('0'));
-					const auto asInt = digit * magnitude;
-
-					result += static_cast<Integer_t>(asInt);
-					magnitude /= 10;
-				}
-
-				if (isNeg)
-					result *= -1;
+				const auto result = CStrTo<Integer_t>(string.data());
 
 				return result;
 			}
@@ -355,38 +401,9 @@ namespace klib
 				}
 			}
 
-			template<typename StringType
-#if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_String_t<StringType>
-#else
-				, typename = std::enable_if_t<type_trait::Is_StringType_V<StringType>> >
-#endif
-				USE_RESULT constexpr size_t GetSize(const StringType& str)
-			{
-				return str.size();
-			}
-
-			template<typename CharT
-#if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_Char_t<StringType>
-#else
-				, typename = std::enable_if_t<type_trait::Is_CharType_V<CharT>> >
-#endif
-				USE_RESULT constexpr size_t GetSize(const CharT* str)
-			{
-				size_t count = 0;
-				while ( *str != type_trait::s_NullTerminator<CharT> )
-				{
-					++str;
-					++count;
-				}
-				return count;
-			}
-
-
 	}
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kString;
 #endif
-}
+	}
 
