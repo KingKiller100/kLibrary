@@ -64,7 +64,9 @@ namespace klib
 				USE_RESULT constexpr Rep_t GetStartTime() noexcept(std::is_arithmetic_v<Rep_t>)
 			{
 				using UnitsDuration_t = typename Units2::Duration_t;
-				return std::chrono::time_point_cast<UnitsDuration_t>(startTimePoint).time_since_epoch().count();
+				return static_cast<Rep_t>(
+					std::chrono::time_point_cast<UnitsDuration_t>(startTimePoint).time_since_epoch().count()
+					);
 			}
 
 			template<typename Units2 = Units_t, typename = std::enable_if_t<
@@ -74,7 +76,9 @@ namespace klib
 			{
 				using UnitsDuration_t = typename Units2::Duration_t;
 				const auto currentTimePoint = Clock_t::Now();
-				return std::chrono::time_point_cast<UnitsDuration_t>(currentTimePoint).time_since_epoch().count();
+				return static_cast<Rep_t>(
+					std::chrono::time_point_cast<UnitsDuration_t>(currentTimePoint).time_since_epoch().count()
+					);
 			}
 
 		protected:
@@ -86,14 +90,14 @@ namespace klib
 			 *		Desired time units (if left blank, the initialized time unit type is used
 			 * \param now
 			 *		Time point now
-			 * \param prev 
+			 * \param prev
 			 *		Time point before
 			 * \return
 			 *		Time in the desired form, represented as your RepresentationType
 			 */
 			template<typename Units2>
-				USE_RESULT constexpr Rep_t ConvertToUsableValue(const TimePoint_t& now
-					, const TimePoint_t& prev) const noexcept(std::is_arithmetic_v<Rep_t>)
+			USE_RESULT constexpr Rep_t ConvertToUsableValue(const TimePoint_t& now
+				, const TimePoint_t& prev) const noexcept(std::is_arithmetic_v<Rep_t>)
 			{
 				using UnitsDuration_t = typename Units2::Duration_t;
 
@@ -129,4 +133,4 @@ namespace klib
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kStopwatch;
 #endif
-}
+	}

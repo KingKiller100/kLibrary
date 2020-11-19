@@ -25,7 +25,7 @@ namespace kTest::performance
 		}
 		catch (...)
 		{
-			const auto output = klib::kString::ToString("{0} seems to have triggered an exception!\n", name);
+			const auto output = klib::kString::stringify::SprintfWrapper("%s seems to have triggered an exception!\n", name);
 			PerformanceTestManager::Get().CollectResult(output);
 			return;
 		}
@@ -80,8 +80,8 @@ namespace kTest::performance
 			const auto& subTestName = data.first;
 			auto& internalData = data.second;
 
-			Accolade fastest = { name, std::numeric_limits<float>::max() };
-			Accolade slowest = { name, std::numeric_limits<float>::min() };
+			Accolade fastest = { name, std::numeric_limits<int64_t>::max() };
+			Accolade slowest = { name, std::numeric_limits<int64_t>::min() };
 
 			for (const auto& res : profilerResults)
 			{
@@ -139,23 +139,31 @@ namespace kTest::performance
 		, const float percentageDifference, const Accolade& fastest, const Accolade& slowest) const noexcept
 	{
 		using namespace klib;
+		using namespace klib::kStopwatch;
 
 		const auto& fastestName = fastest.name;
 		const auto& slowestName = slowest.name;
 
-		const auto output = klib::kString::ToString(R"(%s: 
-	%s is the fastest on average by %.3f%%
-	Fastest Instance: %s Time: %dms (milliseconds)
-	Slowest Instance: %s Time: %dms (milliseconds)
+		const auto unitsLong = units::GetUnitsStr<units::Millis>(units::UnitStrLength::LONG);
+		const auto unitsShort = units::GetUnitsStr<units::Millis>(units::UnitStrLength::SHORT);
 
-)", 
-			subTestName.data(),
-			result.data(), 
-			percentageDifference,
-			fastestName.data(), 
-			fastest.time,
-			slowestName.data(),
-			slowest.time);
+		const auto output = klib::kString::stringify::SprintfWrapper(R"(%s: 
+	%s is the fastest on average by %.3f%%
+	Fastest Instance: %s Time: %d%s %s
+	Slowest Instance: %s Time: %d%s %s
+
+)",
+subTestName,
+result,
+percentageDifference,
+fastestName,
+fastest.time,
+unitsShort,
+unitsLong,
+slowestName,
+slowest.time,
+unitsShort,
+unitsLong);
 
 		PerformanceTestManager::Get().CollectResult(output);
 	}
