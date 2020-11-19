@@ -1,18 +1,18 @@
 #pragma once
 
+#	include <charconv>
 
 #if defined(_HAS_COMPLETE_CHARCONV) && (_HAS_COMPLETE_CHARCONV == FALSE)
 #	include "kSprintf.hpp"
 #else
-#	include <charconv>
+#	include "../../Debug/Exceptions/StringExceptions.hpp"
+#	include <typeinfo>
 #endif
 
 #include "kStringifyHelper.hpp"
 #include "kStringifyInteger.hpp"
 #include "../kStringConverter.hpp"
-#include "../../Debug/Exceptions/StringExceptions.hpp"
 
-#include <typeinfo>
 
 namespace klib::kString::stringify
 {

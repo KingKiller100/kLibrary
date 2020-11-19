@@ -36,7 +36,7 @@ namespace klib::kString::impl
 			|| outFmt[openerPos + 1] == Char_t('\r')
 			|| outFmt[openerPos + 1] == nullTerminator)
 		{
-			ToStringImpl<Char_t, Ts...>(outFmt, openerPos + 2, argPack...);
+			ToStringImpl<Char_t, T, Ts...>(outFmt, openerPos + 2, arg, argPack...);
 		}
 
 		const auto infoSize = closerPos - openerPos;
