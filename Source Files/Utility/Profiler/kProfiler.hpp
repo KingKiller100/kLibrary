@@ -21,14 +21,14 @@ namespace klib::kProfiler
 	class Profiler
 	{
 	private:
-		using TimeUnitsT = TimeUnits;
-		using FuncT = ProfilerFunc;
-		using RepT = Representation;
+		using TimeUnits_t = TimeUnits;
+		using Func_t = ProfilerFunc;
+		using Rep_t = Representation;
 		
 	public:
-		Profiler(const std::string_view& name, FuncT&& cb)
+		Profiler(const std::string_view& name, Func_t&& cb)
 			: result({ name.data(), 0, 0, 0 }), isRunning(true),
-			callback(std::forward<FuncT>(cb)),
+			callback(std::forward<Func_t>(cb)),
 			timer("Profiler")
 		{}
 
@@ -41,8 +41,8 @@ namespace klib::kProfiler
 	private:
 		void Stop()
 		{
-			result.end = timer.template Now<TimeUnitsT>();
-			result.start = timer.template GetStartTime<TimeUnitsT>();
+			result.end = timer.template Now<TimeUnits_t>();
+			result.start = timer.template GetStartTime<TimeUnits_t>();
 			result.threadID = static_cast<uint32_t>(
 				std::hash<std::thread::id>{}
 			( std::this_thread::get_id() ));
@@ -53,10 +53,10 @@ namespace klib::kProfiler
 		}
 
 	private:
-		ProfilerResult<RepT> result;
+		ProfilerResult<Rep_t> result;
 		bool isRunning;
-		FuncT callback;
+		Func_t callback;
 
-		kStopwatch::Stopwatch<RepT> timer;
+		kStopwatch::Stopwatch<Rep_t> timer;
 	};
 }

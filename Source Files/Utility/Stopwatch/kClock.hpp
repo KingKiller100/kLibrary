@@ -119,13 +119,7 @@ namespace klib::kStopwatch
 
 		USE_RESULT static constexpr decltype(auto) Now() noexcept
 		{
-			// get current time
-			const long long _Freq = _Query_perf_frequency();	// doesn't change after system boot
-			const long long _Ctr = _Query_perf_counter();
-			static_assert(Period_t::num == 1, "This assumes period::num == 1.");
-			const long long _Whole = (_Ctr / _Freq) * Period_t::den;
-			const long long _Part = (_Ctr % _Freq) * Period_t::den / _Freq;
-			return (TimePoint_t(Duration_t(_Whole + _Part)));
+			return HighAccuracyClock<Units_t>::Now();
 		}
 	};
 
