@@ -13,14 +13,14 @@ namespace kTest::performance
 {
 	struct AverageTime
 	{
-		long long time = 0;
+		float time = 0;
 		int count = 0;
 	};
 
 	struct Accolade
 	{
 		std::string name;
-		long long time;
+		float time;
 	};
 
 	class PerformanceTestBase
@@ -47,16 +47,16 @@ namespace kTest::performance
 
 	protected:
 		std::string name;
-		std::vector<klib::kProfiler::ProfilerResult> profilerResults;
+		std::vector<klib::kProfiler::ProfilerResult<float>> profilerResults;
 		std::map<const std::string, std::map<std::string, AverageTime>> results;
 	};
 }
 
-#define REPORT_BACK_FUNC [&](const klib::kProfiler::ProfilerResult& res)\
+#define REPORT_BACK_FUNC [&](const klib::kProfiler::ProfilerResult<float>& res)\
 		{\
 			profilerResults.push_back(res);\
 		}\
 
-#define START_TEST(profilee) auto profiler##__LINE__ = klib::kProfiler::Profiler<klib::kStopwatch::units::Micros> (profilee, REPORT_BACK_FUNC);
+#define START_TEST(profilee) auto profiler##__LINE__ = klib::kProfiler::Profiler<klib::kStopwatch::units::Millis, float> (profilee, REPORT_BACK_FUNC);
 
 #endif

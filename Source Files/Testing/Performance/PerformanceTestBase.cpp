@@ -80,8 +80,8 @@ namespace kTest::performance
 			const auto& subTestName = data.first;
 			auto& internalData = data.second;
 
-			Accolade fastest = { name, std::numeric_limits<long long>::max() };
-			Accolade slowest = { name, std::numeric_limits<long long>::min() };
+			Accolade fastest = { name, std::numeric_limits<float>::max() };
+			Accolade slowest = { name, std::numeric_limits<float>::min() };
 
 			for (const auto& res : profilerResults)
 			{
@@ -145,8 +145,8 @@ namespace kTest::performance
 
 		const auto output = klib::kString::ToString(R"(%s: 
 	%s is the fastest on average by %.3f%%
-	Fastest Instance: %s Time: %dus (microseconds)
-	Slowest Instance: %s Time: %dus (microseconds)
+	Fastest Instance: %s Time: %dms (milliseconds)
+	Slowest Instance: %s Time: %dms (milliseconds)
 
 )", 
 			subTestName.data(),
