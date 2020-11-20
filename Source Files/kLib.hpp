@@ -33,7 +33,7 @@
 
 // String
 #include "Utility/String/kStringConverter.hpp"
-#include "Utility/String/kStringManipulation.hpp"
+#include "Utility/String/kStringTricks.hpp"
 #include "Utility/String/kStringTypes.hpp"
 #include "Utility/String/kToString.hpp"
 #include "Utility/String/kStringView.hpp"

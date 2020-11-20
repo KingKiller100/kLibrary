@@ -3,7 +3,7 @@
 #include "kFileSystemTypes.hpp"
 
 #include "../String/kStringConverter.hpp"
-#include"../String/kStringManipulation.hpp"
+#include"../String/kStringTricks.hpp"
 
 #include "../../HelperMacros.hpp"
 

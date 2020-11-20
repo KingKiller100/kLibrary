@@ -2,7 +2,7 @@
 #include "kCalendar.hpp"
 
 #include "../String/kToString.hpp"
-#include "../String/kStringManipulation.hpp"
+#include "../String/kStringTricks.hpp"
 
 #include <unordered_map>
 

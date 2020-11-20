@@ -1,7 +1,7 @@
 ﻿#include "pch.hpp"
 #include "StringManipulation_Test.hpp"
 
-#include "../../Source Files/Utility/String/kStringManipulation.hpp"
+#include "../../Source Files/Utility/String/kStringTricks.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility

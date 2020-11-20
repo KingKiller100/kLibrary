@@ -120,7 +120,7 @@ namespace klib
 
 		template<typename CharT
 #if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_Char_t<StringType>
+				> requires type_trait::Is_Char_t<CharT>
 #else
 			, typename = std::enable_if_t<type_trait::Is_CharType_V<CharT>> >
 #endif

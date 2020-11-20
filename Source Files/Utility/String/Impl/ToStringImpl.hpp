@@ -2,7 +2,7 @@
 
 
 #include "Stringify.hpp"
-#include "../kStringManipulation.hpp"
+#include "../kStringTricks.hpp"
 #include "../../../TypeTraits/StringTraits.hpp"
 #include <string>
 
