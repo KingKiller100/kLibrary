@@ -10,11 +10,11 @@
 namespace klib::kString::stringify
 {
 	template<class Char_t>
-	constexpr void ToStringImpl(UNUSED const std::basic_string<Char_t>& fmt, UNUSED size_t currentIndex)
+	constexpr void ToStringImpl(UNUSED const std::basic_string<Char_t>& fmt, const size_t argIndex, UNUSED size_t currentIndex)
 	{}
 
 	template<class Char_t, typename T, typename ...Ts>
-	constexpr void ToStringImpl(std::basic_string<Char_t>& outFmt, size_t textPos, T arg, Ts ...argPack)
+	constexpr void ToStringImpl(std::basic_string<Char_t>& outFmt, size_t textPos, const size_t argIndex, T arg, Ts ...argPack)
 	{
 		constexpr auto npos = type_trait::s_NoPos<std::basic_string<Char_t>>;
 
@@ -29,7 +29,7 @@ namespace klib::kString::stringify
 			|| IsWhiteSpace(outFmt[openerPos + 1])
 			|| outFmt[openerPos + 1] == type_trait::s_NullTerminator<Char_t>)
 		{
-			ToStringImpl<Char_t, T, Ts...>(outFmt, openerPos + 2, arg, argPack...);
+			ToStringImpl<Char_t, T, Ts...>(outFmt, openerPos + 2, argIndex, arg, argPack...);
 		}
 
 		const size_t origOpenerPos = openerPos;
@@ -56,7 +56,17 @@ namespace klib::kString::stringify
 			objIndexStr = outFmt.substr(openerPos + 1, infoSize - 1);
 		}
 
-		const auto objIndex = StrTo<long long>(objIndexStr);
+		const auto scopeArgIndex = StrTo<long long>(objIndexStr);
+
+		/// If the object is meant to be emplaced at a different point of the string
+		/// We neeed to call this funciton again looking for the correct part of the
+		/// string to add this same object.
+		if (scopeArgIndex != argIndex)
+		{
+			ToStringImpl<Char_t, Ts...>(outFmt, textPos, argIndex + 1, argPack...);
+			ToStringImpl<Char_t, T, Ts...>(outFmt, textPos, argIndex, arg, argPack...);
+			return;
+		}
 
 		size_t spacesToSkip = 0;
 		bool skipSet = false;
@@ -74,6 +84,6 @@ namespace klib::kString::stringify
 			closerPos = outFmt.find_first_of(format::s_CloserSymbol<Char_t>, openerPos);
 		}
 
-		ToStringImpl<Char_t, Ts...>(outFmt, origOpenerPos + spacesToSkip, argPack...);
+		ToStringImpl<Char_t, Ts...>(outFmt, origOpenerPos + spacesToSkip, argIndex + 1, argPack...);
 	}
 }

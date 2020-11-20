@@ -15,7 +15,7 @@
 namespace klib::kString::stringify
 {
 	template<typename CharType, typename T, typename ...Ts>
-	USE_RESULT constexpr std::basic_string<CharType> SprintfWrapper(const std::basic_string_view<CharType>& format, T arg1, Ts ...argPack)
+	USE_RESULT constexpr std::basic_string<CharType> SprintfWrapper(const CharType* format, T arg1, Ts ...argPack)
 	{
 		using SignedSize_t = std::make_signed_t<size_t>;
 		
@@ -26,24 +26,24 @@ namespace klib::kString::stringify
 
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 		{
-			length = _snprintf(nullptr, 0, format.data()
+			length = _snprintf(nullptr, 0, format
 				, stringify::Identity<CharType, decltype(arg1)>::Get(arg1)
 				, stringify::Identity<CharType, decltype(argPack)>::Get(argPack)...
 			) + 1;
 			if (length <= npos) throw std::runtime_error("Error during char type \"" __FUNCSIG__ "\" formatting: string returned length <= 0");
 			buffer = new CharType[length]();
-			sprintf_s(buffer, length, format.data()
+			sprintf_s(buffer, length, format
 				, stringify::Identity<CharType, decltype(arg1)>::Get(arg1)
 				, stringify::Identity<CharType, decltype(argPack)>::Get(argPack)...);
 		}
 		else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
 		{
-			length = _snwprintf(nullptr, 0, format.data()
+			length = _snwprintf(nullptr, 0, format
 				, stringify::Identity<CharType, decltype(arg1)>::Get(arg1)
 				, stringify::Identity<CharType, decltype(argPack)>::Get(argPack)...) + 1;
 			if (length <= npos) throw std::runtime_error("Error during wchar_t type \"" __FUNCSIG__ "\" formatting: string returned length <= 0");
 			buffer = new CharType[length]();
-			swprintf_s(buffer, length, format.data()
+			swprintf_s(buffer, length, format
 				, stringify::Identity<CharType, decltype(arg1)>::Get(arg1)
 				, stringify::Identity<CharType, decltype(argPack)>::Get(argPack)...);
 		}
@@ -62,17 +62,15 @@ namespace klib::kString::stringify
 	}
 
 	template<typename CharType, typename T, typename ...Ts>
-	USE_RESULT constexpr std::basic_string<CharType> SprintfWrapper(const CharType* format, const T& arg, const Ts& ...argPack)
+	USE_RESULT constexpr std::basic_string<CharType> SprintfWrapper(const std::basic_string_view<CharType>& format, const T& arg, const Ts& ...argPack)
 	{
-		const std::basic_string_view<CharType> fmt(format);
-		return SprintfWrapper<CharType>(fmt, arg, argPack...);
+		return SprintfWrapper<CharType>(format.data(), arg, argPack...);
 	}
 
 	template<typename CharType, typename T, typename ...Ts>
 	USE_RESULT constexpr std::basic_string<CharType> SprintfWrapper(const std::basic_string<CharType>& format, const T& arg, const Ts& ...argPack)
 	{
-		const std::basic_string_view<CharType> fmt(format);
-		return SprintfWrapper<CharType>(fmt, arg, argPack...);
+		return SprintfWrapper<CharType>(format.data(), arg, argPack...);
 	}
 	
 }

@@ -18,7 +18,6 @@ namespace klib {
 		template<class CharT, typename T, typename ...Ts>
 		USE_RESULT constexpr std::basic_string<CharT> ToString(const CharT* format, T arg, Ts ...argPack)
 		{
-
 			std::basic_string<CharT> finalString(format);
 			
 			if (Contains(finalString, format::s_PrintfSymbol<CharT>))
@@ -26,7 +25,7 @@ namespace klib {
 				return stringify::SprintfWrapper<CharT>(format, arg, argPack...);
 			}
 
-			stringify::ToStringImpl<CharT, T, Ts...>(finalString, 0, arg, argPack...);
+			stringify::ToStringImpl<CharT, T, Ts...>(finalString, 0, 0, arg, argPack...);
 			return finalString;
 		}
 
@@ -52,7 +51,7 @@ namespace klib {
 				format.push_back(format::s_CloserSymbol<CharT>);
 			}
 
-			const auto output = ToString(format, arg, argPack...);
+			const auto output = ToString(format.data(), arg, argPack...);
 			return output;
 		}
 	}

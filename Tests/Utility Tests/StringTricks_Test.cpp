@@ -419,11 +419,29 @@ namespace kTest::utility
 		{
 			constexpr char* str = nullptr;
 			const auto result = IsWhiteSpaceOrNull(str);
-			VERIFY(result == true);
+			VERIFY(result == false);
 		}
 		
 		{
 			constexpr char str[] = "   ";
+			const auto result = IsWhiteSpaceOrNull(str);
+			VERIFY(result == true);
+		}
+		
+		{
+			constexpr char16_t str[] = u"  f";
+			const auto result = IsWhiteSpaceOrNull(str);
+			VERIFY(result == false);
+		}
+		
+		{
+			constexpr std::u8string_view str = u8"f  ";
+			const auto result = IsWhiteSpaceOrNull(str);
+			VERIFY(result == false);
+		}
+		
+		{
+			const std::string str = "";
 			const auto result = IsWhiteSpaceOrNull(str);
 			VERIFY(result == true);
 		}

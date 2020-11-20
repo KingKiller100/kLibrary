@@ -21,7 +21,7 @@
 #include "../../Tests/Utility Tests/StringView_Test.hpp"
 #include "../../Tests/Utility Tests/StringConverter_Test.hpp"
 #include "../../Tests/Utility Tests/StringTricks_Test.hpp"
-#include "../../Tests/Utility Tests/FormatToString_Test.hpp"
+#include "../../Tests/Utility Tests/ToString_Test.hpp"
 
 // Templates
 #include "../../Tests/Templates Tests/BytesStorage_Test.hpp"
