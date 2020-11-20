@@ -5,50 +5,10 @@
 #include <string>
 #include <type_traits>
 
+#include "CharacterTraits.hpp"
+
 namespace klib::type_trait
-{
-	template<typename T>
-	struct Is_CharTypeBase : std::false_type
-	{};
-
-	template<>
-	struct Is_CharTypeBase<char> : std::true_type
-	{};
-
-	template<>
-	struct Is_CharTypeBase<unsigned char> : std::true_type
-	{};
-
-	template<>
-	struct Is_CharTypeBase<signed char> : std::true_type
-	{};
-
-	template<>
-	struct Is_CharTypeBase<wchar_t> : std::true_type
-	{};
-
-	template<>
-	struct Is_CharTypeBase<char16_t> : std::true_type
-	{};
-
-	template<>
-	struct Is_CharTypeBase<char32_t> : std::true_type
-	{};
-
-#ifdef __cpp_char8_t
-	template<>
-	struct Is_CharTypeBase<char8_t> : std::true_type
-	{};
-#endif
-
-	template<typename T>
-	struct Is_CharType : Is_CharTypeBase<std::remove_cv_t<T>>
-	{};
-
-	// Determines whether type is a character type
-	template<typename T>
-	constexpr bool Is_CharType_V = Is_CharType<T>::value;
-
+{	
 	template<typename T>
 	struct Is_StringTypeBase : std::bool_constant<
 		Is_Specialization_V< T, std::basic_string>
@@ -58,25 +18,35 @@ namespace klib::type_trait
 
 	// Determines whether type is an STL string class type
 	template<typename T>
-	struct Is_StringType : Is_StringTypeBase<std::remove_cv_t<T>>
-	{};
+	struct Is_StringType : Is_StringTypeBase<std::remove_cv_t<T>> {};
 
 	// Determines whether type is an STL string class type
 	template<typename T>
 	constexpr bool Is_StringType_V = Is_StringType<T>::value;
 
+	template<typename T>
+	struct Is_CStringBase : std::bool_constant<
+		(std::is_pointer_v<T> && Is_CharType_V<ONLY_TYPE(T)>)
+	>
+	{};
+
+	// Determines whether type is an C character* type
+	template<typename T>
+	struct Is_CString : Is_CharTypeBase<std::decay_t<T>> {};
+
+	// Determines whether type is an C character* type
+	template<typename T>
+	constexpr bool Is_CString_V = Is_CString<T>::value;
 
 #if MSVC_PLATFORM_TOOLSET > 141
 	template<typename T>
-	concept Is_Char_t = Is_CharType_V<T> == true;
-
-	template<typename T>
 	concept Is_String_t = Is_StringType_V<T> == true;
+	
+	template<typename T>
+	concept Is_CString_t = Is_CString_V<T> == true;
 #endif
 
-	template<typename CharType, typename = std::enable_if_t<Is_CharType_V<CharType>>>
-	constexpr auto s_NullTerminator = CharType();
 
 	template<class StringT, class = std::enable_if_t<Is_StringType_V<StringT>>>
-	constexpr auto npos = StringT::npos;
+	constexpr auto s_NoPos = StringT::npos;
 }

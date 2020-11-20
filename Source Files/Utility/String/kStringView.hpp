@@ -284,7 +284,7 @@ namespace klib
 				return Template_String_View(string + offset, amount);
 			}
 
-			constexpr Size FirstInstanceOf(const CharType item, const Size offset = 0, Size searchLimit = (std::numeric_limits<Size>::max)())
+			constexpr Size FirstIndexOf(const CharType item, const Size offset = 0, Size searchLimit = (std::numeric_limits<Size>::max)())
 			{
 				CheckWithinLength(offset,
 					"Offset is greater than the length of string");
@@ -306,46 +306,45 @@ namespace klib
 				return npos;
 			}
 
-			constexpr Size FirstInstanceOf(Const_Ptr str, const Size offset = 0)
+			constexpr Size FirstIndexOf(Const_Ptr search, const Size offset = 0)
 			{
 				CheckWithinLength(offset,
 					"Offset is greater than the length of string");
 
-				auto pos = FirstInstanceOf(str[0], offset);
-				auto strLength = GetStrLength(str);
+				auto pos = FirstIndexOf(search[0], offset);
+				auto strLength = GetStrLength(search);
 
 				if (pos == npos)
 					return npos;
 
 				auto viewStr = string + pos;
-				Size idx(0);
+				Size searchIdx(0);
 
 				while (*viewStr != null_terminater)
 				{
-					if (*viewStr == str[idx])
+					if (*viewStr == search[searchIdx])
 					{
 						++viewStr;
 						++pos;
-						++idx;
+						++searchIdx;
+						continue;
 					}
 
-					if (str[idx] == null_terminater)
+					if (search[searchIdx] == null_terminater)
 						return (pos - strLength);
-					else
-						continue;
+					
 
-
-					idx = 0;
-					pos = FirstInstanceOf(str[0], pos);
+					searchIdx = 0;
+					pos = FirstIndexOf(search[0], pos);
 					viewStr = string + pos;
 				}
 
 				return npos;
 			}
 
-			constexpr Size FirstInstanceOf(const Template_String_View& other, const Size offset = 0)
+			constexpr Size FirstIndexOf(const Template_String_View& other, const Size offset = 0)
 			{
-				return FirstInstanceOf(other.string, offset);
+				return FirstIndexOf(other.string, offset);
 			}
 
 			constexpr Size FirstInstanceOfNot(const CharType item, const Size offset = 0)
@@ -390,7 +389,7 @@ namespace klib
 				return npos;
 			}
 
-			constexpr Size LastInstanceOf(const CharType item, const Size offset = 0)
+			constexpr Size LastIndexOf(const CharType item, const Size offset = 0)
 			{
 				CheckWithinLength(offset,
 					"Offset greater than length of this string");
@@ -425,11 +424,11 @@ namespace klib
 				return npos;
 			}
 
-			constexpr Size LastInstanceOf(Const_Ptr str, const Size offset = 0) noexcept
+			constexpr Size LastIndexOf(Const_Ptr str, const Size offset = 0) noexcept
 			{
 				CheckWithinLength(offset, "Offset greater than length of this string");
 
-				auto pos = LastInstanceOf(str[0], offset);
+				auto pos = LastIndexOf(str[0], offset);
 				auto strLength = GetStrLength(str);
 
 				if (pos == npos)
@@ -452,7 +451,7 @@ namespace klib
 						return (pos - strLength);
 
 					strIdx = 0;
-					pos = LastInstanceOf(str[0], pos);
+					pos = LastIndexOf(str[0], pos);
 					viewStr = string + length - pos;
 				}
 
@@ -500,22 +499,22 @@ namespace klib
 
 			USE_RESULT constexpr Size Find(const CharType item, Size offset) const
 			{
-				return FirstInstanceOf(item, offset);
+				return FirstIndexOf(item, offset);
 			}
 
 			USE_RESULT constexpr Size Find(Const_Ptr str, Size offset) const
 			{
-				return FirstInstanceOf(str, offset);
+				return FirstIndexOf(str, offset);
 			}
 
 			USE_RESULT constexpr Size rFind(const CharType item, Size offset) const
 			{
-				return LastInstanceOf(item, offset);
+				return LastIndexOf(item, offset);
 			}
 
 			USE_RESULT constexpr Size rFind(Const_Ptr str, Size offset) const
 			{
-				return LastInstanceOf(str, offset);
+				return LastIndexOf(str, offset);
 			}
 
 

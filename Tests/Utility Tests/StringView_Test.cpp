@@ -44,13 +44,13 @@ namespace kTest::utility
 		s.RemoveSuffix(1);
 		VERIFY(s.Length() == 7);
 
-		const auto rPos = s.FirstInstanceOf('r');
+		const auto rPos = s.FirstIndexOf('r');
 		VERIFY(rPos != StringView::npos && rPos == 0);
 
-		const auto ngPos = s.FirstInstanceOf("ng", 2);
+		const auto ngPos = s.FirstIndexOf("ng", 2);
 		VERIFY(ngPos != StringView::npos && ngPos == 6);
 		
-		const auto badGPos = s.FirstInstanceOf('g', 2, 3);
+		const auto badGPos = s.FirstIndexOf('g', 2, 3);
 		VERIFY(badGPos == StringView::npos);
 		
 		const auto iPos = s.FirstInstanceOfNot('i', 2);
@@ -59,7 +59,7 @@ namespace kTest::utility
 		const auto rBlankSPos = s.FirstInstanceOfNot("r S");
 		VERIFY(rBlankSPos == 3);
 
-		const auto Pos3 = s4.LastInstanceOf(L'6');
+		const auto Pos3 = s4.LastIndexOf(L'6');
 		VERIFY(Pos3 == 11);
 
 		const auto BadrPos = s4.LastInstanceOfNot(L'r', 2);

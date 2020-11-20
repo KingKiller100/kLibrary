@@ -12,4 +12,14 @@ namespace klib::type_trait
 
 	template <class _Type, template <class...> class _Template>
 	struct Is_Specialization : std::bool_constant<Is_Specialization_V<_Type, _Template>> {};
+
+
+	// VARIABLE TEMPLATE _Is_any_of_v
+	template <class T, class... Ts>
+	_INLINE_VAR constexpr bool Is_It_V = // true if and only if T is in Ts
+		std::disjunction_v<std::is_same<T, Ts>...>;
+
+	template <class T, class... Ts>
+	struct Is_It : std::bool_constant<Is_It_V<T, Ts...>> {};
+	
 }

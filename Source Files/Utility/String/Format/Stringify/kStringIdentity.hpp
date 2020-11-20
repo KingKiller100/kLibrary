@@ -14,6 +14,9 @@
 
 namespace klib::kString::stringify
 {
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	/// Primary template for unknown types - Crashes system if chosen
+	/////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename Char_t, typename T, typename Enabled_t = void>
 	class Identity
 	{
@@ -115,9 +118,8 @@ namespace klib::kString::stringify
 	template<typename Char_t, typename T>
 	class Identity<Char_t, T, std::enable_if_t<
 		type_trait::Is_CharType_V<Char_t>
-		&& type_trait::Is_CharType_V<ONLY_TYPE(T)>
+		&& type_trait::Is_CString_V<T>
 		&& std::is_same_v<Char_t, ONLY_TYPE(T)>
-		&& std::is_pointer_v<T>
 		>>
 	{
 	public:

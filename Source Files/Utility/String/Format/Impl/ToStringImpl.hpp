@@ -16,7 +16,7 @@ namespace klib::kString::stringify
 	template<class Char_t, typename T, typename ...Ts>
 	constexpr void ToStringImpl(std::basic_string<Char_t>& outFmt, size_t textPos, T arg, Ts ...argPack)
 	{
-		constexpr auto npos = type_trait::npos<std::basic_string<Char_t>>;
+		constexpr auto npos = type_trait::s_NoPos<std::basic_string<Char_t>>;
 		
 		size_t openerPos = outFmt.find_first_of(format::openerSymbol<Char_t>, textPos);
 		size_t closerPos = outFmt.find_first_of(format::closerSymbol<Char_t>, openerPos);
