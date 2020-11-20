@@ -48,7 +48,7 @@ namespace klib::type_trait
 	// Determines whether type is a character type
 	template<typename T>
 	constexpr bool Is_CharType_V = Is_CharType<T>::value;
-	
+
 	template<typename T>
 	struct Is_StringTypeBase : std::bool_constant<
 		Is_Specialization_V< T, std::basic_string>
@@ -57,23 +57,26 @@ namespace klib::type_trait
 	{};
 
 	// Determines whether type is an STL string class type
-	template<typename T> 
+	template<typename T>
 	struct Is_StringType : Is_StringTypeBase<std::remove_cv_t<T>>
 	{};
-	
+
 	// Determines whether type is an STL string class type
 	template<typename T>
 	constexpr bool Is_StringType_V = Is_StringType<T>::value;
-	
+
 
 #if MSVC_PLATFORM_TOOLSET > 141
 	template<typename T>
 	concept Is_Char_t = Is_CharType_V<T> == true;
-	
+
 	template<typename T>
 	concept Is_String_t = Is_StringType_V<T> == true;
 #endif
 
 	template<typename CharType, typename = std::enable_if_t<Is_CharType_V<CharType>>>
 	constexpr auto s_NullTerminator = CharType();
+
+	template<class StringT, class = std::enable_if_t<Is_StringType_V<StringT>>>
+	constexpr auto npos = StringT::npos;
 }

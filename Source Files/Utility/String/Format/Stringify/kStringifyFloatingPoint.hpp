@@ -3,15 +3,15 @@
 #	include <charconv>
 
 #if defined(_HAS_COMPLETE_CHARCONV) && (_HAS_COMPLETE_CHARCONV == FALSE)
-#	include "kSprintf.hpp"
+#	include "../kSprintf.hpp"
 #else
-#	include "../../Debug/Exceptions/StringExceptions.hpp"
+#	include "../../../Debug/Exceptions/StringExceptions.hpp"
 #	include <typeinfo>
 #endif
 
 #include "kStringifyHelper.hpp"
 #include "kStringifyInteger.hpp"
-#include "../kStringConverter.hpp"
+#include "../../kStringConverter.hpp"
 
 
 namespace klib::kString::stringify
@@ -28,8 +28,7 @@ namespace klib::kString::stringify
 #if defined(_HAS_COMPLETE_CHARCONV) && (_HAS_COMPLETE_CHARCONV == FALSE)
 		const std::string format = "%." + StringIntegral<char>(precision - 1, 1) + "f";
 		const auto temp = stringify::SprintfWrapper(format, val);
-		const auto conv = kString::Convert<CharType>(temp);
-		const StringWriter<CharType> str(conv);
+		const auto str = kString::Convert<CharType>(temp);
 #else
 
 		constexpr auto maxsize = std::numeric_limits<T>::max_exponent10 + 1;

@@ -1,6 +1,7 @@
 ﻿#pragma once
-#include "../kStringTypes.hpp"
-#include "../../../TypeTraits/StringTraits.hpp"
+
+#include "../../../../TypeTraits/StringTraits.hpp"
+#include "../../../Debug/Exceptions/StringExceptions.hpp"
 
 namespace klib::kString::stringify
 {
@@ -10,21 +11,21 @@ namespace klib::kString::stringify
 		>
 	kString::StringWriter<CharType> StringBool(const T val)
 	{
-		std::basic_string<CharType> booleanResult;
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
-			booleanResult = val ? "true" : "false";
+			return val ? "true" : "false";
 		else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
-			booleanResult = val ? L"true" : L"false";
+			return val ? L"true" : L"false";
 		else if _CONSTEXPR_IF(std::is_same_v<CharType, char16_t>)
-			booleanResult = val ? u"true" : u"false";
+			return val ? u"true" : u"false";
 		else if _CONSTEXPR_IF(std::is_same_v<CharType, char32_t>)
-			booleanResult = val ? U"true" : U"false";
+			return val ? U"true" : U"false";
 #ifdef __cpp_char8_t
 		else if _CONSTEXPR_IF(std::is_same_v<CharType, char8_t>)
-			booleanResult = val ? u8"true" : u8"false";
+			return  val ? u8"true" : u8"false";
 #endif
 
-		return booleanResult;
+		const std::string type = typeid(T).name();
+		throw kDebug::FormatError("Cannot stringify bool to unknown char type: " + type);
 	}
 	
 }

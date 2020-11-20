@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kClock.hpp"
+#include "Clock/kClock.hpp"
 
 #include "../../HelperMacros.hpp"
 #include "../../TypeTraits/TemplateTraits.hpp"

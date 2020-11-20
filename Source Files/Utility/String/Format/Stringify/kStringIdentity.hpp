@@ -1,14 +1,16 @@
 ﻿#pragma once
 
-#include "../kStringTypes.hpp"
-#include "../Type/kStringExtract.hpp"
+#include "../../kStringTypes.hpp"
+#include "kStringExtract.hpp"
 
-#include "../../../HelperMacros.hpp"
-#include "../../../TypeTraits/StringTraits.hpp"
-#include "../../../TypeTraits/CustomTraits.hpp"
+#include "../../../../HelperMacros.hpp"
+#include "../../../../TypeTraits/StringTraits.hpp"
+#include "../../../../TypeTraits/CustomTraits.hpp"
+#include "../../../Debug/Exceptions/StringExceptions.hpp"
 
 #include <type_traits>
 #include <vector>
+
 
 namespace klib::kString::stringify
 {
@@ -16,7 +18,7 @@ namespace klib::kString::stringify
 	class Identity
 	{
 		static void CrashUnknownObject()
-		{
+		{ // File cannot include kSprintf otherwise a circular dependency occurs
 			constexpr auto format =
 				"Type \"%s\" is not recognised/supported by " __FUNCTION__;
 
@@ -102,7 +104,7 @@ namespace klib::kString::stringify
 
 		USE_RESULT static const typename T::value_type* MakeStr(const T& arg, StringWriter<Char_t>& specifier)
 		{
-			const auto& str = impl::HandleSTLString(arg, specifier);
+			const auto& str = stringify::HandleSTLString(arg, specifier);
 			return str.data();
 		}
 	};
@@ -126,7 +128,7 @@ namespace klib::kString::stringify
 
 		USE_RESULT static decltype(auto) MakeStr(const T arg, StringWriter<Char_t>& specifier)
 		{
-			return impl::HandleCharPointer(arg, specifier);
+			return stringify::HandleCharPointer(arg, specifier);
 		}
 	};
 
@@ -149,7 +151,7 @@ namespace klib::kString::stringify
 
 		USE_RESULT static decltype(auto) MakeStr(T arg, StringWriter<Char_t>& specifier)
 		{
-			return impl::HandlePointer<Char_t>(arg, specifier);
+			return stringify::HandlePointer<Char_t>(arg, specifier);
 		}
 	};
 
@@ -171,11 +173,11 @@ namespace klib::kString::stringify
 		USE_RESULT static decltype(auto) MakeStr(T value, StringWriter<Char_t>& specifier)
 		{
 			if constexpr (std::is_floating_point_v<T>)
-				return  impl::HandleFloat<Char_t>(value, specifier);
+				return  stringify::HandleFloat<Char_t>(value, specifier);
 			else if constexpr (std::is_same_v<ONLY_TYPE(T), bool>)
-				return impl::HandleBool<Char_t>(value, specifier);
+				return stringify::HandleBool<Char_t>(value, specifier);
 			else
-				return impl::HandleInteger<Char_t>(value, specifier);
+				return stringify::HandleInteger<Char_t>(value, specifier);
 		}
 
 	private:

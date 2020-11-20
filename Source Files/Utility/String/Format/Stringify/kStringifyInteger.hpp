@@ -1,7 +1,7 @@
 #pragma once
 
 #include "kStringifyHelper.hpp"
-#include "../kStringTricks.hpp"
+#include "../../kStringTricks.hpp"
 
 #include <cstddef>
 

@@ -2,11 +2,13 @@
 
 
 #include "Stringify.hpp"
-#include "../kStringTricks.hpp"
-#include "../../../TypeTraits/StringTraits.hpp"
+#include "../FormatSymbols.hpp"
+#include "../../kStringTricks.hpp"
+#include "../../../../TypeTraits/StringTraits.hpp"
 #include <string>
 
-namespace klib::kString::impl
+
+namespace klib::kString::stringify
 {
 	template<class Char_t>
 	void ToStringImpl(UNUSED const std::basic_string<Char_t>& fmt, UNUSED size_t currentIndex)
@@ -15,26 +17,21 @@ namespace klib::kString::impl
 	template<class Char_t, typename T, typename ...Ts>
 	void ToStringImpl(std::basic_string<Char_t>& outFmt, size_t textPos, T arg, Ts ...argPack)
 	{
-		constexpr Char_t printfSymbol = Char_t('%');
-		constexpr Char_t openerSymbol = Char_t('{');
-		constexpr Char_t closerSymbol = Char_t('}');
-		constexpr Char_t specifierSymbol = Char_t(':');
-		constexpr Char_t nullTerminator = type_trait::s_NullTerminator<Char_t>;
-		constexpr size_t npos = std::basic_string<Char_t>::npos;
-
-		size_t openerPos = outFmt.find_first_of(openerSymbol, textPos);
-		size_t closerPos = outFmt.find_first_of(closerSymbol, openerPos);
+		constexpr auto npos = type_trait::npos<std::basic_string<Char_t>>;
+		
+		size_t openerPos = outFmt.find_first_of(format::openerSymbol<Char_t>, textPos);
+		size_t closerPos = outFmt.find_first_of(format::closerSymbol<Char_t>, openerPos);
 
 		if (openerPos == npos
 			|| closerPos == npos)
 			return;
 
-		if (outFmt[openerPos + 1] == openerSymbol // Escape
+		if (outFmt[openerPos + 1] == format::openerSymbol<Char_t> // Escape
 			|| outFmt[openerPos + 1] == Char_t(' ')
 			|| outFmt[openerPos + 1] == Char_t('\t')
 			|| outFmt[openerPos + 1] == Char_t('\n')
 			|| outFmt[openerPos + 1] == Char_t('\r')
-			|| outFmt[openerPos + 1] == nullTerminator)
+			|| outFmt[openerPos + 1] == type_trait::s_NullTerminator<Char_t>)
 		{
 			ToStringImpl<Char_t, T, Ts...>(outFmt, openerPos + 2, arg, argPack...);
 		}
@@ -46,7 +43,7 @@ namespace klib::kString::impl
 		StringWriter<Char_t> specifier;
 
 		const auto replacePos = openerPos - textPos;
-		const size_t colonPos = outFmt.find_first_of(specifierSymbol, replacePos);
+		const size_t colonPos = outFmt.find_first_of(format::specifierSymbol<Char_t>, replacePos);
 
 		if (openerPos < colonPos
 			&& closerPos > colonPos)
@@ -77,8 +74,8 @@ namespace klib::kString::impl
 			}
 			outFmt.erase(openerPos, infoSize + 1);
 			outFmt.insert(openerPos, replacement);
-			openerPos = outFmt.find(openerSymbol + objIndexStr);
-			closerPos = outFmt.find_first_of(closerSymbol, openerPos);
+			openerPos = outFmt.find(format::openerSymbol<Char_t> + objIndexStr);
+			closerPos = outFmt.find_first_of(format::closerSymbol<Char_t>, openerPos);
 		}
 
 		ToStringImpl<Char_t, Ts...>(outFmt, origOpenerPos + spacesToSkip, argPack...);

@@ -3,7 +3,7 @@
 
 #include "PerformanceTestManager.hpp"
 
-#include "../../Utility/String/Stringify/kSprintf.hpp"
+#include "../../Utility/String/kSprintf.hpp"
 
 #include <iostream>
 

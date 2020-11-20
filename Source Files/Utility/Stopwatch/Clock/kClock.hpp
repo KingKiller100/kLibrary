@@ -1,9 +1,9 @@
 ﻿#pragma once
 
-#include "../Calendar/Time/kTimeComponentBase.hpp"
-#include "../../TypeTraits/TemplateTraits.hpp"
-#include "../Enum/Enum.hpp"
-#include "../String/kStringConverter.hpp"
+#include "../../Calendar/Time/kTimeComponentBase.hpp"
+#include "../../../TypeTraits/TemplateTraits.hpp"
+#include "../../Enum/Enum.hpp"
+#include "../../String/kStringConverter.hpp"
 
 #include <chrono>
 #include <ratio>
@@ -18,6 +18,8 @@ namespace klib::kStopwatch
 		using Millis = kCalendar::TimeComponentBase<std::chrono::microseconds>;
 		using Micros = kCalendar::TimeComponentBase<std::chrono::nanoseconds>;
 		using Nanos = kCalendar::TimeComponentBase<std::chrono::duration<long long, std::pico>>;
+		using Pico = kCalendar::TimeComponentBase<std::chrono::duration<long long, std::femto>>;
+		using Femto = kCalendar::TimeComponentBase<std::chrono::duration<long long, std::atto>>;
 
 		ENUM_CLASS(UnitStrLength, uint8_t, SHORT, LONG);
 
@@ -61,6 +63,18 @@ namespace klib::kStopwatch
 			{
 				return kString::Convert<CharT>(length.Compare(UnitStrLength::SHORT,
 					"ns", "nanoseconds"
+				));
+			}
+			else if _CONSTEXPR_IF(std::is_same_v<Units, Pico>)
+			{
+				return kString::Convert<CharT>(length.Compare(UnitStrLength::SHORT,
+					"ps", "picoseconds"
+				));
+			}
+			else if _CONSTEXPR_IF(std::is_same_v<Units, Femto>)
+			{
+				return kString::Convert<CharT>(length.Compare(UnitStrLength::SHORT,
+					"fs", "femtoseconds"
 				));
 			}
 			else
@@ -114,7 +128,7 @@ namespace klib::kStopwatch
 		using Rep_t = typename Units_t::Rep_t;
 		using Period_t = typename Units_t::Period_t;
 		using Duration_t = typename Units_t::Duration_t;
-		using Base_t = std::chrono::steady_clock;
+		using Base_t = steady_clock;
 		using TimePoint_t = std::chrono::time_point<Base_t, Duration_t>;
 
 		USE_RESULT static constexpr decltype(auto) Now() noexcept
@@ -132,22 +146,22 @@ namespace klib::kStopwatch
 		using Rep_t = typename Units_t::Rep_t;
 		using Period_t = std::ratio_multiply<std::ratio<_XTIME_NSECS_PER_TICK, 1>, typename Units_t::Period_t>;
 		using Duration_t = std::chrono::duration<Rep_t, Period_t>;
-		using Base_t = std::chrono::system_clock;
+		using Base_t = system_clock;
 		using TimePoint_t = std::chrono::time_point<Base_t, Duration_t>;
 
 		USE_RESULT static constexpr decltype(auto) Now() noexcept
 		{
-			return Base_t::now();
+			return TimePoint_t(Duration_t(_Xtime_get_ticks()));
 		}
 
 		USE_RESULT static decltype(auto) To_Time_t(const time_point& timePoint) noexcept
 		{ // convert to __time64_t
-			return Base_t::to_time_t(timePoint);
+			return to_time_t(timePoint);
 		}
 
 		USE_RESULT static decltype(auto) From_Time_t(__time64_t time_t) noexcept
 		{ // convert from __time64_t
-			return Base_t::from_time_t(time_t);
+			return from_time_t(time_t);
 		}
 	};
 }

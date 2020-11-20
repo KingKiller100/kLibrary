@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../kStringTypes.hpp"
+#include "../../kStringTypes.hpp"
 #include "../Stringify/kStringifyHelper.hpp"
 
 #include "../Stringify/kStringifyFloatingPoint.hpp"
@@ -8,7 +8,7 @@
 #include "../Stringify/kStringifyBool.hpp"
 
 
-namespace klib::kString::impl
+namespace klib::kString::stringify
 {
 	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
 	constexpr CharType s_BinaryModeToken = CharType('b');

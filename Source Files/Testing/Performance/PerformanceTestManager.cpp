@@ -4,8 +4,6 @@
 #include "PerformanceTestBase.hpp"
 #include "../SetUpTests.hpp"
 
-#include "../../Utility/Stopwatch/kClock.hpp"
-
 #include <filesystem>
 #include <fstream>
 #include <iostream>

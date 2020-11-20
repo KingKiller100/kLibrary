@@ -16,7 +16,7 @@ namespace klib::kString::stringify
 	{
 		constexpr auto defaultPadding = sizeof(intptr_t) * 2;
 
-		const auto binaryMode = Remove(specifier, kString::impl::s_BinaryModeToken<CharType>);
+		const auto binaryMode = Remove(specifier, kString::stringify::s_BinaryModeToken<CharType>);
 		
 		const auto padding = StrTo<size_t>(specifier, defaultPadding);
 		const auto asUint = reinterpret_cast<uintptr_t>(ptr);
