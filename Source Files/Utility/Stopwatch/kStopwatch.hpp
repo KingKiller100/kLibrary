@@ -108,7 +108,7 @@ namespace klib
 
 				long double finalDuration;
 
-				if _CONSTEXPR_IF(std::_Is_any_of_v<Units2, units::Hours, units::Mins>)
+				if _CONSTEXPR_IF(type_trait::Is_It_V<Units2, units::Hours, units::Mins>)
 					finalDuration = sixtieth * diff.count();
 				else
 					finalDuration = thousandth * diff.count();

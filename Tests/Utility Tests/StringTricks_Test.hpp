@@ -22,6 +22,7 @@ namespace kTest::utility
 		bool ToLower();
 		bool ToUpper();
 		bool ToWriterAndToReaderTest();
+		bool IsWhiteSpaceOrNullTest();
 	};
 
 }

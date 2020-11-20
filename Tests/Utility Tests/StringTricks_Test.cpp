@@ -1,5 +1,5 @@
 ﻿#include "pch.hpp"
-#include "StringManipulation_Test.hpp"
+#include "StringTricks_Test.hpp"
 
 #include "../../Source Files/Utility/String/kStringTricks.hpp"
 
@@ -24,6 +24,7 @@ namespace kTest::utility
 		VERIFY_MULTI(CountTest());
 		VERIFY_MULTI(ReplaceTest());
 		VERIFY_MULTI(SplitTest());
+		VERIFY_MULTI(IsWhiteSpaceOrNullTest());
 		VERIFY_MULTI_END();
 	}
 
@@ -409,6 +410,25 @@ namespace kTest::utility
 
 		return success;
 
+	}
+
+	bool StringManipulationTester::IsWhiteSpaceOrNullTest()
+	{
+		const auto h = klib::type_trait::Is_CString_V<const char*>;
+		
+		{
+			constexpr char* str = nullptr;
+			const auto result = IsWhiteSpaceOrNull(str);
+			VERIFY(result == true);
+		}
+		
+		{
+			constexpr char str[] = "   ";
+			const auto result = IsWhiteSpaceOrNull(str);
+			VERIFY(result == true);
+		}
+		
+		return success;
 	}
 }
 #endif

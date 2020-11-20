@@ -26,7 +26,7 @@ namespace klib::kString::stringify
 			precision = 6;
 		
 #if defined(_HAS_COMPLETE_CHARCONV) && (_HAS_COMPLETE_CHARCONV == FALSE)
-		const std::string format = "%." + StringIntegral<char>(precision - 1, 1) + "f";
+		const std::string format = "%." + StringIntegral<char>(precision, 0) + "f";
 		const auto temp = stringify::SprintfWrapper(format, val);
 		const auto str = kString::Convert<CharType>(temp);
 #else

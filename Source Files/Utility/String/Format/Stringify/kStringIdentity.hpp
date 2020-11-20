@@ -37,7 +37,7 @@ namespace klib::kString::stringify
 
 			throw kDebug::FormatError(msg);
 		}
-		
+
 	public:
 		constexpr Identity() = delete;
 
@@ -81,7 +81,7 @@ namespace klib::kString::stringify
 			const std::basic_string<Char_t>& string = GetObjectString<Char_t>(val);
 			return string.data();
 		}
-		
+
 		USE_RESULT static decltype(auto) MakeStr(const T& arg, UNUSED StringWriter<Char_t>& specifier)
 		{
 			const std::basic_string<Char_t>& string = GetObjectString<Char_t>(arg);
@@ -119,7 +119,10 @@ namespace klib::kString::stringify
 	class Identity<Char_t, T, std::enable_if_t<
 		type_trait::Is_CharType_V<Char_t>
 		&& type_trait::Is_CString_V<T>
-		&& std::is_same_v<Char_t, ONLY_TYPE(T)>
+		&& std::is_same_v<Char_t,
+		std::remove_cv_t<
+		std::remove_pointer_t<
+		std::decay_t<T>>>>
 		>>
 	{
 	public:

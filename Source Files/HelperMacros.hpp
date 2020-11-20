@@ -34,7 +34,7 @@
 #define REINTERPRET(type, value) reinterpret_cast<type>(value)
 #define DYNAMIC(type, value) dynamic_cast<type>(value)
 
-#define ONLY_TYPE(type) std::decay_t<std::remove_pointer_t<type>>
+#define ONLY_TYPE(type) std::remove_cv_t<std::remove_pointer_t<std::decay_t<type>>>
 
 #define BIT_SHIFT(n) (1 << n)
 

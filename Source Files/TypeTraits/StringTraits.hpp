@@ -1,11 +1,11 @@
 ﻿#pragma once
 
 #include "TemplateTraits.hpp"
+#include "CharacterTraits.hpp"
 
 #include <string>
 #include <type_traits>
 
-#include "CharacterTraits.hpp"
 
 namespace klib::type_trait
 {	
@@ -26,13 +26,13 @@ namespace klib::type_trait
 
 	template<typename T>
 	struct Is_CStringBase : std::bool_constant<
-		(std::is_pointer_v<T> && Is_CharType_V<ONLY_TYPE(T)>)
+		std::is_pointer_v<T> && Is_CharType_V<std::remove_pointer_t<T>>
 	>
 	{};
 
 	// Determines whether type is an C character* type
 	template<typename T>
-	struct Is_CString : Is_CharTypeBase<std::decay_t<T>> {};
+	struct Is_CString : Is_CStringBase<std::decay_t<T>> {};
 
 	// Determines whether type is an C character* type
 	template<typename T>

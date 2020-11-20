@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <locale>
 
 
 #ifdef max
@@ -17,14 +18,6 @@ namespace klib
 {
 	namespace kString
 	{
-#if MSVC_PLATFORM_TOOLSET >= 142
-		template<typename Stringish>
-		concept ValidStringT = type_trait::Is_StringType_V<Stringish> // STL string
-			|| (type_trait::Is_CharType_V<ONLY_TYPE(Stringish)> // C string
-				&& std::is_pointer_v<Stringish>)
-			|| std::is_array_v<Stringish>;
-#endif
-
 		ENUM_CLASS(PreserveToken, std::uint8_t, YES, NO);
 		ENUM_CLASS(PreserveEmpty, std::uint8_t, YES, NO);
 		ENUM_CLASS(CaseSensitive, std::uint8_t, YES, NO);
@@ -82,16 +75,18 @@ namespace klib
 
 		template<typename StringType, typename Stringish
 #if MSVC_PLATFORM_TOOLSET >= 142
-			> requires ValidStringT<Stringish> || type_trait::Is_CharType_V<Stringish>
+			> requires type_trait::Is_String_t<StringType>
+			&& (type_trait::Is_String_t<Stringish>     // STL string
+				|| type_trait::Is_CString_t<Stringish> // C style string
+				|| type_trait::Is_Char_t<Stringish>)   // Just a character
 #else
-			, typename = std::enable_if_t<type_trait::Is_StringType_V<Stringish> // STL string
-			|| (type_trait::Is_CharType_V<ONLY_TYPE(Stringish)> // C string
-				&& std::is_pointer_v<Stringish>)
-			|| std::is_array_v<Stringish>
-			|| type_trait::Is_CharType_V<Stringish>
+			, typename = std::enable_if_t<
+			type_trait::Is_String_V<StringType>
+			&& type_trait::Is_StringType_V<Stringish>   // STL string
+			|| type_trait::Is_CString_V<Stringish>  // C style string
+			|| type_trait::Is_CharType_V<Stringish> // Just a character
 			>>
 #endif
-
 			constexpr bool Remove(StringType & str, const Stringish & search, size_t offset = 0)
 		{
 			bool removed = false;
@@ -113,7 +108,7 @@ namespace klib
 #else
 			, typename = std::enable_if_t<type_trait::Is_StringType_V<StringType>> >
 #endif
-			USE_RESULT constexpr size_t GetSize(const StringType& str)
+			USE_RESULT constexpr size_t GetSize(const StringType & str)
 		{
 			return str.size();
 		}
@@ -124,7 +119,7 @@ namespace klib
 #else
 			, typename = std::enable_if_t<type_trait::Is_CharType_V<CharT>> >
 #endif
-			USE_RESULT constexpr size_t GetSize(const CharT* str)
+			USE_RESULT constexpr size_t GetSize(const CharT * str)
 		{
 			size_t count = 0;
 			while (*str != type_trait::s_NullTerminator<CharT>)
@@ -228,15 +223,15 @@ namespace klib
 				, typename = std::enable_if_t<type_trait::Is_StringType_V<StringType>> >
 #endif
 
-				USE_RESULT constexpr bool Contains(const StringType& str, typename StringType::value_type search
+				USE_RESULT constexpr bool Contains(const StringType & str, typename StringType::value_type search
 					, const size_t offset = 0)
 			{
-				return str.find(search, offset) != type_trait::npos<StringType>;
+				return str.find(search, offset) != type_trait::s_NoPos<StringType>;
 			}
 
 			template<typename StringA, typename StringB
 #if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_String_t<StringA> && type_trait::Is_String_t<StringB>
+				> requires type_trait::Is_String_t<StringA>&& type_trait::Is_String_t<StringB>
 #else
 				, typename = std::enable_if_t<
 				type_trait::Is_StringType_V<StringA>
@@ -244,10 +239,10 @@ namespace klib
 				>>
 #endif
 
-				USE_RESULT constexpr bool Contains(const StringA& str, const StringB& search
+				USE_RESULT constexpr bool Contains(const StringA & str, const StringB & search
 					, const size_t offset = 0)
 			{
-				return str.find(search.data(), offset) != type_trait::npos<StringA>;
+				return str.find(search.data(), offset) != type_trait::s_NoPos<StringA>;
 			}
 
 			template<typename StringType, typename Stringish
@@ -287,8 +282,8 @@ namespace klib
 			{
 				static_assert(std::is_integral_v<Integer_t>, __FUNCTION__ " can only be used with integer types "
 					"(char, int, long, unsigned short, etc..");
-			
-				const auto CrashFunc = [](const std::string& errMsg) { throw kDebug::StringError(errMsg); };
+
+				const auto CrashFunc = [](const std::string& errMsg) { throw kDebug::StringError(errMsg + '\n'); };
 				const auto MaxDigitsFunc = []()
 				{
 
@@ -316,7 +311,7 @@ namespace klib
 				if (size > MaxDigitsFunc())
 				{
 					const std::string type = typeid(Integer_t).name();
-					const auto msg = "String contains more digits than largest number of type: "
+					const auto msg = __FUNCTION__ "'s string contains more digits than largest number of type: "
 						+ type;
 					CrashFunc(msg);
 				}
@@ -325,7 +320,10 @@ namespace klib
 				{
 					if (Char_t('0') > str[currentPos]
 						|| Char_t('9') < str[currentPos])
-						CrashFunc("String must only contain digits");
+					{
+						const auto input = ToWriter(Convert<char>(str));
+						CrashFunc(__FUNCTION__ "'s string must only contain digits. string: " + input);
+					}
 
 					const auto digit = static_cast<size_t>(str[currentPos] - Char_t('0'));
 					const auto asInt = digit * magnitude;
@@ -348,14 +346,13 @@ namespace klib
 				>>
 				USE_RESULT constexpr Integer_t StrTo(StringT string)
 			{
-				static_assert(std::is_integral_v<Integer_t>, __FUNCTION__ " can only be used with integer types "
-					"(char, int, long, unsigned short, etc..");
-
 				using CharType = typename StringT::value_type;
 
-				const auto CrashFunc = [](const std::string& errMsg) { throw kDebug::StringError(errMsg); };
+				const auto CrashFunc = [](const std::string& errMsg) { throw kDebug::StringError(errMsg + "\n"); };
 
 				Remove(string, ' ');
+				Remove(string, ',');
+				Remove(string, '\'');
 
 				if (string.empty())
 					return static_cast<Integer_t>(0);
@@ -382,7 +379,6 @@ namespace klib
 				return val;
 			}
 
-
 			// Converts strings containing text for an integer value into the integer type with that value.
 			// But bad string inputs are likely, ignore the exception and return a default value
 			template<class Integer_t, typename StringT
@@ -401,9 +397,56 @@ namespace klib
 				}
 			}
 
-	}
+			template<class CharT, class = std::enable_if_t<
+				type_trait::Is_CharType_V<CharT>
+				>>
+				USE_RESULT constexpr bool IsWhiteSpace(CharT c, const std::string& localeName = "C")
+			{
+				const std::locale locale(localeName);
+				const auto& facet = std::use_facet<std::ctype<CharT>>(locale);
+				const auto isWhiteSpace = facet.is(std::ctype_base::blank, c);
+				return isWhiteSpace;
+			}
+
+			template<typename Stringish, class = std::enable_if_t<
+				type_trait::Is_CString_V<Stringish>
+				|| type_trait::Is_StringType_V<Stringish>
+				>>
+				USE_RESULT constexpr bool IsWhiteSpaceOrNull(const Stringish& str
+					, const std::string& localeName = "C")
+			{
+				using namespace type_trait;
+				if _CONSTEXPR17(Is_StringType_V<Stringish>)
+				{
+					if (str.data() == nullptr)
+						return false;
+
+					for (const auto& c : str)
+					{
+						if (!IsWhiteSpace(c, localeName))
+							return false;
+					}
+					return true;
+				}
+				else
+				{
+					if (str == nullptr)
+						return false;
+
+					auto index = 0u;
+					while (str[index] != s_NullTerminator<ONLY_TYPE(Stringish)>)
+					{
+						if (!IsWhiteSpace(str[index], localeName))
+							return false;
+						++index;
+					}
+
+					return true;
+				}
+			}
+				}
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kString;
 #endif
-	}
+			}
 

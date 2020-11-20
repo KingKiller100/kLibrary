@@ -20,7 +20,7 @@
 #include "../../Tests/Utility Tests/FileSystem_Test.hpp"
 #include "../../Tests/Utility Tests/StringView_Test.hpp"
 #include "../../Tests/Utility Tests/StringConverter_Test.hpp"
-#include "../../Tests/Utility Tests/StringManipulation_Test.hpp"
+#include "../../Tests/Utility Tests/StringTricks_Test.hpp"
 #include "../../Tests/Utility Tests/FormatToString_Test.hpp"
 
 // Templates

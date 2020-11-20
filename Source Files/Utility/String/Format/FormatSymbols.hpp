@@ -4,11 +4,11 @@
 namespace klib::kString::format
 {
 	template<class CharT, class = std::enable_if_t<type_trait::Is_CharType_V<CharT>>>
-	constexpr auto printfSymbol = CharT('%');
+	constexpr auto s_PrintfSymbol = CharT('%');
 	template<class CharT, class = std::enable_if_t<type_trait::Is_CharType_V<CharT>>>
-	constexpr auto openerSymbol = CharT('{');
+	constexpr auto s_OpenerSymbol = CharT('{');
 	template<class CharT, class = std::enable_if_t<type_trait::Is_CharType_V<CharT>>>
-	constexpr auto closerSymbol = CharT('}');
+	constexpr auto s_CloserSymbol = CharT('}');
 	template<class CharT, class = std::enable_if_t<type_trait::Is_CharType_V<CharT>>>
-	constexpr auto specifierSymbol = CharT(':');
+	constexpr auto s_SpecifierSymbol = CharT(':');
 }

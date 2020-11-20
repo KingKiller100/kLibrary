@@ -24,7 +24,6 @@ namespace klib::type_trait
 	template<typename T>
 	concept Is_Char_t = Is_CharType_V<T> == true;
 #endif
-
 	
 
 	template<typename CharType, typename = std::enable_if_t<Is_CharType_V<CharType>>>

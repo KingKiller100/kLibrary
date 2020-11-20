@@ -23,11 +23,10 @@ namespace kTest::performance
 		{
 			Test();
 		}
-		catch (...)
+		catch (const std::exception& e)
 		{
-			const auto output = klib::kString::stringify::SprintfWrapper("%s seems to have triggered an exception!\n", name);
+			const auto output = klib::kString::stringify::SprintfWrapper("%s seems to have triggered an exception!\nException: %s", name, e.what());
 			PerformanceTestManager::Get().CollectResult(output);
-			return;
 		}
 
 		Output();

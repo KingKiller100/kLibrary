@@ -21,7 +21,7 @@ namespace klib {
 
 			std::basic_string<CharT> finalString(format);
 			
-			if (Contains(finalString, format::printfSymbol<CharT>))
+			if (Contains(finalString, format::s_PrintfSymbol<CharT>))
 			{
 				return stringify::SprintfWrapper<CharT>(format, arg, argPack...);
 			}
@@ -47,9 +47,9 @@ namespace klib {
 			format.reserve(count + 2 * count);
 			for (auto i = 0; i < count; ++i)
 			{
-				format.push_back(format::openerSymbol<CharT>);
+				format.push_back(format::s_OpenerSymbol<CharT>);
 				format.append(stringify::StringIntegral<CharT>(i, 1, CharT('0')));
-				format.push_back(format::closerSymbol<CharT>);
+				format.push_back(format::s_CloserSymbol<CharT>);
 			}
 
 			const auto output = ToString(format, arg, argPack...);

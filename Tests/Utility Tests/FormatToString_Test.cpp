@@ -68,7 +68,11 @@ namespace kTest::utility
 		
 		{
 			const auto input = "quarantine";
-			const auto result = stringify::Identity<char, decltype(input)>::Get(input);
+			constexpr auto g = type_trait::Is_CharType_V<char>;
+			constexpr auto h = type_trait::Is_CString_V<decltype(input)>;
+			constexpr auto i = std::is_same_v<char, std::remove_cv_t<std::remove_pointer_t<
+				std::decay_t<decltype(input)>>>>;
+			const auto result = stringify::Identity<char, const char[]>::Get(input);
 			const auto expected = std::is_same_v<decltype(result), const char* const>;
 			VERIFY_COMPILE_TIME(expected);
 		}
