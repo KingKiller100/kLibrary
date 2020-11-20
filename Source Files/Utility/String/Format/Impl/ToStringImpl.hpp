@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "Stringify.hpp"
 #include "../FormatSymbols.hpp"
 #include "../../kStringTricks.hpp"
@@ -11,11 +10,11 @@
 namespace klib::kString::stringify
 {
 	template<class Char_t>
-	void ToStringImpl(UNUSED const std::basic_string<Char_t>& fmt, UNUSED size_t currentIndex)
+	constexpr void ToStringImpl(UNUSED const std::basic_string<Char_t>& fmt, UNUSED size_t currentIndex)
 	{}
 
 	template<class Char_t, typename T, typename ...Ts>
-	void ToStringImpl(std::basic_string<Char_t>& outFmt, size_t textPos, T arg, Ts ...argPack)
+	constexpr void ToStringImpl(std::basic_string<Char_t>& outFmt, size_t textPos, T arg, Ts ...argPack)
 	{
 		constexpr auto npos = type_trait::npos<std::basic_string<Char_t>>;
 		

@@ -92,16 +92,16 @@ namespace klib
 			>>
 #endif
 
-			constexpr bool Remove(StringType & str, const Stringish & search)
+			constexpr bool Remove(StringType & str, const Stringish & search, size_t offset = 0)
 		{
 			bool removed = false;
-			auto pos = str.find(search);
+			auto pos = str.find(search, offset);
 
 			while (pos != StringType::npos)
 			{
 				const auto endPos = str.find_first_not_of(search, pos);
 				str.erase(pos, endPos - pos);
-				pos = str.find(search);
+				pos = str.find(search, offset);
 				removed = true;
 			}
 			return removed;
@@ -231,7 +231,7 @@ namespace klib
 				USE_RESULT constexpr bool Contains(const StringType& str, typename StringType::value_type search
 					, const size_t offset = 0)
 			{
-				return str.find(search, offset) != StringType::npos;
+				return str.find(search, offset) != type_trait::npos<StringType>;
 			}
 
 			template<typename StringA, typename StringB
@@ -247,7 +247,7 @@ namespace klib
 				USE_RESULT constexpr bool Contains(const StringA& str, const StringB& search
 					, const size_t offset = 0)
 			{
-				return str.find(search.data(), offset) != StringA::npos;
+				return str.find(search.data(), offset) != type_trait::npos<StringA>;
 			}
 
 			template<typename StringType, typename Stringish
