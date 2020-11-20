@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "../../String/kToString.hpp"
-
+#include "../../Misc/NumberSuffix.hpp"
 #include <stdexcept>
 
 
@@ -35,10 +35,8 @@ namespace klib::kDebug
 			: MathsError(kString::ToString("ERROR: Value \"{0:2}\" has no {1}{2} root",
 				value,
 				root,
-				(root % 10) == 1 ? "st"
-				: (root % 10) == 2 ? "nd"
-				: (root % 10) == 3 ? "rd"
-				: "th"))
+				kMisc::GetNumberSuffix<char>(root)
+			)
 		{}
 
 		explicit NoRealRootError(const char* const _Message);

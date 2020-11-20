@@ -19,13 +19,12 @@ namespace klib::kString::stringify
 		using Str_t = std::basic_string<Char_t>;
 		constexpr auto npos = type_trait::s_NoPos<Str_t>;
 
-		const auto searchStr = format::s_OpenerSymbol<Char_t> +stringify::StringIntegral<Char_t>(argIndex);
+		const auto searchStr = format::s_OpenerSymbol<Char_t> + stringify::StringIntegral<Char_t>(argIndex);
 		
 		size_t openerPos = outFmt.find_first_of(searchStr);
 		size_t closerPos = outFmt.find_first_of(format::s_CloserSymbol<Char_t>, openerPos);
 
-		if (openerPos == npos
-			|| closerPos == npos)
+		if (openerPos == npos || closerPos == npos)
 			return;
 
 		while (openerPos != npos && closerPos != npos)

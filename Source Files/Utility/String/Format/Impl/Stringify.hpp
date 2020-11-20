@@ -5,7 +5,6 @@
 
 namespace klib::kString::stringify
 {
-	// Integral but not character types
 	template<class Char_t, typename T>
 	constexpr StringWriter<Char_t> Stringify(T arg, StringWriter<Char_t>& specifier)
 	{
