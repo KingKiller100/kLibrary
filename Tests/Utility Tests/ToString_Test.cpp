@@ -250,8 +250,8 @@ namespace kTest::utility
 		const auto testStr4 = ToString("doubles {0:7}, ", 2.7182818);
 		const auto testStr5 = ToString("unsigned ({1}) or signed integers ({0}), ", -50, 200U);
 		const auto testStr6 = ToString("pointer addresses i.e. 0x{0} (random int ptr address)", tempIntPtr.get());
-		const auto testStr7 = ToString("{0:b10}", 54321);
-		const auto testStr8 = ToString("{0:h}", 54321);
+		const auto testStr7 = ToString("Repeat the same value in different ways. num:{0} hex:{0:h8} bin:{0:b}", 54321);
+		const auto testStr8 = ToString("Booleans - Text:{0} Int:{0:d}", true);
 
 		constexpr auto num = 1000;
 		const auto hex = "0x" + stringify::StringIntegralHex<char>(num, 4, '0');
@@ -266,8 +266,8 @@ namespace kTest::utility
 		VERIFY(testStr4 == "doubles 2.7182818, ");
 		VERIFY(testStr5 == "unsigned (200) or signed integers (-50), ");
 		VERIFY(testStr6.find("pointer addresses i.e. 0x00") != std::string::npos);
-		VERIFY(testStr7 == "1101010000110001");
-		VERIFY(testStr8 == "000000000000d431");
+		VERIFY(testStr7 == "Repeat the same value in different ways. num:54321 hex:0000d431 bin:1101010000110001");
+		VERIFY(testStr8 == "Booleans - Text:true Int:1");
 		VERIFY(hex == "0x03e8");
 
 #ifdef __cpp_char8_t

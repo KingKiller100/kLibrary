@@ -27,7 +27,7 @@ namespace klib::kStopwatch
 			type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
 			&& type_trait::Is_CharType_V<CharT>
 			>>
-			USE_RESULT constexpr std::basic_string_view<CharT> GetUnitsStr(UnitStrLength length) noexcept
+			USE_RESULT constexpr std::basic_string_view<CharT> GetUnitsStr(UnitStrLength length = UnitStrLength::SHORT) noexcept
 		{
 			if _CONSTEXPR_IF(std::is_same_v<Units, Hours>)
 			{

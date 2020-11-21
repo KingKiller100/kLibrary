@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "StringTraits.hpp"
+#include "SmartPointerTraits.hpp"
 
 #include <type_traits>
 
@@ -9,6 +10,7 @@ namespace klib::type_trait
 	struct Is_CustomBase : std::bool_constant<
 		!std::is_arithmetic_v<T>
 		&& !Is_StringType_V<T>
+		&& !Is_SmartPtr_V<T>
 		&& !std::is_pointer_v<T>
 		&& !std::is_array_v<T>
 	>

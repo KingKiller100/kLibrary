@@ -456,6 +456,35 @@ namespace kTest::utility
 			constexpr auto str = "upgrade";
 			constexpr auto search = "grade";
 			const auto pos = Find(str, search);
+			VERIFY(pos == 2);
+		}
+		
+		{
+			constexpr std::string_view str = "upgrade";
+			constexpr auto search = "pain";
+			const auto pos = Find(str.data(), search);
+			VERIFY(pos == static_cast<size_t>(-1));
+		}
+		
+		{
+			constexpr char str[] = "upgrade";
+			constexpr auto search = "p";
+			constexpr auto pos = Find(str, search);
+			VERIFY(pos == 1);
+		}
+		
+		{
+			constexpr char str[] = "upgrade";
+			constexpr char* search = nullptr;
+			constexpr auto pos = Find(str, search);
+			VERIFY(pos == static_cast<size_t>(-1));
+		}
+		
+		{
+			constexpr char *str = nullptr;
+			constexpr char* search = nullptr;
+			constexpr auto pos = Find(str, search);
+			VERIFY(pos == static_cast<size_t>(-1));
 		}
 		
 		return success;

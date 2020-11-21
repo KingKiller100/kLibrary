@@ -6,6 +6,7 @@
 #include "../../../../HelperMacros.hpp"
 #include "../../../../TypeTraits/StringTraits.hpp"
 #include "../../../../TypeTraits/CustomTraits.hpp"
+#include "../../../../TypeTraits/SmartPointerTraits.hpp"
 #include "../../../Debug/Exceptions/StringExceptions.hpp"
 
 #include <type_traits>
@@ -184,40 +185,25 @@ namespace klib::kString::stringify
 			else
 				return stringify::HandleInteger<Char_t>(value, specifier);
 		}
-
-	private:
-		const T data;
 	};
 
-
 	///////////////////////////////////////////////////////////////////////////////////////////////////
-	///// Primitive array types (char, int, double, unsigned long long,...)
+	///// Smart Pointers
 	///////////////////////////////////////////////////////////////////////////////////////////////////
-	//template<typename CharType, typename T, size_t Size>
-	//constexpr
-	//	std::enable_if_t <
-	//	type_trait::Is_CharType_V<CharType>
-	//	&& std::is_arithmetic_v<T>
-	//	&& !std::is_pointer_v<T>
-	//	&& std::is_array_v<T[Size]>
-	//	, const T*>
-	//	Identity(const T(&obj)[Size])
-	//{
-	//	return std::addressof(obj[0]);
-	//}
+	template<typename Char_t, typename T>
+	class Identity<Char_t, T, std::enable_if_t<
+		type_trait::Is_SmartPtr_V<T>
+		>>
+	{
+	public:
+		USE_RESULT static decltype(auto) Get(T ptr) noexcept
+		{
+			return ptr.get();
+		}
 
-	//template<typename CharType, typename T, size_t Size>
-	//constexpr
-	//	std::enable_if_t <
-	//	type_trait::Is_CharType_V<CharType>
-	//	&& std::is_arithmetic_v<T>
-	//	&& !std::is_pointer_v<T>
-	//	&& std::is_array_v<T[]>
-	//	, const T* const*>
-	//	IdentityPtr(const T(&obj)[Size])
-	//{
-	//	auto ptr = Identity<CharType, T, Size>(obj);
-	//	return std::addressof(ptr);
-	//}
-
+		USE_RESULT static decltype(auto) MakeStr(const T& ptr, StringWriter<Char_t>& specifier)
+		{
+			return stringify::HandlePointer<Char_t>(ptr.get(), specifier);
+		}
+	};
 }

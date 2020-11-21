@@ -78,11 +78,11 @@ namespace kTest::utility
 			VERIFY(day.ToString("dddd") == "Wed");
 			VERIFY(day.ToString("ddddd") == "Wednesday");
 		}
-		
+
 		{
 			const Day day(9, Day::SATURDAY);
-			VERIFY (day.GetValue() == 9);
-			VERIFY (day.GetDayOfTheWeek() == Day::SATURDAY);
+			VERIFY(day.GetValue() == 9);
+			VERIFY(day.GetDayOfTheWeek() == Day::SATURDAY);
 			VERIFY(day.Verify());
 			VERIFY(day.ToString("d") == "9"
 				&& day.ToString("dd") == "09");
@@ -90,7 +90,7 @@ namespace kTest::utility
 			VERIFY(day.ToString("dddd") == "Sat");
 			VERIFY(day.ToString("ddddd") == "Saturday");
 		}
-		
+
 		{
 			const Day day(32, Day::THURSDAY);
 			VERIFY(day.GetValue() == 32);
@@ -102,7 +102,7 @@ namespace kTest::utility
 			VERIFY(day.ToString("dddd") == "Thu");
 			VERIFY(day.ToString("ddddd") == "Thursday");
 		}
-		
+
 		{
 			const auto day = 30_d;
 			VERIFY(day.GetValue() == 30);
@@ -114,7 +114,7 @@ namespace kTest::utility
 			VERIFY(day.ToString("dddd") == "Mon");
 			VERIFY(day.ToString("ddddd") == "Monday");
 		}
-		
+
 		return success;
 	}
 
@@ -203,8 +203,8 @@ namespace kTest::utility
 			const auto month = 2_m;
 			const auto day = 29_d;
 			const auto year = 1999_y;
-			VERIFY (month.GetMonthNumber() == 2);
-			VERIFY (month.GetValue() == Month::FEB);
+			VERIFY(month.GetMonthNumber() == 2);
+			VERIFY(month.GetValue() == Month::FEB);
 			VERIFY(!month.Verify(day, year));
 			VERIFY(month.ToString("m") == "2"
 				&& month.ToString("mm") == "02");
@@ -235,9 +235,9 @@ namespace kTest::utility
 			VERIFY(millis.ToString("cccc") == "300ms");
 			VERIFY(millis.ToString("ccccc") == "300ms");
 		}
-		
+
 		{
-			const Millisecond millis { 3 };
+			const Millisecond millis{ 3 };
 			VERIFY(millis.GetValue() == 3);
 			VERIFY(millis.Verify());
 			VERIFY(millis.ToString("c") == "3");
@@ -246,7 +246,7 @@ namespace kTest::utility
 			VERIFY(millis.ToString("cccc") == "3ms");
 			VERIFY(millis.ToString("ccccc") == "003ms");
 		}
-		
+
 		{
 			const Millisecond millis(75);
 			VERIFY(millis.GetValue() == 75);
@@ -288,7 +288,7 @@ namespace kTest::utility
 	bool CalendarTester::SecondTest()
 	{
 		{
-			const Second sec (30);
+			const Second sec(30);
 			VERIFY(sec.GetValue() == 30);
 			VERIFY(sec.Verify());
 			VERIFY(sec.ToString("s") == "30");
@@ -296,7 +296,7 @@ namespace kTest::utility
 			VERIFY(sec.ToString("sss") == "30s");
 			VERIFY(sec.ToString("ssss") == "30s");
 		}
-		
+
 		{
 			constexpr auto size = sizeof Second;
 			const Second sec(4);
@@ -307,7 +307,7 @@ namespace kTest::utility
 			VERIFY(sec.ToString("sss") == "4s");
 			VERIFY(sec.ToString("ssss") == "04s");
 		}
-		
+
 		{
 			const auto sec(100_ss);
 			VERIFY(sec.GetValue() == 100);
@@ -317,7 +317,7 @@ namespace kTest::utility
 			VERIFY(sec.ToString("sss") == "100s");
 			VERIFY(sec.ToString("ssss") == "100s");
 		}
-		
+
 		return success;
 	}
 
@@ -332,7 +332,7 @@ namespace kTest::utility
 			VERIFY(minute.ToString("mmm") == "30m");
 			VERIFY(minute.ToString("mmmm") == "30m");
 		}
-		
+
 		{
 			const Minute minute(1);
 			VERIFY(minute.GetValue() == 1);
@@ -342,7 +342,7 @@ namespace kTest::utility
 			VERIFY(minute.ToString("mmm") == "1m");
 			VERIFY(minute.ToString("mmmm") == "01m");
 		}
-		
+
 		{
 			const auto minute(1000_mm);
 			VERIFY(minute.GetValue() == 1000);
@@ -352,7 +352,7 @@ namespace kTest::utility
 			VERIFY(minute.ToString("mmm") == "1000m");
 			VERIFY(minute.ToString("mmmm") == "1000m");
 		}
-		
+
 		return success;
 	}
 
@@ -367,7 +367,7 @@ namespace kTest::utility
 			VERIFY(hour.ToString("hhh") == "12h");
 			VERIFY(hour.ToString("hhhh") == "12h");
 		}
-		
+
 		{
 			const Hour hour(2);
 			VERIFY(hour.GetValue() == 2);
@@ -377,7 +377,7 @@ namespace kTest::utility
 			VERIFY(hour.ToString("hhh") == "2h");
 			VERIFY(hour.ToString("hhhh") == "02h");
 		}
-		
+
 		{
 			const auto hour(30_hh);
 			VERIFY(hour.GetValue() == 30);
@@ -387,7 +387,7 @@ namespace kTest::utility
 			VERIFY(hour.ToString("hhh") == "30h");
 			VERIFY(hour.ToString("hhhh") == "30h");
 		}
-		
+
 		return success;
 	}
 
@@ -410,7 +410,10 @@ namespace kTest::utility
 
 		const auto dateSuffix = [&]()
 		{
-			return klib::kMisc::GetNumberSuffix<char>(dateTime.wDay);
+			return (dateTime.wDay % 10) == 1 ? "st"
+				: (dateTime.wDay % 10) == 2 ? "nd"
+				: (dateTime.wDay % 10) == 3 ? "rd"
+				: "th";
 		};
 
 		std::string dateStr;

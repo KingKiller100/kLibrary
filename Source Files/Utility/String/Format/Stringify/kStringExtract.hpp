@@ -17,6 +17,9 @@ namespace klib::kString::stringify
 	constexpr CharType s_HexModeToken = CharType('h');
 
 	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
+	constexpr CharType s_BoolAsInt = CharType('d');
+
+	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
 	constexpr CharType s_GeneralFloatModeToken = CharType('g');
 
 	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
@@ -82,6 +85,8 @@ namespace klib::kString::stringify
 	template<typename CharT, typename T>
 	StringWriter<CharT> HandleFloat(T value, StringWriter<CharT>& specifier)
 	{
+		using IntegralSizeMatch_t = std::conditional_t<sizeof(T) == 4, std::int32_t, std::int64_t>;
+		
 		StringWriter<CharT> str;
 
 		std::chars_format fmt = std::chars_format::fixed;
@@ -107,7 +112,7 @@ namespace klib::kString::stringify
 		const auto padding = StrTo<std::int64_t>(specifier, stringify::s_NoSpecifier);
 
 		if (binaryMode)
-			str = stringify::StringIntegralBinary<CharT, size_t>(*(size_t*)&value, padding, CharT('0'));
+			str = stringify::StringIntegralBinary<CharT, size_t>(*(IntegralSizeMatch_t*)&value, padding, CharT('0'));
 		else
 			str = stringify::StringFloatingPoint<CharT>(value, padding, fmt);
 		return str;
@@ -119,13 +124,14 @@ namespace klib::kString::stringify
 		union DummyUnion
 		{
 			bool real;
-			size_t uint;
+			uint8_t uint;
 		} dummy;
 
 		dummy.real = value;
 
 		const auto hexMode = Remove(specifier, s_HexModeToken<CharT>);
 		const auto binaryMode = Remove(specifier, s_BinaryModeToken<CharT>);
+		const auto basiMode = Remove(specifier, s_BoolAsInt<CharT>);
 		const auto padding = StrTo<size_t>(specifier, stringify::s_NoSpecifier);
 
 		StringWriter<CharT> str;
@@ -133,7 +139,9 @@ namespace klib::kString::stringify
 		if (hexMode)
 			str = stringify::StringIntegralHex<CharT>(dummy.uint, padding, CharT('0'));
 		else if (binaryMode)
-			str = stringify::StringIntegralBinary<CharT, size_t>(dummy.uint, padding, CharT('0'));
+			str = stringify::StringIntegralBinary<CharT>(dummy.uint, padding, CharT('0'));
+		else if (basiMode)
+			str = stringify::StringIntegral<CharT>(dummy.uint, padding, CharT('0'));
 		else
 			str = stringify::StringBool<CharT>(dummy.real);
 		return str;

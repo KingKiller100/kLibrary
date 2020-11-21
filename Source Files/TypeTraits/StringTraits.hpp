@@ -16,7 +16,6 @@ namespace klib::type_trait
 	>
 	{
 		using String_t = T;
-		using Char_t = typename T::value_type;
 	};
 
 	// Determines whether type is an STL string class type

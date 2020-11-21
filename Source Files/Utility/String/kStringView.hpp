@@ -4,14 +4,15 @@
 
 #include "../Debug/kAssert.hpp"
 
+#include "kStringTricks.hpp"
+
 #include <limits>
 #include <string>
-#include <type_traits>
 #include <xutility>
 
 namespace klib
 {
-	namespace kString_View
+	namespace kString
 	{
 		template<class CharType, class Traits>
 		class Template_String_View
@@ -311,35 +312,8 @@ namespace klib
 				CheckWithinLength(offset,
 					"Offset is greater than the length of string");
 
-				auto pos = FirstIndexOf(search[0], offset);
-				auto strLength = GetStrLength(search);
-
-				if (pos == npos)
-					return npos;
-
-				auto viewStr = string + pos;
-				Size searchIdx(0);
-
-				while (*viewStr != null_terminater)
-				{
-					if (*viewStr == search[searchIdx])
-					{
-						++viewStr;
-						++pos;
-						++searchIdx;
-						continue;
-					}
-
-					if (search[searchIdx] == null_terminater)
-						return (pos - strLength);
-					
-
-					searchIdx = 0;
-					pos = FirstIndexOf(search[0], pos);
-					viewStr = string + pos;
-				}
-
-				return npos;
+				const auto index = kString::Find(string, search, offset);
+				return index;
 			}
 
 			constexpr Size FirstIndexOf(const Template_String_View& other, const Size offset = 0)

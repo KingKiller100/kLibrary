@@ -136,7 +136,7 @@ namespace kTest
 
 		const HighAccuracyStopwatch timer("Test Run Time");
 
-		std::cout << "Now running: " << test.GetName();
+		std::cout << "Now running: " << test.GetName() << " | ";
 
 		const auto pass = test.Run();
 		const auto testTime = timer.GetLifeTime<units::Millis>();
@@ -165,8 +165,6 @@ namespace kTest
 
 		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-		std::cout << " | ";
-
 		SetConsoleTextAttribute(hConsole, pass
 			? kMisc::ConsoleColour::LIGHT_GREEN
 			: kMisc::ConsoleColour::SCARLET_RED);
@@ -177,8 +175,9 @@ namespace kTest
 
 		resultStr.insert(0, "| ");
 
-		auto runtimeResultStr = stringify::SprintfWrapper("| Runtime: %.3fms"
-			, resTime);
+		auto runtimeResultStr = stringify::SprintfWrapper("| Runtime: %.3f%s"
+			, resTime
+			, units::GetUnitsStr<units::Millis>());
 		std::cout << " " << runtimeResultStr << "\n";
 
 		runtimeResultStr.insert(0, resultStr + " ");

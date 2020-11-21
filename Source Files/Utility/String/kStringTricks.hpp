@@ -449,7 +449,7 @@ namespace klib
 			template<typename CStringA, typename CStringB, class = std::enable_if_t<
 				type_trait::Is_CString_V<CStringA>
 				&& type_trait::Is_CString_V<CStringB>
-				&& std::is_same_v<CStringA, CStringB>
+				&& std::is_same_v<ONLY_TYPE(CStringA), ONLY_TYPE(CStringB)>
 				>>
 				USE_RESULT constexpr size_t Find(const CStringA& str, const CStringB& search, size_t offset = 0)
 			{
@@ -459,6 +459,9 @@ namespace klib
 
 				constexpr Char_t nt = s_NullTerminator<Char_t>;
 				constexpr size_t npos = s_NoPos<PossibleString_t>;
+
+				if (str == nullptr || search == nullptr)
+					return npos;
 
 				const auto searchSize = GetSize(search);
 				const auto strSize = GetSize(str + offset);
@@ -485,6 +488,9 @@ namespace klib
 					++strIndex;
 					searchIndex = 0;
 				}
+
+				if (search[searchIndex] == nt)
+					return strIndex - searchIndex;
 
 				return npos;
 			}

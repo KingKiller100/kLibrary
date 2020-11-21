@@ -11,7 +11,7 @@ namespace kTest::performance::util
 	using namespace klib;
 
 	constexpr auto maxIter = static_cast<size_t>(1e3);
-	
+
 	ToStringSpeedTest::ToStringSpeedTest() noexcept
 		: PerformanceTestBase("ToString Speed Test")
 	{}
@@ -36,6 +36,8 @@ namespace kTest::performance::util
 
 		constexpr auto num = 6.015625;
 
+		const auto str = kString::ToString("{0:b}", 5.5f);
+
 		for (auto i = 0; i < maxIter; ++i)
 		{
 			{
@@ -49,14 +51,14 @@ namespace kTest::performance::util
 			}
 		}
 	}
-	
+
 	void ToStringSpeedTest::IntTest()
 	{
 		const std::vector<std::string_view> participants = { "klib::kString::ToString int", "std::stringstream int", "std::sprintf int" };
 		SetUpParticipants(participants);
-		
+
 		const int sint = -50;
-		
+
 		std::unique_ptr<char[]> buffer;
 		std::stringstream ss;
 
@@ -80,7 +82,7 @@ namespace kTest::performance::util
 				buffer.reset(new char[length + 1]);
 				std::sprintf(buffer.get(), "sint: %d", sint);
 			}
-			
+
 			ss.clear();
 			buffer.release();
 		}
@@ -91,9 +93,9 @@ namespace kTest::performance::util
 		const std::vector<std::string_view> participants = { "klib::kString::ToString double", "std::stringstream double"
 			, "std::sprintf double", "klib::kString::stringify::SprintfWrapper" };
 		SetUpParticipants(participants);
-		
+
 		const auto f64 = 125.625;
-		
+
 		std::unique_ptr<char[]> buffer;
 		std::stringstream ss;
 
@@ -106,14 +108,14 @@ namespace kTest::performance::util
 
 			{
 				START_TEST(participants[1]);
-				
+
 				ss << std::setprecision(3) << f64;
 			}
 
-				constexpr auto format = "f64: %.3f";
+			constexpr auto format = "f64: %.3f";
 			{
 				START_TEST(participants[2]);
-				
+
 				const auto length = _snprintf(nullptr, 0, format
 					, f64
 				);
@@ -123,10 +125,10 @@ namespace kTest::performance::util
 
 			{
 				START_TEST(participants[3]);
-				
+
 				(void)kString::stringify::SprintfWrapper(format, f64);
 			}
-			
+
 			ss.clear();
 			buffer.release();
 		}
@@ -137,9 +139,9 @@ namespace kTest::performance::util
 		const std::vector<std::string_view> participants = { "klib::kString::ToString double", "std::stringstream double"
 			, "std::sprintf double", "klib::kString::stringify::SprintfWrapper" };
 		SetUpParticipants(participants);
-		
+
 		const auto str = "string";
-		
+
 		std::unique_ptr<char[]> buffer;
 		std::stringstream ss;
 
@@ -155,10 +157,10 @@ namespace kTest::performance::util
 				ss << str;
 			}
 
-				constexpr auto format = "string: %s";
+			constexpr auto format = "string: %s";
 			{
 				START_TEST(participants[2]);
-				
+
 				const auto length = _snprintf(nullptr, 0, format, str);
 				buffer.reset(new char[length + 1]);
 				std::sprintf(buffer.get(), format, str);
@@ -169,12 +171,12 @@ namespace kTest::performance::util
 
 				(void)kString::stringify::SprintfWrapper(format, str);
 			}
-			
+
 			ss.clear();
 			buffer.release();
 		}
 	}
-	
+
 
 	void ToStringSpeedTest::OstreamTest()
 	{
@@ -192,7 +194,7 @@ namespace kTest::performance::util
 		const bool boolean = true;
 
 		std::stringstream ss;
-		for (auto i =0; i < maxIter; ++i)
+		for (auto i = 0; i < maxIter; ++i)
 		{
 			{
 				START_TEST(participants[0]);
@@ -217,7 +219,7 @@ namespace kTest::performance::util
 			}
 			ss.clear();
 		}
-		
+
 	}
 
 	void ToStringSpeedTest::SprintfTest()
@@ -235,13 +237,14 @@ namespace kTest::performance::util
 		const int sint = -50;
 		const bool boolean = true;
 
+		const auto ptr = std::make_shared<int64_t>(64);
 		std::unique_ptr<char[]> buffer;
 		for (auto i = 0; i < maxIter; ++i)
 		{
 			{
 				START_TEST(participants[0]);
 				const auto output = kString::ToString("string: {0} - string_view: {1} - double: {2:5}"
-					" - float: {3:5} - ulong: {4} - slong: {5} - uint: {6} - sint: {7} - boolean: {8}"
+					" - float: {3:5} - ulong: {4} - slong: {5} - uint: {6} - sint: {7} - boolean: {8} - Pointer: {9}"
 					, string
 					, string_view
 					, f64
@@ -251,13 +254,14 @@ namespace kTest::performance::util
 					, uint
 					, sint
 					, boolean
+					, ptr
 				);
 			}
 
 			{
 				START_TEST(participants[1]);
-				const auto length = _snprintf(nullptr,0, "string: %s - string_view: %s - double: %.5f"
-					" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s"
+				const auto length = _snprintf(nullptr, 0, "string: %s - string_view: %s - double: %.5f"
+					" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s - Pointer: %p"
 					, string.data()
 					, string_view.data()
 					, f64
@@ -267,10 +271,11 @@ namespace kTest::performance::util
 					, uint
 					, sint
 					, boolean ? "true" : "false"
+					, ptr.get()
 				);
 				buffer.reset(new char[length + 1]);
 				std::sprintf(buffer.get(), "string: %s - string_view: %s - double: %.5f"
-					" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s"
+					" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s - Pointer: %p"
 					, string.data()
 					, string_view.data()
 					, f64
@@ -280,6 +285,7 @@ namespace kTest::performance::util
 					, uint
 					, sint
 					, boolean ? "true" : "false"
+					, ptr.get()
 				);
 			}
 
@@ -289,7 +295,7 @@ namespace kTest::performance::util
 				START_TEST(participants[2]);
 
 				(void)kString::stringify::SprintfWrapper("string: %s - string_view: %s - double: %.5f"
-					" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s"
+					" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s - Pointer: %p"
 					, string.data()
 					, string_view.data()
 					, f64
@@ -298,9 +304,11 @@ namespace kTest::performance::util
 					, slong
 					, uint
 					, sint
-					, boolean ? "true" : "false");
+					, boolean ? "true" : "false"
+					, ptr
+				);
 			}
-			
+
 			buffer.release();
 		}
 	}
