@@ -16,12 +16,18 @@ namespace klib::kString::stringify
 	template<class Char_t, typename T, typename ...Ts>
 	constexpr void ToStringImpl(std::basic_string<Char_t>& outFmt, const size_t argIndex, T arg, Ts ...argPack)
 	{
+		using namespace stringify;
 		using Str_t = std::basic_string<Char_t>;
 		constexpr auto npos = type_trait::s_NoPos<Str_t>;
 
-		const auto searchStr = format::s_OpenerSymbol<Char_t> + stringify::StringIntegral<Char_t>(argIndex);
-		
-		size_t openerPos = outFmt.find_first_of(searchStr);
+		auto searchStr = format::s_OpenerSymbol<Char_t> + StringIntegral<Char_t>(argIndex) + format::s_CloserSymbol<Char_t>;
+		size_t openerPos = outFmt.find(searchStr);
+		if (openerPos == npos)
+		{
+			searchStr = format::s_OpenerSymbol<Char_t> + StringIntegral<Char_t>(argIndex) + format::s_SpecifierSymbol<Char_t>;
+			openerPos = outFmt.find(searchStr);
+		}
+
 		size_t closerPos = outFmt.find_first_of(format::s_CloserSymbol<Char_t>, openerPos);
 
 		if (openerPos == npos || closerPos == npos)

@@ -25,6 +25,7 @@ namespace kTest::utility
 		VERIFY_MULTI(ReplaceTest());
 		VERIFY_MULTI(SplitTest());
 		VERIFY_MULTI(IsWhiteSpaceOrNullTest());
+		VERIFY_MULTI(FindTest());
 		VERIFY_MULTI_END();
 	}
 
@@ -444,6 +445,17 @@ namespace kTest::utility
 			const std::string str = "";
 			const auto result = IsWhiteSpaceOrNull(str);
 			VERIFY(result == true);
+		}
+		
+		return success;
+	}
+
+	bool StringManipulationTester::FindTest()
+	{
+		{
+			constexpr auto str = "upgrade";
+			constexpr auto search = "grade";
+			const auto pos = Find(str, search);
 		}
 		
 		return success;

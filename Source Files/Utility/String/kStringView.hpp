@@ -347,7 +347,7 @@ namespace klib
 				return FirstIndexOf(other.string, offset);
 			}
 
-			constexpr Size FirstInstanceOfNot(const CharType item, const Size offset = 0)
+			constexpr Size FirstIndexOfNot(const CharType item, const Size offset = 0)
 			{
 				CheckWithinLength(offset,
 					"Offset is greater than the length of string");
@@ -366,7 +366,7 @@ namespace klib
 				return npos;
 			}
 
-			constexpr Size FirstInstanceOfNot(Const_Ptr str, const Size offset = 0)
+			constexpr Size FirstIndexOfNot(Const_Ptr str, const Size offset = 0)
 			{
 				CheckWithinLength(offset,
 					"Offset is greater than the length of string");
@@ -408,7 +408,7 @@ namespace klib
 				return npos;
 			}
 
-			constexpr Size LastInstanceOfNot(const CharType item, const Size offset = 0) noexcept
+			constexpr Size LastIndexOfNot(const CharType item, const Size offset = 0) noexcept
 			{
 				auto currentChar = string + length - offset - 1;
 				Size pos(length - offset);

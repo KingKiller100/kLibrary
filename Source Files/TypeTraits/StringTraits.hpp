@@ -14,7 +14,10 @@ namespace klib::type_trait
 		Is_Specialization_V< T, std::basic_string>
 		|| Is_Specialization_V<T, std::basic_string_view>
 	>
-	{};
+	{
+		using String_t = T;
+		using Char_t = typename T::value_type;
+	};
 
 	// Determines whether type is an STL string class type
 	template<typename T>
@@ -28,7 +31,9 @@ namespace klib::type_trait
 	struct Is_CStringBase : std::bool_constant<
 		std::is_pointer_v<T> && Is_CharType_V<std::remove_pointer_t<T>>
 	>
-	{};
+	{
+		using Char_t = std::remove_cv_t<std::remove_pointer_t<T>>;
+	};
 
 	// Determines whether type is an C character* type
 	template<typename T>

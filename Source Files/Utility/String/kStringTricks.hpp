@@ -444,9 +444,72 @@ namespace klib
 					return true;
 				}
 			}
+
+
+			template<typename CStringA, typename CStringB, class = std::enable_if_t<
+				type_trait::Is_CString_V<CStringA>
+				&& type_trait::Is_CString_V<CStringB>
+				&& std::is_same_v<CStringA, CStringB>
+				>>
+				USE_RESULT constexpr size_t Find(const CStringA& str, const CStringB& search, size_t offset = 0)
+			{
+				using namespace type_trait;
+				using Char_t = typename type_trait::Is_CString<CStringA>::Char_t;
+				using PossibleString_t = std::basic_string<Char_t>;
+
+				constexpr Char_t nt = s_NullTerminator<Char_t>;
+				constexpr size_t npos = s_NoPos<PossibleString_t>;
+
+				const auto searchSize = GetSize(search);
+				const auto strSize = GetSize(str + offset);
+
+				if (searchSize > strSize) // if search string longer than size of pointer
+					return npos;
+
+				size_t strIndex(0);
+				size_t searchIndex(0);
+
+				while (str[strIndex] != nt)
+				{
+					if (str[strIndex] == search[searchIndex]
+						&& search[searchIndex] != nt)
+					{
+						++strIndex;
+						++searchIndex;
+						continue;
+					}
+
+					if (search[searchIndex] == nt)
+						return strIndex - searchIndex;
+
+					++strIndex;
+					searchIndex = 0;
 				}
+
+				return npos;
+			}
+
+
+			/*template<typename StringA, typename StringB, class = std::enable_if_t <
+				(type_trait::Is_CString_V<StringA> || type_trait::Is_StringType_V<StringB>)
+				&& (type_trait::Is_CString_V<StringB> || type_trait::Is_StringType_V<StringA>)
+				&& (type_trait::Is_StringType_V<StringA> || type_trait::Is_StringType_V<StringB>)
+				>>
+				USE_RESULT constexpr size_t Find(const StringA& str, const StringB& search, size_t offset = 0)
+			{
+				using namespace type_trait;
+				if _CONSTEXPR_IF(Is_StringType_V<StringA> && Is_StringType_V<StringB>)
+					return Find(str.data(), search.data(), offset);
+				else if _CONSTEXPR_IF(Is_StringType_V<StringA> && Is_CString_V<StringB>)
+					return Find(str.data(), search, offset);
+				else if _CONSTEXPR_IF(Is_CString_V<StringA> && Is_StringType_V<StringB>)
+					return Find(str.data(), search.data(), offset);
+				else
+					return static_cast<size_t>(-1);
+			}*/
+	}
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kString;
 #endif
-			}
+}
 

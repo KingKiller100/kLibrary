@@ -410,10 +410,7 @@ namespace kTest::utility
 
 		const auto dateSuffix = [&]()
 		{
-			return (dateTime.wDay == 1 || dateTime.wDay == 21 || dateTime.wDay == 31) ? "st"
-				: (dateTime.wDay == 2 || dateTime.wDay == 22) ? "nd"
-				: dateTime.wDay == 3 ? "rd"
-				: "th";
+			return klib::kMisc::GetNumberSuffix<char>(dateTime.wDay);
 		};
 
 		std::string dateStr;

@@ -2,8 +2,8 @@
 
 #include "../../String/kToString.hpp"
 #include "../../Misc/NumberSuffix.hpp"
+#include <string>
 #include <stdexcept>
-
 
 namespace klib::kDebug
 {
@@ -36,7 +36,7 @@ namespace klib::kDebug
 				value,
 				root,
 				kMisc::GetNumberSuffix<char>(root)
-			)
+			))
 		{}
 
 		explicit NoRealRootError(const char* const _Message);

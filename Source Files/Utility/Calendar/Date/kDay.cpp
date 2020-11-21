@@ -2,6 +2,7 @@
 #include "kDay.hpp"
 
 #include "../../String/kToString.hpp"
+#include "../../Misc/NumberSuffix.hpp"
 
 namespace klib::kCalendar
 {
@@ -49,19 +50,8 @@ namespace klib::kCalendar
 	{
 		const auto str = kString::ToString("{0}{1}"
 			, day
-			, GetDaySuffix(day));
+			, kMisc::GetNumberSuffix<char>(day));
 		return str;
-	}
-
-	std::string_view Day::GetDaySuffix(const std::uint16_t day)
-	{
-		const auto remaining = day % 10;
-		switch ( remaining ) {
-		case 1: return "st";
-		case 2: return "nd";
-		case 3: return "rd";
-		default: return "th";
-		}
 	}
 
 	std::string Day::GetDayOfTheWeekStr() const

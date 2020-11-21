@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "../Secret/kComponentToStringImpl.hpp"
 #include "../../../HelperMacros.hpp"
+#include "../Secret/kComponentToStringImpl.hpp"
 
 #include <array>
 #include <string>
@@ -52,15 +52,13 @@ namespace klib::kCalendar
 
 		USE_RESULT static constexpr auto DayOfTheWeekToString(DayOfTheWeek day)
 		{
-			constexpr std::array<const char*,DaysInWeek> kCalendar_DaysOfTheWeek = {
+			constexpr std::array<const char*, DaysInWeek> kCalendar_DaysOfTheWeek = {
 				"Sunday", "Monday", "Tuesday", "Wednesday",
 			"Thursday", "Friday", "Saturday"
 			};
 
 			return kCalendar_DaysOfTheWeek[day];
 		}
-
-		static std::string_view GetDaySuffix(const std::uint16_t day);
 		
 		USE_RESULT bool Verify() const;
 		

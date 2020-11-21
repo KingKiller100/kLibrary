@@ -53,16 +53,16 @@ namespace kTest::utility
 		const auto badGPos = s.FirstIndexOf('g', 2, 3);
 		VERIFY(badGPos == StringView::npos);
 		
-		const auto iPos = s.FirstInstanceOfNot('i', 2);
+		const auto iPos = s.FirstIndexOfNot('i', 2);
 		VERIFY(iPos == 2);
 		
-		const auto rBlankSPos = s.FirstInstanceOfNot("r S");
+		const auto rBlankSPos = s.FirstIndexOfNot("r S");
 		VERIFY(rBlankSPos == 3);
 
 		const auto Pos3 = s4.LastIndexOf(L'6');
 		VERIFY(Pos3 == 11);
 
-		const auto BadrPos = s4.LastInstanceOfNot(L'r', 2);
+		const auto BadrPos = s4.LastIndexOfNot(L'r', 2);
 		VERIFY(BadrPos == 20);
 
 		auto k = s2.Back();

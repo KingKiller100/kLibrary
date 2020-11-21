@@ -10,7 +10,9 @@ namespace klib::type_trait
 		, char8_t
 #endif
 		>>
-	{};
+	{
+		using Char_t = T;
+	};
 
 	template<typename T>
 	struct Is_CharType : Is_CharTypeBase<std::remove_cv_t<T>>
