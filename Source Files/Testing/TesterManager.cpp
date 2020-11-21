@@ -104,16 +104,19 @@ namespace kTest
 			Run(*test);
 		}
 
-		const auto finalTime = totalRunTimeTimer.GetDeltaTime<units::Secs>();
+		const auto finalTime = totalRunTimeTimer.GetLifeTime<units::Secs>();
+		const auto avgTime = finalTime / testsSet.size();
+		
 		const auto secs = CAST(unsigned, finalTime);
 		const auto remainder = finalTime - secs;
 		const unsigned millis = CAST(unsigned
 			, units::Secs::Period_t::den * remainder);
 
-		const auto finalTimeStr = stringify::SprintfWrapper("Total Runtime: %us  %ums", secs, millis);
-		kFileSystem::WriteFile(path, finalTimeStr);
+		auto timeStr = stringify::SprintfWrapper("Total Runtime: %us  %ums | ", secs, millis);
+		timeStr.append(stringify::SprintfWrapper("Average Runtime: %.3fs", avgTime));
+		kFileSystem::WriteFile(path, timeStr);
 
-		std::cout << "\n" << finalTimeStr << "\n";
+		std::cout << "\n" << timeStr << "\n";
 
 		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path << std::endl;
 		std::cin.get();

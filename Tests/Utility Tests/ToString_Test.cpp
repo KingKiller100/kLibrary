@@ -51,7 +51,7 @@ namespace kTest::utility
 		VERIFY_MULTI(DirectToStringTest());
 		VERIFY_MULTI_END();
 	}
-
+	
 	using namespace klib;
 	using namespace klib::kString;
 

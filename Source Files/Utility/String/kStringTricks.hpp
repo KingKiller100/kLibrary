@@ -494,25 +494,6 @@ namespace klib
 
 				return npos;
 			}
-
-
-			/*template<typename StringA, typename StringB, class = std::enable_if_t <
-				(type_trait::Is_CString_V<StringA> || type_trait::Is_StringType_V<StringB>)
-				&& (type_trait::Is_CString_V<StringB> || type_trait::Is_StringType_V<StringA>)
-				&& (type_trait::Is_StringType_V<StringA> || type_trait::Is_StringType_V<StringB>)
-				>>
-				USE_RESULT constexpr size_t Find(const StringA& str, const StringB& search, size_t offset = 0)
-			{
-				using namespace type_trait;
-				if _CONSTEXPR_IF(Is_StringType_V<StringA> && Is_StringType_V<StringB>)
-					return Find(str.data(), search.data(), offset);
-				else if _CONSTEXPR_IF(Is_StringType_V<StringA> && Is_CString_V<StringB>)
-					return Find(str.data(), search, offset);
-				else if _CONSTEXPR_IF(Is_CString_V<StringA> && Is_StringType_V<StringB>)
-					return Find(str.data(), search.data(), offset);
-				else
-					return static_cast<size_t>(-1);
-			}*/
 	}
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kString;
