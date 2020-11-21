@@ -8,7 +8,7 @@ namespace klib::type_trait
 {
 	template<typename T>
 	struct Is_CustomBase : std::bool_constant<
-		!std::is_arithmetic_v<T>
+		!std::is_fundamental_v<T>
 		&& !Is_StringType_V<T>
 		&& !Is_SmartPtr_V<T>
 		&& !std::is_pointer_v<T>
@@ -20,11 +20,12 @@ namespace klib::type_trait
 	struct Is_Custom : Is_CustomBase<std::remove_cv_t<T>>
 	{};
 
-	/* Checks if the given type is NEITHER:
+	/* Only TRUE if the given type is NEITHER:
 	 * A raw pointer
 	 * A C array
-	 * An arithmetic type
+	 * A fundamental type
 	 * A STL string[_view] type
+	 * A STL smart pointer
 	*/
 	template<typename T>
 	constexpr bool Is_CustomType_V = Is_Custom<T>::value;

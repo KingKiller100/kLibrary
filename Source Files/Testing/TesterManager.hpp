@@ -3,6 +3,7 @@
 #include "../HelperMacros.hpp"
 #include <memory>
 #include <set>
+#include <vector>
 #include <string>
 
 #ifdef TESTING_ENABLED
@@ -38,7 +39,7 @@ namespace kTest
 	private:
 		std::string path;
 		std::set< std::unique_ptr<Tester> > testsSet;
-
+		std::vector<double> timesRecorded;
 		bool success;
 	};
 }

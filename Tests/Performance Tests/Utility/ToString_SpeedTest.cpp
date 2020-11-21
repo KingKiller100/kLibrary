@@ -21,6 +21,7 @@ namespace kTest::performance::util
 
 	void ToStringSpeedTest::Test()
 	{
+		AvgSpeed();
 		kSprintfTest();
 		OstreamTest();
 		IntTest();
@@ -236,8 +237,8 @@ namespace kTest::performance::util
 		const unsigned uint = 100;
 		const int sint = -50;
 		const bool boolean = true;
-
 		const auto ptr = std::make_shared<int64_t>(64);
+
 		std::unique_ptr<char[]> buffer;
 		for (auto i = 0; i < maxIter; ++i)
 		{
@@ -310,6 +311,43 @@ namespace kTest::performance::util
 			}
 
 			buffer.release();
+		}
+	}
+
+	void ToStringSpeedTest::AvgSpeed()
+	{
+		const std::vector<std::string_view> participants = { "klib::kString::ToString" };
+		SetUpParticipants(participants);
+
+		const std::string string = "Input1";
+		const std::string_view string_view = "Input2";
+		const double f64 = 64.625;
+		const float f32 = 32.25;
+		const size_t ulong = 10000;
+		const long long slong = -5000;
+		const unsigned uint = 100;
+		const int sint = -50;
+		const bool boolean = true;
+		const auto ptr = std::make_shared<int64_t>(64);
+
+		for (auto i = 0; i < maxIter; ++i)
+		{
+			{
+				START_TEST(participants[0]);
+				const auto output = kString::ToString("string: {0} - string_view: {1} - double: {2:5}"
+					" - float: {3:5} - ulong: {4} - slong: {5} - uint: {6} - sint: {7} - boolean: {8} - Pointer: {9}"
+					, string
+					, string_view
+					, f64
+					, f32
+					, ulong
+					, slong
+					, uint
+					, sint
+					, boolean
+					, ptr
+				);
+			}
 		}
 	}
 }

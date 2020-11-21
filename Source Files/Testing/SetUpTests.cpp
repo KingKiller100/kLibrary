@@ -79,7 +79,7 @@ namespace kTest
 		AddTest<TesterManager>(new utility::DebugHelpTester());
 		AddTest<TesterManager>(new utility::LoggingTester());
 		AddTest<TesterManager>(new utility::StringViewTester());
-		AddTest<TesterManager>(new utility::StopWatchTester());
+		//AddTest<TesterManager>(new utility::StopWatchTester());
 	}
 
 	void InitializeTemplateTests()

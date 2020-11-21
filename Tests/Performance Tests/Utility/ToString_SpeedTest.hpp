@@ -12,13 +12,16 @@ namespace kTest::performance::util
 		
 	protected:
 		void Test() override;
+		
+	private:
 		void kSprintfTest();
 		void IntTest();
 		void DoubleTest();
 		void StringTest();
 
-	private:
 		void OstreamTest();
 		void SprintfTest();
+		
+		void AvgSpeed();
 	};
 }

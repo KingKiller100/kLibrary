@@ -44,8 +44,8 @@ namespace kTest::maths
 			const auto b = rng(lb, ub);
 
 			VERIFY(a != b);
-			VERIFY(lb < a&& a < ub);
-			VERIFY(lb < b&& b < ub);
+			VERIFY(lb <= a&& a <= ub);
+			VERIFY(lb <= b&& b <= ub);
 		}
 
 		{
@@ -58,8 +58,8 @@ namespace kTest::maths
 			const auto b = rng(lb, ub);
 
 			VERIFY(a != b);
-			VERIFY(lb < a&& a < ub);
-			VERIFY(lb < b&& b < ub);
+			VERIFY(lb <= a && a <= ub);
+			VERIFY(lb <= b && b <= ub);
 		}
 
 		return success;
@@ -80,8 +80,8 @@ namespace kTest::maths
 
 
 			VERIFY(a != b);
-			VERIFY(lb < a&& a < ub);
-			VERIFY(lb < b&& b < ub);
+			VERIFY(lb <= a&& a <= ub);
+			VERIFY(lb <= b&& b <= ub);
 		}
 
 		{
@@ -96,8 +96,8 @@ namespace kTest::maths
 
 
 			VERIFY(a != b);
-			VERIFY(lb < a&& a < ub);
-			VERIFY(lb < b&& b < ub);
+			VERIFY(lb <= a&& a <= ub);
+			VERIFY(lb <= b&& b <= ub);
 		}
 
 		return success;
@@ -117,8 +117,8 @@ namespace kTest::maths
 			const auto b = rng(lb, ub);
 
 			VERIFY(a != b);
-			VERIFY(lb < a&& a < ub);
-			VERIFY(lb < b&& b < ub);
+			VERIFY(lb <= a&& a <= ub);
+			VERIFY(lb <= b&& b <= ub);
 		}
 
 		{
@@ -130,8 +130,8 @@ namespace kTest::maths
 			const auto b = rng(lb, ub);
 
 			VERIFY(a != b);
-			VERIFY(lb < a&& a < ub);
-			VERIFY(lb < b&& b < ub);
+			VERIFY(lb <= a&& a <= ub);
+			VERIFY(lb <= b&& b <= ub);
 		}
 
 		return success;
@@ -151,8 +151,8 @@ namespace kTest::maths
 			const auto b = rng(lb, ub);
 
 			VERIFY(a != b);
-			VERIFY(lb < a&& a < ub);
-			VERIFY(lb < b&& b < ub);
+			VERIFY(lb <= a&& a <= ub);
+			VERIFY(lb <= b&& b <= ub);
 		}
 
 		{
@@ -164,8 +164,8 @@ namespace kTest::maths
 			const auto b = rng(lb, ub);
 
 			VERIFY(a != b);
-			VERIFY(lb < a&& a < ub);
-			VERIFY(lb < b&& b < ub);
+			VERIFY(lb <= a&& a <= ub);
+			VERIFY(lb <= b&& b <= ub);
 		}
 
 		return success;

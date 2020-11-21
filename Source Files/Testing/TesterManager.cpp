@@ -98,6 +98,7 @@ namespace kTest
 	void TesterManager::RunAll()
 	{
 		HighAccuracyStopwatch totalRunTimeTimer("Total Test Run Time");
+		timesRecorded.reserve(testsSet.size());
 
 		for (const auto& test : testsSet)
 		{
@@ -105,15 +106,20 @@ namespace kTest
 		}
 
 		const auto finalTime = totalRunTimeTimer.GetLifeTime<units::Secs>();
-		const auto avgTime = finalTime / testsSet.size();
+		double avgTime(0);
+
+		for (auto t : timesRecorded)
+			avgTime += t;
+
+		avgTime /= timesRecorded.size();
 		
 		const auto secs = CAST(unsigned, finalTime);
 		const auto remainder = finalTime - secs;
 		const unsigned millis = CAST(unsigned
 			, units::Secs::Period_t::den * remainder);
 
-		auto timeStr = stringify::SprintfWrapper("Total Runtime: %us  %ums | ", secs, millis);
-		timeStr.append(stringify::SprintfWrapper("Average Runtime: %.3fs", avgTime));
+		auto timeStr = stringify::SprintfWrapper("Total Runtime: %us %ums | ", secs, millis);
+		timeStr.append(stringify::SprintfWrapper("Average Runtime: %.3fms", avgTime));
 		kFileSystem::WriteFile(path, timeStr);
 
 		std::cout << "\n" << timeStr << "\n";
@@ -144,6 +150,8 @@ namespace kTest
 		const auto pass = test.Run();
 		const auto testTime = timer.GetLifeTime<units::Millis>();
 
+		timesRecorded.push_back(testTime);
+		
 		if (!pass)
 			success = false;
 
