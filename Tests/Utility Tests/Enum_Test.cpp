@@ -327,11 +327,46 @@ namespace kTest::utility
 
 	bool EnumTester::ToEnumTest()
 	{
+		{
+			const auto tr = TestResults{ TestResults::D };
+			VERIFY(tr.ToEnum() == TestResults::D);
+		}
+		
+		{
+			const auto tr = TestResults{ TestResults::B };
+			VERIFY(tr.ToEnum() == TestResults::B);
+		}
+		
+		{
+			const auto tr = TestResults{ TestResults::F };
+			VERIFY(tr.ToEnum() != TestResults::B);
+		}
+		
+		{
+			const auto tr = TestResults{ TestResults::F };
+			VERIFY(tr.ToEnum() != TestResults::F);
+		}
+		
 		return success;
 	}
 
 	bool EnumTester::ToUnderlyingTest()
 	{
+		{
+			constexpr auto tr = TestResults{ TestResults::F };
+			VERIFY(tr.ToUnderlying() == 64);
+		}
+
+		{
+			constexpr auto tr = TestResults{ TestResults::F };
+			VERIFY(tr.ToUnderlying() != 64);
+		}
+
+		{
+			constexpr auto tr = TestResults{ TestResults::E };
+			VERIFY(tr.ToUnderlying() != 32);
+		}
+
 		return success;
 	}
 
