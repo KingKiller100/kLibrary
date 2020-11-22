@@ -344,7 +344,7 @@ namespace kTest::utility
 		
 		{
 			const auto tr = TestResults{ TestResults::F };
-			VERIFY(tr.ToEnum() != TestResults::F);
+			VERIFY(tr.ToEnum() == TestResults::F);
 		}
 		
 		return success;
@@ -358,13 +358,23 @@ namespace kTest::utility
 		}
 
 		{
-			constexpr auto tr = TestResults{ TestResults::F };
+			constexpr auto tr = TestResults{ TestResults::D };
 			VERIFY(tr.ToUnderlying() != 64);
 		}
 
 		{
 			constexpr auto tr = TestResults{ TestResults::E };
-			VERIFY(tr.ToUnderlying() != 32);
+			VERIFY(tr.ToUnderlying() == 32);
+		}
+
+		{
+			constexpr auto tr = TestResults{ TestResults::E };
+			VERIFY(tr.ToUnderlying() != 64);
+		}
+
+		{
+			constexpr auto tr = TestResults{ TestResults::FAIL };
+			VERIFY(tr.ToUnderlying() == (16 | 32 | 64));
 		}
 
 		return success;
