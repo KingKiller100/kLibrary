@@ -5,7 +5,7 @@
 
 #ifdef _WIN64
 
-namespace klib::kCalendar::secret::helper::windows
+namespace klib::kCalendar::secret::impl::windows
 {
 	CalendarInfoSourceWindows::CalendarInfoSourceWindows()
 	{

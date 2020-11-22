@@ -9,7 +9,7 @@ namespace klib::kCalendar
 {
 	namespace
 	{
-		using namespace secret::helper;
+		using namespace secret::impl;
 
 		iCalendarInfoSource& GetInfoSource(CalendarInfoSourceType type)
 		{

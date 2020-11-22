@@ -2,6 +2,8 @@
 
 #include "../../HelperMacros.hpp"
 
+#include "../String/kStringConverter.hpp"
+
 #include <array>
 #include <memory>
 #include <string>
@@ -50,7 +52,7 @@
 #define STRINGIZE_SINGLE(e) #e,
 #define STRINGIZE(...) IDENTITY(MAP(STRINGIZE_SINGLE, __VA_ARGS__))
 
-namespace klib::kEnum::secret::helper
+namespace klib::kEnum::secret::impl
 {
 	// The type "U" mentioned above that drops assignment operations.
 	template <typename U>
@@ -67,7 +69,7 @@ namespace klib::kEnum::secret::helper
 	};
 
 // Prepends "(ignore_assign<underlying_t>)" to each argument.
-#define IGNORE_ASSIGN_SINGLE(e) (klib::kEnum::secret::helper::ignore_assign<underlying_t>)e,
+#define IGNORE_ASSIGN_SINGLE(e) (klib::kEnum::secret::impl::ignore_assign<underlying_t>)e,
 #define IGNORE_ASSIGN(...) \
     IDENTITY(MAP(IGNORE_ASSIGN_SINGLE, __VA_ARGS__))
 
@@ -136,9 +138,10 @@ public:																					\
 		return value;																	\
 	}																					\
 																						\
-	USE_RESULT std::string_view ToString() const										\
+	template<class Char_t = char>														\
+	USE_RESULT std::basic_string_view<Char_t> ToString() const							\
 	{																					\
-		const auto name = ToStringImpl(static_cast<enum_t>(value));						\
+		const auto name = ToStringImpl<Char_t>(static_cast<enum_t>(value));				\
 		return name;																	\
 	}																					\
 																						\
@@ -161,7 +164,7 @@ public:																					\
 																						\
 	static constexpr enum_t FromString(const std::string_view& s, size_t index = 0)		\
 	{																					\
-		using namespace klib::kEnum::secret::helper;									\
+		using namespace klib::kEnum::secret::impl;										\
 																						\
 		if (index >= data_##enumName::size)												\
 			std::_Xout_of_range("Invalid identifier");									\
@@ -185,26 +188,28 @@ public:																					\
 	static std::string PrettyType(const enumName input)									\
 	{																					\
 		const auto type = std::string(PrettyType());									\
-		const auto name = std::string(ToStringImpl(input));								\
+		const auto name = std::string(ToStringImpl<char>(input));						\
 		return type + "::" + name;														\
 	}																					\
 																						\
 	private:																			\
-	USE_RESULT static std::string_view ToStringImpl(enumName input)						\
+	template<class Char_t>																\
+	USE_RESULT static const Char_t* ToStringImpl(enumName input)						\
 	{																					\
-		const auto name = TrimmedNames(static_cast<enum_t>(input));						\
+		const auto* name = TrimmedNames<Char_t>(static_cast<enum_t>(input));			\
 		return name;																	\
 	}																					\
 																						\
-		static std::string_view TrimmedNames(const enumName input)						\
+	template<class Char_t>																\
+	USE_RESULT static const Char_t* TrimmedNames(const enumName input)					\
 	{																					\
-		static std::unique_ptr<char[]> the_names[data_##enumName::size];				\
+		static std::unique_ptr<Char_t[]> the_names[data_##enumName::size];				\
 		static bool  initialized = false;												\
 		size_t index = 0;																\
 																						\
 		if (!initialized)																\
 		{																				\
-			InitializeNames(the_names);													\
+			InitializeNames<Char_t>(the_names);											\
 			initialized = true;															\
 		}																				\
 																						\
@@ -218,10 +223,11 @@ public:																					\
 		return the_names[index].get();													\
 	}																					\
 																						\
-	static constexpr void InitializeNames(std::unique_ptr<char[]>						\
+	template<class Char_t>																\
+	static constexpr void InitializeNames(std::unique_ptr<Char_t[]>						\
 		(&the_names)[data_##enumName::size])											\
 	{																					\
-		using namespace klib::kEnum::secret::helper;									\
+		using namespace klib::kEnum::secret::impl;										\
 		for (auto i = 0; i < data_##enumName::size; ++i)								\
 		{																				\
 			const auto & raw_name = data_##enumName::raw_names[i];						\
@@ -231,14 +237,16 @@ public:																					\
 				std::strcspn(raw_name.data(),											\
 					terminators);														\
 																						\
-			name.reset(new char[length_til_terminator + 1]);							\
+			name.reset(new Char_t[length_til_terminator + 1]);							\
 																						\
-			strncpy_s(name.get(),														\
-				length_til_terminator + 1,												\
-				raw_name.data(),														\
-				length_til_terminator);													\
+			size_t index(0);															\
+			while (index < length_til_terminator)										\
+			{																			\
+				name[index] = Char_t(raw_name[index]);									\
+				++index;																\
+			}																			\
 																						\
-			name[length_til_terminator] = '\0';											\
+			name[length_til_terminator] = Char_t('\0');									\
 		}																				\
 	}																					\
 																						\

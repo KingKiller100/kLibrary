@@ -31,7 +31,7 @@ namespace kmaths
 		constexpr AccuracyType GOLDEN_RATIO = 1.61803398874989l;
 		constexpr AccuracyType INVERSE_GOLDEN_RATIO = static_cast<AccuracyType>(1) / GOLDEN_RATIO;
 
-		namespace secret::helper
+		namespace secret::impl
 		{
 			constexpr size_t GetCountImpl()
 			{
@@ -47,7 +47,7 @@ namespace kmaths
 		template<typename T, typename ...Ts>
 		constexpr size_t Count(const T& arg, const Ts& ...args)
 		{
-			using namespace secret::helper;
+			using namespace secret::impl;
 			const auto count(GetCountImpl(arg, args...));
 			return count;
 		}

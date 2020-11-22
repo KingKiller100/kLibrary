@@ -9,7 +9,7 @@
 
 #	include <Windows.h>
 
-namespace klib::kCalendar::secret::helper::windows
+namespace klib::kCalendar::secret::impl::windows
 {
 	class CalendarInfoSourceWindows : public iCalendarInfoSource
 	{

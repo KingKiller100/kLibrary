@@ -1,7 +1,7 @@
 #pragma once
 
 #include "kStringTypes.hpp"
-#include "../Enum/Enum.hpp"
+#include "../Enum/kEnum.hpp"
 #include "../Debug/Exceptions/StringExceptions.hpp"
 #include "../../TypeTraits/StringTraits.hpp"
 

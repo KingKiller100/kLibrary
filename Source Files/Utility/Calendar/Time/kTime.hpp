@@ -17,7 +17,7 @@ namespace klib
 {
 	namespace kCalendar
 	{
-		namespace secret::helper
+		namespace secret::impl
 		{
 			class iCalendarInfoSource;
 		}
@@ -55,7 +55,7 @@ namespace klib
 		private:
 			void CheckTime() const;
 
-			explicit Time(const secret::helper::iCalendarInfoSource& timeSource);
+			explicit Time(const secret::impl::iCalendarInfoSource& timeSource);
 			
 		private:
 			Hour hour;

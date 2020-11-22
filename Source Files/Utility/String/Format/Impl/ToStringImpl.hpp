@@ -1,13 +1,12 @@
 #pragma once
 
-#include "Stringify.hpp"
 #include "../FormatSymbols.hpp"
-#include "../../kStringTricks.hpp"
+#include "../Stringify/kStringIdentity.hpp"
 #include "../../../../TypeTraits/StringTraits.hpp"
 #include <string>
 
 
-namespace klib::kString::stringify
+namespace klib::kString::secret::impl
 {
 	template<class Char_t>
 	constexpr void ToStringImpl(UNUSED const std::basic_string<Char_t>& fmt, UNUSED const size_t argIndex)
@@ -16,6 +15,7 @@ namespace klib::kString::stringify
 	template<class Char_t>
 	USE_RESULT constexpr size_t FindOpenerPos(std::basic_string<Char_t>& outFmt, const size_t argIndex)
 	{
+		using namespace stringify;
 		using Str_t = std::basic_string<Char_t>;
 		constexpr size_t npos = type_trait::s_NoPos<Str_t>;
 		
@@ -58,7 +58,7 @@ namespace klib::kString::stringify
 				specifier = outFmt.substr(startPos, count);
 			}
 
-			const auto replacement = Stringify<Char_t, T>(arg, specifier);
+			const auto replacement = Identity<Char_t, T>::MakeStr(arg, specifier);
 			outFmt.erase(openerPos, infoSize + 1);
 			outFmt.insert(openerPos, replacement);
 			openerPos = FindOpenerPos(outFmt, argIndex);

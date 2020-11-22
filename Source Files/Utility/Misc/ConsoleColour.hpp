@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Enum/Enum.hpp"
+#include "../Enum/kEnum.hpp"
 
 namespace klib::kMisc
 {

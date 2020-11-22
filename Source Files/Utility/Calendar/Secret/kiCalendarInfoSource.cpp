@@ -9,7 +9,7 @@
 
 
 
-namespace klib::kCalendar::secret::helper
+namespace klib::kCalendar::secret::impl
 {
 	iCalendarInfoSource& GetCalendarInfoSource()
 	{

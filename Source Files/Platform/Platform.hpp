@@ -2,7 +2,7 @@
 
 #include "../HelperMacros.hpp"
 
-#include "../Utility/Enum/Enum.hpp"
+#include "../Utility/Enum/kEnum.hpp"
 
 namespace klib::kPlatform
 {

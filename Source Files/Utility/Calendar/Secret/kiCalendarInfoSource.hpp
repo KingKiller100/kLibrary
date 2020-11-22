@@ -7,7 +7,7 @@ namespace klib::kCalendar
 {
 	enum class CalendarInfoSourceType;
 
-	namespace secret::helper
+	namespace secret::impl
 	{
 		// Singleton class
 		class iCalendarInfoSource

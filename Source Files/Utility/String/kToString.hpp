@@ -25,7 +25,7 @@ namespace klib {
 				return stringify::SprintfWrapper<CharT>(format, arg, argPack...);
 			}
 
-			stringify::ToStringImpl<CharT, T, Ts...>(finalString, 0, arg, argPack...);
+			secret::impl::ToStringImpl<CharT, T, Ts...>(finalString, 0, arg, argPack...);
 			return finalString;
 		}
 

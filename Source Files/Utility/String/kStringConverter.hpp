@@ -12,7 +12,7 @@ namespace klib
 			type_trait::Is_CharType_V<DestChar>
 			&& type_trait::Is_CharType_V<SourceChar>
 			>>
-			USE_RESULT constexpr DestChar Convert(const SourceChar source) noexcept
+			USE_RESULT constexpr DestChar Convert(SourceChar source) noexcept
 		{
 			return CAST(DestChar, source);
 		}
@@ -25,22 +25,24 @@ namespace klib
 		{
 			if _CONSTEXPR_IF(std::is_same_v<SourceChar, DestChar>)
 				return (DestChar*)source;
+			else
+			{
+				constexpr auto destTerminator = type_trait::s_NullTerminator<DestChar>;
+				constexpr auto sourceTerminator = type_trait::s_NullTerminator<SourceChar>;
 
-			constexpr auto destTerminator = DestChar();
-			constexpr auto sourceTerminator = SourceChar();
+				auto currentPos = source;
+				size_t size = 0;
 
-			auto currentPos = source;
-			size_t size = 0;
+				while (*(currentPos++) != sourceTerminator)
+					size++;
 
-			while (*(currentPos++) != sourceTerminator)
-				size++;
+				auto result = new DestChar[size + 1]{ destTerminator };
+				do {
+					result[size] = Convert<DestChar>(source[size]);
+				} while (size-- > 0);
 
-			auto result = new DestChar[size + 1]{ destTerminator };
-			do {
-				result[size] = CAST(DestChar, source[size]);
-			} while (size-- > 0);
-
-			return result;
+				return result;
+			}
 		}
 
 		template<class DestChar, class SourceChar, class = std::enable_if_t <

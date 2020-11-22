@@ -83,10 +83,10 @@ namespace klib::kString::stringify
 			return string.data();
 		}
 
-		USE_RESULT static decltype(auto) MakeStr(const T& arg, UNUSED StringWriter<Char_t>& specifier)
+		USE_RESULT static const std::basic_string<Char_t>& MakeStr(const T& arg, UNUSED StringWriter<Char_t>& specifier)
 		{
 			const std::basic_string<Char_t>& string = GetObjectString<Char_t>(arg);
-			return string.data();
+			return string;
 		}
 	};
 
@@ -121,9 +121,7 @@ namespace klib::kString::stringify
 		type_trait::Is_CharType_V<Char_t>
 		&& type_trait::Is_CString_V<T>
 		&& std::is_same_v<Char_t,
-		std::remove_cv_t<
-		std::remove_pointer_t<
-		std::decay_t<T>>>>
+		std::remove_cv_t<std::remove_pointer_t<std::decay_t<T>>>>
 		>>
 	{
 	public:

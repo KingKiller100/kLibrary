@@ -11,7 +11,7 @@ namespace klib
 {
 	namespace kCalendar
 	{
-		namespace secret::helper
+		namespace secret::impl
 		{
 			class iCalendarInfoSource;
 		}
@@ -48,7 +48,7 @@ namespace klib
 			
 		private:
 			void CheckDate() const;
-			explicit Date(const secret::helper::iCalendarInfoSource& source);
+			explicit Date(const secret::impl::iCalendarInfoSource& source);
 
 		private:
 			Day day;

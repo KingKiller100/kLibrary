@@ -2,7 +2,7 @@
 
 #include "../../Calendar/Time/kTimeComponentBase.hpp"
 #include "../../../TypeTraits/TemplateTraits.hpp"
-#include "../../Enum/Enum.hpp"
+#include "../../Enum/kEnum.hpp"
 #include "../../String/kStringConverter.hpp"
 
 #include <chrono>
