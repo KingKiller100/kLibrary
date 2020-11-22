@@ -5,7 +5,7 @@
 #ifdef TESTING_ENABLED
 namespace kTest::utility
 {
-	class EnumTester : public Tester
+	class EnumTester final : public Tester
 	{
 	public:
 		EnumTester();
@@ -22,6 +22,9 @@ namespace kTest::utility
 		bool MaskCmpTest();
 		bool ToEnumTest();
 		bool ToUnderlyingTest();
+		bool PrettyTypeTest();
+		bool PrettyValueTest();
+		bool FromStringTest();
 	};
 }
 #endif

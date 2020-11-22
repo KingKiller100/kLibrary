@@ -138,13 +138,6 @@ public:																					\
 		return value;																	\
 	}																					\
 																						\
-	template<class Char_t = char>														\
-	USE_RESULT std::basic_string_view<Char_t> ToString() const							\
-	{																					\
-		const auto name = ToStringImpl<Char_t>(static_cast<enum_t>(value));				\
-		return name;																	\
-	}																					\
-																						\
 	template<typename T1, typename T2, typename = std::enable_if_t<						\
 	std::is_convertible_v<T2, T1>														\
 	>>																					\
@@ -198,23 +191,31 @@ public:																					\
 	}																					\
 																						\
 	USE_RESULT																			\
-	static std::string PrettyType(const enumName input)									\
+	static std::string PrettyValue(enumName input)										\
 	{																					\
-		const auto type = std::string(PrettyType());									\
-		const auto name = std::string(ToStringImpl<char>(input));						\
-		return type + "::" + name;														\
+		static const auto type = std::string(PrettyType());								\
+		const auto name = std::string(input.ToString<char>());							\
+		const auto prettyValue = type + "::" + name;									\
+		return prettyValue;																\
+	}																					\
+																						\
+	template<class Char_t = char>														\
+	USE_RESULT std::basic_string_view<Char_t> ToString() const							\
+	{																					\
+		const auto name = ToStringImpl<Char_t>();										\
+		return name;																	\
 	}																					\
 																						\
 	private:																			\
 	template<class Char_t>																\
-	USE_RESULT static const Char_t* ToStringImpl(enum_t input)							\
+	USE_RESULT const Char_t* ToStringImpl() const										\
 	{																					\
-		const auto* name = TrimmedNames<Char_t>(input);									\
+		const auto* name = TrimmedNames<Char_t>();										\
 		return name;																	\
 	}																					\
 																						\
 	template<class Char_t>																\
-	USE_RESULT static const Char_t* TrimmedNames(enum_t input)							\
+	USE_RESULT const Char_t* TrimmedNames() const										\
 	{																					\
 		static std::unique_ptr<Char_t[]> the_names[secret_impl_##enumName::size];		\
 		static bool  initialized = false;												\
@@ -228,7 +229,7 @@ public:																					\
 																						\
 		do																				\
 		{																				\
-			if (input == secret_impl_##enumName::values[index])							\
+			if (ToEnum() == secret_impl_##enumName::values[index])						\
 				break;																	\
 		}																				\
 		while (++index < secret_impl_##enumName::size);									\
@@ -237,8 +238,8 @@ public:																					\
 	}																					\
 																						\
 	template<class Char_t>																\
-	static constexpr void InitializeNames(std::unique_ptr<Char_t[]>						\
-		(&the_names)[secret_impl_##enumName::size])										\
+	constexpr void InitializeNames(std::unique_ptr<Char_t[]>							\
+		(&the_names)[secret_impl_##enumName::size]) const								\
 	{																					\
 		using namespace klib::kEnum::secret::impl;										\
 		for (auto i = 0; i < secret_impl_##enumName::size; ++i)							\

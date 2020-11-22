@@ -61,8 +61,8 @@ namespace klib::kLogs
 		{
 			if (!dest.second->Open())
 			{
-				const auto destType = DestionationType::PrettyType(dest.first);
-				const auto errMsg = ToString("{0} - Unable to open log destination: {1}", name, destType);
+				const auto destPrettyValue = DestionationType::PrettyValue(dest.first);
+				const auto errMsg = ToString("{0} - Unable to open log destination: {1}", name, destPrettyValue);
 				throw std::runtime_error(errMsg);
 			}
 		}
