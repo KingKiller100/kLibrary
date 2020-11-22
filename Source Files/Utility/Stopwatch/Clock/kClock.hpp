@@ -33,7 +33,8 @@ namespace klib::kStopwatch
 			{
 				return kString::Convert<CharT>(length.Compare(UnitStrLength::SHORT,
 					"h", "hours"
-				));
+				)
+					);
 			}
 			else if _CONSTEXPR_IF(std::is_same_v<Units, Mins>)
 			{

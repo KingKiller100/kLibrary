@@ -13,6 +13,7 @@
 #include "../../Tests/Maths Tests/Quaternion_Test.hpp"
 
 // Utility
+#include "../../Tests/Utility Tests/Enum_Test.hpp"
 #include "../../Tests/Utility Tests/Stopwatch_Test.hpp"
 #include "../../Tests/Utility Tests/Logging_Test.hpp"
 #include "../../Tests/Utility Tests/Calendar_Test.hpp"
@@ -71,7 +72,8 @@ namespace kTest
 
 	void InitializeUtilityTests()
 	{
-		AddTest<TesterManager>(new utility::UTFConverterTester());
+		AddTest<TesterManager>(new utility::StringConverterTester());
+		AddTest<TesterManager>(new utility::EnumTester());
 		AddTest<TesterManager>(new utility::StringManipulationTester());
 		AddTest<TesterManager>(new utility::FormatToStringTester());
 		AddTest<TesterManager>(new utility::CalendarTester());

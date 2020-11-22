@@ -6,14 +6,14 @@
 #ifdef TESTING_ENABLED
 namespace kTest::utility
 {
-	UTFConverterTester::UTFConverterTester()
+	StringConverterTester::StringConverterTester()
 		: Tester("UTF Converter Test")
 	{}
 
-	UTFConverterTester::~UTFConverterTester()
+	StringConverterTester::~StringConverterTester()
 		= default;
 
-	void UTFConverterTester::Test()
+	void StringConverterTester::Test()
 	{
 		constexpr auto str16 = u"I'm a char32 ptr";
 		const std::u32string str32 = klib::kString::Convert<char32_t>(str16);

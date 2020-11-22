@@ -99,7 +99,7 @@ namespace klib::kEnum::secret::impl
 
 
 #define ENUM_CLASS(enumName, underlying, ...)											\
-struct data_##enumName																	\
+struct secret_impl_##enumName															\
 {																						\
 	using underlying_t = underlying;													\
 	enum { __VA_ARGS__ };																\
@@ -148,13 +148,26 @@ public:																					\
 	template<typename T1, typename T2, typename = std::enable_if_t<						\
 	std::is_convertible_v<T2, T1>														\
 	>>																					\
-	USE_RESULT constexpr T1 Compare(enum_t target										\
-		, T1 successState, T2 failState) const											\
+	USE_RESULT constexpr std::decay_t<T1> MaskCmp(enum_t target							\
+		, T1&& successState, T2&& failState) const										\
+	{																					\
+		if (target & value)																\
+			return successState;														\
+		return failState;																\
+	}																					\
+																						\
+	USE_RESULT constexpr bool MaskCmp(enum_t target) const								\
+	{																					\
+		return MaskCmp(target, true, false);											\
+	}																					\
+																						\
+	template<typename T1, typename T2>													\
+	USE_RESULT constexpr std::decay_t<T1> Compare(enum_t target							\
+		, T1&& successState, T2&& failState) const										\
 	{																					\
 		if (target == value)															\
 			return successState;														\
-		else																			\
-			return failState;															\
+		return failState;																\
 	}																					\
 																						\
 	USE_RESULT constexpr bool Compare(enum_t target) const								\
@@ -165,14 +178,14 @@ public:																					\
 	static constexpr enum_t FromString(const std::string_view& s, size_t index = 0)		\
 	{																					\
 		using namespace klib::kEnum::secret::impl;										\
-																						\
-		if (index >= data_##enumName::size)												\
+		if (index >= secret_impl_##enumName::size)										\
 			std::_Xout_of_range("Invalid identifier");									\
 																						\
-		const auto matches = matches_untrimmed(data_##enumName::raw_names[index], s);	\
+		const auto matches =															\
+			matches_untrimmed(secret_impl_##enumName::raw_names[index], s);				\
 																						\
 		const auto ret = matches														\
-			? static_cast<enum_t>(data_##enumName::values[index])						\
+			? static_cast<enum_t>(secret_impl_##enumName::values[index])				\
 			: FromString(s, index + 1);													\
 																						\
 		return ret;																		\
@@ -194,16 +207,16 @@ public:																					\
 																						\
 	private:																			\
 	template<class Char_t>																\
-	USE_RESULT static const Char_t* ToStringImpl(enumName input)						\
+	USE_RESULT static const Char_t* ToStringImpl(enum_t input)							\
 	{																					\
-		const auto* name = TrimmedNames<Char_t>(static_cast<enum_t>(input));			\
+		const auto* name = TrimmedNames<Char_t>(input);									\
 		return name;																	\
 	}																					\
 																						\
 	template<class Char_t>																\
-	USE_RESULT static const Char_t* TrimmedNames(const enumName input)					\
+	USE_RESULT static const Char_t* TrimmedNames(enum_t input)							\
 	{																					\
-		static std::unique_ptr<Char_t[]> the_names[data_##enumName::size];				\
+		static std::unique_ptr<Char_t[]> the_names[secret_impl_##enumName::size];		\
 		static bool  initialized = false;												\
 		size_t index = 0;																\
 																						\
@@ -215,22 +228,22 @@ public:																					\
 																						\
 		do																				\
 		{																				\
-			if (input == data_##enumName::values[index])								\
+			if (input == secret_impl_##enumName::values[index])							\
 				break;																	\
 		}																				\
-		while (++index < data_##enumName::size);										\
+		while (++index < secret_impl_##enumName::size);									\
 																						\
 		return the_names[index].get();													\
 	}																					\
 																						\
 	template<class Char_t>																\
 	static constexpr void InitializeNames(std::unique_ptr<Char_t[]>						\
-		(&the_names)[data_##enumName::size])											\
+		(&the_names)[secret_impl_##enumName::size])										\
 	{																					\
 		using namespace klib::kEnum::secret::impl;										\
-		for (auto i = 0; i < data_##enumName::size; ++i)								\
+		for (auto i = 0; i < secret_impl_##enumName::size; ++i)							\
 		{																				\
-			const auto & raw_name = data_##enumName::raw_names[i];						\
+			const auto & raw_name = secret_impl_##enumName::raw_names[i];				\
 			auto& name = the_names[i];													\
 																						\
 			const auto length_til_terminator =											\

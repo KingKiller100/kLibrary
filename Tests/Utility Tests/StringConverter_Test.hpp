@@ -5,11 +5,11 @@
 #ifdef TESTING_ENABLED
 namespace kTest::utility
 {
-	class UTFConverterTester : public Tester
+	class StringConverterTester : public Tester
 	{
 	public:
-		UTFConverterTester();
-		~UTFConverterTester() override;
+		StringConverterTester();
+		~StringConverterTester() override;
 
 	protected:
 		void Test() override;
