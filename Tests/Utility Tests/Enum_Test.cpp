@@ -40,8 +40,8 @@ namespace kTest::utility
 		};
 
 		static constexpr auto size = IDENTITY(
-			COUNT(A_STAR = (1 << 0) , A = (1 << 1) , B = (1 << 2) , C = (1 << 3) , D = (1 << 4) , E = (1 << 5) , F = (1
-				<< 6) , PASS = A_STAR | A | B | C , FAIL = D | E | F));
+			COUNT(A_STAR = (1 << 0), A = (1 << 1), B = (1 << 2), C = (1 << 3), D = (1 << 4), E = (1 << 5), F = (1
+				<< 6), PASS = A_STAR | A | B | C, FAIL = D | E | F));
 		static constexpr std::array<underlying_t, size> values = {
 			IDENTITY(
 				IGNORE_ASSIGN(A_STAR = (1 << 0) , A = (1 << 1) , B = (1 << 2) , C = (1 << 3) , D = (1 << 4) , E = (1 <<
@@ -133,13 +133,12 @@ namespace kTest::utility
 				InitializeNames<Char_t>(the_names);
 				initialized = true;
 			}
-			do { if (ToEnum() == secret_impl_TestResults::values[index]) break; }
-			while (++index < secret_impl_TestResults::size);
+			do { if (ToEnum() == secret_impl_TestResults::values[index]) break; } while (++index < secret_impl_TestResults::size);
 			return the_names[index].get();
 		}
 
 		template <class Char_t>
-		constexpr void InitializeNames(std::unique_ptr<Char_t[]> (&the_names)[secret_impl_TestResults::size]) const
+		constexpr void InitializeNames(std::unique_ptr<Char_t[]>(&the_names)[secret_impl_TestResults::size]) const
 		{
 			using namespace klib::kEnum::secret::impl;
 			for (auto i = 0; i < secret_impl_TestResults::size; ++i)
@@ -165,8 +164,8 @@ namespace kTest::utility
 				"Name does not map to a value in enum: " "TestResults");
 			const auto matches = matches_untrimmed(secret_impl_TestResults::raw_names[index].data(), s);
 			const auto ret = matches
-				                 ? static_cast<enum_t>(secret_impl_TestResults::values[index])
-				                 : FromStringImpl(s, index + 1);
+				? static_cast<enum_t>(secret_impl_TestResults::values[index])
+				: FromStringImpl(s, index + 1);
 			return ret;
 		}
 
@@ -180,7 +179,7 @@ namespace kTest::utility
 	}
 
 	EnumTester::~EnumTester()
-	= default;
+		= default;
 
 	void EnumTester::Test()
 	{
@@ -336,22 +335,22 @@ namespace kTest::utility
 	bool EnumTester::ToEnumTest()
 	{
 		{
-			const auto tr = TestResults{TestResults::D};
+			const auto tr = TestResults{ TestResults::D };
 			VERIFY(tr.ToEnum() == TestResults::D);
 		}
 
 		{
-			const auto tr = TestResults{TestResults::B};
+			const auto tr = TestResults{ TestResults::B };
 			VERIFY(tr.ToEnum() == TestResults::B);
 		}
 
 		{
-			const auto tr = TestResults{TestResults::F};
+			const auto tr = TestResults{ TestResults::F };
 			VERIFY(tr.ToEnum() != TestResults::B);
 		}
 
 		{
-			const auto tr = TestResults{TestResults::F};
+			const auto tr = TestResults{ TestResults::F };
 			VERIFY(tr.ToEnum() == TestResults::F);
 		}
 
@@ -361,27 +360,27 @@ namespace kTest::utility
 	bool EnumTester::ToUnderlyingTest()
 	{
 		{
-			constexpr auto tr = TestResults{TestResults::F};
+			constexpr auto tr = TestResults{ TestResults::F };
 			VERIFY(tr.ToUnderlying() == 64);
 		}
 
 		{
-			constexpr auto tr = TestResults{TestResults::D};
+			constexpr auto tr = TestResults{ TestResults::D };
 			VERIFY(tr.ToUnderlying() != 64);
 		}
 
 		{
-			constexpr auto tr = TestResults{TestResults::E};
+			constexpr auto tr = TestResults{ TestResults::E };
 			VERIFY(tr.ToUnderlying() == 32);
 		}
 
 		{
-			constexpr auto tr = TestResults{TestResults::E};
+			constexpr auto tr = TestResults{ TestResults::E };
 			VERIFY(tr.ToUnderlying() != 64);
 		}
 
 		{
-			constexpr auto tr = TestResults{TestResults::FAIL};
+			constexpr auto tr = TestResults{ TestResults::FAIL };
 			VERIFY(tr.ToUnderlying() == (16 | 32 | 64));
 		}
 
@@ -393,7 +392,7 @@ namespace kTest::utility
 		constexpr auto prettyType = TestResults::PrettyType();
 		VERIFY(prettyType == "enum TestResults")
 
-		return success;
+			return success;
 	}
 
 	bool EnumTester::PrettyValueTest()
@@ -413,8 +412,29 @@ namespace kTest::utility
 
 	bool EnumTester::FromStringTest()
 	{
-		const auto fromString = TestResults::FromString("D");
-		VERIFY(fromString == TestResults::D);
+		{
+			constexpr auto fromString = TestResults::FromString("D");
+			VERIFY_COMPILE_TIME(fromString == TestResults::D);
+		}
+
+		{
+			constexpr auto fromString = TestResults::FromString("A_STAR");
+			VERIFY_COMPILE_TIME(fromString == TestResults::A_STAR);
+		}
+
+		{
+			try
+			{
+				const auto fromString = TestResults::FromString("A*");
+				VERIFY(false);
+			}
+			catch (const std::exception& e)
+			{
+				const std::string_view expected = "Name does not map to a value in enum: TestResults";
+				VERIFY(expected == e.what());
+			}
+		}
+
 		return success;
 	}
 
