@@ -85,7 +85,7 @@ namespace klib::kEnum::secret::impl
 			is_terminator(c, index + 1);
 	}
 
-	constexpr bool matches_untrimmed(const std::string_view& untrimmed, const std::string_view& s,
+	constexpr bool matches_untrimmed(const char* untrimmed, const char* s,
 		size_t index = 0)
 	{
 		return
@@ -138,6 +138,11 @@ public:																					\
 		return value;																	\
 	}																					\
 																						\
+	USE_RESULT constexpr bool MaskCmp(enum_t target) const								\
+	{																					\
+		return MaskCmp(target, true, false);											\
+	}																					\
+																						\
 	template<typename T1, typename T2, typename = std::enable_if_t<						\
 	std::is_convertible_v<T2, T1>														\
 	>>																					\
@@ -149,9 +154,9 @@ public:																					\
 		return failState;																\
 	}																					\
 																						\
-	USE_RESULT constexpr bool MaskCmp(enum_t target) const								\
+	USE_RESULT constexpr bool Compare(enum_t target) const								\
 	{																					\
-		return MaskCmp(target, true, false);											\
+		return Compare(target, true, false);											\
 	}																					\
 																						\
 	template<typename T1, typename T2>													\
@@ -163,40 +168,24 @@ public:																					\
 		return failState;																\
 	}																					\
 																						\
-	USE_RESULT constexpr bool Compare(enum_t target) const								\
+	static constexpr enum_t FromString(const std::string_view& search)					\
 	{																					\
-		return Compare(target, true, false);											\
+		return FromStringImpl(search.data(), 0);										\
 	}																					\
 																						\
-	static constexpr enum_t FromString(const std::string_view& s, size_t index = 0)		\
+	USE_RESULT																			\
+	static std::string PrettyValue(enumName input)										\
 	{																					\
-		using namespace klib::kEnum::secret::impl;										\
-		if (index >= secret_impl_##enumName::size)										\
-			std::_Xout_of_range("Invalid identifier");									\
-																						\
-		const auto matches =															\
-			matches_untrimmed(secret_impl_##enumName::raw_names[index], s);				\
-																						\
-		const auto ret = matches														\
-			? static_cast<enum_t>(secret_impl_##enumName::values[index])				\
-			: FromString(s, index + 1);													\
-																						\
-		return ret;																		\
+		static const auto type = std::string(PrettyType()) + "::";						\
+		const auto name = std::string(input.ToString<char>());							\
+		const auto prettyValue = type + name;											\
+		return prettyValue;																\
 	}																					\
 																						\
 	USE_RESULT																			\
 	static constexpr std::string_view PrettyType()										\
 	{																					\
 		return "enum " #enumName;														\
-	}																					\
-																						\
-	USE_RESULT																			\
-	static std::string PrettyValue(enumName input)										\
-	{																					\
-		static const auto type = std::string(PrettyType());								\
-		const auto name = std::string(input.ToString<char>());							\
-		const auto prettyValue = type + "::" + name;									\
-		return prettyValue;																\
 	}																					\
 																						\
 	template<class Char_t = char>														\
@@ -262,6 +251,24 @@ public:																					\
 																						\
 			name[length_til_terminator] = Char_t('\0');									\
 		}																				\
+	}																					\
+																						\
+	static constexpr enum_t FromStringImpl(const char* s, size_t index)					\
+	{																					\
+		using namespace klib::kEnum::secret::impl;										\
+																						\
+		if (index >= secret_impl_##enumName::size)										\
+			std::_Xout_of_range("Name does not map to a value in enum: " #enumName);	\
+																						\
+		const auto matches =															\
+			matches_untrimmed(															\
+				secret_impl_##enumName::raw_names[index].data(), s);					\
+																						\
+		const auto ret = matches														\
+			? static_cast<enum_t>(secret_impl_##enumName::values[index])				\
+			: FromStringImpl(s, index + 1);												\
+																						\
+		return ret;																		\
 	}																					\
 																						\
 private:																				\
