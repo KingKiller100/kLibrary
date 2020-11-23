@@ -6,6 +6,8 @@
 #ifdef TESTING_ENABLED
 namespace kTest::utility
 {
+	static const auto npos = std::string::npos;
+	
 	StringManipulationTester::StringManipulationTester()
 		: Tester("String Manipulator Test")
 	{}
@@ -26,6 +28,10 @@ namespace kTest::utility
 		VERIFY_MULTI(SplitTest());
 		VERIFY_MULTI(IsWhiteSpaceOrNullTest());
 		VERIFY_MULTI(FindTest());
+		VERIFY_MULTI(FindFirstOfTest());
+		VERIFY_MULTI(FindFirstNotOfTest());
+		VERIFY_MULTI(FindLastOfTest());
+		VERIFY_MULTI(FindLastNotOfTest());
 		VERIFY_MULTI_END();
 	}
 
@@ -465,7 +471,14 @@ namespace kTest::utility
 			constexpr std::string_view str = "upgrade";
 			constexpr auto search = "pain";
 			const auto pos = Find(str.data(), search);
-			VERIFY(pos == static_cast<size_t>(-1));
+			VERIFY(pos == npos);
+		}
+		
+		{
+			constexpr std::string_view str = "upgrade";
+			constexpr auto search = "ad";
+			const auto pos = Find(str.data(), search, 3);
+			VERIFY(pos == 4);
 		}
 		
 		{
@@ -479,14 +492,163 @@ namespace kTest::utility
 			constexpr char str[] = "upgrade";
 			constexpr char* search = nullptr;
 			constexpr auto pos = Find(str, search);
-			VERIFY(pos == static_cast<size_t>(-1));
+			VERIFY(pos == npos);
 		}
 		
 		{
 			constexpr char *str = nullptr;
 			constexpr char* search = nullptr;
 			constexpr auto pos = Find(str, search);
-			VERIFY(pos == static_cast<size_t>(-1));
+			VERIFY(pos == npos);
+		}
+		
+		return success;
+	}
+
+	bool StringManipulationTester::FindFirstOfTest()
+	{
+		{
+			constexpr auto str = "upgrade";
+			constexpr auto search = 'e';
+			const auto pos = Find_First_Of(str, search);
+			VERIFY(pos == 6);
+		}
+			
+		{
+			constexpr auto str = "upgrade";
+			constexpr auto search = 'p';
+			const auto pos = Find_First_Of(str, search);
+			VERIFY(pos == 1);
+		}
+		
+		{
+			constexpr auto str = "upgrade";
+			constexpr auto search = 'q';
+			const auto pos = Find_First_Of(str, search);
+			VERIFY(pos == npos);
+		}
+		
+		{
+			constexpr auto str = "upgraddde";
+			constexpr auto search = 'd';
+			const auto pos = Find_First_Of(str, search, 2);
+			VERIFY(pos == 5);
+		}
+
+		
+		return success;
+	}
+
+	bool StringManipulationTester::FindFirstNotOfTest()
+	{
+		{
+			constexpr auto str = "upgrade";
+			constexpr auto search = 'e';
+			const auto pos = Find_First_Not_Of(str, search);
+			VERIFY(pos == 0);
+		}
+
+		{
+			constexpr auto str = "upgrade";
+			constexpr auto search = 'u';
+			const auto pos = Find_First_Not_Of(str, search);
+			VERIFY(pos == 1);
+		}
+
+		{
+			constexpr auto str = "good";
+			constexpr auto search = 'o';
+			const auto pos = Find_First_Not_Of(str, search, 1);
+			VERIFY(pos == 3);
+		}
+
+		{
+			constexpr auto str = "fffffff";
+			constexpr auto search = 'f';
+			const auto pos = Find_First_Not_Of(str, search, 1);
+			VERIFY(pos == npos);
+		}
+		
+		return success;
+	}
+
+	bool StringManipulationTester::FindLastOfTest()
+	{
+		{
+			constexpr auto str = "aggregate";
+			constexpr auto search = 'g';
+			const auto pos = Find_Last_Of(str, search, 3);
+			constexpr std::string_view sv = str;
+			constexpr auto expected = sv.find_last_of(search);
+			VERIFY(pos == 5);
+		}
+
+		{
+			constexpr auto str = "oooooooooe";
+			constexpr auto search = 'o';
+			const auto pos = Find_Last_Of(str, search);
+			constexpr std::string_view sv = str;
+			constexpr auto expected = sv.find_last_of(search);
+			VERIFY(pos == 8);
+		}
+
+		{
+			constexpr auto str = "upgrade";
+			constexpr auto search = 'q';
+			const auto pos = Find_Last_Of(str, search);
+			constexpr std::string_view sv = str;
+			constexpr auto expected = sv.find_last_of(search);
+			VERIFY(pos == npos);
+		}
+
+		{
+			constexpr auto str = "upgrade";
+			constexpr auto search = 'd';
+			const auto pos = Find_Last_Of(str, search, 2);
+			constexpr std::string_view sv = str;
+			constexpr auto expected = sv.find_last_of(search);
+			VERIFY(pos == npos);
+		}
+		
+		return success;
+	}
+
+	bool StringManipulationTester::FindLastNotOfTest()
+	{
+		{
+			constexpr auto str = "aggregate";
+			constexpr auto search = 'g';
+			const auto pos = Find_Last_Not_Of(str, search, 3);
+			constexpr std::string_view sv = str;
+			constexpr auto expected = sv.find_last_not_of(search);
+			VERIFY(pos == 7);
+		}
+
+		{
+			constexpr auto str = "oooooooooe";
+			constexpr auto search = 'e';
+			const auto pos = Find_Last_Not_Of(str, search);
+			constexpr std::string_view sv = str;
+			constexpr auto expected = sv.find_last_not_of(search);
+			VERIFY(pos == 10);
+		}
+
+		{
+			constexpr auto str = "upgrade";
+			constexpr auto search = 'q';
+			const auto pos = Find_Last_Not_Of(str, search);
+			constexpr std::string_view sv = str;
+			constexpr auto expected = sv.find_last_not_of(search);
+			VERIFY(pos == 0);
+		}
+
+		{
+			constexpr auto str = "upgrade";
+			constexpr auto search = 'd';
+			const auto pos = Find_Last_Not_Of(str, search, 2);
+			constexpr std::string_view sv = str;
+			constexpr auto expected = sv.find_last_not_of(search);
+			VERIFY(pos == 7);
 		}
 		
 		return success;

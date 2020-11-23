@@ -24,6 +24,10 @@ namespace kTest::utility
 		bool ToWriterAndToReaderTest();
 		bool IsWhiteSpaceOrNullTest();
 		bool FindTest();
+		bool FindFirstOfTest();
+		bool FindFirstNotOfTest();
+		bool FindLastOfTest();
+		bool FindLastNotOfTest();
 	};
 
 }

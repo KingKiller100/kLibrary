@@ -15,7 +15,7 @@
 #include "../Utility/Stopwatch/kStopwatch.hpp"
 
 // Change console colour
-#include "../Utility/Misc/ConsoleColour.hpp"
+#include "../Utility/Misc/kConsoleColour.hpp"
 
 #include <iostream>
 

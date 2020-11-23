@@ -15,7 +15,12 @@ namespace klib::kString::stringify
 	/// Digits of largest conceivable number for any integral type
 	/// plus a null terminator + possible minus symbol
 	template<class T, typename = std::enable_if_t<std::is_integral_v<T>>>
-	constexpr std::size_t max_digits = std::numeric_limits<T>::digits10 + 2;
+	constexpr std::size_t s_MaxDigits = std::numeric_limits<T>::digits10 + 2;
+
+	/// Bit count of largest conceivable number for any integral type
+	/// plus a null terminator
+	template<class T, typename = std::enable_if_t<std::is_integral_v<T>>>
+	constexpr std::size_t s_MaxBits = std::numeric_limits<T>::digits + 1;
 
 	template<class CharType, typename Uint_t
 		, typename = std::enable_if_t<std::is_unsigned_v<Uint_t>
@@ -42,8 +47,8 @@ namespace klib::kString::stringify
 			minDigits = 1;
 
 		using Unsigned_t = std::make_unsigned_t<Signed_t>;
-		CharType buff[max_digits<Signed_t>]{};
-		CharType* const end = std::end(buff);
+		CharType buff[s_MaxDigits<Signed_t>]{ type_trait::s_NullTerminator<CharType> };
+		CharType* const end = std::end(buff) - 1;
 		CharType* current = end;
 		const auto uVal = static_cast<Unsigned_t>(val);
 
@@ -55,13 +60,13 @@ namespace klib::kString::stringify
 			current = UintToStr(current, uVal);
 
 
-		if (minDigits < max_digits<Signed_t>)
+		if (minDigits < s_MaxDigits<Signed_t>)
 			PrependPadding(current, minDigits, placeHolder);
 
 		if (isNeg)
 			*(--current) = CharType('-');
 
-		StringWriter<CharType> str(current, end);
+		const StringWriter<CharType> str(current, end);
 
 		return str;
 	}
@@ -76,14 +81,14 @@ namespace klib::kString::stringify
 		if (minDigits == s_NoSpecifier)
 			minDigits = 1;
 
-		CharType buff[max_digits<Unsigned_t>]{};
-		CharType* const end = std::end(buff);
+		CharType buff[s_MaxDigits<Unsigned_t>]{ type_trait::s_NullTerminator<CharType> };
+		CharType* const end = std::end(buff) - 1;
 		CharType* current = UintToStr(end, val);
 
-		if (minDigits < max_digits<Unsigned_t>)
+		if (minDigits < s_MaxDigits<Unsigned_t>)
 			PrependPadding(current, minDigits, placeHolder);
 
-		StringWriter<CharType> str(current, end);
+		const StringWriter<CharType> str(current, end);
 
 		return str;
 	}
@@ -115,8 +120,8 @@ namespace klib::kString::stringify
 
 		using Unsigned_t = std::make_unsigned_t<Integral_t>;
 
-		CharType buff[max_digits<Integral_t>]{};
-		CharType* const end = std::end(buff);
+		CharType buff[s_MaxDigits<Integral_t>]{ type_trait::s_NullTerminator<CharType> };
+		CharType* const end = std::end(buff) - 1;
 		CharType* current = end;
 		auto asUint = static_cast<Unsigned_t>(val);
 
@@ -124,19 +129,19 @@ namespace klib::kString::stringify
 		{
 			const auto index = asUint % hexMap.size();
 			*(--current) = hexMap[index];
-			asUint /= hexMap.size();
+			asUint /= static_cast<Unsigned_t>(hexMap.size());
 		}
 
-		if (val < 0 && buff[0] == hexMap[15])
+		if (val < 0 && current[0] == hexMap[15])
 		{
-			const auto notFpos = address.find_first_not_of(hexMap[15]);
-			address = address.substr(notFpos - 1);
+			const auto notFpos = Find_First_Not_Of(current, hexMap[15]);
+			current += (notFpos - 1);
 			if (placeHolder == s_DefaultPlaceHolder<CharType>)
 				placeHolder = hexMap[15];
 		}
 
-		StringWriter<CharType> address;
-		PrependPadding(address, minCharacters, placeHolder);
+		PrependPadding(current, minCharacters, placeHolder);
+		const StringWriter<CharType> address(current, end);
 
 		return address;
 	}
@@ -151,22 +156,26 @@ namespace klib::kString::stringify
 		if (minCharacters == s_NoSpecifier)
 			minCharacters = 1;
 
-		StringWriter<CharType> binary;
-		binary.reserve(std::numeric_limits<Integral_t>::digits);
+		using Unsigned_t = std::make_unsigned_t<Integral_t>;
 
+		CharType buff[s_MaxBits<Integral_t>]{ type_trait::s_NullTerminator<CharType> };
+		CharType* const end = std::end(buff) - 1;
+		CharType* current = end;
+		
 		while (val > 0)
 		{
 			const auto binVal = val % 2;
-			const CharType digit = static_cast<CharType>(CharType('0') + binVal);
-			binary.push_back(digit);
+			const CharType digit = static_cast<CharType>('0' + binVal);
+			*(--current) = digit;
 			val >>= 1;
 		}
 
-		AppendPadding(binary, minCharacters, placeHolder);
+		PrependPadding(current, minCharacters, placeHolder);
 
-		if (endian == EndianFormat::BIG)
-			std::reverse(binary.begin(), binary.end());
+		if (endian == EndianFormat::LITTLE)
+			std::reverse(current, end);
 
+		const StringWriter<CharType> binary(current, end);
 		return binary;
 	}
 }

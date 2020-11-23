@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "../../String/kToString.hpp"
-#include "../../Misc/NumberSuffix.hpp"
+#include "../../Misc/kNumberSuffix.hpp"
 #include <string>
 #include <stdexcept>
 

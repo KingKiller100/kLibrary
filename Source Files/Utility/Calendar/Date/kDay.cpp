@@ -2,7 +2,7 @@
 #include "kDay.hpp"
 
 #include "../../String/kToString.hpp"
-#include "../../Misc/NumberSuffix.hpp"
+#include "../../Misc/kNumberSuffix.hpp"
 
 namespace klib::kCalendar
 {

@@ -2,7 +2,7 @@
 
 #include "kiLoggerDestination.hpp"
 
-#include "../../Misc/ConsoleColour.hpp"
+#include "../../Misc/kConsoleColour.hpp"
 
 namespace klib
 {
