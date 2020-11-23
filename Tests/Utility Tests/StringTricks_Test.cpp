@@ -435,11 +435,13 @@ namespace kTest::utility
 			VERIFY(result == false);
 		}
 		
+#if __cpp_char8_t
 		{
 			constexpr std::u8string_view str = u8"f  ";
 			const auto result = IsWhiteSpaceOrNull(str);
 			VERIFY(result == false);
 		}
+#endif
 		
 		{
 			const std::string str = "";

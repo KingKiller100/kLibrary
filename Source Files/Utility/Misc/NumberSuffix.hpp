@@ -32,6 +32,7 @@ namespace klib::kMisc
 				: (n % 10) == 3 ? U"rd"
 				: U"th";
 		}
+#if __cpp_char8_t
 		else if _CONSTEXPR_IF(std::is_same_v<Char_t, char8_t>)
 		{
 			return (n % 10) == 1 ? u8"st"
@@ -39,6 +40,7 @@ namespace klib::kMisc
 				: (n % 10) == 3 ? u8"rd"
 				: u8"th";
 		}
+#endif
 		else
 		{
 			return (n % 10) == 1 ? "st"

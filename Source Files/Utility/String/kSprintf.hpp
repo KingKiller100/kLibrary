@@ -28,8 +28,7 @@ namespace klib::kString::stringify
 		{
 			length = _snprintf(nullptr, 0, format
 				, stringify::Identity<CharType, decltype(arg1)>::Get(arg1)
-				, stringify::Identity<CharType, decltype(argPack)>::Get(argPack)...
-			) + 1;
+				, stringify::Identity<CharType, decltype(argPack)>::Get(argPack)...) + 1;
 			if (length <= npos) throw std::runtime_error("Error during char type \"" __FUNCSIG__ "\" formatting: string returned length <= 0");
 			buffer = new CharType[length]();
 			sprintf_s(buffer, length, format

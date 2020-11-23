@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "../../../../TypeTraits/StringTraits.hpp"
+#include "../../kStringTricks.hpp"
 
 namespace klib::kString::stringify
 {
@@ -25,6 +26,22 @@ namespace klib::kString::stringify
 
 		const auto count = minDigits - outStr.size();
 		outStr.insert(outStr.begin(), count, padding);
+	}
+
+	template<typename CharType>
+	void PrependPadding(CharType*& outHeadOfPtr, const size_t minDigits, CharType padding)
+	{
+		const auto size = GetSize(outHeadOfPtr);
+
+		if (size >= minDigits)
+			return;
+
+		auto count = minDigits - size;
+		while (count > 0)
+		{
+			*(--outHeadOfPtr) = padding;
+			--count;
+		}
 	}
 
 	template<typename CharType>

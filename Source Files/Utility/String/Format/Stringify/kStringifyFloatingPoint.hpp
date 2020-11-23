@@ -3,7 +3,7 @@
 #	include <charconv>
 
 #if defined(_HAS_COMPLETE_CHARCONV) && (_HAS_COMPLETE_CHARCONV == FALSE)
-#	include "../kSprintf.hpp"
+#	include "../../kSprintf.hpp"
 #else
 #	include "../../../Debug/Exceptions/StringExceptions.hpp"
 #	include <typeinfo>
@@ -20,14 +20,15 @@ namespace klib::kString::stringify
 		, typename = std::enable_if_t<std::is_floating_point_v<T>
 		|| type_trait::Is_CharType_V<CharType>>
 		>
-		kString::StringWriter<CharType> StringFloatingPoint(const T val, size_t precision = s_NoSpecifier, std::chars_format fmt = std::chars_format::fixed)
+		kString::StringWriter<CharType> StringFloatingPoint(const T val, size_t precision = s_NoSpecifier
+			, std::chars_format fmt = std::chars_format::fixed)
 	{
 		if (precision == s_NoSpecifier)
 			precision = 6;
 		
 #if defined(_HAS_COMPLETE_CHARCONV) && (_HAS_COMPLETE_CHARCONV == FALSE)
 		const std::string format = "%." + StringIntegral<char>(precision, 0) + "f";
-		const auto temp = stringify::SprintfWrapper(format, val);
+		const auto temp = SprintfWrapper<char>(format, val);
 		const auto str = kString::Convert<CharType>(temp);
 #else
 

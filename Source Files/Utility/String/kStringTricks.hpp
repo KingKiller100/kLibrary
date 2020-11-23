@@ -4,6 +4,8 @@
 #include "../Enum/kEnum.hpp"
 #include "../Debug/Exceptions/StringExceptions.hpp"
 #include "../../TypeTraits/StringTraits.hpp"
+#include "Tricks/kStringFind.hpp"
+
 
 #include <algorithm>
 #include <vector>
@@ -81,7 +83,7 @@ namespace klib
 				|| type_trait::Is_Char_t<Stringish>)   // Just a character
 #else
 			, typename = std::enable_if_t<
-			type_trait::Is_String_V<StringType>
+			type_trait::Is_StringType_V<StringType>
 			&& type_trait::Is_StringType_V<Stringish>   // STL string
 			|| type_trait::Is_CString_V<Stringish>  // C style string
 			|| type_trait::Is_CharType_V<Stringish> // Just a character
@@ -446,54 +448,6 @@ namespace klib
 			}
 
 
-			template<typename CStringA, typename CStringB, class = std::enable_if_t<
-				type_trait::Is_CString_V<CStringA>
-				&& type_trait::Is_CString_V<CStringB>
-				&& std::is_same_v<ONLY_TYPE(CStringA), ONLY_TYPE(CStringB)>
-				>>
-				USE_RESULT constexpr size_t Find(const CStringA& str, const CStringB& search, size_t offset = 0)
-			{
-				using namespace type_trait;
-				using Char_t = typename type_trait::Is_CString<CStringA>::Char_t;
-				using PossibleString_t = std::basic_string<Char_t>;
-
-				constexpr Char_t nt = s_NullTerminator<Char_t>;
-				constexpr size_t npos = s_NoPos<PossibleString_t>;
-
-				if (str == nullptr || search == nullptr)
-					return npos;
-
-				const auto searchSize = GetSize(search);
-				const auto strSize = GetSize(str + offset);
-
-				if (searchSize > strSize) // if search string longer than size of pointer
-					return npos;
-
-				size_t strIndex(0);
-				size_t searchIndex(0);
-
-				while (str[strIndex] != nt)
-				{
-					if (str[strIndex] == search[searchIndex]
-						&& search[searchIndex] != nt)
-					{
-						++strIndex;
-						++searchIndex;
-						continue;
-					}
-
-					if (search[searchIndex] == nt)
-						return strIndex - searchIndex;
-
-					++strIndex;
-					searchIndex = 0;
-				}
-
-				if (search[searchIndex] == nt)
-					return strIndex - searchIndex;
-
-				return npos;
-			}
 	}
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kString;

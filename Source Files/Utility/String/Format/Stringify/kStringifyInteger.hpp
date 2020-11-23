@@ -40,24 +40,28 @@ namespace klib::kString::stringify
 	{
 		if (minDigits == s_NoSpecifier)
 			minDigits = 1;
-		using unsigned_t = std::make_unsigned_t<Signed_t>;
+
+		using Unsigned_t = std::make_unsigned_t<Signed_t>;
 		CharType buff[max_digits<Signed_t>]{};
 		CharType* const end = std::end(buff);
 		CharType* current = end;
-		const auto uVal = static_cast<unsigned_t>(val);
+		const auto uVal = static_cast<Unsigned_t>(val);
 
-		if (val < 0)
-		{
+		const auto isNeg = val < 0;
+
+		if (isNeg)
 			current = UintToStr(current, 0 - uVal);
-			*(--current) = CharType('-');
-		}
 		else
-		{
 			current = UintToStr(current, uVal);
-		}
 
-		kString::StringWriter<CharType> str(current, end);
-		PrependPadding(str, minDigits, placeHolder);
+
+		if (minDigits < max_digits<Signed_t>)
+			PrependPadding(current, minDigits, placeHolder);
+
+		if (isNeg)
+			*(--current) = CharType('-');
+
+		StringWriter<CharType> str(current, end);
 
 		return str;
 	}
@@ -76,9 +80,10 @@ namespace klib::kString::stringify
 		CharType* const end = std::end(buff);
 		CharType* current = UintToStr(end, val);
 
+		if (minDigits < max_digits<Unsigned_t>)
+			PrependPadding(current, minDigits, placeHolder);
 
-		kString::StringWriter<CharType> str(current, end);
-		PrependPadding(str, minDigits, placeHolder);
+		StringWriter<CharType> str(current, end);
 
 		return str;
 	}
@@ -108,18 +113,21 @@ namespace klib::kString::stringify
 		if (minCharacters == s_NoSpecifier)
 			minCharacters = sizeof(uintptr_t) * 2;
 
-		StringWriter<CharType> address;
+		using Unsigned_t = std::make_unsigned_t<Integral_t>;
 
-		auto asUint = static_cast<size_t>(val);
+		CharType buff[max_digits<Integral_t>]{};
+		CharType* const end = std::end(buff);
+		CharType* current = end;
+		auto asUint = static_cast<Unsigned_t>(val);
 
 		while (asUint > 0)
 		{
 			const auto index = asUint % hexMap.size();
-			address.insert(address.begin(), hexMap.at(index));
+			*(--current) = hexMap[index];
 			asUint /= hexMap.size();
 		}
 
-		if (val < 0 && address.front() == hexMap[15])
+		if (val < 0 && buff[0] == hexMap[15])
 		{
 			const auto notFpos = address.find_first_not_of(hexMap[15]);
 			address = address.substr(notFpos - 1);
@@ -127,6 +135,7 @@ namespace klib::kString::stringify
 				placeHolder = hexMap[15];
 		}
 
+		StringWriter<CharType> address;
 		PrependPadding(address, minCharacters, placeHolder);
 
 		return address;
