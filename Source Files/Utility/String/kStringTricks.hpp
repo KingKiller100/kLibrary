@@ -2,15 +2,17 @@
 
 #include "kStringTypes.hpp"
 #include "../Enum/kEnum.hpp"
-#include "../Debug/Exceptions/StringExceptions.hpp"
 #include "../../TypeTraits/StringTraits.hpp"
+
 #include "Tricks/kStringFind.hpp"
 #include "Tricks/kStringSize.hpp"
 #include "Tricks/kStringCases.hpp"
+#include "Tricks/kStringWhiteSpace.hpp"
+#include "Tricks/kStringRemove.hpp"
+#include "Tricks/kStringTo.hpp"
 
 #include <algorithm>
 #include <vector>
-#include <locale>
 
 
 #ifdef max
@@ -81,213 +83,6 @@ namespace klib
 		{
 			return Split(str, tokens.data(), preserveToken, preserveEmpty);
 		}
-
-		template<typename StringType, typename Stringish
-#if MSVC_PLATFORM_TOOLSET >= 142
-			> requires type_trait::Is_String_t<StringType>
-			&& (type_trait::Is_String_t<Stringish>     // STL string
-				|| type_trait::Is_CString_t<Stringish> // C style string
-				|| type_trait::Is_Char_t<Stringish>)   // Just a character
-#else
-			, typename = std::enable_if_t<
-			type_trait::Is_StringType_V<StringType>
-			&& type_trait::Is_StringType_V<Stringish>   // STL string
-			|| type_trait::Is_CString_V<Stringish>  // C style string
-			|| type_trait::Is_CharType_V<Stringish> // Just a character
-			>>
-#endif
-			constexpr bool Remove(StringType & str, const Stringish & search, size_t offset = 0)
-		{
-			auto pos = str.find(search, offset);
-			if (pos == StringType::npos)
-				return false;
-
-			while (pos != StringType::npos)
-			{
-				const auto endPos = str.find_first_not_of(search, pos);
-				str.erase(pos, endPos - pos);
-				pos = str.find(search, offset);
-			}
-
-			return true;
-		}
-
-		template<class Char_t, typename = std::enable_if_t<type_trait::Is_CharType_V<Char_t>>>
-		USE_RESULT constexpr bool IsDigitCharacter(Char_t c)
-		{
-			return (Char_t('0') <= c
-				&& Char_t('9') >= c);
-		}
-
-		template<class Integer_t, class Char_t, class = std::enable_if_t<
-			type_trait::Is_CharType_V<Char_t>
-			>>
-			USE_RESULT constexpr Integer_t CStrTo(const Char_t* const str)
-		{
-			static_assert(std::is_integral_v<Integer_t>, __FUNCTION__ " can only be used with integer types "
-				"(char, int, long, unsigned short, etc..");
-
-			const auto CrashFunc = [](const std::string& errMsg) { throw kDebug::StringError(errMsg + '\n'); };
-			const auto MaxDigitsFunc = []()
-			{
-
-				auto maxNum = std::numeric_limits<Integer_t>::max();
-				size_t count = 0;
-				do {
-					++count;
-					maxNum /= 10;
-				} while (maxNum);
-				return count;
-			};
-
-			if (str == nullptr
-				|| str[0] == type_trait::s_NullTerminator<Char_t>)
-				return static_cast<Integer_t>(0);
-
-			const auto isNeg = std::is_signed_v<Integer_t>
-				&& str[0] == Char_t('-');
-
-			Integer_t result = 0;
-			auto currentPos = isNeg ? 1 : 0;
-			size_t size = isNeg ? GetSize(str) - 1 : GetSize(str);
-			auto magnitude = static_cast<size_t>(std::pow(10, size - 1));
-
-			if (size > MaxDigitsFunc())
-			{
-				const std::string type = typeid(Integer_t).name();
-				const auto msg = __FUNCTION__ "'s string contains more digits than largest number of type: "
-					+ type;
-				CrashFunc(msg);
-			}
-
-			while (str[currentPos] != type_trait::s_NullTerminator<Char_t>)
-			{
-				if (!IsDigitCharacter(str[currentPos]))
-				{
-					const auto input = ToWriter(Convert<char>(str));
-					CrashFunc(__FUNCTION__ "'s string must only contain digits. string: " + input);
-				}
-
-				const auto digit = static_cast<size_t>(str[currentPos] - Char_t('0'));
-				const auto asInt = digit * magnitude;
-
-				result += static_cast<Integer_t>(asInt);
-				magnitude /= 10;
-				++currentPos;
-			}
-
-			if (isNeg)
-				result *= -1;
-
-			return result;
-		}
-
-		// Converts strings containing text for an integer value into the integer type with that value 
-		template<class Integer_t, typename StringT
-			, typename = std::enable_if_t<
-			type_trait::Is_Specialization_V<StringT, std::basic_string>
-			>>
-			USE_RESULT constexpr Integer_t StrTo(StringT string)
-		{
-			using CharType = typename StringT::value_type;
-
-			const auto CrashFunc = [](const std::string& errMsg) { throw kDebug::StringError(errMsg + "\n"); };
-
-			Remove(string, ' ');
-			Remove(string, ',');
-			Remove(string, '\'');
-
-			if (string.empty())
-				return static_cast<Integer_t>(0);
-
-			if (Contains(string, CharType('.')))
-				CrashFunc("string must contain only one integer number");
-
-			const auto result = CStrTo<Integer_t>(string.data());
-
-			return result;
-		}
-
-		// Converts strings containing text for an integer value into the integer type with that value.
-		// But if zero results are unwanted, a default value can be returned instead
-		template<class Integer_t, typename StringT
-			, typename = std::enable_if_t<
-			type_trait::Is_Specialization_V<StringT, std::basic_string>
-			>>
-			USE_RESULT constexpr Integer_t StrTo(StringT string, Integer_t defaultValue)
-		{
-			const auto val = StrTo<Integer_t>(string);
-			if (val == 0)
-				return defaultValue;
-			return val;
-		}
-
-		// Converts strings containing text for an integer value into the integer type with that value.
-		// But bad string inputs are likely, ignore the exception and return a default value
-		template<class Integer_t, typename StringT
-			, typename = std::enable_if_t<
-			type_trait::Is_Specialization_V<StringT, std::basic_string>
-			>>
-			USE_RESULT constexpr Integer_t TryStrTo(StringT string, Integer_t defaultValue)
-		{
-			try
-			{
-				return StrTo<Integer_t>(string);
-			}
-			catch (...)
-			{
-				return defaultValue;
-			}
-		}
-
-		template<class CharT, class = std::enable_if_t<
-			type_trait::Is_CharType_V<CharT>
-			>>
-			USE_RESULT constexpr bool IsWhiteSpace(CharT c, const std::string& localeName = "C")
-		{
-			const std::locale locale(localeName);
-			const auto& facet = std::use_facet<std::ctype<CharT>>(locale);
-			const auto isWhiteSpace = facet.is(std::ctype_base::blank, c);
-			return isWhiteSpace;
-		}
-
-		template<typename Stringish, class = std::enable_if_t<
-			type_trait::Is_CString_V<Stringish>
-			|| type_trait::Is_StringType_V<Stringish>
-			>>
-			USE_RESULT constexpr bool IsWhiteSpaceOrNull(const Stringish& str
-				, const std::string& localeName = "C")
-		{
-			using namespace type_trait;
-			if _CONSTEXPR17(Is_StringType_V<Stringish>)
-			{
-				if (str.data() == nullptr)
-					return false;
-
-				for (const auto& c : str)
-				{
-					if (!IsWhiteSpace(c, localeName))
-						return false;
-				}
-				return true;
-			}
-			else
-			{
-				if (str == nullptr)
-					return false;
-
-				auto index = 0u;
-				while (str[index] != s_NullTerminator<ONLY_TYPE(Stringish)>)
-				{
-					if (!IsWhiteSpace(str[index], localeName))
-						return false;
-					++index;
-				}
-
-				return true;
-			}
-		}
-
 
 	}
 #ifdef KLIB_SHORT_NAMESPACE

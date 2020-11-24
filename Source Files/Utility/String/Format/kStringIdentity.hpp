@@ -1,13 +1,13 @@
 ﻿#pragma once
 
-#include "../../kStringTypes.hpp"
-#include "kStringExtract.hpp"
+#include "../kStringTypes.hpp"
+#include "Stringify/kStringExtract.hpp"
 
-#include "../../../../HelperMacros.hpp"
-#include "../../../../TypeTraits/StringTraits.hpp"
-#include "../../../../TypeTraits/CustomTraits.hpp"
-#include "../../../../TypeTraits/SmartPointerTraits.hpp"
-#include "../../../Debug/Exceptions/StringExceptions.hpp"
+#include "../../../HelperMacros.hpp"
+#include "../../../TypeTraits/StringTraits.hpp"
+#include "../../../TypeTraits/CustomTraits.hpp"
+#include "../../../TypeTraits/SmartPointerTraits.hpp"
+#include "../../Debug/Exceptions/StringExceptions.hpp"
 
 #include <type_traits>
 #include <vector>

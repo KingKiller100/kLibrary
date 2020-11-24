@@ -146,7 +146,6 @@ namespace klib::kString::stringify
 		return address;
 	}
 
-	// Big endian format
 	template<class CharType, typename Integral_t, typename = std::enable_if_t <
 		std::is_integral_v<Integral_t>
 		>>

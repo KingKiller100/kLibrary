@@ -236,9 +236,9 @@ namespace kTest::utility
 
 		{
 			constexpr auto character = u8'X';
-			constexpr auto res = klib::kString::ToLower(character);
+			const auto res = klib::kString::ToLower(character);
 			constexpr auto expected = u8'x';
-			VERIFY_COMPILE_TIME(expected == res);
+			VERIFY(expected == res);
 		}
 
 		{
@@ -276,7 +276,7 @@ namespace kTest::utility
 
 		{
 			constexpr auto character = u8'u';
-			constexpr auto res = klib::kString::ToUpper(character);
+			const auto res = klib::kString::ToUpper(character);
 			constexpr auto expected = u8'U';
 			VERIFY(expected == res);
 		}
@@ -464,28 +464,36 @@ namespace kTest::utility
 			constexpr auto str = "upgrade";
 			constexpr auto search = "grade";
 			const auto pos = Find(str, search);
-			VERIFY(pos == 2);
+			constexpr std::string_view sv = str;
+			const auto expected = sv.find(search);
+			VERIFY(pos == expected);
 		}
 		
 		{
 			constexpr std::string_view str = "upgrade";
 			constexpr auto search = "pain";
 			const auto pos = Find(str.data(), search);
-			VERIFY(pos == npos);
+			constexpr std::string_view sv = str;
+			const auto expected = sv.find(search);
+			VERIFY(pos == expected);
 		}
 		
 		{
 			constexpr std::string_view str = "upgrade";
 			constexpr auto search = "ad";
 			const auto pos = Find(str.data(), search, 3);
-			VERIFY(pos == 4);
+			constexpr std::string_view sv = str;
+			const auto expected = sv.find(search, 3);
+			VERIFY(pos == expected);
 		}
 		
 		{
 			constexpr char str[] = "upgrade";
 			constexpr auto search = "p";
 			constexpr auto pos = Find(str, search);
-			VERIFY(pos == 1);
+			const std::string_view sv(str);
+			const auto expected = sv.find(search);
+			VERIFY(pos == expected);
 		}
 		
 		{
@@ -511,28 +519,36 @@ namespace kTest::utility
 			constexpr auto str = "upgrade";
 			constexpr auto search = 'e';
 			const auto pos = Find_First_Of(str, search);
-			VERIFY(pos == 6);
+			constexpr std::string_view sv = str;
+			constexpr auto expected = sv.find_first_of(search);
+			VERIFY(pos == expected);
 		}
 			
 		{
 			constexpr auto str = "upgrade";
 			constexpr auto search = 'p';
 			const auto pos = Find_First_Of(str, search);
-			VERIFY(pos == 1);
+			constexpr std::string_view sv = str;
+			constexpr auto expected = sv.find_first_of(search);
+			VERIFY(pos == expected);
 		}
 		
 		{
 			constexpr auto str = "upgrade";
 			constexpr auto search = 'q';
 			const auto pos = Find_First_Of(str, search);
-			VERIFY(pos == npos);
+			constexpr std::string_view sv = str;
+			constexpr auto expected = sv.find_first_of(search);
+			VERIFY(pos == expected);
 		}
 		
 		{
 			constexpr auto str = "upgraddde";
 			constexpr auto search = 'd';
 			const auto pos = Find_First_Of(str, search, 2);
-			VERIFY(pos == 5);
+			constexpr std::string_view sv = str;
+			constexpr auto expected = sv.find_first_of(search);
+			VERIFY(pos == expected);
 		}
 
 		
@@ -545,28 +561,36 @@ namespace kTest::utility
 			constexpr auto str = "upgrade";
 			constexpr auto search = 'e';
 			const auto pos = Find_First_Not_Of(str, search);
-			VERIFY(pos == 0);
+			constexpr std::string_view sv = str;
+			constexpr auto expected = sv.find_first_not_of(search);
+			VERIFY(pos == expected);
 		}
 
 		{
 			constexpr auto str = "upgrade";
 			constexpr auto search = 'u';
 			const auto pos = Find_First_Not_Of(str, search);
-			VERIFY(pos == 1);
+			constexpr std::string_view sv = str;
+			constexpr auto expected = sv.find_first_not_of(search);
+			VERIFY(pos == expected);
 		}
 
 		{
 			constexpr auto str = "good";
 			constexpr auto search = 'o';
 			const auto pos = Find_First_Not_Of(str, search, 1);
-			VERIFY(pos == 3);
+			constexpr std::string_view sv = str;
+			constexpr auto expected = sv.find_first_not_of(search);
+			VERIFY(pos == expected);
 		}
 
 		{
 			constexpr auto str = "fffffff";
 			constexpr auto search = 'f';
 			const auto pos = Find_First_Not_Of(str, search, 1);
-			VERIFY(pos == npos);
+			constexpr std::string_view sv = str;
+			constexpr auto expected = sv.find_first_not_of(search);
+			VERIFY(pos == expected);
 		}
 		
 		return success;
@@ -579,8 +603,8 @@ namespace kTest::utility
 			constexpr auto search = 'g';
 			const auto pos = Find_Last_Of(str, search, 3);
 			constexpr std::string_view sv = str;
-			constexpr auto expected = sv.find_last_of(search);
-			VERIFY(pos == 5);
+			const auto expected = sv.find_last_of(search, 3);
+			VERIFY(pos == expected);
 		}
 
 		{
@@ -589,7 +613,7 @@ namespace kTest::utility
 			const auto pos = Find_Last_Of(str, search);
 			constexpr std::string_view sv = str;
 			constexpr auto expected = sv.find_last_of(search);
-			VERIFY(pos == 8);
+			VERIFY(pos == expected);
 		}
 
 		{
@@ -598,7 +622,7 @@ namespace kTest::utility
 			const auto pos = Find_Last_Of(str, search);
 			constexpr std::string_view sv = str;
 			constexpr auto expected = sv.find_last_of(search);
-			VERIFY(pos == npos);
+			VERIFY(pos == expected);
 		}
 
 		{
@@ -606,8 +630,8 @@ namespace kTest::utility
 			constexpr auto search = 'd';
 			const auto pos = Find_Last_Of(str, search, 2);
 			constexpr std::string_view sv = str;
-			constexpr auto expected = sv.find_last_of(search);
-			VERIFY(pos == npos);
+			constexpr auto expected = sv.find_last_of(search, 2);
+			VERIFY(pos == expected);
 		}
 		
 		return success;
@@ -620,8 +644,8 @@ namespace kTest::utility
 			constexpr auto search = 'g';
 			const auto pos = Find_Last_Not_Of(str, search, 3);
 			constexpr std::string_view sv = str;
-			constexpr auto expected = sv.find_last_not_of(search);
-			VERIFY(pos == 7);
+			const auto expected = sv.find_last_not_of(search, 3);
+			VERIFY(pos == 3);
 		}
 
 		{
@@ -630,7 +654,7 @@ namespace kTest::utility
 			const auto pos = Find_Last_Not_Of(str, search);
 			constexpr std::string_view sv = str;
 			constexpr auto expected = sv.find_last_not_of(search);
-			VERIFY(pos == 10);
+			VERIFY(pos == 8);
 		}
 
 		{
@@ -639,7 +663,7 @@ namespace kTest::utility
 			const auto pos = Find_Last_Not_Of(str, search);
 			constexpr std::string_view sv = str;
 			constexpr auto expected = sv.find_last_not_of(search);
-			VERIFY(pos == 0);
+			VERIFY(pos == 6);
 		}
 
 		{
@@ -647,8 +671,8 @@ namespace kTest::utility
 			constexpr auto search = 'd';
 			const auto pos = Find_Last_Not_Of(str, search, 2);
 			constexpr std::string_view sv = str;
-			constexpr auto expected = sv.find_last_not_of(search);
-			VERIFY(pos == 7);
+			constexpr auto expected = sv.find_last_not_of(search, 2);
+			VERIFY(pos == 2);
 		}
 		
 		return success;

@@ -23,12 +23,6 @@ namespace klib::kString
 #endif
 		USE_RESULT constexpr size_t GetSize(const CharT * str)
 	{
-		size_t count = 0;
-		while (*str != type_trait::s_NullTerminator<CharT>)
-		{
-			++str;
-			++count;
-		}
-		return count;
+		return std::char_traits<CharT>::length(str);
 	}
 }

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "kStringConverter.hpp"
-#include "Format/Stringify/kStringIdentity.hpp"
+#include "Format/kStringIdentity.hpp"
 #include "../../HelperMacros.hpp"
 
 #include <cstdio>

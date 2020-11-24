@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-#include "../../String/kToString.hpp"
+#include "../../String/kSprintf.hpp"
+#include "../../String/Format/kStringIdentity.hpp"
 #include "../../Misc/kNumberSuffix.hpp"
 #include <string>
 #include <stdexcept>
@@ -29,11 +30,12 @@ namespace klib::kDebug
 
 	class NoRealRootError final : public MathsError
 	{
+		inline static std::string NoSpecifier = "";
 	public:
 		template<typename T>
 		NoRealRootError(const T value, const size_t root)
-			: MathsError(kString::ToString("ERROR: Value \"{0:2}\" has no {1}{2} root",
-				value,
+			: MathsError(kString::stringify::SprintfWrapper("ERROR: Value \"%s\" has no %u%s root",
+				kString::stringify::Identity<char, T>::MakeStr(value, NoSpecifier),
 				root,
 				kMisc::GetNumberSuffix<char>(root)
 			))

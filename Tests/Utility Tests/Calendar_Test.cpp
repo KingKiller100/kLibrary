@@ -3,6 +3,8 @@
 
 #include "../../Source Files/Utility/Calendar/kCalendar.hpp"
 #include "../../Source Files/Utility/Calendar/kCalenderHelpers.hpp"
+#include "../../Source Files/Utility/String/kToString.hpp"
+
 
 #include <Windows.h>
 

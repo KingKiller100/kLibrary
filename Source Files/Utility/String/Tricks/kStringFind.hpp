@@ -2,11 +2,10 @@
 #include "../../../HelperMacros.hpp"
 #include "../../../TypeTraits/StringTraits.hpp"
 #include "kStringSize.hpp"
+#include "kStringCases.hpp"
 
 namespace klib::kString
 {
-	ENUM_CLASS(CaseSensitive, std::uint8_t, YES, NO);
-
 	namespace impl
 	{
 		template<typename CStringA, typename Char_t, typename CmpFunc_t, typename DirectionFunc_t, class = std::enable_if_t <
@@ -40,7 +39,7 @@ namespace klib::kString
 			return npos;
 		}
 	}
-	
+
 	template<typename CStringA, typename CStringB, class = std::enable_if_t<
 		type_trait::Is_CString_V<CStringA>
 		&& type_trait::Is_CString_V<CStringB>
@@ -86,7 +85,7 @@ namespace klib::kString
 			++strIndex;
 			searchIndex = 0;
 		}
-		
+
 		if (search[searchIndex] == nt)
 			return strIndex - searchIndex;
 
@@ -120,10 +119,9 @@ namespace klib::kString
 		&& type_trait::Is_CharType_V<Char_t>
 		&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
 		>>
-		USE_RESULT constexpr size_t Find_Last_Of(const CStringA& str, Char_t search, size_t offset = 0)
+		USE_RESULT constexpr size_t Find_Last_Of(const CStringA& str, Char_t search, size_t offset = type_trait::s_NoPos<std::basic_string<Char_t>>)
 	{
-		const auto size = GetSize(str) - 1;
-		offset = size - offset;
+		offset = std::min(offset, GetSize(str) - 1);
 		const size_t pos = impl::FindCharImpl(str, search, offset, std::equal_to<Char_t>{}, std::minus<void>{});
 		return pos;
 	}
@@ -133,10 +131,9 @@ namespace klib::kString
 		&& type_trait::Is_CharType_V<Char_t>
 		&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
 		>>
-		USE_RESULT constexpr size_t Find_Last_Not_Of(const CStringA& str, Char_t search, size_t offset = 0)
+		USE_RESULT constexpr size_t Find_Last_Not_Of(const CStringA& str, Char_t search, size_t offset = type_trait::s_NoPos<std::basic_string<Char_t>>)
 	{
-		const auto size = GetSize(str) - 1;
-		offset = size - offset;
+		offset = std::min(offset, GetSize(str) - 1);
 		const size_t pos = impl::FindCharImpl(str, search, offset, std::not_equal_to<Char_t>{}, std::minus<void>{});
 		return pos;
 	}

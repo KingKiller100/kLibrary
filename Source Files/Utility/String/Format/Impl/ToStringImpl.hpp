@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../FormatSymbols.hpp"
-#include "../Stringify/kStringIdentity.hpp"
+#include "../kStringIdentity.hpp"
 #include "../../../../TypeTraits/StringTraits.hpp"
 #include <string>
 
