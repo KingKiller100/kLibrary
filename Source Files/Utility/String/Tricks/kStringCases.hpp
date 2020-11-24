@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "kStringLocale.hpp"
 
-#include "../Enum/kEnum.hpp"
 #include "../kStringTypes.hpp"
+#include "../../Enum/kEnum.hpp"
 #include "../../../HelperMacros.hpp"
 #include "../../../TypeTraits/StringTraits.hpp"
 
@@ -35,7 +35,7 @@ namespace klib::kString
 		if (IsLower(c, localeName))
 		{
 			const auto& facet = impl::GetFacet<std::ctype<CharT>>(localeName);
-			c = facet.toupper(c);
+			c = facet->toupper(c);
 		}
 		return c;
 	}
@@ -72,7 +72,7 @@ namespace klib::kString
 		if (IsUpper(c, localeName))
 		{
 			const auto& facet = impl::GetFacet<std::ctype<CharT>>(localeName);
-			c = facet.tolower(c);
+			c = facet->tolower(c);
 		}
 		return c;
 	}
