@@ -7,7 +7,6 @@
 
 #include <thread>
 
-
 #ifdef TESTING_ENABLED
 namespace kTest::utility
 {
