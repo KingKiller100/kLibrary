@@ -20,13 +20,18 @@ namespace klib::kString::stringify
 
 	/// Digits of largest conceivable number for any integral type
 	/// plus a null terminator + possible minus symbol
-	template<class T>
-	constexpr std::size_t s_MaxDigits = std::numeric_limits<T>::digits10 + 2;
+	template<class T, class = std::enable_if_t<std::is_integral_v<T>>>
+	constexpr size_t s_MaxDigits = std::numeric_limits<T>::digits10 + 2;
+
+	/// Digits of largest conceivable number for any floating point type
+	/// plus a null terminator + possible minus symbol
+	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	constexpr size_t s_MaxFloatDigits = std::numeric_limits<T>::max_digits10 + 2;
 
 	/// Bit count of largest conceivable number for any integral type
 	/// plus a null terminator
-	template<class T>
-	constexpr std::size_t s_MaxBits = std::numeric_limits<T>::digits + 1;
+	template<class T, class = std::enable_if_t<std::is_integral_v<T>>>
+	constexpr size_t s_MaxBits = std::numeric_limits<T>::digits + 1;
 	
 	template<typename CharType>
 	void PrependPadding(std::basic_string<CharType>& outStr, const size_t minDigits, CharType padding)

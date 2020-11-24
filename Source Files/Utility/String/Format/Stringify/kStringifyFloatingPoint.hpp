@@ -4,7 +4,6 @@
 #include "kStringifyHelper.hpp"
 #include "kStringifyInteger.hpp"
 
-#include "../../kSprintf.hpp"
 #include "../../kStringConverter.hpp"
 
 #include "../../../Debug/Exceptions/StringExceptions.hpp"
@@ -54,7 +53,7 @@ namespace klib::kString::stringify
 			const auto justDecimals = val - (isNeg ? -justIntegers : justIntegers);
 			auto decimalsToAppend = static_cast<size_t>(GetSignificantFigures(justDecimals, decimalPlaces));
 
-			Char_t buff[s_MaxDigits<T>]{ s_NullTerminator<Char_t> };
+			Char_t buff[s_MaxFloatDigits<T>]{ s_NullTerminator<Char_t> };
 			Char_t* const end = std::end(buff) - 1;
 			Char_t* current = end;
 
@@ -76,15 +75,15 @@ namespace klib::kString::stringify
 	}
 
 	/// <summary>
-	/// Floating point formating for string
+	/// Floating point formatting for string
 	/// </summary>
 	/// <param name="FIX">Fixed notation</param>
 	/// <param name="SCI">Scientific notation</param>
 	/// <param name="GEN">General notation (either scientific or fixed)</param>
-	ENUM_CLASS(FloatingPointFormat, std::uint8_t
-		, FIX = BIT_SHIFT(0)
-		, SCI = BIT_SHIFT(1)
-		, GEN = FIX | SCI
+	ENUM_CLASS(FloatingPointFormat, std::uint8_t, 
+		FIX = BIT_SHIFT(0),
+		SCI = BIT_SHIFT(1),
+		GEN = FIX | SCI
 	);
 
 	template<class Char_t, typename T, typename = std::enable_if_t<
@@ -96,12 +95,11 @@ namespace klib::kString::stringify
 	{
 		using namespace secret::impl;
 		switch (fmt.ToEnum()) {
-		case FloatingPointFormat::FIX:
-			return FixedNotation<Char_t>(val, precision);
+		case FloatingPointFormat::FIX: return FixedNotation<Char_t>(val, precision);
 		case FloatingPointFormat::SCI:
 		case FloatingPointFormat::GEN:
 		default:
-			throw kDebug::FormatError("Unknown floating point notation");
+		throw kDebug::FormatError("Unknown floating point notation: " + ToWriter(fmt.ToString()));
 		}
 	}
 

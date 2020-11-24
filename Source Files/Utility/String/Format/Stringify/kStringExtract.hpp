@@ -85,30 +85,25 @@ namespace klib::kString::stringify
 	{
 		using IntegralSizeMatch_t = std::conditional_t<sizeof(T) == 4, std::int32_t, std::int64_t>;
 		
-		std::chars_format fmt = std::chars_format::fixed;
+		FloatingPointFormat fmt = FloatingPointFormat::FIX;
 		if (Remove(specifier, s_ScientificFloatModeToken<CharT>))
 		{
-			fmt = std::chars_format::scientific;
+			fmt = FloatingPointFormat::FIX;
 		}
-		else if (Remove(specifier, s_HexModeToken<CharT>))
-		{
-			fmt = std::chars_format::hex;
-		}
-		/*else if (Remove(specifier, s_FixedFloatModeToken<CharT>))
-		{
-			fmt = std::chars_format::fixed;
-		}*/
 		else if (Remove(specifier, s_GeneralFloatModeToken<CharT>))
 		{
-			fmt = std::chars_format::general;
+			fmt = FloatingPointFormat::GEN;
 		}
 
+		const auto hexMode = Remove(specifier, s_HexModeToken<CharT>);
 		const auto binaryMode = Remove(specifier, s_BinaryModeToken<CharT>);
 
 		const auto padding = StrTo<std::int64_t>(specifier, stringify::s_NoSpecifier);
 
 		if (binaryMode)
-			return stringify::StringIntegralBinary<CharT, size_t>(*(IntegralSizeMatch_t*)&value, padding, CharT('0'));
+			return stringify::StringIntegralBinary<CharT>(*(IntegralSizeMatch_t*)&value, padding, CharT('0'));
+		if (hexMode)
+			return stringify::StringIntegralHex<CharT>(*(IntegralSizeMatch_t*)&value, padding, CharT('0'));
 		
 		return stringify::StringFloatingPoint<CharT>(value, padding, fmt);
 	}
