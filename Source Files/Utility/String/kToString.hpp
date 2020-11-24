@@ -18,7 +18,7 @@ namespace klib {
 		{
 			if (Find_First_Of(format, format::s_PrintfSymbol<CharT>) != type_trait::s_NoPos<std::basic_string<CharT>>)
 			{
-				return stringify::SprintfWrapper<CharT>(format, arg, argPack...);
+				return SprintfWrapper<CharT>(format, arg, argPack...);
 			}
 
 			auto finalString = ToWriter(format);
@@ -29,8 +29,7 @@ namespace klib {
 		template<class StringT, typename T, typename ...Ts>
 		USE_RESULT constexpr std::basic_string<typename StringT::value_type> ToString(const StringT& format, const T& arg, const Ts& ...argPack)
 		{
-			const std::basic_string<typename StringT::value_type> text =
-				ToString(format.data(), arg, argPack...);
+			const auto text = ToString(format.data(), arg, argPack...);
 			return text;
 		}
 
@@ -39,6 +38,7 @@ namespace klib {
 		{
 			using DataTypes = std::variant<std::monostate, T, Ts...>;
 			constexpr auto count = std::variant_size_v<DataTypes> -1;
+			
 			std::basic_string<CharT> format;
 			format.reserve(count + 2 * count);
 			for (auto i = 0; i < count; ++i)

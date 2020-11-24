@@ -116,20 +116,20 @@ namespace kTest::utility
 
 		{
 			const auto input = std::string("STL strings can be handled by klib::SprintfWrapper");
-			const auto result = stringify::SprintfWrapper("%s", input);
+			const auto result = SprintfWrapper("%s", input);
 			constexpr auto expected = "STL strings can be handled by klib::SprintfWrapper";
 			VERIFY(result == expected);
 		}
 
 		{
 			const auto input = 100;
-			const auto result = stringify::SprintfWrapper(L"%d", input);
+			const auto result = SprintfWrapper(L"%d", input);
 			constexpr auto expected = L"100";
 			VERIFY(result == expected);
 		}
 
 		{
-			const auto result = stringify::SprintfWrapper(U"%s", example);
+			const auto result = SprintfWrapper(U"%s", example);
 			constexpr auto expected = U"klib::SprintfWrapper using object with ToString func";
 			VERIFY(result == expected);
 		}

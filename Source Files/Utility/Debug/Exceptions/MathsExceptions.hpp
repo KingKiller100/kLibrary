@@ -34,7 +34,7 @@ namespace klib::kDebug
 	public:
 		template<typename T>
 		NoRealRootError(const T value, const size_t root)
-			: MathsError(kString::stringify::SprintfWrapper("ERROR: Value \"%s\" has no %u%s root",
+			: MathsError(kString::SprintfWrapper("ERROR: Value \"%s\" has no %u%s root",
 				kString::stringify::Identity<char, T>::MakeStr(value, NoSpecifier),
 				root,
 				kMisc::GetNumberSuffix<char>(root)

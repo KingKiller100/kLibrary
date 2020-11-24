@@ -37,7 +37,7 @@ namespace kTest::utility
 			const auto dt = testTime.GetDeltaTime<klib::kStopwatch::units::Micros>();
 			nums[i] = i;
 			VERIFY(nums[i] == i && dt != 0);
-			outputStr = klib::kString::stringify::SprintfWrapper("Test Time %d : %fus (Microseconds)\n", i, dt);
+			outputStr = klib::kString::SprintfWrapper("Test Time %d : %fus (Microseconds)\n", i, dt);
 		}
 
 		const auto lifetime = testTime.GetLifeTime<klib::kStopwatch::units::Micros>();

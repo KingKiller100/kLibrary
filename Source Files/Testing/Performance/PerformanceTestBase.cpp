@@ -25,7 +25,7 @@ namespace kTest::performance
 		}
 		catch (const std::exception& e)
 		{
-			const auto output = klib::kString::stringify::SprintfWrapper("%s seems to have triggered an exception!\nException: %s", name, e.what());
+			const auto output = klib::kString::SprintfWrapper("%s seems to have triggered an exception!\nException: %s", name, e.what());
 			PerformanceTestManager::Get().CollectResult(output);
 		}
 
@@ -146,7 +146,7 @@ namespace kTest::performance
 		const auto unitsLong = units::GetUnitsStr<units::Millis>(units::UnitStrLength::LONG);
 		const auto unitsShort = units::GetUnitsStr<units::Millis>(units::UnitStrLength::SHORT);
 
-		const auto output = klib::kString::stringify::SprintfWrapper(R"(%s: 
+		const auto output = klib::kString::SprintfWrapper(R"(%s: 
 	%s is the fastest on average by %.3f%%
 	Fastest Instance: %s Time: %d%s (%s)
 	Slowest Instance: %s Time: %d%s (%s)
