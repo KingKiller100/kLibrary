@@ -12,16 +12,6 @@ namespace klib::kString::stringify
 		BIG, LITTLE
 	};
 
-	/// Digits of largest conceivable number for any integral type
-	/// plus a null terminator + possible minus symbol
-	template<class T, typename = std::enable_if_t<std::is_integral_v<T>>>
-	constexpr std::size_t s_MaxDigits = std::numeric_limits<T>::digits10 + 2;
-
-	/// Bit count of largest conceivable number for any integral type
-	/// plus a null terminator
-	template<class T, typename = std::enable_if_t<std::is_integral_v<T>>>
-	constexpr std::size_t s_MaxBits = std::numeric_limits<T>::digits + 1;
-
 	template<class CharType, typename Uint_t, typename = std::enable_if_t<
 		std::is_unsigned_v<Uint_t> || type_trait::Is_CharType_V<CharType>>
 		>

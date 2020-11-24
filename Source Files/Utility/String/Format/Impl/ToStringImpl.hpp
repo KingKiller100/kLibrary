@@ -2,6 +2,7 @@
 
 #include "../FormatSymbols.hpp"
 #include "../kStringIdentity.hpp"
+#include "../../Tricks/kStringData.hpp"
 #include "../../../../TypeTraits/StringTraits.hpp"
 #include <string>
 

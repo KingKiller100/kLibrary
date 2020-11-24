@@ -122,7 +122,7 @@ namespace kTest::performance::maths
 
 			{
 				START_TEST(participants[1]);
-				const auto value = kmaths::PowerOfImpl(i, power);
+				const auto value = kmaths::secret::impl::PowerOfImpl(i, power);
 			}
 
 			{

@@ -1234,7 +1234,7 @@ namespace kTest::maths
 		constexpr auto piOver4To45 = ToDegrees<long double>(constants::PI_OVER_4);
 		VERIFY_COMPILE_TIME(piOver4To45 == 45.0l);
 
-		constexpr auto pitimes3Over2To270 = ToDegrees<constants::AccuracyType>(constants::PI_OVER_2 * 3);
+		constexpr auto pitimes3Over2To270 = ToDegrees<constants::Accuracy_t>(constants::PI_OVER_2 * 3);
 		VERIFY_COMPILE_TIME(pitimes3Over2To270 == 270.0l);
 
 		return success;

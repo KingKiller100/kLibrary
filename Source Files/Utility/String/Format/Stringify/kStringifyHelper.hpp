@@ -7,16 +7,26 @@ namespace klib::kString::stringify
 {
 	constexpr auto s_NoSpecifier = static_cast<size_t>(-1);
 
-	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
-	constexpr auto s_DefaultPlaceHolder = CharType('0');
+	template<class Char_t, typename = std::enable_if_t<type_trait::Is_CharType_V<Char_t>>>
+	constexpr auto s_DefaultPlaceHolder = Char_t('0');
 
-	template<class CharType>
-	constexpr std::array<CharType, 16> s_GeneralHexMap = {
-		static_cast<CharType>('0'), static_cast<CharType>('1'), static_cast<CharType>('2'), static_cast<CharType>('3'),
-		static_cast<CharType>('4'), static_cast<CharType>('5'), static_cast<CharType>('6'), static_cast<CharType>('7'),
-		static_cast<CharType>('8'), static_cast<CharType>('9'), static_cast<CharType>('a'), static_cast<CharType>('b'),
-		static_cast<CharType>('c'), static_cast<CharType>('d'), static_cast<CharType>('e'), static_cast<CharType>('f'),
+	template<class Char_t>
+	constexpr std::array<Char_t, 16> s_GeneralHexMap = {
+		static_cast<Char_t>('0'), static_cast<Char_t>('1'), static_cast<Char_t>('2'), static_cast<Char_t>('3'),
+		static_cast<Char_t>('4'), static_cast<Char_t>('5'), static_cast<Char_t>('6'), static_cast<Char_t>('7'),
+		static_cast<Char_t>('8'), static_cast<Char_t>('9'), static_cast<Char_t>('a'), static_cast<Char_t>('b'),
+		static_cast<Char_t>('c'), static_cast<Char_t>('d'), static_cast<Char_t>('e'), static_cast<Char_t>('f'),
 	};
+
+	/// Digits of largest conceivable number for any integral type
+	/// plus a null terminator + possible minus symbol
+	template<class T>
+	constexpr std::size_t s_MaxDigits = std::numeric_limits<T>::digits10 + 2;
+
+	/// Bit count of largest conceivable number for any integral type
+	/// plus a null terminator
+	template<class T>
+	constexpr std::size_t s_MaxBits = std::numeric_limits<T>::digits + 1;
 	
 	template<typename CharType>
 	void PrependPadding(std::basic_string<CharType>& outStr, const size_t minDigits, CharType padding)
