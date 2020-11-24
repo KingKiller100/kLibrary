@@ -13,7 +13,7 @@ namespace klib::kString::secret::impl
 	{}
 
 	template<class Char_t>
-	USE_RESULT constexpr size_t FindOpenerPos(std::basic_string<Char_t>& outFmt, const size_t argIndex)
+	USE_RESULT constexpr size_t FindOpenerPosition(std::basic_string<Char_t>& outFmt, const size_t argIndex)
 	{
 		using namespace stringify;
 		using Str_t = std::basic_string<Char_t>;
@@ -38,13 +38,13 @@ namespace klib::kString::secret::impl
 	}
 
 	template<class Char_t, typename T, typename ...Ts>
-	constexpr void ToStringImpl(std::basic_string<Char_t>& outFmt, const size_t argIndex, T arg, Ts ...argPack)
+	constexpr void ToStringImpl(std::basic_string<Char_t>& outFmt, const size_t argIndex, const T& arg, const Ts& ...argPack)
 	{
 		using namespace stringify;
 		using Str_t = std::basic_string<Char_t>;
 		constexpr auto npos = type_trait::s_NoPos<Str_t>;
 
-		size_t openerPos = FindOpenerPos(outFmt, argIndex);
+		size_t openerPos = FindOpenerPosition(outFmt, argIndex);
 		size_t closerPos = Find_First_Of(outFmt.data(), format::s_CloserSymbol<Char_t>, openerPos);
 
 		if (openerPos == npos || closerPos == npos)
@@ -68,7 +68,8 @@ namespace klib::kString::secret::impl
 			const auto replacement = Identity<Char_t, T>::MakeStr(arg, specifier);
 			outFmt.erase(openerPos, infoSize + 1);
 			outFmt.insert(openerPos, GetData(replacement), GetSize( replacement ));
-			openerPos = FindOpenerPos(outFmt, argIndex);
+			
+			openerPos = FindOpenerPosition(outFmt, argIndex);
 			closerPos = Find_First_Of(outFmt.data(), format::s_CloserSymbol<Char_t>, openerPos);
 		}
 

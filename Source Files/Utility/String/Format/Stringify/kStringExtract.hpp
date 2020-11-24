@@ -39,6 +39,7 @@ namespace klib::kString::stringify
 			return stringify::StringIntegralHex<CharT>(value, padding, CharT('0'));
 		if (binaryMode)
 			return stringify::StringIntegralBinary<CharT, ONLY_TYPE(T)>(value, padding, CharT('0'));
+		
 		return stringify::StringIntegral<CharT, ONLY_TYPE(T)>(value, padding, CharT('0'));
 	}
 
@@ -69,6 +70,7 @@ namespace klib::kString::stringify
 			return stringify::StringIntegralBinary<CharT>(asUint, padding);
 		if (asNumberMode)
 			return stringify::StringIntegral<CharT>(asUint, padding);
+		
 		return stringify::StringIntegralHex<CharT>(asUint, padding);
 	}
 
@@ -107,6 +109,7 @@ namespace klib::kString::stringify
 
 		if (binaryMode)
 			return stringify::StringIntegralBinary<CharT, size_t>(*(IntegralSizeMatch_t*)&value, padding, CharT('0'));
+		
 		return stringify::StringFloatingPoint<CharT>(value, padding, fmt);
 	}
 
@@ -132,6 +135,7 @@ namespace klib::kString::stringify
 			return stringify::StringIntegralBinary<CharT>(dummy.uint, padding, CharT('0'));
 		if (basiMode)
 			return stringify::StringIntegral<CharT>(dummy.uint, padding, CharT('0'));
+		
 		return stringify::StringBool<CharT>(dummy.real);
 	}
 }

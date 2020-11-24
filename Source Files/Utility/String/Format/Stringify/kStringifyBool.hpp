@@ -9,7 +9,7 @@ namespace klib::kString::stringify
 		, typename = std::enable_if_t<std::is_same_v<T, bool>
 		|| type_trait::Is_CharType_V<CharType>>
 		>
-	kString::StringWriter<CharType> StringBool(const T val)
+	decltype(auto) StringBool(const T val)
 	{
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			return val ? "true" : "false";

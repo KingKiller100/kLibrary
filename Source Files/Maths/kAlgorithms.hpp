@@ -139,17 +139,36 @@ namespace kmaths
 		return CAST(BigInt_t, value) == value;
 	}
 
+	template<typename T>
+	USE_RESULT constexpr T Abs(const T x) noexcept
+	{
+		if _CONSTEXPR_IF(std::is_unsigned_v<T>)
+			return x;
+		else
+		{
+			if (x >= 0)
+				return x;
+			else
+			{
+				if _CONSTEXPR_IF(std::is_integral_v<T>)
+					return (~x + CAST(T, 1));
+				else
+					return -x;
+			}
+		}
+	}
+
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr unsigned int CountIntegerDigits(T x) noexcept
 	{
 		unsigned int count = 1;
-		bool stop = CAST(T, 10) > x && x > CAST(T, -10);
+		bool stop = CAST(T, 10) > Abs(x);
 
 		while (!stop)
 		{
 			x /= CAST(T, 10);
 			count++;
-			stop = CAST(T, 10) > x && x > CAST(T, -10);
+			stop = CAST(T, 10) > Abs(x);
 		}
 
 		return count;
@@ -229,25 +248,6 @@ namespace kmaths
 		const auto integer = CAST(T, CAST(BigInt_t, value));
 
 		return integer > value ? integer - CAST(T, 1) : integer;
-	}
-
-	template<typename T>
-	USE_RESULT constexpr T Abs(const T x) noexcept
-	{
-		if _CONSTEXPR_IF(std::is_unsigned_v<T>)
-			return x;
-		else
-		{
-			if (x >= 0)
-				return x;
-			else
-			{
-				if _CONSTEXPR_IF(std::is_integral_v<T>)
-					return (~x + CAST(T, 1));
-				else
-					return -x;
-			}
-		}
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>

@@ -16,20 +16,28 @@
 
 namespace klib::kString::stringify
 {
-	template<class CharType, typename T
+	template<class Char_t, typename T
 		, typename = std::enable_if_t<std::is_floating_point_v<T>
-		|| type_trait::Is_CharType_V<CharType>>
+		|| type_trait::Is_CharType_V<Char_t>>
 		>
-		kString::StringWriter<CharType> StringFloatingPoint(const T val, size_t precision = s_NoSpecifier
+		kString::StringWriter<Char_t> StringFloatingPoint(const T val, size_t precision = s_NoSpecifier
 			, std::chars_format fmt = std::chars_format::fixed)
 	{
+		using namespace type_trait;
 		if (precision == s_NoSpecifier)
 			precision = 6;
 		
 #if defined(_HAS_COMPLETE_CHARCONV) && (_HAS_COMPLETE_CHARCONV == FALSE)
-		const std::string format = "%." + StringIntegral<char>(precision, 0) + "f";
-		const auto temp = SprintfWrapper<char>(format, val);
-		const auto str = kString::Convert<CharType>(temp);
+		Char_t buff[ 6 ]{ s_NullTerminator<Char_t> };
+		Char_t* const end = std::end(buff) - 1;
+		Char_t* current = end;
+
+		*(--current) = 'f';
+		current = UintToStr(current, precision);
+		*(--current) = '.';
+		*(--current) = '%';
+		
+		return SprintfWrapper<Char_t>(current, val);
 #else
 
 		constexpr auto maxsize = std::numeric_limits<T>::max_exponent10 + 1;
@@ -49,10 +57,8 @@ namespace klib::kString::stringify
 			throw kDebug::FormatError(err);
 		}
 
-		const StringWriter<CharType> str(kString::Convert<ONLY_TYPE(CharType)>(buff));
-#endif 
-
-		return str;
+		return StringWriter<Char_t>(kString::Convert<ONLY_TYPE(Char_t)>(buff));
+#endif
 	}
 
 }

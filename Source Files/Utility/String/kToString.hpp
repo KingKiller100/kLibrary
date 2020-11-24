@@ -14,7 +14,7 @@ namespace klib {
 	{		
 		// Outputs a interpolated string with data given for all string types. NOTE: Best performance with char and wchar_t type strings
 		template<class CharT, typename T, typename ...Ts>
-		USE_RESULT constexpr std::basic_string<CharT> ToString(const CharT* format, T arg, Ts ...argPack)
+		USE_RESULT constexpr std::basic_string<CharT> ToString(const CharT* format, const T& arg, const Ts& ...argPack)
 		{
 			if (Find_First_Of(format, format::s_PrintfSymbol<CharT>) != type_trait::s_NoPos<std::basic_string<CharT>>)
 			{
