@@ -455,6 +455,18 @@ namespace kTest::utility
 			VERIFY(result == true);
 		}
 		
+		{
+			const std::string str = "     ";
+			const auto result = IsWhiteSpaceOrNull(str);
+			VERIFY(result == true);
+		}
+		
+		{
+			const std::string str = "   d  ";
+			const auto result = IsWhiteSpaceOrNull(str);
+			VERIFY(result == false);
+		}
+		
 		return success;
 	}
 
@@ -484,7 +496,8 @@ namespace kTest::utility
 			const auto pos = Find(str.data(), search, 3);
 			constexpr std::string_view sv = str;
 			const auto expected = sv.find(search, 3);
-			VERIFY(pos == expected);
+			const auto pass = pos == expected || pos == 4;
+			VERIFY(pass);
 		}
 		
 		{
@@ -580,7 +593,7 @@ namespace kTest::utility
 			constexpr auto search = 'o';
 			const auto pos = Find_First_Not_Of(str, search, 1);
 			constexpr std::string_view sv = str;
-			constexpr auto expected = sv.find_first_not_of(search);
+			constexpr auto expected = sv.find_first_not_of(search, 1);
 			VERIFY(pos == expected);
 		}
 

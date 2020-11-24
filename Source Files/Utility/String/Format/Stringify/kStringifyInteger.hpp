@@ -120,7 +120,7 @@ namespace klib::kString::stringify
 
 		using Unsigned_t = std::make_unsigned_t<Integral_t>;
 
-		CharType buff[s_MaxDigits<Integral_t>]{ type_trait::s_NullTerminator<CharType> };
+		CharType buff[s_MaxDigits<size_t>]{ type_trait::s_NullTerminator<CharType> };
 		CharType* const end = std::end(buff) - 1;
 		CharType* current = end;
 		auto asUint = static_cast<Unsigned_t>(val);

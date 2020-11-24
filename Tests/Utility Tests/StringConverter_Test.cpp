@@ -7,7 +7,7 @@
 namespace kTest::utility
 {
 	StringConverterTester::StringConverterTester()
-		: Tester("UTF Converter Test")
+		: Tester("Character Converter Test")
 	{}
 
 	StringConverterTester::~StringConverterTester()

@@ -12,7 +12,7 @@ namespace klib::kString
 		std::enable_if_t<
 		type_trait::Is_CharType_V<CharT>
 		>>
-		USE_RESULT constexpr bool IsUpper(CharT c, const std::string_view& localeName = "C") noexcept
+		USE_RESULT constexpr bool IsUpper(CharT c, const std::string_view& localeName = "") noexcept
 	{
 		return IsIt(c, std::ctype_base::upper, localeName);
 	}
@@ -21,7 +21,7 @@ namespace klib::kString
 		std::enable_if_t<
 		type_trait::Is_CharType_V<CharT>
 		>>
-		USE_RESULT constexpr bool IsLower(CharT c, const std::string_view& localeName = "C") noexcept
+		USE_RESULT constexpr bool IsLower(CharT c, const std::string_view& localeName = "") noexcept
 	{
 		return IsIt(c, std::ctype_base::lower, localeName);
 	}
@@ -30,12 +30,12 @@ namespace klib::kString
 		std::enable_if_t<
 		type_trait::Is_CharType_V<CharT>
 		>>
-		USE_RESULT constexpr CharT ToUpper(CharT c, const std::string_view& localeName = "C")
+		USE_RESULT constexpr CharT ToUpper(CharT c, const std::string_view& localeName = "")
 	{
 		if (IsLower(c, localeName))
 		{
 			const auto& facet = impl::GetFacet<std::ctype<CharT>>(localeName);
-			c = facet->toupper(c);
+			c = facet.toupper(c);
 		}
 		return c;
 	}
@@ -46,7 +46,7 @@ namespace klib::kString
 		|| (type_trait::Is_CharType_V<ONLY_TYPE(Stringish)>
 			&& std::is_pointer_v<Stringish>)
 		>>
-		USE_RESULT constexpr auto ToUpper(const Stringish& input, const std::string_view& localeName = "C")
+		USE_RESULT constexpr auto ToUpper(const Stringish& input, const std::string_view& localeName = "")
 	{
 		auto output = ToWriter(input);
 		for (auto& c : output)
@@ -58,7 +58,7 @@ namespace klib::kString
 		type_trait::Is_CharType_V<CharT>
 		&& std::is_array_v<CharT[Size]>
 		>>
-		USE_RESULT constexpr auto ToUpper(const CharT(&input)[Size], const std::string_view& localeName = "C")
+		USE_RESULT constexpr auto ToUpper(const CharT(&input)[Size], const std::string_view& localeName = "")
 	{
 		return ToUpper(StringReader<std::remove_all_extents_t<CharT>>(input), localeName);
 	}
@@ -67,12 +67,12 @@ namespace klib::kString
 		std::enable_if_t<
 		type_trait::Is_CharType_V<CharT>
 		>>
-		USE_RESULT constexpr CharT ToLower(CharT c, const std::string_view& localeName = "C")
+		USE_RESULT constexpr CharT ToLower(CharT c, const std::string_view& localeName = "")
 	{
 		if (IsUpper(c, localeName))
 		{
 			const auto& facet = impl::GetFacet<std::ctype<CharT>>(localeName);
-			c = facet->tolower(c);
+			c = facet.tolower(c);
 		}
 		return c;
 	}
@@ -83,7 +83,7 @@ namespace klib::kString
 		|| (type_trait::Is_CharType_V<ONLY_TYPE(Stringish)>
 			&& std::is_pointer_v<Stringish>)
 		>>
-		USE_RESULT constexpr auto ToLower(const Stringish& input, const std::string_view& localeName = "C")
+		USE_RESULT constexpr auto ToLower(const Stringish& input, const std::string_view& localeName = "")
 	{
 		auto output = ToWriter(input);
 		for (auto& c : output)
@@ -95,7 +95,7 @@ namespace klib::kString
 		type_trait::Is_CharType_V<CharT>
 		&& std::is_array_v<CharT[Size]>
 		>>
-		USE_RESULT constexpr auto ToLower(const CharT(&input)[Size], const std::string_view& localeName = "C")
+		USE_RESULT constexpr auto ToLower(const CharT(&input)[Size], const std::string_view& localeName = "")
 	{
 		return ToLower(StringReader<std::remove_all_extents_t<CharT>>(input), localeName);
 	}
