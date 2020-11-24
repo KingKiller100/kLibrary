@@ -66,9 +66,7 @@ namespace klib::kString::stringify
 		if (isNeg)
 			*(--current) = CharType('-');
 
-		const StringWriter<CharType> str(current, end);
-
-		return str;
+		return StringWriter<CharType>(current, end);
 	}
 
 	template<class CharType, typename Unsigned_t
@@ -88,9 +86,7 @@ namespace klib::kString::stringify
 		if (minDigits < s_MaxDigits<Unsigned_t>)
 			PrependPadding(current, minDigits, placeHolder);
 
-		const StringWriter<CharType> str(current, end);
-
-		return str;
+		return StringWriter<CharType> (current, end);
 	}
 
 
@@ -141,9 +137,8 @@ namespace klib::kString::stringify
 		}
 
 		PrependPadding(current, minCharacters, placeHolder);
-		const StringWriter<CharType> address(current, end);
 
-		return address;
+		return StringWriter<CharType>(current, end);
 	}
 
 	template<class CharType, typename Integral_t, typename = std::enable_if_t <
@@ -174,8 +169,7 @@ namespace klib::kString::stringify
 		if (endian == EndianFormat::LITTLE)
 			std::reverse(current, end);
 
-		const StringWriter<CharType> binary(current, end);
-		return binary;
+		return StringWriter<CharType>(current, end);
 	}
 }
 
