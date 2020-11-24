@@ -18,13 +18,20 @@ namespace klib::kString::secret::impl
 		using namespace stringify;
 		using Str_t = std::basic_string<Char_t>;
 		constexpr size_t npos = type_trait::s_NoPos<Str_t>;
+
+		Char_t buff[s_MaxDigits<std::uint32_t>]{ type_trait::s_NullTerminator<Char_t> };
+		Char_t* const end = std::end(buff) - 1;
+		Char_t* current = end;
+
+		*(--current) = format::s_CloserSymbol<Char_t>;
+		current = stringify::UintToStr(current, argIndex);
+		*(--current) = format::s_OpenerSymbol<Char_t>;
+		size_t openerPos = Find(outFmt.data(), current);
 		
-		auto searchStr = format::s_OpenerSymbol<Char_t> + StringIntegral<Char_t>(argIndex) + format::s_CloserSymbol<Char_t>;
-		size_t openerPos = outFmt.find(searchStr);
 		if (openerPos == npos)
 		{
-			searchStr = format::s_OpenerSymbol<Char_t> +StringIntegral<Char_t>(argIndex) + format::s_SpecifierSymbol<Char_t>;
-			openerPos = outFmt.find(searchStr);
+			*(end - 1) = format::s_SpecifierSymbol<Char_t>;
+			openerPos = Find(outFmt.data(), current);
 		}
 
 		return openerPos;
@@ -38,7 +45,7 @@ namespace klib::kString::secret::impl
 		constexpr auto npos = type_trait::s_NoPos<Str_t>;
 
 		size_t openerPos = FindOpenerPos(outFmt, argIndex);
-		size_t closerPos = outFmt.find_first_of(format::s_CloserSymbol<Char_t>, openerPos);
+		size_t closerPos = Find_First_Of(outFmt.data(), format::s_CloserSymbol<Char_t>, openerPos);
 
 		if (openerPos == npos || closerPos == npos)
 			return;
@@ -46,7 +53,7 @@ namespace klib::kString::secret::impl
 		while (openerPos != npos && closerPos != npos)
 		{
 			const auto infoSize = closerPos - openerPos;
-			const size_t colonPos = outFmt.find_first_of(format::s_SpecifierSymbol<Char_t>, openerPos);
+			const size_t colonPos = Find_First_Of(outFmt.data(), format::s_SpecifierSymbol<Char_t>, openerPos);
 
 			StringWriter<Char_t> specifier;
 
@@ -62,7 +69,7 @@ namespace klib::kString::secret::impl
 			outFmt.erase(openerPos, infoSize + 1);
 			outFmt.insert(openerPos, replacement);
 			openerPos = FindOpenerPos(outFmt, argIndex);
-			closerPos = outFmt.find_first_of(format::s_CloserSymbol<Char_t>, openerPos);
+			closerPos = Find_First_Of(outFmt.data(), format::s_CloserSymbol<Char_t>, openerPos);
 		}
 
 		ToStringImpl<Char_t, Ts...>(outFmt, argIndex + 1, argPack...);
