@@ -159,18 +159,14 @@ namespace kmaths
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr unsigned int CountIntegerDigits(T x) noexcept
+	USE_RESULT constexpr size_t CountIntegerDigits(T x) noexcept
 	{
-		unsigned int count = 1;
-		bool stop = CAST(T, 10) > Abs(x);
-
-		while (!stop)
+		size_t count = 1;
+		while (CAST(T, 10) > Abs(x))
 		{
 			x /= CAST(T, 10);
 			count++;
-			stop = CAST(T, 10) > Abs(x);
 		}
-
 		return count;
 	}
 
