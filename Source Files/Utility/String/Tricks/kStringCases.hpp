@@ -34,7 +34,7 @@ namespace klib::kString
 	{
 		if (IsLower(c, localeName))
 		{
-			const auto& facet = impl::GetFacet<std::ctype<CharT>>(localeName);
+			const auto& facet = secret::impl::GetFacet<std::ctype<CharT>>(localeName);
 			c = facet.toupper(c);
 		}
 		return c;
@@ -71,7 +71,7 @@ namespace klib::kString
 	{
 		if (IsUpper(c, localeName))
 		{
-			const auto& facet = impl::GetFacet<std::ctype<CharT>>(localeName);
+			const auto& facet = secret::impl::GetFacet<std::ctype<CharT>>(localeName);
 			c = facet.tolower(c);
 		}
 		return c;

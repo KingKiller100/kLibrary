@@ -9,8 +9,6 @@
 #include <string>
 #include <variant>
 
-
-
 namespace klib {
 	namespace kString
 	{		
@@ -18,13 +16,12 @@ namespace klib {
 		template<class CharT, typename T, typename ...Ts>
 		USE_RESULT constexpr std::basic_string<CharT> ToString(const CharT* format, T arg, Ts ...argPack)
 		{
-			std::basic_string<CharT> finalString(format);
-			
-			if (Contains(finalString, format::s_PrintfSymbol<CharT>))
+			if (Find_First_Of(format, format::s_PrintfSymbol<CharT>) != type_trait::s_NoPos<std::basic_string<CharT>>)
 			{
 				return stringify::SprintfWrapper<CharT>(format, arg, argPack...);
 			}
 
+			auto finalString = ToWriter(format);
 			secret::impl::ToStringImpl<CharT, T, Ts...>(finalString, 0, arg, argPack...);
 			return finalString;
 		}

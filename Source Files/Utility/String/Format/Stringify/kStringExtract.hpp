@@ -17,7 +17,7 @@ namespace klib::kString::stringify
 	constexpr CharType s_HexModeToken = CharType('h');
 
 	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
-	constexpr CharType s_BoolAsInt = CharType('d');
+	constexpr CharType s_AsNumber = CharType('d');
 
 	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
 	constexpr CharType s_GeneralFloatModeToken = CharType('g');
@@ -37,10 +37,9 @@ namespace klib::kString::stringify
 		
 		if (hexMode)
 			return stringify::StringIntegralHex<CharT>(value, padding, CharT('0'));
-		else if (binaryMode)
+		if (binaryMode)
 			return stringify::StringIntegralBinary<CharT, ONLY_TYPE(T)>(value, padding, CharT('0'));
-		else
-			return stringify::StringIntegral<CharT, ONLY_TYPE(T)>(value, padding, CharT('0'));
+		return stringify::StringIntegral<CharT, ONLY_TYPE(T)>(value, padding, CharT('0'));
 	}
 
 	template<typename CharT>
@@ -50,7 +49,7 @@ namespace klib::kString::stringify
 	}
 
 	template<typename CharT>
-	StringWriter<CharT> HandleCharPointer(const CharT* value, UNUSED const StringWriter<CharT>& specifier)
+	const CharT* HandleCharPointer(const CharT* value, UNUSED const StringWriter<CharT>& specifier)
 	{
 		return value;
 	}
@@ -61,14 +60,16 @@ namespace klib::kString::stringify
 		constexpr auto defaultPadding = sizeof(intptr_t) * 2;
 
 		const auto binaryMode = Remove(specifier, s_BinaryModeToken<CharT>);
+		const auto asNumberMode = Remove(specifier, s_AsNumber<CharT>);
 
 		const auto padding = StrTo<size_t>(specifier, defaultPadding);
 		auto asUint = reinterpret_cast<uintptr_t>(ptr);
 
 		if (binaryMode)
+			return stringify::StringIntegralBinary<CharT>(asUint, padding);
+		if (asNumberMode)
 			return stringify::StringIntegral<CharT>(asUint, padding);
-		else
-			return stringify::StringIntegralHex<CharT>(asUint, padding);
+		return stringify::StringIntegralHex<CharT>(asUint, padding);
 	}
 
 	template<typename StringT>
@@ -106,8 +107,7 @@ namespace klib::kString::stringify
 
 		if (binaryMode)
 			return stringify::StringIntegralBinary<CharT, size_t>(*(IntegralSizeMatch_t*)&value, padding, CharT('0'));
-		else
-			return stringify::StringFloatingPoint<CharT>(value, padding, fmt);
+		return stringify::StringFloatingPoint<CharT>(value, padding, fmt);
 	}
 
 	template<typename CharT>
@@ -123,16 +123,15 @@ namespace klib::kString::stringify
 
 		const auto hexMode = Remove(specifier, s_HexModeToken<CharT>);
 		const auto binaryMode = Remove(specifier, s_BinaryModeToken<CharT>);
-		const auto basiMode = Remove(specifier, s_BoolAsInt<CharT>);
+		const auto basiMode = Remove(specifier, s_AsNumber<CharT>);
 		const auto padding = StrTo<size_t>(specifier, stringify::s_NoSpecifier);
 		
 		if (hexMode)
 			return stringify::StringIntegralHex<CharT>(dummy.uint, padding, CharT('0'));
-		else if (binaryMode)
+		if (binaryMode)
 			return stringify::StringIntegralBinary<CharT>(dummy.uint, padding, CharT('0'));
-		else if (basiMode)
+		if (basiMode)
 			return stringify::StringIntegral<CharT>(dummy.uint, padding, CharT('0'));
-		else
-			return stringify::StringBool<CharT>(dummy.real);
+		return stringify::StringBool<CharT>(dummy.real);
 	}
 }

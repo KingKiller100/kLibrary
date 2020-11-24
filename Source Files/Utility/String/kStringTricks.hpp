@@ -10,6 +10,7 @@
 #include "Tricks/kStringWhiteSpace.hpp"
 #include "Tricks/kStringRemove.hpp"
 #include "Tricks/kStringTo.hpp"
+#include "Tricks/kStringData.hpp"
 
 #include <algorithm>
 #include <vector>

@@ -83,10 +83,10 @@ namespace klib::kString::stringify
 			return string.data();
 		}
 
-		USE_RESULT static const std::basic_string<Char_t>& MakeStr(const T& arg, UNUSED StringWriter<Char_t>& specifier)
+		USE_RESULT static const Char_t* MakeStr(const T& arg, UNUSED StringWriter<Char_t>& specifier)
 		{
 			const std::basic_string<Char_t>& string = GetObjectString<Char_t>(arg);
-			return string;
+			return string.data();
 		}
 	};
 
@@ -106,7 +106,7 @@ namespace klib::kString::stringify
 			return str.data();
 		}
 
-		USE_RESULT static const typename T::value_type* MakeStr(const T& arg, StringWriter<Char_t>& specifier)
+		USE_RESULT static const Char_t* MakeStr(const T& arg, StringWriter<Char_t>& specifier)
 		{
 			const auto& str = stringify::HandleSTLString(arg, specifier);
 			return str.data();
@@ -123,14 +123,14 @@ namespace klib::kString::stringify
 		&& std::is_same_v<Char_t,
 		std::remove_cv_t<std::remove_pointer_t<std::decay_t<T>>>>
 		>>
-	{
+	{		
 	public:
 		USE_RESULT static decltype(auto) Get(const T val) noexcept
 		{
 			return val;
 		}
 
-		USE_RESULT static decltype(auto) MakeStr(const T arg, StringWriter<Char_t>& specifier)
+		USE_RESULT static const Char_t* MakeStr(const T arg, StringWriter<Char_t>& specifier)
 		{
 			return stringify::HandleCharPointer(arg, specifier);
 		}

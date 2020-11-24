@@ -6,7 +6,7 @@
 
 namespace klib::kString
 {
-	namespace impl
+	namespace secret::impl
 	{
 		template<typename CStringA, typename Char_t, typename CmpFunc_t, typename DirectionFunc_t, class = std::enable_if_t <
 			type_trait::Is_CString_V<CStringA>
@@ -99,7 +99,7 @@ namespace klib::kString
 		>>
 		USE_RESULT constexpr size_t Find_First_Of(const CStringA& str, Char_t search, size_t offset = 0)
 	{
-		const size_t pos = impl::FindCharImpl(str, search, offset, std::equal_to<Char_t>(), std::plus<void>{});
+		const size_t pos = secret::impl::FindCharImpl(str, search, offset, std::equal_to<Char_t>(), std::plus<void>{});
 		return pos;
 	}
 
@@ -110,7 +110,7 @@ namespace klib::kString
 		>>
 		USE_RESULT constexpr size_t Find_First_Not_Of(const CStringA& str, Char_t search, size_t offset = 0)
 	{
-		const size_t pos = impl::FindCharImpl(str, search, offset, std::not_equal_to<Char_t>{}, std::plus<void>{});
+		const size_t pos = secret::impl::FindCharImpl(str, search, offset, std::not_equal_to<Char_t>{}, std::plus<void>{});
 		return pos;
 	}
 
@@ -122,7 +122,7 @@ namespace klib::kString
 		USE_RESULT constexpr size_t Find_Last_Of(const CStringA& str, Char_t search, size_t offset = type_trait::s_NoPos<std::basic_string<Char_t>>)
 	{
 		offset = std::min(offset, GetSize(str) - 1);
-		const size_t pos = impl::FindCharImpl(str, search, offset, std::equal_to<Char_t>{}, std::minus<void>{});
+		const size_t pos = secret::impl::FindCharImpl(str, search, offset, std::equal_to<Char_t>{}, std::minus<void>{});
 		return pos;
 	}
 
@@ -134,7 +134,7 @@ namespace klib::kString
 		USE_RESULT constexpr size_t Find_Last_Not_Of(const CStringA& str, Char_t search, size_t offset = type_trait::s_NoPos<std::basic_string<Char_t>>)
 	{
 		offset = std::min(offset, GetSize(str) - 1);
-		const size_t pos = impl::FindCharImpl(str, search, offset, std::not_equal_to<Char_t>{}, std::minus<void>{});
+		const size_t pos = secret::impl::FindCharImpl(str, search, offset, std::not_equal_to<Char_t>{}, std::minus<void>{});
 		return pos;
 	}
 
@@ -146,7 +146,7 @@ namespace klib::kString
 		USE_RESULT constexpr bool Contains(const StringType& str, const typename StringType::value_type* search
 			, const size_t offset = 0)
 		{
-			return str.find(search, offset) != StringType::npos;
+			return Find(str.data(), search, offset) != type_trait::s_NoPos<StringType>;
 		}
 
 		template<typename StringType
@@ -159,7 +159,7 @@ namespace klib::kString
 			USE_RESULT constexpr bool Contains(const StringType & str, typename StringType::value_type search
 				, const size_t offset = 0)
 		{
-			return str.find(search, offset) != type_trait::s_NoPos<StringType>;
+			return Find_First_Of( str.data(), search, offset ) != type_trait::s_NoPos<StringType>;
 		}
 
 		template<typename StringA, typename StringB
@@ -171,11 +171,10 @@ namespace klib::kString
 			&& type_trait::Is_StringType_V<StringB>
 			>>
 #endif
-
 			USE_RESULT constexpr bool Contains(const StringA & str, const StringB & search
 				, const size_t offset = 0)
 		{
-			return str.find(search.data(), offset) != type_trait::s_NoPos<StringA>;
+			return Find( str.data(), search.data(), offset ) != type_trait::s_NoPos<StringA>;
 		}
 
 		template<typename StringType, typename Stringish
@@ -192,7 +191,9 @@ namespace klib::kString
 		{
 			size_t count = 0;
 
-			const auto hayStack = cs.Compare(CaseSensitive::YES, ToWriter(str), ToLower(str));
+			const auto hayStack = cs.Compare(CaseSensitive::YES
+				, ToWriter(str)
+				, ToLower(str));
 
 			const auto needle = cs == CaseSensitive::YES
 				? search

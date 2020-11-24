@@ -6,7 +6,7 @@
 
 namespace klib::kString
 {
-	namespace impl
+	namespace secret::impl
 	{
 		template<typename Facet_t>
 		USE_RESULT constexpr const Facet_t& GetFacet(const std::string_view& localeName = "") noexcept
@@ -19,12 +19,10 @@ namespace klib::kString
 		}
 	}
 	
-	template<class CharT, class = std::enable_if_t<
-		type_trait::Is_CharType_V<CharT>
-		>>
-		USE_RESULT constexpr bool IsIt(CharT c, std::ctype_base::mask mask, const std::string_view& localeName = "")
+	template<class Char_t, class = std::enable_if_t<type_trait::Is_CharType_V<Char_t>>>
+		USE_RESULT constexpr bool IsIt(Char_t c, std::ctype_base::mask mask, const std::string_view& localeName = "")
 	{
-		const auto& facet = impl::GetFacet<std::ctype<CharT>>(localeName);
+		const auto& facet = secret::impl::GetFacet<std::ctype<Char_t>>(localeName);
 		const auto result = facet.is(mask, c);
 		return result;
 	}

@@ -22,9 +22,8 @@ namespace klib::kString::stringify
 	template<class T, typename = std::enable_if_t<std::is_integral_v<T>>>
 	constexpr std::size_t s_MaxBits = std::numeric_limits<T>::digits + 1;
 
-	template<class CharType, typename Uint_t
-		, typename = std::enable_if_t<std::is_unsigned_v<Uint_t>
-		|| type_trait::Is_CharType_V<CharType>>
+	template<class CharType, typename Uint_t, typename = std::enable_if_t<
+		std::is_unsigned_v<Uint_t> || type_trait::Is_CharType_V<CharType>>
 		>
 		USE_RESULT constexpr CharType* UintToStr(CharType* current, Uint_t uVal)
 	{
@@ -36,9 +35,8 @@ namespace klib::kString::stringify
 		return current;
 	}
 
-	template<class CharType, typename Signed_t
-		, typename = std::enable_if_t<std::is_integral_v<Signed_t>
-		|| type_trait::Is_CharType_V<CharType>>
+	template<class CharType, typename Signed_t, typename = std::enable_if_t<
+		std::is_integral_v<Signed_t> || type_trait::Is_CharType_V<CharType>>
 		>
 		USE_RESULT constexpr StringWriter<CharType> StringSignedIntegral(Signed_t val, size_t minDigits = s_NoSpecifier
 			, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
@@ -69,9 +67,8 @@ namespace klib::kString::stringify
 		return StringWriter<CharType>(current, end);
 	}
 
-	template<class CharType, typename Unsigned_t
-		, typename = std::enable_if_t<std::is_integral_v<Unsigned_t>
-		|| type_trait::Is_CharType_V<CharType>>
+	template<class CharType, typename Unsigned_t, typename = std::enable_if_t<
+		std::is_integral_v<Unsigned_t> || type_trait::Is_CharType_V<CharType>>
 		>
 		USE_RESULT constexpr StringWriter<CharType> StringUnsignedIntegral(Unsigned_t val, size_t minDigits = s_NoSpecifier
 			, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
@@ -89,9 +86,8 @@ namespace klib::kString::stringify
 		return StringWriter<CharType> (current, end);
 	}
 
-
-	template<class CharType, typename Integral_t
-		, typename = std::enable_if_t < std::is_integral_v<Integral_t>
+	template<class CharType, typename Integral_t, typename = std::enable_if_t<
+		std::is_integral_v<Integral_t>
 		>>
 		USE_RESULT constexpr StringWriter<CharType> StringIntegral(Integral_t val, size_t minDigits = s_NoSpecifier
 			, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
@@ -103,7 +99,7 @@ namespace klib::kString::stringify
 	}
 
 	// Big endian format
-	template<class CharType, typename Integral_t, typename = std::enable_if_t <
+	template<class CharType, typename Integral_t, typename = std::enable_if_t<
 		std::is_integral_v<Integral_t>
 		>>
 		USE_RESULT StringWriter<CharType> StringIntegralHex(Integral_t val, size_t minCharacters = s_NoSpecifier
@@ -141,7 +137,7 @@ namespace klib::kString::stringify
 		return StringWriter<CharType>(current, end);
 	}
 
-	template<class CharType, typename Integral_t, typename = std::enable_if_t <
+	template<class CharType, typename Integral_t, typename = std::enable_if_t<
 		std::is_integral_v<Integral_t>
 		>>
 		USE_RESULT constexpr StringWriter<CharType> StringIntegralBinary(Integral_t val, size_t minCharacters
@@ -149,8 +145,6 @@ namespace klib::kString::stringify
 	{
 		if (minCharacters == s_NoSpecifier)
 			minCharacters = 1;
-
-		using Unsigned_t = std::make_unsigned_t<Integral_t>;
 
 		CharType buff[s_MaxBits<Integral_t>]{ type_trait::s_NullTerminator<CharType> };
 		CharType* const end = std::end(buff) - 1;
