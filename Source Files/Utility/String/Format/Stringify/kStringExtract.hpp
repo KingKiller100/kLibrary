@@ -29,7 +29,7 @@ namespace klib::kString::stringify
 	constexpr CharType s_ScientificFloatModeToken = CharType('e');
 
 	template<typename CharT, typename T>
-	StringWriter<CharT> HandleInteger(T value, StringWriter<CharT>& specifier)
+	std::unique_ptr<CharT[]> HandleInteger(T value, StringWriter<CharT>& specifier)
 	{
 		const auto hexMode = Remove(specifier, s_HexModeToken<CharT>);
 		const auto binaryMode = Remove(specifier, s_BinaryModeToken<CharT>);
@@ -81,7 +81,7 @@ namespace klib::kString::stringify
 	}
 
 	template<typename CharT, typename T>
-	StringWriter<CharT> HandleFloat(T value, StringWriter<CharT>& specifier)
+	std::unique_ptr<CharT[]> HandleFloat(T value, StringWriter<CharT>& specifier)
 	{
 		using IntegralSizeMatch_t = std::conditional_t<sizeof(T) == 4, std::int32_t, std::int64_t>;
 		
@@ -109,7 +109,7 @@ namespace klib::kString::stringify
 	}
 
 	template<typename CharT>
-	StringWriter<CharT> HandleBool(bool value, StringWriter<CharT>& specifier)
+	std::unique_ptr<CharT[]> HandleBool(bool value, StringWriter<CharT>& specifier)
 	{
 		union DummyUnion
 		{

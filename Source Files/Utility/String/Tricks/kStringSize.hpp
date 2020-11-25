@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "../../../HelperMacros.hpp"
+
+#include "../../../TypeTraits/SmartPointerTraits.hpp"
 #include "../../../TypeTraits/StringTraits.hpp"
 
 namespace klib::kString
@@ -30,5 +32,16 @@ namespace klib::kString
 			++count;
 		}
 		return count;
+	}
+
+	template<typename SmartPtr_t
+#if MSVC_PLATFORM_TOOLSET >= 142
+				> requires type_trait::Is_SmartPtr_t<SmartPtr_t>
+#else
+		, typename = std::enable_if_t<type_trait::Is_SmartPtr_V<CharT>> >
+#endif
+		USE_RESULT constexpr size_t GetSize(const SmartPtr_t & sptr) noexcept
+	{
+		return GetSize(sptr.get());
 	}
 }

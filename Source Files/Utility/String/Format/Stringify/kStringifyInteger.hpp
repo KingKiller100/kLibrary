@@ -12,32 +12,32 @@ namespace klib::kString::stringify
 		BIG, LITTLE
 	};
 
-	template<class CharType, typename Uint_t, typename = std::enable_if_t<
-		std::is_unsigned_v<Uint_t> || type_trait::Is_CharType_V<CharType>>
+	template<class Char_t, typename Uint_t, typename = std::enable_if_t<
+		std::is_unsigned_v<Uint_t> || type_trait::Is_CharType_V<Char_t>>
 		>
-		USE_RESULT constexpr CharType* UintToStr(CharType* current, Uint_t uVal)
+		USE_RESULT constexpr Char_t* UintToStr(Char_t* current, Uint_t uVal)
 	{
 		do {
 			const auto mod = uVal % 10;
-			*(--current) = static_cast<CharType>('0' + mod);
+			*(--current) = static_cast<Char_t>('0' + mod);
 			uVal /= 10;
 		} while (uVal != 0);
 		return current;
 	}
 
-	template<class CharType, typename Signed_t, typename = std::enable_if_t<
-		std::is_integral_v<Signed_t> || type_trait::Is_CharType_V<CharType>>
+	template<class Char_t, typename Signed_t, typename = std::enable_if_t<
+		std::is_integral_v<Signed_t> || type_trait::Is_CharType_V<Char_t>>
 		>
-		USE_RESULT constexpr StringWriter<CharType> StringSignedIntegral(Signed_t val, size_t minDigits = s_NoSpecifier
-			, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
+		USE_RESULT constexpr std::unique_ptr<Char_t[]> StringSignedIntegral(Signed_t val, size_t minDigits = s_NoSpecifier
+			, Char_t placeHolder = s_DefaultPlaceHolder<Char_t>)
 	{
 		if (minDigits == s_NoSpecifier)
 			minDigits = 1;
 
 		using Unsigned_t = std::make_unsigned_t<Signed_t>;
-		CharType buff[s_MaxDigits<Signed_t>]{ type_trait::s_NullTerminator<CharType> };
-		CharType* const end = std::end(buff) - 1;
-		CharType* current = end;
+		Char_t buff[s_MaxDigits<Signed_t>]{ type_trait::s_NullTerminator<Char_t> };
+		Char_t* const end = std::end(buff) - 1;
+		Char_t* current = end;
 		const auto uVal = static_cast<Unsigned_t>(val);
 
 		const auto isNeg = val < 0;
@@ -52,59 +52,65 @@ namespace klib::kString::stringify
 			PrependPadding(current, minDigits, placeHolder);
 
 		if (isNeg)
-			*(--current) = CharType('-');
+			*(--current) = Char_t('-');
 
-		return StringWriter<CharType>(current, end);
+		const auto size = GetSize(current);
+		auto str = std::make_unique<Char_t[]>(size + 1);
+		std::memcpy(str.get(), current, size + 1);
+		return std::move(str);
 	}
 
-	template<class CharType, typename Unsigned_t, typename = std::enable_if_t<
-		std::is_integral_v<Unsigned_t> || type_trait::Is_CharType_V<CharType>>
+	template<class Char_t, typename Unsigned_t, typename = std::enable_if_t<
+		std::is_integral_v<Unsigned_t> || type_trait::Is_CharType_V<Char_t>>
 		>
-		USE_RESULT constexpr StringWriter<CharType> StringUnsignedIntegral(Unsigned_t val, size_t minDigits = s_NoSpecifier
-			, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
+		USE_RESULT constexpr std::unique_ptr<Char_t[]> StringUnsignedIntegral(Unsigned_t val, size_t minDigits = s_NoSpecifier
+			, Char_t placeHolder = s_DefaultPlaceHolder<Char_t>)
 	{
 		if (minDigits == s_NoSpecifier)
 			minDigits = 1;
 
-		CharType buff[s_MaxDigits<Unsigned_t>]{ type_trait::s_NullTerminator<CharType> };
-		CharType* const end = std::end(buff) - 1;
-		CharType* current = UintToStr(end, val);
+		Char_t buff[s_MaxDigits<Unsigned_t>]{ type_trait::s_NullTerminator<Char_t> };
+		Char_t* const end = std::end(buff) - 1;
+		Char_t* current = UintToStr(end, val);
 
 		if (minDigits < s_MaxDigits<Unsigned_t>)
 			PrependPadding(current, minDigits, placeHolder);
 
-		return StringWriter<CharType> (current, end);
+		const auto size = GetSize(current);
+		auto str = std::make_unique<Char_t[]>(size + 1);
+		std::memcpy(str.get(), current, size + 1);
+		return std::move(str);
 	}
 
-	template<class CharType, typename Integral_t, typename = std::enable_if_t<
+	template<class Char_t, typename Integral_t, typename = std::enable_if_t<
 		std::is_integral_v<Integral_t>
 		>>
-		USE_RESULT constexpr StringWriter<CharType> StringIntegral(Integral_t val, size_t minDigits = s_NoSpecifier
-			, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
+		USE_RESULT constexpr std::unique_ptr<Char_t[]> StringIntegral(Integral_t val, size_t minDigits = s_NoSpecifier
+			, Char_t placeHolder = s_DefaultPlaceHolder<Char_t>)
 	{
 		if constexpr (std::is_unsigned_v<Integral_t>)
-			return StringUnsignedIntegral<CharType, Integral_t>(val, minDigits, placeHolder);
+			return StringUnsignedIntegral<Char_t, Integral_t>(val, minDigits, placeHolder);
 		else
-			return StringSignedIntegral<CharType, Integral_t>(val, minDigits, placeHolder);
+			return StringSignedIntegral<Char_t, Integral_t>(val, minDigits, placeHolder);
 	}
 
 	// Big endian format
-	template<class CharType, typename Integral_t, typename = std::enable_if_t<
+	template<class Char_t, typename Integral_t, typename = std::enable_if_t<
 		std::is_integral_v<Integral_t>
 		>>
-		USE_RESULT StringWriter<CharType> StringIntegralHex(Integral_t val, size_t minCharacters = s_NoSpecifier
-			, CharType placeHolder = s_DefaultPlaceHolder<CharType>)
+		USE_RESULT std::unique_ptr<Char_t[]> StringIntegralHex(Integral_t val, size_t minCharacters = s_NoSpecifier
+			, Char_t placeHolder = s_DefaultPlaceHolder<Char_t>)
 	{
-		constexpr auto& hexMap = s_GeneralHexMap<CharType>;
+		constexpr auto& hexMap = s_GeneralHexMap<Char_t>;
 
 		if (minCharacters == s_NoSpecifier)
 			minCharacters = sizeof(uintptr_t) * 2;
 
 		using Unsigned_t = std::make_unsigned_t<Integral_t>;
 
-		CharType buff[s_MaxDigits<size_t>]{ type_trait::s_NullTerminator<CharType> };
-		CharType* const end = std::end(buff) - 1;
-		CharType* current = end;
+		Char_t buff[s_MaxDigits<size_t>]{ type_trait::s_NullTerminator<Char_t> };
+		Char_t* const end = std::end(buff) - 1;
+		Char_t* current = end;
 		auto asUint = static_cast<Unsigned_t>(val);
 
 		while (asUint > 0)
@@ -118,32 +124,35 @@ namespace klib::kString::stringify
 		{
 			const auto notFpos = Find_First_Not_Of(current, hexMap[15]);
 			current += (notFpos - 1);
-			if (placeHolder == s_DefaultPlaceHolder<CharType>)
+			if (placeHolder == s_DefaultPlaceHolder<Char_t>)
 				placeHolder = hexMap[15];
 		}
 
 		PrependPadding(current, minCharacters, placeHolder);
 
-		return StringWriter<CharType>(current, end);
+		const auto size = GetSize(current);
+		auto str = std::make_unique<Char_t[]>(size + 1);
+		std::memcpy(str.get(), current, size + 1);
+		return std::move(str);
 	}
 
-	template<class CharType, typename Integral_t, typename = std::enable_if_t<
+	template<class Char_t, typename Integral_t, typename = std::enable_if_t<
 		std::is_integral_v<Integral_t>
 		>>
-		USE_RESULT constexpr StringWriter<CharType> StringIntegralBinary(Integral_t val, size_t minCharacters
-			, CharType placeHolder = s_DefaultPlaceHolder<CharType>, EndianFormat endian = EndianFormat::BIG)
+		USE_RESULT constexpr std::unique_ptr<Char_t[]> StringIntegralBinary(Integral_t val, size_t minCharacters
+			, Char_t placeHolder = s_DefaultPlaceHolder<Char_t>, EndianFormat endian = EndianFormat::BIG)
 	{
 		if (minCharacters == s_NoSpecifier)
 			minCharacters = 1;
 
-		CharType buff[s_MaxBits<Integral_t>]{ type_trait::s_NullTerminator<CharType> };
-		CharType* const end = std::end(buff) - 1;
-		CharType* current = end;
+		Char_t buff[s_MaxBits<Integral_t>]{ type_trait::s_NullTerminator<Char_t> };
+		Char_t* const end = std::end(buff) - 1;
+		Char_t* current = end;
 		
 		while (val > 0)
 		{
 			const auto binVal = val % 2;
-			const CharType digit = static_cast<CharType>('0' + binVal);
+			const Char_t digit = static_cast<Char_t>('0' + binVal);
 			*(--current) = digit;
 			val >>= 1;
 		}
@@ -153,7 +162,10 @@ namespace klib::kString::stringify
 		if (endian == EndianFormat::LITTLE)
 			std::reverse(current, end);
 
-		return StringWriter<CharType>(current, end);
+		const auto size = GetSize(current);
+		auto str = std::make_unique<Char_t[]>(size + 1);
+		std::memcpy(str.get(), current, size + 1);
+		return std::move(str);
 	}
 }
 

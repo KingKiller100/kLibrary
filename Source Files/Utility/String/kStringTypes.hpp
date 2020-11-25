@@ -2,6 +2,7 @@
 
 #include "../../HelperMacros.hpp"
 #include "../../TypeTraits/StringTraits.hpp"
+#include "../../TypeTraits/SmartPointerTraits.hpp"
 
 #include <string>
 
@@ -28,10 +29,19 @@ namespace klib
 			return StringWriter<Char>(string);
 		}
 
+		template<class SmtPtr, class = std::enable_if_t<type_trait::Is_SmartPtr_V<SmtPtr>>>
+		USE_RESULT constexpr StringWriter<typename SmtPtr::element_type> ToWriter(const SmtPtr& string) noexcept
+		{
+			return StringWriter<typename SmtPtr::element_type>(string.get());
+		}
+
 		template<class StringT, typename = std::enable_if_t<type_trait::Is_StringType_V<StringT>>>
 		USE_RESULT constexpr StringWriter<typename StringT::value_type> ToWriter(const StringT& string) noexcept
 		{
-			return StringWriter<typename StringT::value_type>(string);
+			if _CONSTEXPR17(type_trait::Is_Specialization_V<StringT, std::basic_string>)
+				return string;
+			else
+				return StringWriter<typename StringT::value_type>(string);
 		}
 
 		template<class Char>
@@ -43,8 +53,18 @@ namespace klib
 		template<class StringT, typename = std::enable_if_t<type_trait::Is_StringType_V<StringT>>>
 		USE_RESULT constexpr StringReader<typename StringT::value_type> ToReader(const StringT& string) noexcept
 		{
-			return StringReader<typename StringT::value_type>(string);
+			if _CONSTEXPR17(type_trait::Is_Specialization_V<StringT, std::basic_string_view>)
+				return string;
+			else
+				return StringWriter<typename StringT::value_type>(string);
 		}
+
+		template<class SmtPtr, class = std::enable_if_t<type_trait::Is_SmartPtr_V<SmtPtr>>>
+		USE_RESULT constexpr StringWriter<typename SmtPtr::element_type> ToReader(const SmtPtr& string) noexcept
+		{
+			return StringReader<typename SmtPtr::element_type>(string.get());
+		}
+
 	}
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kString;

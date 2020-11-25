@@ -44,7 +44,7 @@ namespace klib {
 			for (auto i = 0; i < count; ++i)
 			{
 				format.push_back(format::s_OpenerSymbol<CharT>);
-				format.append(stringify::StringIntegral<CharT>(i, 1));
+				format.append(GetData(stringify::StringIntegral<CharT>(i, 1)));
 				format.push_back(format::s_CloserSymbol<CharT>);
 			}
 

@@ -141,28 +141,28 @@ namespace kTest::utility
 	{
 		{
 			constexpr auto input = 1000;
-			const auto result = stringify::StringIntegralHex<char>(input, 8);
+			const auto result = ToWriter(stringify::StringIntegralHex<char>(input, 8));
 			constexpr auto expected = "000003e8";
 			VERIFY(expected == result);
 		}
 
 		{
 			constexpr auto input = -1000;
-			const auto result = stringify::StringIntegralHex<char16_t>(input, 8);
+			const auto result = ToWriter(stringify::StringIntegralHex<char16_t>(input, 8));
 			constexpr auto expected = u"fffffc18";
 			VERIFY(expected == result);
 		}
 
 		{
 			constexpr auto input = 4;
-			const auto result = stringify::StringIntegralHex<char16_t>(input, 2);
+			const auto result = ToWriter(stringify::StringIntegralHex<char16_t>(input, 2));
 			constexpr auto expected = u"04";
 			VERIFY(expected == result);
 		}
 
 		{
 			constexpr auto input = 24;
-			const auto result = stringify::StringIntegralHex<char16_t>(input);
+			const auto result = ToWriter(stringify::StringIntegralHex<char16_t>(input));
 			constexpr auto expected = u"0000000000000018";
 			VERIFY(expected == result);
 		}
@@ -174,14 +174,14 @@ namespace kTest::utility
 	{
 		{
 			constexpr auto input = 2ull;
-			const auto result = stringify::StringIntegralBinary<char>(input, 4);
+			const auto result = ToWriter(stringify::StringIntegralBinary<char>(input, 4));
 			VERIFY(result == "0010");
 		}
 
 		// Prints minimum digit of binary string, will fill remaining characters with '0' unless specified differently
 		{ 
 			constexpr auto input = 64;
-			const auto result = stringify::StringIntegralBinary<char16_t>(input, 8);
+			const auto result = ToWriter(stringify::StringIntegralBinary<char16_t>(input, 8));
 			VERIFY(result == u"01000000");
 		}
 
@@ -189,21 +189,21 @@ namespace kTest::utility
 		// Prints as many characters as necessary to represent the number, if min digits is less than the expected binary characters
 		{
 			constexpr auto input = 1000;
-			const auto result = stringify::StringIntegralBinary<char8_t>(input, 8);
+			const auto result = ToWriter(stringify::StringIntegralBinary<char8_t>(input, 8));
 			VERIFY(result == u8"1111101000");
 		}
 #endif
 		
 		{
 			constexpr auto input = 4;
-			const auto result = stringify::StringIntegralBinary<char32_t>(input, 0);
+			const auto result = ToWriter(stringify::StringIntegralBinary<char32_t>(input, 0));
 			VERIFY(result == U"100");
 		}
 
 		// if smaller than remaining characters, newly specified placeholder is used
 		{
 			constexpr auto input = 4;
-			const auto result = stringify::StringIntegralBinary<char16_t>(input, 5, 'a');
+			const auto result = ToWriter(stringify::StringIntegralBinary<char16_t>(input, 5, 'a'));
 			VERIFY(result == u"aa100");
 		}
 
@@ -254,10 +254,10 @@ namespace kTest::utility
 		const auto testStr8 = ToString("Booleans - Text:{0} Int:{0:d}", true);
 
 		constexpr auto num = 1000;
-		const auto hex = "0x" + stringify::StringIntegralHex<char>(num, 4, '0');
+		const auto hex = "0x" + std::string(stringify::StringIntegralHex<char>(num, 4, '0').get());
 			
 #ifdef __cpp_char8_t
-		const auto binary = u8"0b" + stringify::StringIntegralBinary<char8_t>(num, 4, '0');
+		const auto binary = u8"0b" + std::u8string(stringify::StringIntegralBinary<char8_t>(num, 4, '0').get());
 #endif
 
 		VERIFY(testStr == "This test 1 ");

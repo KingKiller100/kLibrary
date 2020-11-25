@@ -22,6 +22,7 @@ namespace kTest::performance::util
 	void ToStringSpeedTest::Test()
 	{
 		AvgSpeed();
+		OstreamSprintfTest();
 		kSprintfTest();
 		OstreamTest();
 		IntTest();
@@ -55,7 +56,7 @@ namespace kTest::performance::util
 
 	void ToStringSpeedTest::IntTest()
 	{
-		const std::vector<std::string_view> participants = { "klib::kString::ToString int", "std::stringstream int", "std::sprintf int" };
+		const std::vector<std::string_view> participants = { "klib::kString::ToString int", "std::stringstream int", "C sprintf int" };
 		SetUpParticipants(participants);
 
 		const int sint = -50;
@@ -81,7 +82,7 @@ namespace kTest::performance::util
 					, sint
 				);
 				buffer.reset(new char[length + 1]);
-				std::sprintf(buffer.get(), "sint: %d", sint);
+				sprintf(buffer.get(), "sint: %d", sint);
 			}
 
 			ss.clear();
@@ -92,7 +93,7 @@ namespace kTest::performance::util
 	void ToStringSpeedTest::DoubleTest()
 	{
 		const std::vector<std::string_view> participants = { "klib::kString::ToString double", "std::stringstream double"
-			, "std::sprintf double", "klib::kString::SprintfWrapper" };
+			, "C sprintf double", "klib::kString::SprintfWrapper" };
 		SetUpParticipants(participants);
 
 		const auto f64 = 125.625;
@@ -121,7 +122,7 @@ namespace kTest::performance::util
 					, f64
 				);
 				buffer.reset(new char[length + 1]);
-				std::sprintf(buffer.get(), format, f64);
+				sprintf(buffer.get(), format, f64);
 			}
 
 			{
@@ -137,8 +138,8 @@ namespace kTest::performance::util
 
 	void ToStringSpeedTest::StringTest()
 	{
-		const std::vector<std::string_view> participants = { "klib::kString::ToString double", "std::stringstream double"
-			, "std::sprintf double", "klib::kString::SprintfWrapper" };
+		const std::vector<std::string_view> participants = { "klib::kString::ToString string", "std::stringstream string"
+			, "sprintf string", "klib::kString::SprintfWrapper string" };
 		SetUpParticipants(participants);
 
 		const auto str = "string";
@@ -164,7 +165,7 @@ namespace kTest::performance::util
 
 				const auto length = _snprintf(nullptr, 0, format, str);
 				buffer.reset(new char[length + 1]);
-				std::sprintf(buffer.get(), format, str);
+				sprintf(buffer.get(), format, str);
 			}
 
 			{
@@ -176,6 +177,69 @@ namespace kTest::performance::util
 			ss.clear();
 			buffer.release();
 		}
+	}
+
+	void ToStringSpeedTest::OstreamSprintfTest()
+	{
+		const std::vector<std::string_view> participants = { "C sprintf", "std::stringstream" };
+		SetUpParticipants(participants);
+
+		const std::string string = "Input1";
+		const std::string_view string_view = "Input2";
+		const double f64 = 64.625;
+		const float f32 = 32.25;
+		const size_t ulong = 10000;
+		const long long slong = -5000;
+		const unsigned uint = 100;
+		const int sint = -50;
+		const bool boolean = true;
+		const auto ptr = std::make_shared<int64_t>(64);
+
+		std::unique_ptr<char[]> buffer;
+
+		std::stringstream ss;
+		for (auto i = 0; i < maxIter; ++i)
+		{
+			{
+				START_TEST(participants[1]);
+				const auto length = _snprintf(nullptr, 0, "string: %s - string_view: %s - double: %.5f"
+					" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s - Pointer: %p"
+					, string.data()
+					, string_view.data()
+					, f64
+					, f32
+					, ulong
+					, slong
+					, uint
+					, sint
+					, boolean ? "true" : "false"
+					, ptr.get()
+				);
+				buffer.reset(new char[length + 1]);
+				sprintf(buffer.get(), "string: %s - string_view: %s - double: %.5f"
+					" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s - Pointer: %p"
+					, string.data()
+					, string_view.data()
+					, f64
+					, f32
+					, ulong
+					, slong
+					, uint
+					, sint
+					, boolean ? "true" : "false"
+					, ptr.get()
+				);
+			}
+
+			{
+				START_TEST(participants[1]);
+				ss << "string: " << string << " - string_view: " << string_view << " - double: " << std::setprecision(5) << f64 <<
+					" - float: " << std::setprecision(5) << f32 << " - ulong: " << ulong << " - slong: " << slong << " - uint: " << uint << " - sint: " << sint << " - boolean: " << boolean;
+			}
+			ss.clear();
+			buffer.release();
+		}
+
 	}
 
 
@@ -225,7 +289,7 @@ namespace kTest::performance::util
 
 	void ToStringSpeedTest::SprintfTest()
 	{
-		const std::vector<std::string_view> participants = { "klib::kString::ToString", "std::sprintf", "klib::kString::stringify::kSprintfWrapper" };
+		const std::vector<std::string_view> participants = { "klib::kString::ToString", "C sprintf", "klib::kString::stringify::kSprintfWrapper" };
 		SetUpParticipants(participants);
 
 		const std::string string = "Input1";
@@ -275,7 +339,7 @@ namespace kTest::performance::util
 					, ptr.get()
 				);
 				buffer.reset(new char[length + 1]);
-				std::sprintf(buffer.get(), "string: %s - string_view: %s - double: %.5f"
+				sprintf(buffer.get(), "string: %s - string_view: %s - double: %.5f"
 					" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s - Pointer: %p"
 					, string.data()
 					, string_view.data()

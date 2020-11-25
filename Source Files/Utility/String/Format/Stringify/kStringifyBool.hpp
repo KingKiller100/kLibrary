@@ -5,27 +5,21 @@
 
 namespace klib::kString::stringify
 {
-	template<class CharType, typename T
-		, typename = std::enable_if_t<std::is_same_v<T, bool>
-		|| type_trait::Is_CharType_V<CharType>>
+	template<class CharType
+		, typename = std::enable_if_t<
+		type_trait::Is_CharType_V<CharType>>
 		>
-	decltype(auto) StringBool(const T val)
+	decltype(auto) StringBool(bool val)
 	{
-		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
-			return val ? "true" : "false";
-		else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
-			return val ? L"true" : L"false";
-		else if _CONSTEXPR_IF(std::is_same_v<CharType, char16_t>)
-			return val ? u"true" : u"false";
-		else if _CONSTEXPR_IF(std::is_same_v<CharType, char32_t>)
-			return val ? U"true" : U"false";
-#ifdef __cpp_char8_t
-		else if _CONSTEXPR_IF(std::is_same_v<CharType, char8_t>)
-			return  val ? u8"true" : u8"false";
-#endif
+		const auto size = val ? 5 : 6;
+		auto buf = std::make_unique<CharType[]>(size);
+		buf[size - 1] = CharType('\0');
 
-		const std::string type = typeid(T).name();
-		throw kDebug::FormatError("Cannot stringify bool to unknown char type: " + type);
+		const auto res = val ? "true" : "false";
+		const auto temp = Convert<CharType>(res);
+		memcpy(buf.get(), temp, size);
+
+		return std::move(buf);
 	}
 	
 }

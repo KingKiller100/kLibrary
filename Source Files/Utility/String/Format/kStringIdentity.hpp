@@ -194,7 +194,7 @@ namespace klib::kString::stringify
 		>>
 	{
 	public:
-		USE_RESULT static decltype(auto) Get(T ptr) noexcept
+		USE_RESULT static decltype(auto) Get(const T& ptr) noexcept
 		{
 			return ptr.get();
 		}

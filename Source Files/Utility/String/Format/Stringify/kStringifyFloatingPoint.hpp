@@ -39,7 +39,7 @@ namespace klib::kString::stringify
 			std::is_floating_point_v<T>
 			|| type_trait::Is_CharType_V<Char_t>>
 			>
-			StringWriter<Char_t> FixedNotation(T val, size_t decimalPlaces)
+			std::unique_ptr<Char_t[]> FixedNotation(T val, size_t decimalPlaces)
 		{
 			using namespace type_trait;
 
@@ -69,7 +69,10 @@ namespace klib::kString::stringify
 			if (isNeg)
 				*(--current) = Char_t('-');
 
-			return std::basic_string<Char_t>(current, end);
+			const auto size = GetSize(current);
+			auto str = std::make_unique<Char_t[]>(size + 1);
+			std::memcpy(str.get(), current, size + 1);
+			return std::move(str);
 		}
 
 	}
@@ -90,7 +93,7 @@ namespace klib::kString::stringify
 		std::is_floating_point_v<T>
 		|| type_trait::Is_CharType_V<Char_t>>
 		>
-		StringWriter<Char_t> StringFloatingPoint(T val, size_t precision = s_NoSpecifier
+		std::unique_ptr<Char_t[]> StringFloatingPoint(T val, size_t precision = s_NoSpecifier
 			, FloatingPointFormat fmt = FloatingPointFormat::FIX)
 	{
 		using namespace secret::impl;
