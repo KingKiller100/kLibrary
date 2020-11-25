@@ -18,8 +18,8 @@ namespace klib::kString
 			using namespace type_trait;
 			using PossibleString_t = std::basic_string<Char_t>;
 
-			constexpr Char_t nt = s_NullTerminator<Char_t>;
-			constexpr size_t npos = s_NoPos<PossibleString_t>;
+			constexpr Char_t nt = g_NullTerminator<Char_t>;
+			constexpr size_t npos = g_NoPos<PossibleString_t>;
 
 			if (str == nullptr)
 				return npos;
@@ -51,8 +51,8 @@ namespace klib::kString
 		using Char_t = typename type_trait::Is_CString<CStringA>::Char_t;
 		using PossibleString_t = std::basic_string<Char_t>;
 
-		constexpr Char_t nt = s_NullTerminator<Char_t>;
-		constexpr size_t npos = s_NoPos<PossibleString_t>;
+		constexpr Char_t nt = g_NullTerminator<Char_t>;
+		constexpr size_t npos = g_NoPos<PossibleString_t>;
 
 		if (str == nullptr || search == nullptr)
 			return npos;
@@ -108,6 +108,17 @@ namespace klib::kString
 		&& type_trait::Is_CharType_V<Char_t>
 		&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
 		>>
+		USE_RESULT constexpr size_t Find(const CStringA& str, Char_t search, size_t offset = 0)
+	{
+		const size_t pos = Find_First_Of(str, search, offset);
+		return pos;
+	}
+
+	template<typename CStringA, typename Char_t, class = std::enable_if_t <
+		type_trait::Is_CString_V<CStringA>
+		&& type_trait::Is_CharType_V<Char_t>
+		&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
+		>>
 		USE_RESULT constexpr size_t Find_First_Not_Of(const CStringA& str, Char_t search, size_t offset = 0)
 	{
 		const size_t pos = secret::impl::FindCharImpl(str, search, offset, std::not_equal_to<Char_t>{}, std::plus<void>{});
@@ -119,7 +130,7 @@ namespace klib::kString
 		&& type_trait::Is_CharType_V<Char_t>
 		&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
 		>>
-		USE_RESULT constexpr size_t Find_Last_Of(const CStringA& str, Char_t search, size_t offset = type_trait::s_NoPos<std::basic_string<Char_t>>)
+		USE_RESULT constexpr size_t Find_Last_Of(const CStringA& str, Char_t search, size_t offset = type_trait::g_NoPos<std::basic_string<Char_t>>)
 	{
 		offset = std::min(offset, GetSize(str) - 1);
 		const size_t pos = secret::impl::FindCharImpl(str, search, offset, std::equal_to<Char_t>{}, std::minus<void>{});
@@ -131,7 +142,7 @@ namespace klib::kString
 		&& type_trait::Is_CharType_V<Char_t>
 		&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
 		>>
-		USE_RESULT constexpr size_t Find_Last_Not_Of(const CStringA& str, Char_t search, size_t offset = type_trait::s_NoPos<std::basic_string<Char_t>>)
+		USE_RESULT constexpr size_t Find_Last_Not_Of(const CStringA& str, Char_t search, size_t offset = type_trait::g_NoPos<std::basic_string<Char_t>>)
 	{
 		offset = std::min(offset, GetSize(str) - 1);
 		const size_t pos = secret::impl::FindCharImpl(str, search, offset, std::not_equal_to<Char_t>{}, std::minus<void>{});
@@ -146,7 +157,7 @@ namespace klib::kString
 		USE_RESULT constexpr bool Contains(const StringType& str, const typename StringType::value_type* search
 			, const size_t offset = 0)
 		{
-			return Find(str.data(), search, offset) != type_trait::s_NoPos<StringType>;
+			return Find(str.data(), search, offset) != type_trait::g_NoPos<StringType>;
 		}
 
 		template<typename StringType
@@ -159,7 +170,7 @@ namespace klib::kString
 			USE_RESULT constexpr bool Contains(const StringType & str, typename StringType::value_type search
 				, const size_t offset = 0)
 		{
-			return Find_First_Of( str.data(), search, offset ) != type_trait::s_NoPos<StringType>;
+			return Find_First_Of( str.data(), search, offset ) != type_trait::g_NoPos<StringType>;
 		}
 
 		template<typename StringA, typename StringB
@@ -174,7 +185,7 @@ namespace klib::kString
 			USE_RESULT constexpr bool Contains(const StringA & str, const StringB & search
 				, const size_t offset = 0)
 		{
-			return Find( str.data(), search.data(), offset ) != type_trait::s_NoPos<StringA>;
+			return Find( str.data(), search.data(), offset ) != type_trait::g_NoPos<StringA>;
 		}
 
 		template<typename StringType, typename Stringish

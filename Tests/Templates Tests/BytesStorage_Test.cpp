@@ -11,7 +11,7 @@
 namespace kTest::templates
 {
 	BytesStorageTester::BytesStorageTester()
-		: Tester("Bytes Storage Test")
+		: TesterBase("Bytes Storage Test")
 	{}
 
 	BytesStorageTester::~BytesStorageTester()

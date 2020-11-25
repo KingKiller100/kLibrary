@@ -32,7 +32,7 @@ namespace klib::kString::stringify
 namespace kTest::utility
 {
 	FormatToStringTester::FormatToStringTester()
-		: Tester("Formatting To String Test")
+		: TesterBase("Formatting To String Test")
 	{	}
 
 	FormatToStringTester::~FormatToStringTester()
@@ -254,10 +254,10 @@ namespace kTest::utility
 		const auto testStr8 = ToString("Booleans - Text:{0} Int:{0:d}", true);
 
 		constexpr auto num = 1000;
-		const auto hex = "0x" + std::string(stringify::StringIntegralHex<char>(num, 4, '0').get());
+		const auto hex = "0x" + std::string(stringify::StringIntegralHex<char>(num, 4, '0'));
 			
 #ifdef __cpp_char8_t
-		const auto binary = u8"0b" + std::u8string(stringify::StringIntegralBinary<char8_t>(num, 4, '0').get());
+		const auto binary = u8"0b" + std::u8string(stringify::StringIntegralBinary<char8_t>(num, 4, '0'));
 #endif
 
 		VERIFY(testStr == "This test 1 ");

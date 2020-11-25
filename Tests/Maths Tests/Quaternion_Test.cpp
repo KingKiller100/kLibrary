@@ -8,7 +8,7 @@
 namespace kTest::maths
 {
 	QuaternionsTester::QuaternionsTester()
-		: Tester("Quaternions Test")
+		: TesterBase("Quaternions Test")
 	{}
 
 	QuaternionsTester::~QuaternionsTester()

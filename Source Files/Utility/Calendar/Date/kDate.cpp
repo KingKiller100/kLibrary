@@ -91,7 +91,7 @@ namespace klib::kCalendar
 
 	std::string Date::ToString(const std::string_view& format) const
 	{
-		constexpr auto noMatchToken = type_trait::s_NullTerminator<char>;
+		constexpr auto noMatchToken = type_trait::g_NullTerminator<char>;
 		
 		const std::set<char> tokens{ Day::FormatToken, Month::FormatToken, Year::FormatToken };
 

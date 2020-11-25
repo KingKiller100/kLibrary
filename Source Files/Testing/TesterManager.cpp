@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "TesterManager.hpp"
 
-#include "Tester.hpp"
+#include "TesterBase.hpp"
 
 #include "SetUpTests.hpp"
 
@@ -90,9 +90,9 @@ namespace kTest
 		InitializeTemplateTests();
 	}
 
-	void TesterManager::Add(Tester* test)
+	void TesterManager::Add(TesterBase* test)
 	{
-		testsSet.insert(std::unique_ptr<Tester>(std::move(test)));
+		testsSet.insert(std::unique_ptr<TesterBase>(std::move(test)));
 	}
 
 	void TesterManager::RunAll()
@@ -139,7 +139,7 @@ namespace kTest
 		test.Run();
 	}
 
-	void TesterManager::Run(Tester& test)
+	void TesterManager::Run(TesterBase& test)
 	{
 		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 

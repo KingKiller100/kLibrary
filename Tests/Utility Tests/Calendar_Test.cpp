@@ -14,7 +14,7 @@ namespace kTest::utility
 {
 
 	CalendarTester::CalendarTester()
-		: Tester("Calendar Test")
+		: TesterBase("Calendar Test")
 	{}
 
 	CalendarTester::~CalendarTester()

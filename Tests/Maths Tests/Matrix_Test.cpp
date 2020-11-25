@@ -10,7 +10,7 @@ namespace kTest::maths
 {
 
 	MatricesTester::MatricesTester()
-		: Tester("Matrix MxN Test")
+		: TesterBase("Matrix MxN Test")
 	{	}
 
 	MatricesTester::~MatricesTester()

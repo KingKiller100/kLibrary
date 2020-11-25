@@ -7,7 +7,7 @@
 
 namespace klib::kCalendar
 {
-	constexpr auto noMatchToken = type_trait::s_NullTerminator<char>;
+	constexpr auto noMatchToken = type_trait::g_NullTerminator<char>;
 
 	void CalendarComponentToStringImpl::ToStringImpl(const std::string_view& format, const std::set<char>& tokens
 		, const std::function<void(char)>& noMatchingTokenFunc
@@ -16,7 +16,7 @@ namespace klib::kCalendar
 		size_t index = 0;
 
 		for (auto letter = format.front();
-			letter != type_trait::s_NullTerminator<char>;
+			letter != type_trait::g_NullTerminator<char>;
 			letter = format[++index])
 		{
 			auto match(noMatchToken);

@@ -4,25 +4,25 @@
 
 namespace klib::kString::secret::impl
 {
-	std::locale s_Locale;
-	std::string s_CurrentLocale("C");
+	std::locale g_Locale;
+	std::string g_CurrentLocale("C");
 	
 	std::locale& GetLocale()
 	{
-		return s_Locale;
+		return g_Locale;
 	}
 
 	const std::string& GetLocaleName()
 	{
-		return s_CurrentLocale;
+		return g_CurrentLocale;
 	}
 
 	void SetLocale( const std::string_view& localeName, std::locale::category cat )
 	{
-		if ( s_CurrentLocale != localeName )
+		if ( g_CurrentLocale != localeName )
 		{
-			s_CurrentLocale = localeName;
-			s_Locale = std::locale( s_CurrentLocale.data(), cat );
+			g_CurrentLocale = localeName;
+			g_Locale = std::locale( g_CurrentLocale.data(), cat );
 		}
 	}
 }

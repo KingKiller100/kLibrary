@@ -1,5 +1,5 @@
 #include "pch.hpp"
-#include "Tester.hpp"
+#include "TesterBase.hpp"
 
 #include <iostream>
 
@@ -7,16 +7,16 @@
 
 namespace kTest
 {
-	Tester::Tester(const char* name) noexcept
+	TesterBase::TesterBase(const char* name) noexcept
 		: success(true), name(name)
 	{	}
 
-	Tester::Tester(Tester&& other) noexcept
+	TesterBase::TesterBase(TesterBase&& other) noexcept
 	{
 		*this = std::move(other);
 	}
 
-	Tester& Tester::operator=(Tester&& other) noexcept
+	TesterBase& TesterBase::operator=(TesterBase&& other) noexcept
 	{
 		this->success = std::move(other.success);
 		this->name = std::move(other.name);
@@ -24,20 +24,20 @@ namespace kTest
 		return *this;
 	}
 
-	Tester::~Tester()
+	TesterBase::~TesterBase()
 		{}
 
-	const char* Tester::GetName() const noexcept
+	const char* TesterBase::GetName() const noexcept
 	{
 		return name.c_str();
 	}
 
-	const std::string& Tester::GetFailureData() const noexcept
+	const std::string& TesterBase::GetFailureData() const noexcept
 	{
 		return failureData;
 	}
 
-	bool Tester::Run() noexcept
+	bool TesterBase::Run() noexcept
 	{
 		try
 		{
@@ -46,6 +46,7 @@ namespace kTest
 		catch (const std::exception& e)
 		{
 			std::cout << e.what();
+			failureData.append(klib::kString::SprintfWrapper("\tCondition: %s\n", e.what())); 
 			success = false;
 		}
 

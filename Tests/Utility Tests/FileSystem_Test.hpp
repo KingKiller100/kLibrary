@@ -1,10 +1,10 @@
 #pragma once
-#include "../../Source Files/Testing/Tester.hpp"
+#include "../../Source Files/Testing/TesterBase.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility
 {
-	class FileSystemTester : public Tester
+	class FileSystemTester : public TesterBase
 	{
 	public:
 		FileSystemTester();

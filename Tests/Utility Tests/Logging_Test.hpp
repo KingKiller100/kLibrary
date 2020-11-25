@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../../Source Files/Testing/Tester.hpp"
+#include "../../Source Files/Testing/TesterBase.hpp"
 #include <filesystem>
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility
 {
-	class LoggingTester : public Tester
+	class LoggingTester : public TesterBase
 	{
 	public:
 		LoggingTester();

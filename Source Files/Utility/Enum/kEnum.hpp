@@ -123,6 +123,12 @@ public:																					\
 		: value(value)																	\
 	{}																					\
 																						\
+	constexpr enumName& operator=(const enum_t value)									\
+	{																					\
+		this->value = value;															\
+		return *this;																				\
+	}																					\
+																						\
 	constexpr operator enum_t() const													\
 	{																					\
 		return static_cast<enum_t>(value);												\

@@ -1,25 +1,37 @@
 ﻿#pragma once
 
 #include "../../../../TypeTraits/StringTraits.hpp"
-#include "../../../Debug/Exceptions/StringExceptions.hpp"
 
 namespace klib::kString::stringify
 {
-	template<class CharType
+	template<class Char_t
 		, typename = std::enable_if_t<
-		type_trait::Is_CharType_V<CharType>>
+		type_trait::Is_CharType_V<Char_t>>
 		>
-	decltype(auto) StringBool(bool val)
+	const Char_t* StringBool(bool val)
 	{
-		const auto size = val ? 5 : 6;
-		auto buf = std::make_unique<CharType[]>(size);
-		buf[size - 1] = CharType('\0');
+		Char_t buff[6]{ type_trait::g_NullTerminator<Char_t> };
+		Char_t* const end = std::end(buff) - 1;
+		Char_t* current = end;
 
-		const auto res = val ? "true" : "false";
-		const auto temp = Convert<CharType>(res);
-		memcpy(buf.get(), temp, size);
-
-		return std::move(buf);
+		if (val)
+		{
+			*(--current) = Char_t('e');
+			*(--current) = Char_t('u');
+			*(--current) = Char_t('r');
+			*(--current) = Char_t('t');
+		}
+		else
+		{
+			*(--current) = Char_t('e');
+			*(--current) = Char_t('s');
+			*(--current) = Char_t('l');
+			*(--current) = Char_t('a');
+			*(--current) = Char_t('f');
+		}
+		
+		const auto cstr = CreateNewPointer(current);
+		return std::move(cstr);
 	}
 	
 }

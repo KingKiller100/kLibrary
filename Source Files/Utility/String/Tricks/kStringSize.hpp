@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "../../../HelperMacros.hpp"
 
-#include "../../../TypeTraits/SmartPointerTraits.hpp"
 #include "../../../TypeTraits/StringTraits.hpp"
 
 namespace klib::kString
@@ -17,16 +16,16 @@ namespace klib::kString
 		return str.size();
 	}
 
-	template<typename CharT
+	template<typename Char_t
 #if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_Char_t<CharT>
+				> requires type_trait::Is_Char_t<Char_t>
 #else
-		, typename = std::enable_if_t<type_trait::Is_CharType_V<CharT>> >
+		, typename = std::enable_if_t<type_trait::Is_CharType_V<Char_t>> >
 #endif
-		USE_RESULT constexpr size_t GetSize(const CharT * str)
+		USE_RESULT constexpr size_t GetSize(const Char_t* str)
 	{
 		size_t count(0);
-		while ( *str != type_trait::s_NullTerminator<CharT> )
+		while ( *str != type_trait::g_NullTerminator<Char_t> )
 		{
 			++str;
 			++count;
@@ -34,14 +33,20 @@ namespace klib::kString
 		return count;
 	}
 
-	template<typename SmartPtr_t
+	template<typename Char_t
 #if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_SmartPtr_t<SmartPtr_t>
+				> requires type_trait::Is_Char_t<Char_t>
 #else
-		, typename = std::enable_if_t<type_trait::Is_SmartPtr_V<CharT>> >
+		, typename = std::enable_if_t<type_trait::Is_CharType_V<Char_t>> >
 #endif
-		USE_RESULT constexpr size_t GetSize(const SmartPtr_t & sptr) noexcept
+		USE_RESULT constexpr size_t GetSize(Char_t* str)
 	{
-		return GetSize(sptr.get());
+		size_t count(0);
+		while ( *str != type_trait::g_NullTerminator<Char_t> )
+		{
+			++str;
+			++count;
+		}
+		return count;
 	}
 }

@@ -52,5 +52,5 @@ namespace klib::type_trait
 
 
 	template<class StringT, class = std::enable_if_t<Is_StringType_V<StringT>>>
-	constexpr auto s_NoPos = StringT::npos;
+	constexpr auto g_NoPos = StringT::npos;
 }

@@ -7,7 +7,7 @@
 namespace kTest::utility
 {	
 	DebugHelpTester::DebugHelpTester()
-		: Tester("Debug Help Test")
+		: TesterBase("Debug Help Test")
 	{
 	}
 

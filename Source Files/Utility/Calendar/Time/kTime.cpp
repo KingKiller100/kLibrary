@@ -90,7 +90,7 @@ namespace klib::kCalendar
 
 	std::string Time::ToString(const std::string_view& format) const
 	{
-		constexpr auto noMatchToken = type_trait::s_NullTerminator<char>;
+		constexpr auto noMatchToken = type_trait::g_NullTerminator<char>;
 
 		const std::set<char> tokens{ Hour::FormatToken, Minute::FormatToken, Second::FormatToken, Millisecond::FormatToken };
 

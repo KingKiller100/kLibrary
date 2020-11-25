@@ -9,7 +9,7 @@ namespace kTest::utility
 	static const auto npos = std::string::npos;
 	
 	StringManipulationTester::StringManipulationTester()
-		: Tester("String Manipulator Test")
+		: TesterBase("String Manipulator Test")
 	{}
 
 	StringManipulationTester::~StringManipulationTester()

@@ -39,7 +39,7 @@ namespace klib::kString
 				return false;
 
 			auto index = 0u;
-			while (str[index] != s_NullTerminator<ONLY_TYPE(Stringish)>)
+			while (str[index] != g_NullTerminator<ONLY_TYPE(Stringish)>)
 			{
 				if (!IsWhiteSpace(str[index]))
 					return false;

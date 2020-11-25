@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "../../../TypeTraits/StringTraits.hpp"
-
+#include "kStringFind.hpp"
 
 namespace klib::kString
 {
@@ -20,7 +20,7 @@ namespace klib::kString
 #endif
 		constexpr bool Remove(StringType & str, const Stringish & search, size_t offset = 0)
 	{
-		auto pos = str.find(search, offset);
+		auto pos = Find(str.data(), search, offset);
 		if (pos == StringType::npos)
 			return false;
 
@@ -28,7 +28,7 @@ namespace klib::kString
 		{
 			const auto endPos = str.find_first_not_of(search, pos);
 			str.erase(pos, endPos - pos);
-			pos = str.find(search, offset);
+			pos = Find(str.data(), search, offset);
 		}
 
 		return true;

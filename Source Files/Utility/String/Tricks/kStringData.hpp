@@ -22,9 +22,10 @@ namespace klib::kString
 #else
 		, typename = std::enable_if_t<type_trait::Is_CString_V<CStringT>> >
 #endif
-		USE_RESULT constexpr const ONLY_TYPE(CStringT) * GetData(const CStringT & cstr) noexcept
+		USE_RESULT constexpr const ONLY_TYPE(CStringT) * GetData(CStringT cstr) noexcept
 	{
-		return cstr;
+		using Ptr_t = CStringT;
+		return (const Ptr_t)cstr;
 	}
 
 	template<typename CharT
@@ -42,7 +43,7 @@ namespace klib::kString
 #if MSVC_PLATFORM_TOOLSET >= 142
 				> requires type_trait::Is_SmartPtr_t<SmartPtr_t>
 #else
-		, typename = std::enable_if_t<type_trait::Is_SmartPtr_V<CharT>> >
+		, typename = std::enable_if_t<type_trait::Is_SmartPtr_V<SmartPtr_t>> >
 #endif
 		USE_RESULT constexpr const typename SmartPtr_t::element_type * GetData(const SmartPtr_t & sptr) noexcept
 	{

@@ -9,7 +9,7 @@ namespace kTest::utility
 {
 
 	FileSystemTester::FileSystemTester()
-		: Tester("File System Test")
+		: TesterBase("File System Test")
 	{	}
 
 	FileSystemTester::~FileSystemTester()

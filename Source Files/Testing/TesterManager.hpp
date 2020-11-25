@@ -9,13 +9,13 @@
 #ifdef TESTING_ENABLED
 namespace kTest
 {
-	class Tester;
+	class TesterBase;
 	
 	class TesterManager
 	{
 		struct Token {};
 	public:
-		using Test_t = Tester;
+		using Test_t = TesterBase;
 		
 		TesterManager(Token&);
 		~TesterManager();
@@ -26,8 +26,8 @@ namespace kTest
 		void InitializeTemplates() const;
 		void Shutdown();
 		void RunPerformanceTests() const;
-		void Add(Tester* test);
-		void Run(Tester& test);
+		void Add(TesterBase* test);
+		void Run(TesterBase& test);
 		void RunAll();
 		void ClearAllTests();
 
@@ -38,7 +38,7 @@ namespace kTest
 		
 	private:
 		std::string path;
-		std::set< std::unique_ptr<Tester> > testsSet;
+		std::set< std::unique_ptr<TesterBase> > testsSet;
 		std::vector<double> timesRecorded;
 		bool success;
 	};

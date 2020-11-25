@@ -10,7 +10,7 @@ namespace kTest::maths
 {
 
 	FractionTester::FractionTester()
-		: Tester("Fraction Test")
+		: TesterBase("Fraction Test")
 	{}
 
 	FractionTester::~FractionTester()

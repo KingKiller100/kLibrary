@@ -11,14 +11,14 @@
 #ifdef TESTING_ENABLED
 namespace kTest
 {
-	class Tester
+	class TesterBase
 	{
 	public:
-		Tester(const char* name) noexcept;
-		Tester(Tester&& other) noexcept;
-		Tester& operator=(Tester&& other) noexcept;
+		TesterBase(const char* name) noexcept;
+		TesterBase(TesterBase&& other) noexcept;
+		TesterBase& operator=(TesterBase&& other) noexcept;
 
-		virtual ~Tester();
+		virtual ~TesterBase();
 
 		const char* GetName() const noexcept;
 		const std::string& GetFailureData() const noexcept;
@@ -26,8 +26,8 @@ namespace kTest
 		bool Run() noexcept;
 
 		// Deleted Funcs
-		Tester(const Tester& other) = delete;
-		Tester& operator=(const Tester& other) = delete;
+		TesterBase(const TesterBase& other) = delete;
+		TesterBase& operator=(const TesterBase& other) = delete;
 
 	protected:
 		virtual void Test() = 0;

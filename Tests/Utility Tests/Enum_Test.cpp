@@ -174,7 +174,7 @@ namespace kTest::utility
 	};;
 
 	EnumTester::EnumTester()
-		: Tester("Enum Test")
+		: TesterBase("Enum Test")
 	{
 	}
 

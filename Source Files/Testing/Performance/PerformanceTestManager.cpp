@@ -13,7 +13,7 @@
 namespace kTest::performance
 {
 	PerformanceTestManager::PerformanceTestManager(const Token&)
-		: Tester("Performance Tests")
+		: TesterBase("Performance Tests")
 	{}
 
 	PerformanceTestManager::~PerformanceTestManager()

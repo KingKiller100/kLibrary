@@ -13,7 +13,7 @@
 namespace kTest::maths
 {
 	AlgorithmsTester::AlgorithmsTester()
-		: Tester("Algorithms Test")
+		: TesterBase("Algorithms Test")
 	{}
 
 	AlgorithmsTester::~AlgorithmsTester()
@@ -1357,9 +1357,9 @@ namespace kTest::maths
 	{
 		{
 			constexpr auto square = 125348;
-			const auto root = Sqrt(square);
+			const auto root = Sqrt<int>(square);
 			const auto expected = CAST(int, std::sqrtf(square)); // 354.045197 (as int)
-			VERIFY(root == expected);
+			VERIFY(int(root) == int(expected));
 		}
 
 		{

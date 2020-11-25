@@ -27,8 +27,8 @@ namespace klib
 				return (DestChar*)source;
 			else
 			{
-				constexpr auto destTerminator = type_trait::s_NullTerminator<DestChar>;
-				constexpr auto sourceTerminator = type_trait::s_NullTerminator<SourceChar>;
+				constexpr auto destTerminator = type_trait::g_NullTerminator<DestChar>;
+				constexpr auto sourceTerminator = type_trait::g_NullTerminator<SourceChar>;
 
 				auto currentPos = source;
 				size_t size = 0;

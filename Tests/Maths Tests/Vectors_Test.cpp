@@ -12,7 +12,7 @@ namespace kTest::maths
 	using namespace kmaths;
 
 	VectorsTester::VectorsTester()
-		: Tester("Vectors X/2/3/4 Test")
+		: TesterBase("Vectors X/2/3/4 Test")
 	{ }
 
 	VectorsTester::~VectorsTester()

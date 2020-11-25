@@ -16,7 +16,7 @@ namespace klib {
 		template<class CharT, typename T, typename ...Ts>
 		USE_RESULT constexpr std::basic_string<CharT> ToString(const CharT* format, const T& arg, const Ts& ...argPack)
 		{
-			if (Find_First_Of(format, format::s_PrintfSymbol<CharT>) != type_trait::s_NoPos<std::basic_string<CharT>>)
+			if (Find_First_Of(format, format::g_PrintfSymbol<CharT>) != type_trait::g_NoPos<std::basic_string<CharT>>)
 			{
 				return SprintfWrapper<CharT>(format, arg, argPack...);
 			}
@@ -43,9 +43,9 @@ namespace klib {
 			format.reserve(count + 2 * count);
 			for (auto i = 0; i < count; ++i)
 			{
-				format.push_back(format::s_OpenerSymbol<CharT>);
+				format.push_back(format::g_OpenerSymbol<CharT>);
 				format.append(GetData(stringify::StringIntegral<CharT>(i, 1)));
-				format.push_back(format::s_CloserSymbol<CharT>);
+				format.push_back(format::g_CloserSymbol<CharT>);
 			}
 
 			const auto output = ToString(format.data(), arg, argPack...);

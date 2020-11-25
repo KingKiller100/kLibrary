@@ -11,7 +11,7 @@
 namespace kTest::utility
 {
 	StopWatchTester::StopWatchTester()
-		: Tester("Stopwatch Test")
+		: TesterBase("Stopwatch Test")
 	{	}
 
 	StopWatchTester::~StopWatchTester()

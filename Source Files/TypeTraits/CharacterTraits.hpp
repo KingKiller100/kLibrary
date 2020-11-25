@@ -29,6 +29,6 @@ namespace klib::type_trait
 	
 
 	template<typename CharType, typename = std::enable_if_t<Is_CharType_V<CharType>>>
-	constexpr auto s_NullTerminator = CharType();
+	constexpr auto g_NullTerminator = CharType();
 
 }

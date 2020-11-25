@@ -11,7 +11,7 @@
 namespace kTest::maths
 {
 	RandomTester::RandomTester()
-		: Tester("Random Number Tester")
+		: TesterBase("Random Number Tester")
 	{}
 
 	RandomTester::~RandomTester()

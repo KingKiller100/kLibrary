@@ -1,11 +1,11 @@
 ﻿#pragma once
-#include "../../Source Files/Testing/Tester.hpp"
+#include "../../Source Files/Testing/TesterBase.hpp"
 
 
 #ifdef TESTING_ENABLED
 namespace kTest::maths
 {
-	class AlgorithmsTester final : public Tester
+	class AlgorithmsTester final : public TesterBase
 	{
 	public:
 		AlgorithmsTester();

@@ -9,7 +9,7 @@ namespace kTest::utility
 {
 	
 	StringViewTester::StringViewTester()
-		:Tester("StringView Test")
+		:TesterBase("StringView Test")
 	{	}
 
 	StringViewTester::~StringViewTester()

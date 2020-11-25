@@ -68,4 +68,14 @@ namespace klib::kString::stringify
 		const auto count = minDigits - outStr.size();
 		outStr.insert(outStr.end(), count, padding);
 	}
+
+	template<class Char_t>
+	const Char_t* CreateNewPointer(const Char_t* ptr)
+	{
+		const auto size = GetSize(ptr) + 1;
+		auto cstr = new Char_t[size]();
+		const auto bytes = size * sizeof (Char_t);
+		std::memcpy(cstr, ptr, bytes);
+		return (const Char_t*)cstr;
+	}
 }

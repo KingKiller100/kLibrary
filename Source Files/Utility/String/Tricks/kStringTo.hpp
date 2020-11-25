@@ -33,7 +33,7 @@ namespace klib::kString
 		};
 
 		if (str == nullptr
-			|| str[0] == type_trait::s_NullTerminator<Char_t>)
+			|| str[0] == type_trait::g_NullTerminator<Char_t>)
 			return static_cast<Integer_t>(0);
 
 		const auto isNeg = std::is_signed_v<Integer_t>
@@ -52,7 +52,7 @@ namespace klib::kString
 			CrashFunc(msg);
 		}
 
-		while (str[currentPos] != type_trait::s_NullTerminator<Char_t>)
+		while (str[currentPos] != type_trait::g_NullTerminator<Char_t>)
 		{
 			if (!IsDigit(str[currentPos]))
 			{
@@ -73,6 +73,32 @@ namespace klib::kString
 
 		return result;
 	}
+	
+	template<class Integer_t, class Char_t, class = std::enable_if_t<
+		type_trait::Is_CharType_V<Char_t>
+		>>
+		USE_RESULT constexpr Integer_t CStrTo(const Char_t* const cstr, Integer_t defaultValue)
+	{
+		const auto val = CStrTo<Integer_t>(cstr);
+		if (val == 0)
+			return defaultValue;
+		return val;
+	}
+	
+	template<class Integer_t, class Char_t, class = std::enable_if_t<
+		type_trait::Is_CharType_V<Char_t>
+		>>
+		USE_RESULT constexpr Integer_t TryCStrTo(const Char_t* const cstr, Integer_t defaultValue)
+	{
+		try
+		{
+			return CStrTo<Integer_t>(cstr);
+		}
+		catch (...)
+		{
+			return defaultValue;
+		}
+	}
 
 	// Converts strings containing text for an integer value into the integer type with that value 
 	template<class Integer_t, typename StringT
@@ -85,9 +111,9 @@ namespace klib::kString
 
 		const auto CrashFunc = [](const std::string& errMsg) { throw kDebug::StringError(errMsg + "\n"); };
 
-		Remove(string, ' ');
-		Remove(string, ',');
-		Remove(string, '\'');
+		Remove(string, CharType(' '));
+		Remove(string, CharType(','));
+		Remove(string, CharType('\''));
 
 		if (string.empty())
 			return static_cast<Integer_t>(0);

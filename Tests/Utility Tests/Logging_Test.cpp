@@ -7,7 +7,7 @@
 namespace kTest::utility
 {
 	LoggingTester::LoggingTester()
-		: Tester("Logging Test")
+		: TesterBase("Logging Test")
 	{	}
 
 	LoggingTester::~LoggingTester()
