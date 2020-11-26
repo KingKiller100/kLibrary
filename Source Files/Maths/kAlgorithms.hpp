@@ -6,6 +6,7 @@
 #include "kMathsFundamentals.hpp"
 #include "kBinarySearch.hpp"
 #include "kPowerOf.hpp"
+#include "kCount.hpp"
 
 #include "../HelperMacros.hpp"
 #include "../Utility/Debug/Exceptions/MathsExceptions.hpp"
@@ -257,19 +258,6 @@ namespace kmaths
 	
 	template<typename T>
 	USE_RESULT constexpr T LogGamma(T);
-
-	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr size_t CountIntegerDigits(T x) noexcept
-	{
-		constexpr T ten = CAST(T, 10);
-		size_t count = 1;
-		while (ten < Abs(x))
-		{
-			x /= ten;
-			count++;
-		}
-		return count;
-	}
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 	USE_RESULT constexpr T HandleEpsilon(T value, const constants::Accuracy_t magnitude = 1.l) noexcept
