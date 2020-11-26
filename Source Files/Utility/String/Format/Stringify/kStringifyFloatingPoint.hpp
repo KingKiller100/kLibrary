@@ -52,7 +52,7 @@ namespace klib::kString::stringify
 			const auto justDecimals = val - (isNeg ? -justIntegers : justIntegers);
 			auto decimalsToAppend = static_cast<size_t>(GetSignificantFigures(justDecimals, decimalPlaces));
 
-			Char_t buff[s_MaxFloatDigits<T>]{ g_NullTerminator<Char_t> };
+			Char_t buff[g_MaxFloatDigits<T>]{ g_NullTerminator<Char_t> };
 			Char_t* const end = std::end(buff) - 1;
 			Char_t* current = end;
 

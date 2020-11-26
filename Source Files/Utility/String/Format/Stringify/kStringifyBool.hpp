@@ -10,10 +10,11 @@ namespace klib::kString::stringify
 		>
 	const Char_t* StringBool(bool val)
 	{
-		Char_t buff[6]{ type_trait::g_NullTerminator<Char_t> };
-		Char_t* const end = std::end(buff) - 1;
+		const auto size = val ? 5 : 6;
+		Char_t* buff = new Char_t[size]{ };		
+		Char_t* const end = buff + size-1;
 		Char_t* current = end;
-
+		
 		if (val)
 		{
 			*(--current) = Char_t('e');
@@ -29,9 +30,8 @@ namespace klib::kString::stringify
 			*(--current) = Char_t('a');
 			*(--current) = Char_t('f');
 		}
-		
-		const auto cstr = CreateNewPointer(current);
-		return std::move(cstr);
+
+		return (const Char_t*&&)buff;
 	}
 	
 }

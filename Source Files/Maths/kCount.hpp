@@ -9,7 +9,7 @@ namespace kmaths
 	{
 		constexpr T ten = CAST(T, 10);
 		size_t count = 1;
-		while (ten < Abs(x))
+		while (ten <= Abs(x))
 		{
 			x /= ten;
 			count++;

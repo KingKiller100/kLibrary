@@ -2,6 +2,7 @@
 
 #include "kStringifyHelper.hpp"
 #include "../../kStringTricks.hpp"
+#include "../../../Maths/kCount.hpp"
 
 #include <cstddef>
 
@@ -35,27 +36,31 @@ namespace klib::kString::stringify
 			minDigits = 1;
 
 		using Unsigned_t = std::make_unsigned_t<Signed_t>;
-		Char_t buff[s_MaxDigits<Signed_t>]{ type_trait::g_NullTerminator<Char_t> };
-		Char_t* const end = std::end(buff) - 1;
-		Char_t* current = end;
-		const auto uVal = static_cast<Unsigned_t>(val);
-
-		const auto isNeg = val < 0;
-
+		const auto isNeg = kmaths::IsNegative(val);
+		size_t size = kmaths::CountIntegerDigits(val) + 1;
+		if (size < minDigits)
+		{
+			const auto extra = minDigits - size;
+			size += extra;
+		}
 		if (isNeg)
-			current = UintToStr(current, 0 - uVal);
-		else
-			current = UintToStr(current, uVal);
+			++size;
+		Char_t* buff = new Char_t[size]{ };
+		Char_t* const end = buff + (size - 1);
+		Char_t* current = end;
+		const auto uVal = isNeg
+			? 0 - static_cast<Unsigned_t>(val)
+			: static_cast<Unsigned_t>(val);
 
+		current = UintToStr(current, uVal);
 
-		if (minDigits < s_MaxDigits<Signed_t>)
+		if (minDigits < g_MaxDigits<Signed_t>)
 			PrependPadding(current, minDigits, placeHolder);
 
 		if (isNeg)
 			*(--current) = Char_t('-');
 
-		auto cstr = CreateNewPointer(current);
-		return std::move(cstr);
+		return (const Char_t*&&)buff;
 	}
 
 	template<class Char_t, typename Unsigned_t, typename = std::enable_if_t<
@@ -67,15 +72,20 @@ namespace klib::kString::stringify
 		if (minDigits == s_NoSpecifier)
 			minDigits = 1;
 
-		Char_t buff[s_MaxDigits<Unsigned_t>]{ type_trait::g_NullTerminator<Char_t> };
-		Char_t* const end = std::end(buff) - 1;
+		size_t size = kmaths::CountIntegerDigits(val) + 1;
+		if (size < minDigits)
+		{
+			const auto extra = minDigits - size;
+			size += extra;
+		}
+		Char_t* buff = new Char_t[size]{ };
+		Char_t* const end = buff + (size - 1);
 		Char_t* current = UintToStr(end, val);
 
-		if (minDigits < s_MaxDigits<Unsigned_t>)
+		if (minDigits < g_MaxDigits<Unsigned_t>)
 			PrependPadding(current, minDigits, placeHolder);
 
-		auto cstr = CreateNewPointer(current);
-		return std::move(cstr);
+		return (const Char_t*&&)buff;
 	}
 
 	template<class Char_t, typename Integral_t, typename = std::enable_if_t<
@@ -97,14 +107,14 @@ namespace klib::kString::stringify
 		USE_RESULT const Char_t* StringIntegralHex(Integral_t val, size_t minCharacters = s_NoSpecifier
 			, Char_t placeHolder = s_DefaultPlaceHolder<Char_t>)
 	{
-		constexpr auto& hexMap = s_GeneralHexMap<Char_t>;
+		constexpr auto& hexMap = g_GeneralHexMap<Char_t>;
 
 		if (minCharacters == s_NoSpecifier)
 			minCharacters = sizeof(uintptr_t) * 2;
 
 		using Unsigned_t = std::make_unsigned_t<Integral_t>;
 
-		Char_t buff[s_MaxDigits<size_t>]{ type_trait::g_NullTerminator<Char_t> };
+		Char_t buff[g_MaxDigits<size_t>]{ type_trait::g_NullTerminator<Char_t> };
 		Char_t* const end = std::end(buff) - 1;
 		Char_t* current = end;
 		auto asUint = static_cast<Unsigned_t>(val);
@@ -139,10 +149,10 @@ namespace klib::kString::stringify
 		if (minCharacters == s_NoSpecifier)
 			minCharacters = 1;
 
-		Char_t buff[s_MaxBits<Integral_t>]{ type_trait::g_NullTerminator<Char_t> };
+		Char_t buff[g_MaxBits<Integral_t>]{ type_trait::g_NullTerminator<Char_t> };
 		Char_t* const end = std::end(buff) - 1;
 		Char_t* current = end;
-		
+
 		while (val > 0)
 		{
 			const auto binVal = val % 2;

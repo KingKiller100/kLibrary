@@ -39,8 +39,12 @@ namespace klib {
 			using DataTypes = std::variant<std::monostate, T, Ts...>;
 			constexpr auto count = std::variant_size_v<DataTypes> -1;
 			
+			const auto reserveSize = count < 10
+				? count + 2 * count
+				: 27 + (count - 9) * 4;
+			
 			std::basic_string<CharT> format;
-			format.reserve(count + 2 * count);
+			format.reserve(reserveSize);
 			for (auto i = 0; i < count; ++i)
 			{
 				format.push_back(format::g_OpenerSymbol<CharT>);
