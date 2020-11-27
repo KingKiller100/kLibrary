@@ -40,7 +40,7 @@ namespace klib::kString::secret::impl
 	}
 
 	template<class Char_t, typename T, typename ...Ts>
-	constexpr void ToStringImpl(std::basic_string<Char_t>& outFmt, const size_t argIndex, const T& arg, const Ts& ...argPack)
+	constexpr void ToStringImpl(std::basic_string<Char_t>& outFmt, const size_t argIndex, type_trait::SizeCondConstRef_t<T> arg, type_trait::SizeCondConstRef_t<Ts> ...argPack)
 	{
 		using namespace stringify;
 		using Str_t = std::basic_string<Char_t>;
