@@ -129,7 +129,8 @@ namespace kTest::utility
 		}
 
 		{
-			const auto result = SprintfWrapper(U"%s", example);
+			const auto format = ToWriter(U"%s");
+			const auto result = SprintfWrapper(format, example);
 			constexpr auto expected = U"klib::SprintfWrapper using object with ToString func";
 			VERIFY(result == expected);
 		}
