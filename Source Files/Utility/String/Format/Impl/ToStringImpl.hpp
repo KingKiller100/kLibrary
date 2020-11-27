@@ -4,6 +4,7 @@
 #include "../kStringIdentity.hpp"
 #include "../../Tricks/kStringData.hpp"
 #include "../../../../TypeTraits/StringTraits.hpp"
+#include "../../../../TypeTraits/ConditionalReference.hpp"
 #include <string>
 
 

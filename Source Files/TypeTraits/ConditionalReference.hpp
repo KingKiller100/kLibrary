@@ -11,7 +11,7 @@ namespace klib::type_trait
 		using Real_t = T;
 		using Type = std::conditional_t<Test
 			, std::conditional_t<std::is_array_v<T>, std::remove_all_extents_t<std::remove_cv_t<Real_t>>*, Real_t&>
-			, Real_t>;
+			, std::conditional_t<std::is_trivially_copyable_v<T>, Real_t, Real_t&>>;
 	};
 	
 	template<bool Test, typename T>
@@ -20,7 +20,7 @@ namespace klib::type_trait
 		using Real_t = T;
 		using Type = std::conditional_t<Test
 			, std::conditional_t<std::is_array_v<T>, const std::remove_all_extents_t<std::remove_cv_t<Real_t>>*, const Real_t&>
-			, const Real_t>;
+			, std::conditional_t<std::is_trivially_copyable_v<T>, const Real_t, const Real_t&>>;
 	};
 	
 	template<bool Test, typename T>
