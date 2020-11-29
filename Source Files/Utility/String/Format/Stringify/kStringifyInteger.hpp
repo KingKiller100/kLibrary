@@ -136,7 +136,7 @@ namespace klib::kString::stringify
 
 		PrependPadding(current, minCharacters, placeHolder);
 
-		auto cstr = CreateNewPointer(current);
+		auto cstr = CreateNewCString(current);
 		return std::move(cstr);
 	}
 
@@ -166,7 +166,7 @@ namespace klib::kString::stringify
 		if (endian == EndianFormat::LITTLE)
 			std::reverse(current, end);
 
-		auto cstr = CreateNewPointer(current);
+		auto cstr = CreateNewCString(current);
 		return std::move(cstr);
 	}
 }

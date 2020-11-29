@@ -7,6 +7,7 @@
 #include "kBinarySearch.hpp"
 #include "kPowerOf.hpp"
 #include "kCount.hpp"
+#include "kModulus.hpp"
 
 #include "../HelperMacros.hpp"
 #include "../Utility/Debug/Exceptions/MathsExceptions.hpp"
@@ -30,32 +31,7 @@
 #endif
 
 namespace kmaths
-{
-	template <typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
-	USE_RESULT constexpr T Modulus(T num, T base) noexcept
-	{
-		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
-		{
-			const auto mod = (num < 0)
-				? FloatingPointRemainder(num, base) + base
-				: FloatingPointRemainder(num, base);
-			return mod;
-		}
-		else
-		{
-			T const rem = num % base;
-			if _CONSTEXPR_IF(-1 % 2 == 1)
-			{
-				return rem;
-			}
-			else
-			{
-				const auto mod = rem < 0 ? rem + base : rem;
-				return mod;
-			}
-		}
-	}
-	
+{	
 	namespace secret::impl
 	{
 
@@ -440,18 +416,6 @@ namespace kmaths
 		}
 		else
 			return x0;
-	}
-
-	template<typename T, class = std::enable_if_t<
-		!std::is_rvalue_reference_v<T>
-		&& std::is_nothrow_move_assignable_v<T>
-		&& std::is_nothrow_move_constructible_v<T>
-		>>
-		constexpr void Swap(T& lhs, T& rhs) noexcept
-	{
-		T temp = std::move(lhs);
-		lhs = std::move(rhs);
-		rhs = std::move(temp);
 	}
 
 	template<typename T>

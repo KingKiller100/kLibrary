@@ -223,4 +223,16 @@ namespace kmaths
 		}
 	}
 
+	template<typename T, class = std::enable_if_t<
+		!std::is_rvalue_reference_v<T>
+		&& std::is_nothrow_move_assignable_v<T>
+		&& std::is_nothrow_move_constructible_v<T>
+		>>
+		constexpr void Swap(T& lhs, T& rhs) noexcept
+	{
+		T temp = std::move(lhs);
+		lhs = std::move(rhs);
+		rhs = std::move(temp);
+	}
+
 }

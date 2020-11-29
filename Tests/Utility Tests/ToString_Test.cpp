@@ -42,6 +42,7 @@ namespace kTest::utility
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(SprintfWrapperTest());
+		VERIFY_MULTI(StringifyFloatingPointTest());
 		VERIFY_MULTI(StringifyBinaryTest());
 		VERIFY_MULTI(StringifyHexTest());
 		VERIFY_MULTI(IdentityTest());
@@ -135,6 +136,47 @@ namespace kTest::utility
 			VERIFY(result == expected);
 		}
 
+		return success;
+	}
+
+	bool FormatToStringTester::StringifyFloatingPointTest()
+	{
+		{
+			constexpr auto num = 2.5;
+			const std::string result = stringify::StringFloatingPoint<char>(num, 1);
+			VERIFY(result == "2.5");
+		}
+		
+		{
+			constexpr auto num = -2.5;
+			const std::u16string result = stringify::StringFloatingPoint<char16_t>(num, 0);
+			VERIFY(result == u"-2")
+		}
+		
+		{
+			constexpr auto num = 2.5;
+			const std::u8string result = stringify::StringFloatingPoint<char8_t>(num, 3);
+			VERIFY(result == u8"2.500")
+		}
+		
+		{
+			constexpr auto num = 2.5e0;
+			const std::u8string result = stringify::StringFloatingPoint<char8_t>(num, 3, stringify::FloatingPointFormat::SCI);
+			VERIFY(result == u8"2.5e0")
+		}
+		
+		{
+			constexpr auto num = 2.5e3;
+			const std::u32string result = stringify::StringFloatingPoint<char32_t>(num, 3, stringify::FloatingPointFormat::SCI);
+			VERIFY(result == U"2.5e3")
+		}
+		
+		{
+			constexpr auto num = 5e-1f;
+			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
+			VERIFY(result == "5e-1")
+		}
+		
 		return success;
 	}
 

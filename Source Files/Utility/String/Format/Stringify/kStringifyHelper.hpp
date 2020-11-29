@@ -70,7 +70,7 @@ namespace klib::kString::stringify
 	}
 
 	template<class Char_t>
-	const Char_t* CreateNewPointer(const Char_t* ptr)
+	const Char_t* CreateNewCString(const Char_t* ptr)
 	{
 		const auto size = GetSize(ptr) + 1;
 		auto cstr = new Char_t[size]();

@@ -15,6 +15,7 @@ namespace kTest::utility
 
 		bool IdentityTest();
 		bool SprintfWrapperTest();
+		bool StringifyFloatingPointTest();
 		bool StringifyHexTest();
 		bool StringifyBinaryTest();
 		bool CustomTypeWithToStringTest();
