@@ -108,21 +108,22 @@ namespace klib::kString::stringify
 
 			size_t totalDigits = 0;
 
-			Figures figures = GetFigures(val, decimalPlaces);
-			if (figures.integers > 0)
+			Figures figs = GetFigures(val, decimalPlaces);
+			if (figs.integers > 0)
 			{
-				if (figures.integers > 9)
+				if (figs.integers > 9)
 				{
-					totalDigits += kmaths::CountIntegerDigits(figures.integers);
+					totalDigits += kmaths::CountIntegerDigits(figs.integers);
 					--totalDigits;
 				}
-				figures.integers = RemoveTrailingZeros(figures.integers);
+				figs.integers = RemoveTrailingZeros(figs.integers);
 			}
-			if (figures.decimals > 0)
+			if (figs.decimals > 0)
 			{
-				figures.decimals = RemoveTrailingZeros(figures.decimals);
-				if (figures.decimals > 9)
-					totalDigits += kmaths::CountIntegerDigits(figures.decimals);
+				figs.decimals = RemoveTrailingZeros(figs.decimals);
+				if (figs.decimals > 9
+					|| (figs.integers == 0 && figs.decimals > 0))
+					totalDigits += kmaths::CountIntegerDigits(figs.decimals);
 			}
 
 
@@ -134,20 +135,20 @@ namespace klib::kString::stringify
 			if (val < 1)
 				*(--current) = Char_t('-');
 			*(--current) = Char_t('e');
-			if (figures.decimals > 0)
-				current = UintToStr(current, figures.decimals);
-			if (figures.integers > 0)
+			if (figs.decimals > 0)
+				current = UintToStr(current, figs.decimals);
+			if (figs.integers > 0)
 			{
-				current = UintToStr(current, figures.integers);
+				current = UintToStr(current, figs.integers);
 
-				if (figures.integers > 9 || figures.decimals > 0)
+				if (figs.integers > 9 || figs.decimals > 0)
 				{
 					*(--current) = Char_t('.');
 					kmaths::Swap(current[0], current[1]);
 				}
 			}
 
-			if (figures.isNeg)
+			if (figs.isNeg)
 				*(--current) = Char_t('-');
 
 			auto cstr = CreateNewCString(current);

@@ -177,6 +177,12 @@ namespace kTest::utility
 			VERIFY(result == "5e-1")
 		}
 		
+		{
+			constexpr auto num = 6.25e-2;
+			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
+			VERIFY(result == "5e-1")
+		}
+		
 		return success;
 	}
 
