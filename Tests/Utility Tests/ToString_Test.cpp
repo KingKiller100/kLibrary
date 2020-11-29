@@ -172,6 +172,12 @@ namespace kTest::utility
 		}
 		
 		{
+			constexpr auto num = 2e5;
+			const std::u32string result = stringify::StringFloatingPoint<char32_t>(num, 3, stringify::FloatingPointFormat::SCI);
+			VERIFY(result == U"2e5")
+		}
+		
+		{
 			constexpr auto num = 5e-1f;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
 			VERIFY(result == "5e-1")
@@ -180,7 +186,20 @@ namespace kTest::utility
 		{
 			constexpr auto num = 6.25e-2;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
-			VERIFY(result == "5e-1")
+			VERIFY(result == "6.25e-2")
+		}
+		
+		{
+			constexpr auto num = 6.25e-5;
+			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
+			VERIFY(result == "6.25e-5")
+		}
+		
+		{
+			constexpr auto num = 6.2554976934803e-5;
+			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
+			const auto expected = SprintfWrapper("%.20g", num);
+			VERIFY(result == "6.2554976934803e-5")
 		}
 		
 		return success;

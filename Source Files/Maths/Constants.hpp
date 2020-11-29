@@ -98,8 +98,8 @@ namespace kmaths
 		USE_RESULT constexpr bool Approximately(T1 value, T2 target) noexcept
 		{
 			constexpr auto epsilon = Epsilon<T1>();
-			constexpr auto lb = target - epsilon;
-			constexpr auto ub = target + epsilon;
+			const auto lb = static_cast<T1>(target) - epsilon;
+			const auto ub = static_cast<T1>(target) + epsilon;
 
 			return (value >= lb) && (value <= ub);
 		}
@@ -111,10 +111,9 @@ namespace kmaths
 		}
 
 		template<class T>
-		USE_RESULT constexpr bool ApproximatelyEpsilon(T&& value) noexcept
+		USE_RESULT constexpr bool ApproximatelyZero(T value) noexcept
 		{
-			constexpr auto epsilon = Epsilon<T>();
-			return (value >= -epsilon) && (value <= epsilon);
+			return Approximately(value, Zero<T>());
 		}
 
 		template<class T>

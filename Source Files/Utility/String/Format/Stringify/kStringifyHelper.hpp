@@ -10,6 +10,9 @@ namespace klib::kString::stringify
 	template<class Char_t, typename = std::enable_if_t<type_trait::Is_CharType_V<Char_t>>>
 	constexpr auto s_DefaultPlaceHolder = Char_t('0');
 
+	template<class Char_t, typename = std::enable_if_t<type_trait::Is_CharType_V<Char_t>>>
+	constexpr Char_t g_ScientificFloatToken = Char_t('e');
+
 	template<class Char_t>
 	constexpr std::array<Char_t, 16> g_GeneralHexMap = {
 		static_cast<Char_t>('0'), static_cast<Char_t>('1'), static_cast<Char_t>('2'), static_cast<Char_t>('3'),
