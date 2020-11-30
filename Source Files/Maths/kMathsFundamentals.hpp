@@ -235,4 +235,15 @@ namespace kmaths
 		rhs = std::move(temp);
 	}
 
+	template<typename T>
+	USE_RESULT constexpr T Promote(T x)
+	{
+		return x * CAST(T, 10);
+	}
+
+	template<typename T>
+	USE_RESULT constexpr T Demote(T x)
+	{
+		return x / CAST(T, 10);
+	}
 }

@@ -29,7 +29,7 @@ namespace klib::kString::stringify
 	/// Digits of largest conceivable number for any floating point type
 	/// plus a null terminator + possible minus symbol
 	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	constexpr size_t g_MaxFloatDigits = std::numeric_limits<T>::max_digits10 + 2;
+	constexpr size_t g_MaxFloatDigits = std::numeric_limits<T>::max_exponent10 + 2;
 
 	/// Bit count of largest conceivable number for any integral type
 	/// plus a null terminator
@@ -60,6 +60,12 @@ namespace klib::kString::stringify
 			*(--outHeadOfPtr) = padding;
 			--count;
 		}
+	}
+	
+	template<typename CharType>
+	void PrependMinusSign(CharType*& outHeadOfPtr)
+	{
+		*(--outHeadOfPtr) = CharType('-');
 	}
 
 	template<typename CharType>

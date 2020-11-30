@@ -156,13 +156,13 @@ namespace kTest::utility
 		{
 			constexpr auto num = 2.5;
 			const std::u8string result = stringify::StringFloatingPoint<char8_t>(num, 3);
-			VERIFY(result == u8"2.500")
+			VERIFY(result == u8"2.5")
 		}
 
 		{
 			constexpr auto num = 2.5e0;
 			const std::u8string result = stringify::StringFloatingPoint<char8_t>(num, 3, stringify::FloatingPointFormat::SCI);
-			VERIFY(result == u8"2.5e0")
+			VERIFY(result == u8"2.5")
 		}
 
 		{
@@ -180,6 +180,7 @@ namespace kTest::utility
 		{
 			constexpr auto num = 5e-1f;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
+			const auto expected = SprintfWrapper("%.e", num);
 			VERIFY(result == "5e-1")
 		}
 
@@ -197,9 +198,9 @@ namespace kTest::utility
 
 		{
 			constexpr auto num = 2 + 6.2554976934803e-5;
-			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
+			const std::string result = stringify::StringFloatingPoint<char>(num, 20, stringify::FloatingPointFormat::SCI);
 			const auto expected = SprintfWrapper("%.20e", num);
-			VERIFY(result == "6.2554976934803e-5")
+			VERIFY(result == "2.00006255497693485879")
 		}
 
 		return success;

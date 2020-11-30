@@ -27,7 +27,7 @@ namespace klib::kString::stringify
 		};
 
 		template <class T>
-		USE_RESULT constexpr T GetSignificantFigures(T val, size_t precision)
+		USE_RESULT constexpr kmaths::constants::Accuracy_t GetSignificantFigures(T val, size_t precision)
 		{
 			using namespace kmaths;
 			using namespace kmaths::secret::impl;
@@ -39,7 +39,7 @@ namespace klib::kString::stringify
 
 			const auto valuePlusDpsByAcc = (CAST(constants::Accuracy_t, val) + dpShifts) * accuracy;
 			const auto sigFigs = Floor(valuePlusDpsByAcc);
-			return static_cast<T>(sigFigs);
+			return static_cast<Accuracy_t>(sigFigs);
 		}
 
 		template<typename T>
@@ -60,6 +60,15 @@ namespace klib::kString::stringify
 			return count;
 		}
 
+		inline USE_RESULT size_t TrimZeros(size_t num)
+		{
+			while (num != 0 && kmaths::Modulus<size_t>(num, 10) == 0)
+			{
+				num /= static_cast<size_t>(10);
+			}
+			return num;
+		}
+
 		template<typename T>
 		USE_RESULT constexpr Figures GetFigures(T val, size_t decimalPlaces)
 		{
@@ -68,7 +77,9 @@ namespace klib::kString::stringify
 			const auto justIntegers = static_cast<size_t>(kmaths::Floor(val));
 			const auto justDecimals = val - justIntegers;
 			const auto dpShifts = GetDpShifts(justDecimals);
-			const auto decimalsToUse = static_cast<size_t>(GetSignificantFigures(justDecimals, decimalPlaces));
+			const auto rawDecimalsToUse = GetSignificantFigures(justDecimals, decimalPlaces);
+			const auto transformedDecimalsToUse = static_cast<size_t>(rawDecimalsToUse);
+			const auto decimalsToUse = TrimZeros(transformedDecimalsToUse);
 			return { justIntegers, decimalsToUse, dpShifts, isNeg };
 		}
 
@@ -83,11 +94,11 @@ namespace klib::kString::stringify
 			if (decimalPlaces == s_NoSpecifier)
 				decimalPlaces = 6;
 
-			const Figures figures = GetFigures(val, decimalPlaces);
-
 			Char_t buff[g_MaxFloatDigits<T>]{ g_NullTerminator<Char_t> };
 			Char_t* const end = std::end(buff) - 1;
 			Char_t* current = end;
+
+			const Figures figures = GetFigures(val, decimalPlaces);
 
 			if (decimalPlaces > 0)
 			{
@@ -99,19 +110,10 @@ namespace klib::kString::stringify
 			current = UintToStr(current, figures.integers);
 
 			if (figures.isNeg)
-				*(--current) = Char_t('-');
+				PrependMinusSign(current);
 
 			auto cstr = CreateNewCString(current);
 			return std::move(cstr);
-		}
-
-		inline USE_RESULT size_t RemoveTrailingZeros(size_t num)
-		{
-			while (num != 0 && kmaths::Modulus<size_t>(num, 10) == 0)
-			{
-				num /= static_cast<size_t>(10);
-			}
-			return num;
 		}
 
 		template<class Char_t, typename T, typename = std::enable_if_t<
@@ -123,14 +125,24 @@ namespace klib::kString::stringify
 			using namespace type_trait;
 			using String_t = std::basic_string<Char_t>;
 
+			constexpr auto defaultDps = std::numeric_limits<size_t>::digits10;
+			
 			if (decimalPlaces == s_NoSpecifier)
 				decimalPlaces = 1;
 
+			Char_t buff[g_MaxFloatDigits<T>]{ g_NullTerminator<Char_t> };
+			Char_t* const end = std::end(buff) - 1;
+			Char_t* current = end;
+
 			size_t totalShifts = 0;
 
-			Figures figs = GetFigures(val, std::numeric_limits<size_t>::max_digits10);
-			const auto limit = kmaths::PowerOf10(decimalPlaces);
+			Figures figs = decimalPlaces < defaultDps
+			? GetFigures(val, defaultDps)
+			: GetFigures(val, decimalPlaces);
 			
+			if (figs.integers != 0 && kmaths::Abs(val) < 10)
+				return FixedNotation<Char_t>(val, figs.dpShifts + kmaths::CountIntegerDigits(figs.decimals) - 1);
+
 			if (figs.integers > 0)
 			{
 				if (figs.integers > 9)
@@ -138,44 +150,60 @@ namespace klib::kString::stringify
 					totalShifts += kmaths::CountIntegerDigits(figs.integers);
 					--totalShifts;
 				}
-				figs.integers = RemoveTrailingZeros(figs.integers);
+				figs.integers = TrimZeros(figs.integers);
 			}
+
+			const auto limit = kmaths::PowerOf10(decimalPlaces);
+
 			if (figs.decimals > 0)
 			{
-				figs.decimals = RemoveTrailingZeros(figs.decimals);
+				while (figs.decimals > limit)
+				{
+					figs.decimals = kmaths::Demote(figs.decimals);
+				}
+
 				if (figs.decimals > 9
 					|| (figs.integers == 0 && figs.decimals > 0))
 					totalShifts += figs.dpShifts;
 			}
 
+			if (totalShifts > 0)
+			{
+				current = UintToStr(current, totalShifts);
+				if (val < 1)
+					*(--current) = Char_t('-');
+				*(--current) = g_ScientificFloatToken<Char_t>;
+			}
 
-			Char_t buff[g_MaxFloatDigits<T>]{ g_NullTerminator<Char_t> };
-			Char_t* const end = std::end(buff) - 1;
-			Char_t* current = end;
-
-			current = UintToStr(current, totalShifts);
-			if (val < 1)
-				*(--current) = Char_t('-');
-			*(--current) = g_ScientificFloatToken<Char_t>;
 			if (figs.decimals > 0)
+			{
 				current = UintToStr(current, figs.decimals);
+			}
+
 			if (figs.integers > 0)
+			{
+				if (figs.dpShifts > 1)
+				{
+					auto dpShifts = figs.dpShifts;
+					while (dpShifts-- > 0)
+					{
+						*(--current) = s_DefaultPlaceHolder<Char_t>;
+					}
+				}
 				current = UintToStr(current, figs.integers);
+			}
 
 			const auto ePos = Find_First_Of(current, g_ScientificFloatToken<Char_t>);
-			if (ePos == 0)
-				*(--current) = Char_t('0');
-			else if (ePos > 1)
+			if (ePos > 1)
 			{
 				*(--current) = Char_t('.');
 				kmaths::Swap(current[0], current[1]);
 			}
 
 			if (figs.isNeg)
-				*(--current) = Char_t('-');
+				PrependMinusSign(current);
 
-			auto cstr = CreateNewCString(current);
-			return std::move(cstr);
+			return CreateNewCString(current);
 		}
 
 		template<class Char_t, typename T, typename = std::enable_if_t<
