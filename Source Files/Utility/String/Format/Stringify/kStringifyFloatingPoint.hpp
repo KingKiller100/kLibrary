@@ -118,16 +118,19 @@ namespace klib::kString::stringify
 			std::is_floating_point_v<T>
 			|| type_trait::Is_CharType_V<Char_t>>
 			>
-			const Char_t* ScientificNotation(T val)
+			const Char_t* ScientificNotation(T val, size_t decimalPlaces)
 		{
 			using namespace type_trait;
 			using String_t = std::basic_string<Char_t>;
 
-			constexpr auto decimalPlaces = std::numeric_limits<T>::max_digits10;
+			if (decimalPlaces == s_NoSpecifier)
+				decimalPlaces = 1;
 
 			size_t totalShifts = 0;
 
-			Figures figs = GetFigures(val, decimalPlaces);
+			Figures figs = GetFigures(val, std::numeric_limits<size_t>::max_digits10);
+			const auto limit = kmaths::PowerOf10(decimalPlaces);
+			
 			if (figs.integers > 0)
 			{
 				if (figs.integers > 9)
@@ -182,7 +185,7 @@ namespace klib::kString::stringify
 			const Char_t* GeneralNotation(T val, size_t decimalPlaces)
 		{
 			const auto cstr = decimalPlaces > 6
-				? ScientificNotation<Char_t>(val)
+				? ScientificNotation<Char_t>(val, decimalPlaces)
 				: FixedNotation<Char_t>(val, decimalPlaces);
 			return std::move(cstr);
 		}
@@ -216,7 +219,7 @@ namespace klib::kString::stringify
 
 		switch (fmt.ToEnum()) {
 		case FloatingPointFormat::FIX: return FixedNotation<Char_t>(val, decimalPlaces);
-		case FloatingPointFormat::SCI: return ScientificNotation<Char_t>(val);
+		case FloatingPointFormat::SCI: return ScientificNotation<Char_t>(val, decimalPlaces);
 		case FloatingPointFormat::GEN: return GeneralNotation<Char_t>(val, decimalPlaces);
 		case FloatingPointFormat::HEX: return StringIntegralBinary<Char_t>(*(IntegralSizeMatch_t*)&val, decimalPlaces);
 		case FloatingPointFormat::BIN: return StringIntegralHex<Char_t>(*(IntegralSizeMatch_t*)&val, decimalPlaces);

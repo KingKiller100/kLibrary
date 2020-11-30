@@ -52,7 +52,7 @@ namespace kTest::utility
 		VERIFY_MULTI(DirectToStringTest());
 		VERIFY_MULTI_END();
 	}
-	
+
 	using namespace klib;
 	using namespace klib::kString;
 
@@ -66,7 +66,7 @@ namespace kTest::utility
 			VERIFY_COMPILE_TIME(expected);
 		}
 #endif
-		
+
 		{
 			const auto input = "quarantine";
 			constexpr auto g = type_trait::Is_CharType_V<char>;
@@ -77,28 +77,28 @@ namespace kTest::utility
 			const auto expected = std::is_same_v<decltype(result), const char* const>;
 			VERIFY_COMPILE_TIME(expected);
 		}
-		
+
 		{
 			const auto input = std::string_view("quarantine");
 			const auto result = stringify::Identity<char, decltype(input)>::Get(input);
 			const auto expected = std::is_same_v<decltype(result), const char* const>;
 			VERIFY_COMPILE_TIME(expected);
 		}
-		
+
 		{
 			const auto input = 5.6;
 			const auto result = stringify::Identity<char, decltype(input)>::Get(input);
 			const auto expected = std::is_same_v<decltype(result), const double>;
 			VERIFY_COMPILE_TIME(expected);
 		}
-		
+
 		{
 			const auto input = 5.6f;
 			const auto result = stringify::Identity<char, decltype(input)>::Get(input);
 			const auto expected = std::is_same_v<decltype(result), const float>;
 			VERIFY_COMPILE_TIME(expected);
 		}
-		
+
 		return success;
 	}
 
@@ -146,62 +146,62 @@ namespace kTest::utility
 			const std::string result = stringify::StringFloatingPoint<char>(num, 1);
 			VERIFY(result == "2.5");
 		}
-		
+
 		{
 			constexpr auto num = -2.5;
 			const std::u16string result = stringify::StringFloatingPoint<char16_t>(num, 0);
 			VERIFY(result == u"-2")
 		}
-		
+
 		{
 			constexpr auto num = 2.5;
 			const std::u8string result = stringify::StringFloatingPoint<char8_t>(num, 3);
 			VERIFY(result == u8"2.500")
 		}
-		
+
 		{
 			constexpr auto num = 2.5e0;
 			const std::u8string result = stringify::StringFloatingPoint<char8_t>(num, 3, stringify::FloatingPointFormat::SCI);
 			VERIFY(result == u8"2.5e0")
 		}
-		
+
 		{
 			constexpr auto num = 2.5e3;
 			const std::u32string result = stringify::StringFloatingPoint<char32_t>(num, 3, stringify::FloatingPointFormat::SCI);
 			VERIFY(result == U"2.5e3")
 		}
-		
+
 		{
 			constexpr auto num = 2e5;
 			const std::u32string result = stringify::StringFloatingPoint<char32_t>(num, 3, stringify::FloatingPointFormat::SCI);
 			VERIFY(result == U"2e5")
 		}
-		
+
 		{
 			constexpr auto num = 5e-1f;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
 			VERIFY(result == "5e-1")
 		}
-		
+
 		{
 			constexpr auto num = 6.25e-2;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
 			VERIFY(result == "6.25e-2")
 		}
-		
+
 		{
 			constexpr auto num = 6.25e-5;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
 			VERIFY(result == "6.25e-5")
 		}
-		
+
 		{
-			constexpr auto num = 6.2554976934803e-5;
+			constexpr auto num = 2 + 6.2554976934803e-5;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
-			const auto expected = SprintfWrapper("%.20g", num);
+			const auto expected = SprintfWrapper("%.20e", num);
 			VERIFY(result == "6.2554976934803e-5")
 		}
-		
+
 		return success;
 	}
 
@@ -247,7 +247,7 @@ namespace kTest::utility
 		}
 
 		// Prints minimum digit of binary string, will fill remaining characters with '0' unless specified differently
-		{ 
+		{
 			constexpr auto input = 64;
 			const auto result = ToWriter(stringify::StringIntegralBinary<char16_t>(input, 8));
 			VERIFY(result == u"01000000");
@@ -261,7 +261,7 @@ namespace kTest::utility
 			VERIFY(result == u8"1111101000");
 		}
 #endif
-		
+
 		{
 			constexpr auto input = 4;
 			const auto result = ToWriter(stringify::StringIntegralBinary<char32_t>(input, 0));
@@ -323,7 +323,7 @@ namespace kTest::utility
 
 		constexpr auto num = 1000;
 		const auto hex = "0x" + std::string(stringify::StringIntegralHex<char>(num, 4, '0'));
-			
+
 #ifdef __cpp_char8_t
 		const auto binary = u8"0b" + std::u8string(stringify::StringIntegralBinary<char8_t>(num, 4, '0'));
 #endif
@@ -349,11 +349,11 @@ namespace kTest::utility
 	{
 		{
 #ifdef __cpp_char8_t
-		const auto test = klib::kString::ToString<char8_t>(980u, 123);
-		VERIFY(test == u8"980123");
+			const auto test = klib::kString::ToString<char8_t>(980u, 123);
+			VERIFY(test == u8"980123");
 #else
-		const auto test = klib::kString::ToString<char16_t>(980u);
-		VERIFY(test == u"980");
+			const auto test = klib::kString::ToString<char16_t>(980u);
+			VERIFY(test == u"980");
 #endif
 		}
 
@@ -362,7 +362,7 @@ namespace kTest::utility
 			const char expected[] = "1234five6789ten11121314fifteen";
 			VERIFY(result == expected);
 		}
-		
+
 		return success;
 	}
 }
