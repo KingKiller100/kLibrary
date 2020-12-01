@@ -78,8 +78,7 @@ namespace klib::kString::stringify
 			const auto justDecimals = val - justIntegers;
 			const auto dpShifts = GetDpShifts(justDecimals);
 			const auto rawDecimalsToUse = GetSignificantFigures(justDecimals, decimalPlaces);
-			const auto transformedDecimalsToUse = static_cast<size_t>(rawDecimalsToUse);
-			const auto decimalsToUse = TrimZeros(transformedDecimalsToUse);
+			const auto decimalsToUse = static_cast<size_t>(rawDecimalsToUse);
 			return { justIntegers, decimalsToUse, dpShifts, isNeg };
 		}
 
@@ -100,8 +99,17 @@ namespace klib::kString::stringify
 
 			if (decimalPlaces > 0)
 			{
-				current = UintToStr(current, figs.decimals);
-				PrependPadding(current, decimalPlaces, Char_t('0'));
+				const auto remaining = static_cast<long long>(decimalPlaces) - static_cast<long long>(figs.dpShifts);
+				if (remaining >= 0)
+				{
+					current = UintToStr(current, figs.decimals);
+					PrependPadding(current, figs.dpShifts - 1, Char_t('0'));
+				}
+				else
+				{
+					PrependPadding(current, decimalPlaces, Char_t('0'));
+				}
+
 				*(--current) = Char_t('.');
 			}
 
@@ -123,6 +131,9 @@ namespace klib::kString::stringify
 			using namespace type_trait;
 			using String_t = std::basic_string<Char_t>;
 
+			if (figs.integers != 0 && kmaths::Abs(val) < 10)
+				return FixedNotation<Char_t>(val, figs.dpShifts + kmaths::CountIntegerDigits(figs.decimals), figs);
+
 			if (decimalPlaces == s_NoSpecifier)
 				decimalPlaces = 1;
 
@@ -131,10 +142,6 @@ namespace klib::kString::stringify
 			Char_t* current = end;
 
 			size_t totalShifts = 0;
-
-			
-			if (figs.integers != 0 && kmaths::Abs(val) < 10)
-				return FixedNotation<Char_t>(val, figs.dpShifts + kmaths::CountIntegerDigits(figs.decimals) - 1);
 
 			if (figs.integers > 0)
 			{
@@ -146,15 +153,9 @@ namespace klib::kString::stringify
 				figs.integers = TrimZeros(figs.integers);
 			}
 
-			const auto limit = kmaths::PowerOf10(decimalPlaces);
 
 			if (figs.decimals > 0)
 			{
-				while (figs.decimals > limit)
-				{
-					figs.decimals = kmaths::Demote(figs.decimals);
-				}
-
 				if (figs.decimals > 9
 					|| (figs.integers == 0 && figs.decimals > 0))
 					totalShifts += figs.dpShifts;
@@ -240,10 +241,21 @@ namespace klib::kString::stringify
 
 		constexpr auto defaultDps = std::numeric_limits<size_t>::digits10;
 
+		if (std::isnan(val))
+			return Convert<Char_t>("nan");
+		if (std::isinf(val))
+			return Convert<Char_t>("inf");
+		
 		Figures figs = decimalPlaces < defaultDps
 			? GetFigures(val, defaultDps)
 			: GetFigures(val, decimalPlaces);
-		
+
+		const auto limit = kmaths::PowerOf10(decimalPlaces);
+		while (figs.decimals > limit)
+		{
+			figs.decimals = kmaths::Demote(figs.decimals);
+		}
+
 		switch (fmt.ToEnum()) {
 		case FloatingPointFormat::FIX: return FixedNotation<Char_t>(val, decimalPlaces, figs);
 		case FloatingPointFormat::SCI: return ScientificNotation<Char_t>(val, decimalPlaces, figs);
