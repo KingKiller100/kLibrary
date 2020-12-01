@@ -87,7 +87,7 @@ namespace klib::kString::stringify
 			std::is_floating_point_v<T>
 			|| type_trait::Is_CharType_V<Char_t>>
 			>
-			const Char_t* FixedNotation(T val, size_t decimalPlaces)
+			const Char_t* FixedNotation(T val, size_t decimalPlaces, Figures& figs)
 		{
 			using namespace type_trait;
 
@@ -98,18 +98,16 @@ namespace klib::kString::stringify
 			Char_t* const end = std::end(buff) - 1;
 			Char_t* current = end;
 
-			const Figures figures = GetFigures(val, decimalPlaces);
-
 			if (decimalPlaces > 0)
 			{
-				current = UintToStr(current, figures.decimals);
+				current = UintToStr(current, figs.decimals);
 				PrependPadding(current, decimalPlaces, Char_t('0'));
 				*(--current) = Char_t('.');
 			}
 
-			current = UintToStr(current, figures.integers);
+			current = UintToStr(current, figs.integers);
 
-			if (figures.isNeg)
+			if (figs.isNeg)
 				PrependMinusSign(current);
 
 			auto cstr = CreateNewCString(current);
@@ -120,13 +118,11 @@ namespace klib::kString::stringify
 			std::is_floating_point_v<T>
 			|| type_trait::Is_CharType_V<Char_t>>
 			>
-			const Char_t* ScientificNotation(T val, size_t decimalPlaces)
+			const Char_t* ScientificNotation(T val, size_t decimalPlaces, Figures& figs)
 		{
 			using namespace type_trait;
 			using String_t = std::basic_string<Char_t>;
 
-			constexpr auto defaultDps = std::numeric_limits<size_t>::digits10;
-			
 			if (decimalPlaces == s_NoSpecifier)
 				decimalPlaces = 1;
 
@@ -136,9 +132,6 @@ namespace klib::kString::stringify
 
 			size_t totalShifts = 0;
 
-			Figures figs = decimalPlaces < defaultDps
-			? GetFigures(val, defaultDps)
-			: GetFigures(val, decimalPlaces);
 			
 			if (figs.integers != 0 && kmaths::Abs(val) < 10)
 				return FixedNotation<Char_t>(val, figs.dpShifts + kmaths::CountIntegerDigits(figs.decimals) - 1);
@@ -210,11 +203,11 @@ namespace klib::kString::stringify
 			std::is_floating_point_v<T>
 			|| type_trait::Is_CharType_V<Char_t>>
 			>
-			const Char_t* GeneralNotation(T val, size_t decimalPlaces)
+			const Char_t* GeneralNotation(T val, size_t decimalPlaces, Figures& figs)
 		{
-			const auto cstr = decimalPlaces > 6
-				? ScientificNotation<Char_t>(val, decimalPlaces)
-				: FixedNotation<Char_t>(val, decimalPlaces);
+			const auto cstr = figs.dpShifts > 6
+				? ScientificNotation<Char_t>(val, decimalPlaces, figs)
+				: FixedNotation<Char_t>(val, decimalPlaces, figs);
 			return std::move(cstr);
 		}
 	}
@@ -245,10 +238,16 @@ namespace klib::kString::stringify
 		using namespace secret::impl;
 		using IntegralSizeMatch_t = std::conditional_t<sizeof(T) == 4, std::int32_t, std::int64_t>;
 
+		constexpr auto defaultDps = std::numeric_limits<size_t>::digits10;
+
+		Figures figs = decimalPlaces < defaultDps
+			? GetFigures(val, defaultDps)
+			: GetFigures(val, decimalPlaces);
+		
 		switch (fmt.ToEnum()) {
-		case FloatingPointFormat::FIX: return FixedNotation<Char_t>(val, decimalPlaces);
-		case FloatingPointFormat::SCI: return ScientificNotation<Char_t>(val, decimalPlaces);
-		case FloatingPointFormat::GEN: return GeneralNotation<Char_t>(val, decimalPlaces);
+		case FloatingPointFormat::FIX: return FixedNotation<Char_t>(val, decimalPlaces, figs);
+		case FloatingPointFormat::SCI: return ScientificNotation<Char_t>(val, decimalPlaces, figs);
+		case FloatingPointFormat::GEN: return GeneralNotation<Char_t>(val, decimalPlaces, figs);
 		case FloatingPointFormat::HEX: return StringIntegralBinary<Char_t>(*(IntegralSizeMatch_t*)&val, decimalPlaces);
 		case FloatingPointFormat::BIN: return StringIntegralHex<Char_t>(*(IntegralSizeMatch_t*)&val, decimalPlaces);
 		default:
