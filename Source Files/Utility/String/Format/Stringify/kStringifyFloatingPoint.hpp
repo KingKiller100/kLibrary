@@ -103,7 +103,7 @@ namespace klib::kString::stringify
 				if (remaining >= 0)
 				{
 					current = UintToStr(current, figs.decimals);
-					PrependPadding(current, figs.dpShifts - 1, Char_t('0'));
+					PrependPadding(current, GetSize(current) + figs.dpShifts - 1, Char_t('0'));
 				}
 				else
 				{
@@ -245,6 +245,8 @@ namespace klib::kString::stringify
 			return Convert<Char_t>("nan");
 		if (std::isinf(val))
 			return Convert<Char_t>("inf");
+		if (g_MaxFloatDigits<T> - 2 < decimalPlaces)
+			throw kDebug::FormatError("value is too large for buffer");
 		
 		Figures figs = decimalPlaces < defaultDps
 			? GetFigures(val, defaultDps)
