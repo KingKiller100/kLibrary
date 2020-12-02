@@ -17,7 +17,7 @@ namespace klib::type_trait
 		static constexpr auto Bytes = sizeof(T);
 		static constexpr auto Mantissa = std::numeric_limits<T>::digits;
 		static constexpr auto Exponent = Bytes - Mantissa;
-		static constexpr auto DotIndex = 10;
+		static constexpr auto DotIndex = Mantissa - 3;
 
 		static USE_RESULT constexpr Unsigned_t BitCast(T val) noexcept
 		{

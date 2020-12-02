@@ -38,7 +38,7 @@ namespace kTest::performance::util
 
 		constexpr auto num = 6.015625;
 
-		const auto str = kString::ToString("{0:b}", 5.5f);
+		const auto str = kString::ToString("{0:b}", 5.5);
 
 		for (auto i = 0; i < maxIter; ++i)
 		{
