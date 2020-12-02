@@ -46,7 +46,7 @@ namespace klib::kString::stringify
 
 	/// Bit count of largest conceivable number for any integral type
 	/// plus a null terminator
-	template<class T, class = std::enable_if_t<std::is_integral_v<T>>>
+	template<class T>
 	constexpr size_t g_MaxBits = std::numeric_limits<T>::digits + 1;
 
 	template<typename CharType>

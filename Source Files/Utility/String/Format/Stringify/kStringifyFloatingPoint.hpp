@@ -5,9 +5,10 @@
 #include "kStringifyInteger.hpp"
 
 #include "../../kStringConverter.hpp"
-
-#include "../../../../HelperMacros.hpp"
 #include "../../../Debug/Exceptions/StringExceptions.hpp"
+
+#include "../../../../TypeTraits/FloatTraits.hpp"
+#include "../../../../HelperMacros.hpp"
 #include "../../../../Maths/Length_Type.hpp"
 #include "../../../../Maths/kMathsFundamentals.hpp"
 #include "../../../../Maths/kModulus.hpp"
@@ -130,7 +131,7 @@ namespace klib::kString::stringify
 			using String_t = std::basic_string<Char_t>;
 
 			figs.decimals = TrimZeros(figs.decimals);
-			
+
 			if (figs.integers != 0 && kmaths::Abs(val) < 10)
 				return FixedNotation<Char_t>(val, figs.dpShifts + kmaths::CountIntegerDigits(figs.decimals), figs);
 
@@ -207,6 +208,45 @@ namespace klib::kString::stringify
 				: FixedNotation<Char_t>(val, decimalPlaces, figs);
 			return std::move(cstr);
 		}
+
+		// Big Endian
+		template<class Char_t, typename Floating_t, typename Unsigned_t, typename = std::enable_if_t<
+			std::is_unsigned_v<Unsigned_t>
+			|| type_trait::Is_CharType_V<Char_t>>
+			>
+			const Char_t* BinaryNotation(Unsigned_t val)
+		{
+			constexpr auto dotIndex = type_trait::FloatToUint<Floating_t>::DotIndex;
+
+			Char_t buff[g_MaxBits<Unsigned_t> +1]{ type_trait::g_NullTerminator<Char_t> };
+			Char_t* const end = std::end(buff) - 1;
+			Char_t* current = end;
+
+			while (val > 0)
+			{
+				const auto binVal = val % 2;
+				const Char_t digit = static_cast<Char_t>('0' + binVal);
+				*(--current) = digit;
+				val >>= 1;
+
+				if (std::distance(current, end) == dotIndex)
+					*(--current) = Char_t('.');
+			}
+
+			if (const auto distance = std::distance(current, end);
+				distance < dotIndex)
+			{
+				PrependPadding(current, dotIndex, Char_t('0'));
+				*(--current) = Char_t('.');
+				*(--current) = Char_t('0');
+			}
+
+			*current = Char_t('0');
+			
+			auto cstr = CreateNewCString(current);
+			return std::move(cstr);
+		}
+
 	}
 
 	/// <summary>
@@ -233,38 +273,33 @@ namespace klib::kString::stringify
 			, FloatingPointFormat fmt = FloatingPointFormat::FIX)
 	{
 		using namespace secret::impl;
-		using IntegralSizeMatch_t = std::conditional_t<sizeof(T) == 4, std::uint32_t, std::uint64_t>;
 
 		constexpr auto defaultDps = std::numeric_limits<size_t>::digits10;
 
-		if (decimalPlaces == s_NoSpecifier)
-			decimalPlaces = 1;
+		if (decimalPlaces > 25)
+			decimalPlaces = 25;
 
-		if (std::isnan(val))
-			return Convert<Char_t>("nan");
-		if (std::isinf(val))
-			return Convert<Char_t>("inf");
-		if (g_MaxFloatDigits<T> - 2 < decimalPlaces)
-			throw kDebug::FormatError("value is too large for buffer");
-		
+		if (std::isnan(val)) return Convert<Char_t>("nan");
+		if (std::isinf(val)) return Convert<Char_t>("inf");
+
 		Figures figs = decimalPlaces < defaultDps
 			? GetFigures(val, defaultDps)
 			: GetFigures(val, decimalPlaces);
 
-		const auto limit = static_cast<size_t>(std::pow( 10, decimalPlaces + 1 ));
+		const auto limit = static_cast<size_t>(std::pow(10, decimalPlaces + 1));
 		while (figs.decimals > limit)
 		{
 			figs.decimals = kmaths::Demote(figs.decimals);
 		}
 		figs.decimals += 5;
-		figs.decimals = kmaths::Demote( figs.decimals );
+		figs.decimals = kmaths::Demote(figs.decimals);
 
 		switch (fmt.ToEnum()) {
 		case FloatingPointFormat::FIX: return FixedNotation<Char_t>(val, decimalPlaces, figs);
 		case FloatingPointFormat::SCI: return ScientificNotation<Char_t>(val, decimalPlaces, figs);
 		case FloatingPointFormat::GEN: return GeneralNotation<Char_t>(val, decimalPlaces, figs);
-		case FloatingPointFormat::HEX: return StringIntegralHex<Char_t>(*(IntegralSizeMatch_t*)&val, decimalPlaces);
-		case FloatingPointFormat::BIN: return StringIntegralBinary<Char_t>(*(IntegralSizeMatch_t*)&val, decimalPlaces);
+		case FloatingPointFormat::HEX: return StringIntegralHex<Char_t>(type_trait::FloatToUint<T>::BitCast(val));
+		case FloatingPointFormat::BIN: return BinaryNotation<Char_t, T>(type_trait::FloatToUint<T>::BitCast(val));
 		default:
 			throw kDebug::FormatError("Unknown floating point notation: " + ToWriter(fmt.ToString()));
 		}

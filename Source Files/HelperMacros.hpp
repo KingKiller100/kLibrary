@@ -22,6 +22,7 @@
 #else
 #	define UNUSED 
 #	define USE_RESULT 
+#	define NO_RETURN
 #	if MSVC_PLATFORM_TOOLSET < 110
 #		define noexcept throw ()
 #		define constexpr 
