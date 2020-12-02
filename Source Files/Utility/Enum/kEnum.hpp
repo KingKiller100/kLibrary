@@ -126,7 +126,7 @@ public:																					\
 	constexpr enumName& operator=(const enum_t value)									\
 	{																					\
 		this->value = value;															\
-		return *this;																				\
+		return *this;																	\
 	}																					\
 																						\
 	constexpr operator enum_t() const													\

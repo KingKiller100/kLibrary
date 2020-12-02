@@ -37,22 +37,22 @@ namespace klib {
 		USE_RESULT constexpr std::basic_string<CharT> ToString(const T& arg, const  Ts& ...argPack)
 		{
 			using DataTypes = std::variant<std::monostate, T, Ts...>;
-			constexpr auto count = std::variant_size_v<DataTypes> -1;
+			constexpr size_t count = std::variant_size_v<DataTypes> - 1;
 			
-			const auto reserveSize = count < 10
+			const size_t reserveSize = count < 10
 				? count + 2 * count
 				: 27 + (count - 9) * 4;
 			
-			std::basic_string<CharT> format;
-			format.reserve(reserveSize);
-			for (auto i = 0; i < count; ++i)
+			std::basic_string<CharT> output;
+			output.reserve(reserveSize);
+			for (size_t i = 0; i < count; ++i)
 			{
-				format.push_back(format::g_OpenerSymbol<CharT>);
-				format.append(GetData(stringify::StringIntegral<CharT>(i, 1)));
-				format.push_back(format::g_CloserSymbol<CharT>);
+				output.push_back(format::g_OpenerSymbol<CharT>);
+				output.append(stringify::StringUnsignedIntegral<CharT>(i));
+				output.push_back(format::g_CloserSymbol<CharT>);
 			}
 
-			const auto output = ToString(format.data(), arg, argPack...);
+			secret::impl::ToStringImpl<CharT, T, Ts...>(output, 0, arg, argPack...);
 			return output;
 		}
 	}

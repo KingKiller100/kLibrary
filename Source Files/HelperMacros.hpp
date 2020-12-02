@@ -18,6 +18,7 @@
 #if _MSVC_LANG > 201402L
 #	define UNUSED [[maybe_unused]]
 #	define USE_RESULT [[nodiscard]]
+#	define NO_RETURN [[noreturn]]
 #else
 #	define UNUSED 
 #	define USE_RESULT 

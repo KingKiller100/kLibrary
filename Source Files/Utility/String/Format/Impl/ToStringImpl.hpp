@@ -26,7 +26,7 @@ namespace klib::kString::secret::impl
 		Char_t* current = end;
 
 		*(--current) = format::g_CloserSymbol<Char_t>;
-		current = stringify::UintToStr(current, argIndex);
+		current = stringify::UintToStr(current, argIndex, 10);
 		*(--current) = format::g_OpenerSymbol<Char_t>;
 		
 		size_t openerPos = Find(outFmt.data(), current);
@@ -71,7 +71,7 @@ namespace klib::kString::secret::impl
 			outFmt.erase(openerPos, infoSize + 1);
 			outFmt.insert(openerPos, GetData(replacement), GetSize( replacement ));
 
-			if _CONSTEXPR_IF(std::is_pointer_v<decltype(replacement)>)
+			if _CONSTEXPR_IF(type_trait::Is_CString_V<decltype(replacement)>)
 			{
 				delete[] replacement;
 			}

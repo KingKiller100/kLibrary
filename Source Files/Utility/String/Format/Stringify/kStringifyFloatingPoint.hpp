@@ -6,6 +6,7 @@
 
 #include "../../kStringConverter.hpp"
 
+#include "../../../../HelperMacros.hpp"
 #include "../../../Debug/Exceptions/StringExceptions.hpp"
 #include "../../../../Maths/Length_Type.hpp"
 #include "../../../../Maths/kMathsFundamentals.hpp"
@@ -90,9 +91,6 @@ namespace klib::kString::stringify
 		{
 			using namespace type_trait;
 
-			if (decimalPlaces == s_NoSpecifier)
-				decimalPlaces = 6;
-
 			Char_t buff[g_MaxFloatDigits<T>]{ g_NullTerminator<Char_t> };
 			Char_t* const end = std::end(buff) - 1;
 			Char_t* current = end;
@@ -102,7 +100,7 @@ namespace klib::kString::stringify
 				const auto remaining = static_cast<long long>(decimalPlaces) - static_cast<long long>(figs.dpShifts);
 				if (remaining >= 0)
 				{
-					current = UintToStr(current, figs.decimals);
+					current = UintToStr(current, figs.decimals, 10);
 					PrependPadding(current, GetSize(current) + figs.dpShifts - 1, Char_t('0'));
 				}
 				else
@@ -113,7 +111,7 @@ namespace klib::kString::stringify
 				*(--current) = Char_t('.');
 			}
 
-			current = UintToStr(current, figs.integers);
+			current = UintToStr(current, figs.integers, 10);
 
 			if (figs.isNeg)
 				PrependMinusSign(current);
@@ -135,9 +133,6 @@ namespace klib::kString::stringify
 			
 			if (figs.integers != 0 && kmaths::Abs(val) < 10)
 				return FixedNotation<Char_t>(val, figs.dpShifts + kmaths::CountIntegerDigits(figs.decimals), figs);
-
-			if (decimalPlaces == s_NoSpecifier)
-				decimalPlaces = 1;
 
 			Char_t buff[g_MaxFloatDigits<T>]{ g_NullTerminator<Char_t> };
 			Char_t* const end = std::end(buff) - 1;
@@ -164,7 +159,7 @@ namespace klib::kString::stringify
 
 			if (totalShifts > 0)
 			{
-				current = UintToStr(current, totalShifts);
+				current = UintToStr(current, totalShifts, 10);
 				if (val < 1)
 					*(--current) = Char_t('-');
 				*(--current) = g_ScientificFloatToken<Char_t>;
@@ -172,7 +167,7 @@ namespace klib::kString::stringify
 
 			if (figs.decimals > 0)
 			{
-				current = UintToStr(current, figs.decimals);
+				current = UintToStr(current, figs.decimals, 10);
 			}
 
 			if (figs.integers > 0)
@@ -185,7 +180,7 @@ namespace klib::kString::stringify
 						*(--current) = s_DefaultPlaceHolder<Char_t>;
 					}
 				}
-				current = UintToStr(current, figs.integers);
+				current = UintToStr(current, figs.integers, 10);
 			}
 
 			const auto ePos = Find_First_Of(current, g_ScientificFloatToken<Char_t>);
@@ -238,9 +233,12 @@ namespace klib::kString::stringify
 			, FloatingPointFormat fmt = FloatingPointFormat::FIX)
 	{
 		using namespace secret::impl;
-		using IntegralSizeMatch_t = std::conditional_t<sizeof(T) == 4, std::int32_t, std::int64_t>;
+		using IntegralSizeMatch_t = std::conditional_t<sizeof(T) == 4, std::uint32_t, std::uint64_t>;
 
 		constexpr auto defaultDps = std::numeric_limits<size_t>::digits10;
+
+		if (decimalPlaces == s_NoSpecifier)
+			decimalPlaces = 1;
 
 		if (std::isnan(val))
 			return Convert<Char_t>("nan");
@@ -253,18 +251,20 @@ namespace klib::kString::stringify
 			? GetFigures(val, defaultDps)
 			: GetFigures(val, decimalPlaces);
 
-		const auto limit = kmaths::PowerOf10(decimalPlaces);
+		const auto limit = static_cast<size_t>(std::pow( 10, decimalPlaces + 1 ));
 		while (figs.decimals > limit)
 		{
 			figs.decimals = kmaths::Demote(figs.decimals);
 		}
+		figs.decimals += 5;
+		figs.decimals = kmaths::Demote( figs.decimals );
 
 		switch (fmt.ToEnum()) {
 		case FloatingPointFormat::FIX: return FixedNotation<Char_t>(val, decimalPlaces, figs);
 		case FloatingPointFormat::SCI: return ScientificNotation<Char_t>(val, decimalPlaces, figs);
 		case FloatingPointFormat::GEN: return GeneralNotation<Char_t>(val, decimalPlaces, figs);
-		case FloatingPointFormat::HEX: return StringIntegralBinary<Char_t>(*(IntegralSizeMatch_t*)&val, decimalPlaces);
-		case FloatingPointFormat::BIN: return StringIntegralHex<Char_t>(*(IntegralSizeMatch_t*)&val, decimalPlaces);
+		case FloatingPointFormat::HEX: return StringIntegralHex<Char_t>(*(IntegralSizeMatch_t*)&val, decimalPlaces);
+		case FloatingPointFormat::BIN: return StringIntegralBinary<Char_t>(*(IntegralSizeMatch_t*)&val, decimalPlaces);
 		default:
 			throw kDebug::FormatError("Unknown floating point notation: " + ToWriter(fmt.ToString()));
 		}

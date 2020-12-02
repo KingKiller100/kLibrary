@@ -24,10 +24,13 @@ namespace klib::kCalendar
 
 	std::string Millisecond::ToStringUsingTokenCount(const size_t count) const
 	{
-		const auto numberFormat = "{0:" + kString::ToString<char>(count) + "}";
-		const auto milliStr = (count < 4)
-			? kString::ToString(numberFormat, GetValue())
-			: (count == 4)
+		if (count < 4)
+		{
+			const auto numberFormat = "{0:" + kString::ToString<char>(count) + "}";
+			return kString::ToString(numberFormat, GetValue());
+		}
+
+		const auto milliStr = (count == 4)
 			? kString::ToString("{0}{1}", GetValue(), Units)
 			: kString::ToString("{0:3}{1}", GetValue(), Units);
 		return milliStr;

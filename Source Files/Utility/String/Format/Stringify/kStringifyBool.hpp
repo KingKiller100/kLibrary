@@ -8,13 +8,13 @@ namespace klib::kString::stringify
 		, typename = std::enable_if_t<
 		type_trait::Is_CharType_V<Char_t>>
 		>
-	const Char_t* StringBool(bool val)
+		const Char_t* StringBool(bool val)
 	{
 		const auto size = val ? 5 : 6;
-		Char_t* buff = new Char_t[size]{ };		
-		Char_t* const end = buff + size-1;
+		Char_t* buff = new Char_t[size]{ };
+		Char_t* const end = buff + size - 1;
 		Char_t* current = end;
-		
+
 		if (val)
 		{
 			*(--current) = Char_t('e');
@@ -33,5 +33,5 @@ namespace klib::kString::stringify
 
 		return (const Char_t*&&)buff;
 	}
-	
+
 }

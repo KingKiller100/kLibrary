@@ -42,12 +42,12 @@ namespace klib::kString::stringify
 	public:
 		constexpr Identity() = delete;
 
-		USE_RESULT static decltype(auto) Get(const T& val) noexcept
+		NO_RETURN static decltype(auto) Get(const T& val) noexcept
 		{
 			CrashUnknownObject();
 		}
 
-		USE_RESULT static decltype(auto) MakeStr(const T& arg, StringWriter<Char_t>& specifier)
+		NO_RETURN static decltype(auto) MakeStr(const T& arg, StringWriter<Char_t>& specifier)
 		{
 			CrashUnknownObject();
 		}
@@ -138,7 +138,7 @@ namespace klib::kString::stringify
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
-	///// Any Non-Character Pointers
+	/// Any Non-Character Pointers
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename Char_t, typename T>
 	class Identity<Char_t, T, std::enable_if_t<
@@ -160,7 +160,7 @@ namespace klib::kString::stringify
 	};
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
-	///// Primitive types (char, int, double, unsigned long long,...)
+	/// Primitive types (char, int, double, unsigned long long,...)
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename Char_t, typename T>
 	class Identity<Char_t, T, std::enable_if_t<
