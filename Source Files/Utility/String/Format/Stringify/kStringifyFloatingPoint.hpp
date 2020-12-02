@@ -131,6 +131,8 @@ namespace klib::kString::stringify
 			using namespace type_trait;
 			using String_t = std::basic_string<Char_t>;
 
+			figs.decimals = TrimZeros(figs.decimals);
+			
 			if (figs.integers != 0 && kmaths::Abs(val) < 10)
 				return FixedNotation<Char_t>(val, figs.dpShifts + kmaths::CountIntegerDigits(figs.decimals), figs);
 
@@ -152,7 +154,6 @@ namespace klib::kString::stringify
 				}
 				figs.integers = TrimZeros(figs.integers);
 			}
-
 
 			if (figs.decimals > 0)
 			{
