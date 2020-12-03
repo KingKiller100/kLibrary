@@ -22,7 +22,7 @@ namespace klib {
 			}
 
 			auto finalString = ToWriter(format);
-			secret::impl::ToStringImpl<CharT, T, Ts...>(finalString, 0, arg, argPack...);
+			secret::impl::ToStringImpl<CharT, T, Ts...>(finalString, 0, 0, arg, argPack...);
 			return finalString;
 		}
 
@@ -52,7 +52,7 @@ namespace klib {
 				output.push_back(format::g_CloserSymbol<CharT>);
 			}
 
-			secret::impl::ToStringImpl<CharT, T, Ts...>(output, 0, arg, argPack...);
+			secret::impl::ToStringImpl<CharT, T, Ts...>(output, 0, 0, arg, argPack...);
 			return output;
 		}
 	}
