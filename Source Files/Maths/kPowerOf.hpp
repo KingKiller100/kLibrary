@@ -48,6 +48,25 @@ namespace kmaths
 	USE_RESULT constexpr T PowerOf10(T power) noexcept(std::is_arithmetic_v<T>)
 	{
 		using namespace kmaths::secret::impl;
+
+		constexpr T _Small_powers_of_ten[] =
+		{
+		1,
+		10,
+		100,
+		1'000,
+		10'000,
+		100'000,
+		1'000'000,
+		10'000'000,
+		100'000'000,
+		1'000'000'000
+		};
+
+		if (IsInteger( power ) 
+			&& power < 10 && power >= 0)
+			return _Small_powers_of_ten[power];
+		
 		constexpr auto ten = CAST(T, 10);
 		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
 		{

@@ -62,7 +62,7 @@ namespace klib::kString::stringify
 			return count;
 		}
 
-		inline USE_RESULT size_t TrimZeros(size_t num)
+		USE_RESULT inline size_t TrimZeros(size_t num)
 		{
 			while (num != 0 && kmaths::Modulus<size_t>(num, 10) == 0)
 			{
@@ -92,22 +92,33 @@ namespace klib::kString::stringify
 		{
 			using namespace type_trait;
 
+			using Traits = FloatTraits<T>;
+			
+			size_t num = 0;
+			int count = 1;
+			
+			for (auto bit : Traits::Mask)
+			{
+				const auto uintBits = FloatTraits<T>::BitCast(val);
+				const auto presion = FloatTraits<T>::Parts(val);
+				const auto mant = presion.parts.mantissa;
+				const bool hit = mant & bit;
+				if (hit)
+				{
+					num += 1 * std::pow(T(2), -count);
+				}
+				++count;
+			}
+
 			Char_t buff[g_MaxFloatDigits<T>]{ g_NullTerminator<Char_t> };
 			Char_t* const end = std::end(buff) - 1;
 			Char_t* current = end;
 
 			if (decimalPlaces > 0)
 			{
-				const auto remaining = static_cast<long long>(decimalPlaces) - static_cast<long long>(figs.dpShifts);
-				if (remaining >= 0)
-				{
-					current = UintToStr(current, figs.decimals, 10);
-					PrependPadding(current, GetSize(current) + figs.dpShifts - 1, Char_t('0'));
-				}
-				else
-				{
-					PrependPadding(current, decimalPlaces, Char_t('0'));
-				}
+				current = UintToStr(current, figs.decimals, 10);
+				const auto padding = (end - current) + (figs.dpShifts - 1);
+				PrependPadding(current, padding, Char_t('0'));
 
 				*(--current) = Char_t('.');
 			}
@@ -130,10 +141,17 @@ namespace klib::kString::stringify
 			using namespace type_trait;
 			using String_t = std::basic_string<Char_t>;
 
-			figs.decimals = TrimZeros(figs.decimals);
-
-			if (figs.integers != 0 && kmaths::Abs(val) < 10)
+			if (figs.integers != 0 && figs.integers < 10)
 				return FixedNotation<Char_t>(val, figs.dpShifts + kmaths::CountIntegerDigits(figs.decimals), figs);
+
+			constexpr auto defaultDps = std::numeric_limits<size_t>::digits10;
+			if (kmaths::CountIntegerDigits(figs.decimals) < decimalPlaces
+				&& decimalPlaces < defaultDps)
+			{
+				figs = GetFigures(val, defaultDps);
+			}
+
+			figs.decimals = TrimZeros(figs.decimals);
 
 			Char_t buff[g_MaxFloatDigits<T>]{ g_NullTerminator<Char_t> };
 			Char_t* const end = std::end(buff) - 1;
@@ -162,7 +180,7 @@ namespace klib::kString::stringify
 			{
 				current = UintToStr(current, totalShifts, 10);
 				if (val < 1)
-					*(--current) = Char_t('-');
+					PrependMinusSign(current);
 				*(--current) = g_ScientificFloatToken<Char_t>;
 			}
 
@@ -216,7 +234,7 @@ namespace klib::kString::stringify
 			>>
 			const Char_t* BinaryNotation(Unsigned_t val)
 		{
-			constexpr auto dotIndex = type_trait::FloatToUint<Floating_t>::DotIndex;
+			constexpr auto dotIndex = type_trait::FloatTraits<Floating_t>::DotIndex;
 
 			Char_t buff[g_MaxBits<Unsigned_t> +1]{ type_trait::g_NullTerminator<Char_t> };
 			Char_t* const end = std::end(buff) - 1;
@@ -275,32 +293,19 @@ namespace klib::kString::stringify
 	{
 		using namespace secret::impl;
 
-		constexpr auto defaultDps = std::numeric_limits<size_t>::digits10;
-
-		if (decimalPlaces > 25)
-			decimalPlaces = 25;
+		decimalPlaces = kmaths::Min<size_t>(decimalPlaces, 25);
 
 		if (std::isnan(val)) return Convert<Char_t>("nan");
 		if (std::isinf(val)) return Convert<Char_t>("inf");
 
-		Figures figs = decimalPlaces < defaultDps
-			? GetFigures(val, defaultDps)
-			: GetFigures(val, decimalPlaces);
-
-		const auto limit = static_cast<size_t>(std::pow(10, decimalPlaces + 1));
-		while (figs.decimals > limit)
-		{
-			figs.decimals = kmaths::Demote(figs.decimals);
-		}
-		figs.decimals += 5;
-		figs.decimals = kmaths::Demote(figs.decimals);
+		Figures figs = GetFigures(val, decimalPlaces);
 
 		switch (fmt.ToEnum()) {
 		case FloatingPointFormat::FIX: return FixedNotation<Char_t>(val, decimalPlaces, figs);
 		case FloatingPointFormat::SCI: return ScientificNotation<Char_t>(val, decimalPlaces, figs);
 		case FloatingPointFormat::GEN: return GeneralNotation<Char_t>(val, decimalPlaces, figs);
-		case FloatingPointFormat::HEX: return StringIntegralHex<Char_t>(type_trait::FloatToUint<T>::BitCast(val));
-		case FloatingPointFormat::BIN: return BinaryNotation<Char_t, T>(type_trait::FloatToUint<T>::BitCast(val));
+		case FloatingPointFormat::HEX: return StringIntegralHex<Char_t>(type_trait::FloatTraits<T>::BitCast(val));
+		case FloatingPointFormat::BIN: return BinaryNotation<Char_t, T>(type_trait::FloatTraits<T>::BitCast(val));
 		default:
 			throw kDebug::FormatError("Unknown floating point notation: " + ToWriter(fmt.ToString()));
 		}
