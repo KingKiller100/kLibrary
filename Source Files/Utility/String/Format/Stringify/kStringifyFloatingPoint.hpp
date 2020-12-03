@@ -203,7 +203,7 @@ namespace klib::kString::stringify
 			>
 			const Char_t* GeneralNotation(T val, size_t decimalPlaces, Figures& figs)
 		{
-			const auto cstr = figs.dpShifts > 6
+			const auto cstr = figs.dpShifts > 6 || decimalPlaces > 6
 				? ScientificNotation<Char_t>(val, decimalPlaces, figs)
 				: FixedNotation<Char_t>(val, decimalPlaces, figs);
 			return std::move(cstr);
@@ -212,8 +212,8 @@ namespace klib::kString::stringify
 		// Big Endian
 		template<class Char_t, typename Floating_t, typename Unsigned_t, typename = std::enable_if_t<
 			std::is_unsigned_v<Unsigned_t>
-			|| type_trait::Is_CharType_V<Char_t>>
-			>
+			|| type_trait::Is_CharType_V<Char_t>
+			>>
 			const Char_t* BinaryNotation(Unsigned_t val)
 		{
 			constexpr auto dotIndex = type_trait::FloatToUint<Floating_t>::DotIndex;
@@ -241,8 +241,9 @@ namespace klib::kString::stringify
 				*(--current) = Char_t('0');
 			}
 
-			*current = Char_t('0');
-			
+			if (!kmaths::IsNegative(val))
+				*current = Char_t('0');
+
 			auto cstr = CreateNewCString(current);
 			return std::move(cstr);
 		}
