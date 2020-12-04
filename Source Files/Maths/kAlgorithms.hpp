@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Fraction.hpp"
-#include "Constants.hpp"
+#include "kMathsConstants.hpp"
 #include "Length_Type.hpp"
 #include "kMathsFundamentals.hpp"
 #include "kBinarySearch.hpp"
 #include "kPowerOf.hpp"
 #include "kCount.hpp"
 #include "kMathsTrig.hpp"
-#include "kMathEpsilon.hpp"
+#include "kMathsEpsilon.hpp"
 #include "kModulus.hpp"
 
 #include "../HelperMacros.hpp"

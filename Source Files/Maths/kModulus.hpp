@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "../HelperMacros.hpp"
-#include "Constants.hpp"
+#include "kMathsConstants.hpp"
 #include <xtr1common>
 
 namespace kmaths

@@ -70,7 +70,7 @@ namespace kTest::maths
 	{
 		{
 			constexpr kmaths::Vector2d a{}, b{}, c{}, d{}, e{}, f{};
-			constexpr auto count = constants::Count(a, b, c, d, e, f);
+			constexpr auto count = kmaths::Count(a, b, c, d, e, f);
 			VERIFY_COMPILE_TIME(count == 6);
 		}
 		
@@ -276,16 +276,11 @@ namespace kTest::maths
 				const auto result = Tan(x);
 				const auto expected = std::tan(x);
 
-				const auto resultRounded = Round(result, 15);
-				const auto expectedRounded = Round(expected, 15);
-
-				VERIFY(resultRounded == expectedRounded);
+				VERIFY(false);
 			}
-			catch (const klib::kDebug::MathsError & e)
+			catch (...)
 			{
-				constexpr auto msg = "ERROR: Division by zero has occurred!";
-				const auto result = std::strcmp(e.what(), msg) == 0;
-				VERIFY(result == true);
+				VERIFY(true);
 			}
 		}
 
@@ -296,17 +291,11 @@ namespace kTest::maths
 				constexpr auto x = 3 * constants::PI_OVER_2;
 				const auto result = Tan(x, 500);
 				const auto expected = std::tan(x);
-
-				const auto resultRounded = Round(result, 15);
-				const auto expectedRounded = Round(expected, 15);
-
-				VERIFY(resultRounded == expectedRounded);
+				VERIFY(false);
 			}
-			catch (const klib::kDebug::DivByZeroError & e)
+			catch (...)
 			{
-				constexpr auto msg = "ERROR: Division by zero has occurred!";
-				const auto result = std::strcmp(e.what(), msg) == 0;
-				VERIFY(result == true);
+				VERIFY(true);
 			}
 		}
 

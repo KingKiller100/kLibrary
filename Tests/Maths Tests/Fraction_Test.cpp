@@ -1,7 +1,7 @@
 ﻿#include "pch.hpp"
 #include "Fraction_Test.hpp"
 
-#include "../../Source Files/Maths/Constants.hpp"
+#include "../../Source Files/Maths/kMathsConstants.hpp"
 #include "../../Source Files/Maths/Fraction.hpp"
 
 

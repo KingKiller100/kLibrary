@@ -1,7 +1,7 @@
 #pragma once
 
 // Common mathematical constants
-#include "Constants.hpp"
+#include "kMathsConstants.hpp"
 
 // Common math helper functions
 #include "kAlgorithms.hpp"

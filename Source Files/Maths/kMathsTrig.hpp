@@ -1,6 +1,8 @@
 ﻿#pragma once
-#include "Constants.hpp"
+#include "kMathsConstants.hpp"
 #include "../HelperMacros.hpp"
+
+#include "kMathsEpsilon.hpp"
 
 namespace kmaths
 {

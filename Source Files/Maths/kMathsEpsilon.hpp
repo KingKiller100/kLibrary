@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Constants.hpp"
+#include "kMathsConstants.hpp"
 #include "kMathsFundamentals.hpp"
 
 namespace kmaths
