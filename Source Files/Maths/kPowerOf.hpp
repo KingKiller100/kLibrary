@@ -6,13 +6,25 @@
 
 namespace kmaths
 {
+	template<typename T>
+	USE_RESULT constexpr T Square(T x) noexcept
+	{
+		return x * x;
+	}
+
+	template<typename T>
+	USE_RESULT constexpr T Cube(T x) noexcept
+	{
+		return x * x * x;
+	}
+	
 	namespace secret::impl
 	{
 		template<typename T>
 		USE_RESULT constexpr T PowerOfImpl(T base, BigInt_t power) noexcept
 		{
 #if MSVC_PLATFORM_TOOLSET > 142
-			return CAST(T, pow(base, power));
+			return CAST(T, std::pow<T,T>(base, power));
 #else
 			if (power == 0)
 				return constants::One<T>();
@@ -26,11 +38,11 @@ namespace kmaths
 			const T temp = PowerOfImpl(base, power >> 1);
 
 			if (power % 2 == 0)
-				return temp * temp;
+				return Square(temp);
 			else if (IsNegative(power))
-				return (temp * temp) / base;
+				return Square(temp) / base;
 			else
-				return base * temp * temp;
+				return base * Square(temp);
 #endif // MSVC_PLATFORM_TOOLSET > 142
 		}
 	}

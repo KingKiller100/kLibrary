@@ -1,11 +1,33 @@
 ﻿#pragma once
-
-#include "kMathsFundamentals.hpp"
 #include "../HelperMacros.hpp"
+#include "Constants.hpp"
 #include <xtr1common>
 
 namespace kmaths
 {
+	template <typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T FloatingPointRemainder(T num, T base) noexcept
+	{
+#if MSVC_PLATFORM_TOOLSET > 142
+		return std::fmod(num, base);
+#else
+		const auto b = CAST(constants::Accuracy_t, base);
+		const auto n = CAST(constants::Accuracy_t, num);
+
+		const auto one_over_base = constants::OneOver<constants::Accuracy_t>(b);
+		const auto num_over_base = n * one_over_base;
+		const auto int_n_over_b = CAST(BigInt_t, num_over_base);
+
+		if (num_over_base == int_n_over_b)
+			return constants::Zero<T>();
+
+		const auto closestMultiplier = int_n_over_b * b;
+		const auto rem = n - closestMultiplier;
+
+		return CAST(T, rem);
+#endif
+	}
+
 	template <typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Modulus(T num, T base) noexcept
 	{

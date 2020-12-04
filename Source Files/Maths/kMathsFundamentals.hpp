@@ -120,32 +120,6 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T Square(T x) noexcept
-	{
-		return x * x;
-	}
-
-	template<typename T>
-	USE_RESULT constexpr T Cube(T x) noexcept
-	{
-		return x * x * x;
-	}
-
-	template<typename T>
-	USE_RESULT constexpr T ToDegrees(const T radians) noexcept
-	{
-		constexpr auto convertR2D = constants::RadiansToDegrees<T>();
-		return CAST(T, radians * convertR2D);
-	}
-
-	template<typename T>
-	USE_RESULT constexpr T ToRadians(const T degrees) noexcept
-	{
-		constexpr auto convertD2R = constants::DegreesToRadians<constants::Accuracy_t>();
-		return CAST(T, degrees * convertD2R);
-	}
-
-	template<typename T>
 	USE_RESULT constexpr T Remap(T progress, T actualMin, T actualMax, T remappedMin, T remappedMax) noexcept
 	{
 		const T actualDifference = actualMax - actualMin;
@@ -160,43 +134,6 @@ namespace kmaths
 	USE_RESULT constexpr bool InRange(const T value, const T minVal, const T maxVal) noexcept
 	{
 		return (value >= minVal) && (value < maxVal);
-	}
-
-	template <typename T>
-	USE_RESULT constexpr T Lerp(T a, T b, T t) noexcept
-	{
-		return a + t * (b - a);
-	}
-
-	template <typename T>
-	USE_RESULT T GetAccelerationOverTime(T initialVelocity, T distance) noexcept
-	{
-		const T acceleration = (0 - (initialVelocity * initialVelocity)) / (2 * distance);
-
-		return acceleration;
-	}
-
-	template <typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T FloatingPointRemainder(T num, T base) noexcept
-	{
-#if MSVC_PLATFORM_TOOLSET > 142
-		return std::fmod(num, base);
-#else
-		const auto b = CAST(constants::Accuracy_t, base);
-		const auto n = CAST(constants::Accuracy_t, num);
-
-		const auto one_over_base = constants::OneOver<constants::Accuracy_t>(b);
-		const auto num_over_base = n * one_over_base;
-		const auto int_n_over_b = CAST(BigInt_t, num_over_base);
-
-		if (num_over_base == int_n_over_b)
-			return constants::Zero<T>();
-
-		const auto closestMultiplier = int_n_over_b * b;
-		const auto rem = n - closestMultiplier;
-
-		return CAST(T, rem);
-#endif
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
@@ -245,5 +182,16 @@ namespace kmaths
 	USE_RESULT constexpr T Demote(T x)
 	{
 		return x / CAST(T, 10);
+	}
+
+	template<class T>
+	USE_RESULT constexpr T GetDecimals(T x)
+	{
+		const auto isNeg = IsNegative(x);
+		x = Abs(x);
+		const auto justIntegers = static_cast<size_t>(Floor(x));
+		const auto justDecimals = x - justIntegers;
+		x = isNeg ? -justDecimals : justDecimals;
+		return x;
 	}
 }

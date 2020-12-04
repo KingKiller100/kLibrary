@@ -7,6 +7,7 @@
 #include "kBinarySearch.hpp"
 #include "kPowerOf.hpp"
 #include "kCount.hpp"
+#include "kMathsTrig.hpp"
 #include "kModulus.hpp"
 
 #include "../HelperMacros.hpp"
@@ -34,8 +35,6 @@ namespace kmaths
 {	
 	namespace secret::impl
 	{
-
-
 		// Bakhshali Method
 		template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 		USE_RESULT constexpr T SqrtImpl(T square)

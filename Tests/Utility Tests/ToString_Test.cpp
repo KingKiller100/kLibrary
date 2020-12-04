@@ -205,9 +205,9 @@ namespace kTest::utility
 		}
 
 		{
-			constexpr auto num = 2 + 6.2554976934803e-5;
+			constexpr auto num = 100+ 6.255e-8;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 19, stringify::FloatingPointFormat::SCI);
-			const auto expected = SprintfWrapper("%.19e", num);
+			const auto expected = SprintfWrapper("%.10g", num);
 			VERIFY(result == "2.0000625549769348588")
 		}
 
