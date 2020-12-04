@@ -184,14 +184,15 @@ namespace kmaths
 		return x / CAST(T, 10);
 	}
 
-	template<class T>
-	USE_RESULT constexpr T GetDecimals(T x)
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T GetDecimals(T x) noexcept
 	{
+		if (IsDecimal(x))
+			return x;
+
 		const auto isNeg = IsNegative(x);
-		x = Abs(x);
-		const auto justIntegers = static_cast<size_t>(Floor(x));
-		const auto justDecimals = x - justIntegers;
-		x = isNeg ? -justDecimals : justDecimals;
-		return x;
+		if (isNeg) x = Abs(x);
+		x -= Floor(x);
+		return isNeg ? -x : x;
 	}
 }

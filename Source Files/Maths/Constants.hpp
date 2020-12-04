@@ -31,27 +31,6 @@ namespace kmaths
 		constexpr Accuracy_t GOLDEN_RATIO = 1.61803398874989l;
 		constexpr Accuracy_t INVERSE_GOLDEN_RATIO = static_cast<Accuracy_t>(1) / GOLDEN_RATIO;
 
-		namespace secret::impl
-		{
-			constexpr size_t GetCountImpl()
-			{
-				return 0;
-			}
-			template<typename T, typename ...Ts>
-			constexpr size_t GetCountImpl(const T&, const Ts& ...args)
-			{
-				return 1 + GetCountImpl(args...);
-			}
-		}
-
-		template<typename T, typename ...Ts>
-		constexpr size_t Count(const T& arg, const Ts& ...args)
-		{
-			using namespace secret::impl;
-			const auto count(GetCountImpl(arg, args...));
-			return count;
-		}
-
 		template<typename T>
 		USE_RESULT constexpr T RadiansToDegrees() noexcept
 		{
