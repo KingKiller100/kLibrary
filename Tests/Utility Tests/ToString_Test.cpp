@@ -142,20 +142,26 @@ namespace kTest::utility
 	bool FormatToStringTester::StringifyFloatingPointTest()
 	{
 		{
-			constexpr auto num = 2.5f;
+			constexpr auto num = 2.5;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 1);
 			VERIFY(result == "2.5");
 		}
 
 		{
-			constexpr auto num = -2.5;
+			constexpr auto num = -2.75;
+			const std::u16string result = stringify::StringFloatingPoint<char16_t>(num, 0);
+			VERIFY(result == u"-2")
+		}
+
+		{
+			constexpr auto num = 1.l/3;
 			const std::u16string result = stringify::StringFloatingPoint<char16_t>(num, 0);
 			VERIFY(result == u"-2")
 		}
 
 #if __cpp_char8_t
 		{
-			constexpr auto num = 2.5;
+			constexpr auto num = 2.625f;
 			const std::u8string result = stringify::StringFloatingPoint<char8_t>(num, 3);
 			VERIFY(result == u8"2.500")
 		}

@@ -7,34 +7,34 @@
 
 namespace klib::type_trait
 {
-	union SinglePointPrecision
+	union SingleFloatPrecision
 	{
 		float f;
 
-		struct
+		struct Parts
 		{
-			unsigned mantissa : 23;
-			unsigned exponent : 8;
+			unsigned mantissa : FLT_MANT_DIG - 1;
+			unsigned exponent : (CHAR_BIT * sizeof(float) - FLT_MANT_DIG);
 			unsigned sign : 1;
 		} parts;
 		std::uint32_t u;
 	};
 
-	union DoublePointPrecision
+	union DoubleFloatPrecision
 	{
 		double f;
 
-		struct
+		struct Parts
 		{
-			unsigned long long mantissa : 52;
-			unsigned long long exponent : 11;
+			unsigned long long mantissa : (DBL_MANT_DIG - 1);
+			unsigned long long exponent : (CHAR_BIT * sizeof(double) - DBL_MANT_DIG);
 			unsigned long long sign : 1;
 		} parts;
 
 		std::uint64_t u;
 	};
 
-	static constexpr std::array<std::uint32_t, std::numeric_limits<float>::digits> g_SingleMantissaMask = {
+	static constexpr std::array<std::uint32_t, FLT_MANT_DIG> g_SingleMantissaMask = {
 		1u << 23, 1u << 22, 1u << 21,
 		1u << 20, 1u << 19, 1u << 18, 1u << 17,
 		1u << 16, 1u << 15, 1u << 14, 1u << 13,
@@ -44,7 +44,7 @@ namespace klib::type_trait
 		1u << 0
 	};
 
-	static constexpr std::array<std::uint64_t, std::numeric_limits<double>::digits> g_DoubleMantissaMask = {
+	static constexpr std::array<std::uint64_t, DBL_MANT_DIG> g_DoubleMantissaMask = {
 		1ull << 52, 1ull << 51, 1ull << 50, 1ull << 49,
 		1ull << 48, 1ull << 47, 1ull << 46, 1ull << 45,
 		1ull << 44, 1ull << 43, 1ull << 42, 1ull << 41,
@@ -76,33 +76,27 @@ namespace klib::type_trait
 		static_assert(std::is_floating_point_v<T>, "Type entered is not recognized as a floating point type");
 
 		using Unsigned_t = std::conditional_t<sizeof(T) == 4, std::uint32_t, std::uint64_t>;
-		using Precision_t = std::conditional_t<std::is_same_v<T, float>, SinglePointPrecision, DoublePointPrecision>;
+		using Precision_t = std::conditional_t<std::is_same_v<T, float>, SingleFloatPrecision, DoubleFloatPrecision>;
 		using Limits_t = std::numeric_limits<T>;
 
-
-		static constexpr auto& Mask = GetMask<T>();
+		static constexpr auto Mask = GetMask<T>();
 		static constexpr auto Bytes = sizeof(T);
 		static constexpr auto Mantissa = Limits_t::digits;
 		static constexpr auto Exponent = Bytes - Mantissa;
 		static constexpr auto DotIndex = Mantissa - 3;
 
-		USE_RESULT static constexpr Unsigned_t BitCast(T val) noexcept
+		USE_RESULT static constexpr Unsigned_t UintBitCast(T val) noexcept
 		{
 			Precision_t p;
 			p.f = val;
 			return p.u;
 		}
 
-		USE_RESULT static constexpr Unsigned_t AsUint(T val) noexcept
-		{
-			return static_cast<Unsigned_t>(val);
-		}
-
-		USE_RESULT static constexpr Precision_t Parts(T val) noexcept
+		USE_RESULT static constexpr typename Precision_t::Parts Parts(T val) noexcept
 		{
 			Precision_t p;
 			p.f = val;
-			return p;
+			return p.parts;
 		}
 	};
 

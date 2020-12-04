@@ -94,20 +94,19 @@ namespace klib::kString::stringify
 
 			using Traits = FloatTraits<T>;
 			
-			size_t num = 0;
-			int count = 1;
+			T num = 0;
+			T count = 1;
 			
 			for (auto bit : Traits::Mask)
 			{
-				const auto uintBits = FloatTraits<T>::BitCast(val);
-				const auto presion = FloatTraits<T>::Parts(val);
-				const auto mant = presion.parts.mantissa;
-				const bool hit = mant & bit;
+				const auto uintBits = FloatTraits<T>::UintBitCast(val);
+				const auto parts = FloatTraits<T>::Parts(val);
+				const bool hit = uintBits & bit;
 				if (hit)
 				{
-					num += 1 * std::pow(T(2), -count);
+					num += std::pow<T, T>(2, count);
 				}
-				++count;
+				--count;
 			}
 
 			Char_t buff[g_MaxFloatDigits<T>]{ g_NullTerminator<Char_t> };
@@ -304,8 +303,8 @@ namespace klib::kString::stringify
 		case FloatingPointFormat::FIX: return FixedNotation<Char_t>(val, decimalPlaces, figs);
 		case FloatingPointFormat::SCI: return ScientificNotation<Char_t>(val, decimalPlaces, figs);
 		case FloatingPointFormat::GEN: return GeneralNotation<Char_t>(val, decimalPlaces, figs);
-		case FloatingPointFormat::HEX: return StringIntegralHex<Char_t>(type_trait::FloatTraits<T>::BitCast(val));
-		case FloatingPointFormat::BIN: return BinaryNotation<Char_t, T>(type_trait::FloatTraits<T>::BitCast(val));
+		case FloatingPointFormat::HEX: return StringIntegralHex<Char_t>(type_trait::FloatTraits<T>::UintBitCast(val));
+		case FloatingPointFormat::BIN: return BinaryNotation<Char_t, T>(type_trait::FloatTraits<T>::UintBitCast(val));
 		default:
 			throw kDebug::FormatError("Unknown floating point notation: " + ToWriter(fmt.ToString()));
 		}
