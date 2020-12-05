@@ -12,62 +12,18 @@
 #include "../../../../Maths/kMathsFundamentals.hpp"
 #include "../../../../Maths/kModulus.hpp"
 #include "../../../../Maths/kRound.hpp"
+#include "../../../../Maths/kFloatBreakdown.hpp"
 
 #include <utility>
+
 
 namespace klib::kString::stringify
 {
 	namespace secret::impl
 	{
+		using namespace kmaths;
+		
 		constexpr auto g_MaxPrecision = 25;
-
-		template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-		struct Figures
-		{
-			size_t integers;
-			T decimals;
-			size_t dpShifts;
-			bool isNeg;
-		};
-
-		template<typename T>
-		USE_RESULT constexpr size_t GetDpShifts(T decimals)
-		{
-			size_t count = 0;
-			if (!kmaths::constants::ApproximatelyZero<T>(decimals))
-			{
-				auto iter = g_MaxPrecision;
-				size_t magnitude = 1;
-				auto val = decimals * magnitude;
-				while (iter-- > 0 && val < 1)
-				{
-					++count;
-					magnitude *= 10;
-					val = decimals * magnitude;
-				}
-			}
-			return count;
-		}
-
-		template<class T, class = std::enable_if_t<std::is_integral_v<T>>>
-		constexpr void TrimZeros(T& num)
-		{
-			while (num != 0 && (num % 10 == 0))
-			{
-				num /= static_cast<T>(10);
-			}
-		}
-
-		template<typename T>
-		USE_RESULT constexpr Figures<T> GetFigures(T val, size_t decimalPlaces)
-		{
-			const auto isNeg = kmaths::IsNegative(val);
-			val = kmaths::Abs(val);
-			const auto justIntegers = static_cast<size_t>(kmaths::Floor(val));
-			const auto justDecimals = kmaths::GetDecimals(val);
-			const auto dpShifts = GetDpShifts(justDecimals);
-			return { justIntegers, justDecimals, dpShifts, isNeg };
-		}
 
 		template<class Char_t, typename T, typename = std::enable_if_t<
 			std::is_floating_point_v<T>
@@ -83,7 +39,7 @@ namespace klib::kString::stringify
 
 			if (decimalPlaces > 0)
 			{
-				const size_t decimals = static_cast<size_t>(figs.decimals * kmaths::PowerOf10(decimalPlaces));
+				const size_t decimals = static_cast<size_t>(figs.decimals * PowerOf10(decimalPlaces));
 				current = UintToStr(current, decimals);
 				const auto desiredCharacterCount = (end - current) + (figs.dpShifts - 1);
 				PrependPadding(current, desiredCharacterCount, Char_t('0'));
@@ -105,7 +61,8 @@ namespace klib::kString::stringify
 			const Char_t* ScientificNotation(T val, size_t sigFigs, Figures<T>& figs)
 		{
 			using namespace type_trait;
-			if (figs.integers == 0 && kmaths::ApproximatelyZero(figs.decimals))
+			
+			if (figs.integers == 0 && figs.dpShifts == 0)
 				return Convert<Char_t>("0");
 
 			Char_t buff[g_MaxFloatDigits<T>]{ g_NullTerminator<Char_t> };
@@ -113,14 +70,13 @@ namespace klib::kString::stringify
 			Char_t* current = end;
 
 			const auto isZeroInt = figs.integers == 0;
-
 			const auto direction = kmaths::IsDecimal(val)
 				? Char_t('-')
 				: Char_t('+');
 
-			const auto intSize = kmaths::CountIntegerDigits(figs.integers);
-			const auto sizeMet = !isZeroInt && intSize >= sigFigs;
-			auto exponent = intSize - 1;
+			const auto intDigits = kmaths::CountIntegerDigits(figs.integers);
+			const auto sizeMet = !isZeroInt && intDigits >= sigFigs;
+			auto exponent = intDigits - 1;
 
 			if (sizeMet) // Only need integer significant figures
 			{
@@ -128,7 +84,7 @@ namespace klib::kString::stringify
 				if (exponent < 10) current = UintToStr(current, 0);
 				*(--current) = direction;
 				*(--current) = g_ScientificFloatToken<Char_t>;
-				if (intSize > sigFigs)
+				if (intDigits > sigFigs) // Integers size > significant figures
 				{
 					const auto limit = kmaths::PowerOf10(sigFigs + 1);
 					while (figs.integers >= limit)
@@ -138,10 +94,17 @@ namespace klib::kString::stringify
 					figs.integers += 5;
 					figs.integers = kmaths::Demote(figs.integers);
 				}
+				else // Integer == significant figures
+				{
+					if (figs.decimals >= kmaths::ZeroPointFive<T>())
+					{
+						++figs.integers;
+					}
+				}
 			}
 			else // Need integer and decimals significant figures
 			{
-				const auto remaining = isZeroInt ? sigFigs : (sigFigs - intSize);
+				const auto remaining = isZeroInt ? sigFigs : (sigFigs - intDigits);
 				const auto mag = kmaths::PowerOf10(remaining - 1);
 				size_t power = 1;
 				size_t shifts = 1;
