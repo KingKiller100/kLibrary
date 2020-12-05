@@ -154,60 +154,61 @@ namespace kTest::utility
 		}
 
 		{
-			constexpr auto num = 1.l/3;
+			constexpr auto num = -2.125;
 			const std::u16string result = stringify::StringFloatingPoint<char16_t>(num, 0);
 			VERIFY(result == u"-2")
 		}
 
 #if __cpp_char8_t
 		{
-			constexpr auto num = 2.625f;
+			constexpr auto num = 2.5f;
 			const std::u8string result = stringify::StringFloatingPoint<char8_t>(num, 3);
 			VERIFY(result == u8"2.500")
 		}
 
 		{
 			constexpr auto num = 2.5e0;
-			const std::u8string result = stringify::StringFloatingPoint<char8_t>(num, 3, stringify::FloatingPointFormat::SCI);
-			VERIFY(result == u8"2.5")
+			const std::u8string result = stringify::StringFloatingPoint<char8_t>(num, 1, stringify::FloatingPointFormat::SCI);
+			VERIFY(result == u8"2.5e+00")
 		}
 #endif
 
 		{
 			constexpr auto num = 2.5e3;
 			const std::u32string result = stringify::StringFloatingPoint<char32_t>(num, 3, stringify::FloatingPointFormat::SCI);
-			VERIFY(result == U"2.5e3")
+			VERIFY(result == U"2.500e+03")
 		}
 
 		{
 			constexpr auto num = 2e5;
-			const std::u32string result = stringify::StringFloatingPoint<char32_t>(num, 3, stringify::FloatingPointFormat::SCI);
-			VERIFY(result == U"2e5")
+			const std::u32string result = stringify::StringFloatingPoint<char32_t>(num, 4, stringify::FloatingPointFormat::SCI);
+			const auto expected = SprintfWrapper("%.4e", num);
+			VERIFY(result == U"2.0000e+05")
 		}
 
 		{
 			constexpr auto num = 5e-1f;
-			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
-			const auto expected = SprintfWrapper("%.e", num);
-			VERIFY(result == "5e-1")
+			const std::string result = stringify::StringFloatingPoint<char>(num, 0, stringify::FloatingPointFormat::SCI);
+			const auto expected = SprintfWrapper("%.0e", num);
+			VERIFY(result == "5e-01")
 		}
 
 		{
 			constexpr auto num = 6.25e-2;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
-			VERIFY(result == "6.25e-2")
+			VERIFY(result == "6.25e-02")
 		}
 
 		{
 			constexpr auto num = 6.25e-5;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
-			VERIFY(result == "6.25e-5")
+			VERIFY(result == "6.25e-05")
 		}
 
 		{
-			constexpr auto num = 100+ 6.255e-8;
-			const std::string result = stringify::StringFloatingPoint<char>(num, 19, stringify::FloatingPointFormat::SCI);
-			const auto expected = SprintfWrapper("%.10g", num);
+			constexpr auto num = 10005 + 6.255e-1;
+			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
+			const auto expected = SprintfWrapper("%.3e", num);
 			VERIFY(result == "2.0000625549769348588")
 		}
 

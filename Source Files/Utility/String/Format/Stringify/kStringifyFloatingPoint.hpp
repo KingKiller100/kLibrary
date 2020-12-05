@@ -19,29 +19,14 @@ namespace klib::kString::stringify
 {
 	namespace secret::impl
 	{
+		template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 		struct Figures
 		{
 			size_t integers;
-			size_t decimals;
+			T decimals;
 			size_t dpShifts;
 			bool isNeg;
 		};
-
-		template <class T>
-		USE_RESULT constexpr kmaths::constants::Accuracy_t GetSignificantFigures(T val, size_t precision)
-		{
-			using namespace kmaths;
-			using namespace kmaths::secret::impl;
-			using namespace kmaths::constants;
-
-			const auto accuracy = kmaths::secret::impl::PowerOfImpl<Accuracy_t>(CAST(Accuracy_t, 10), precision);
-			const auto accuracyInverse = constants::OneOver<Accuracy_t>(accuracy);
-			const auto dpShifts = constants::ZeroPointFive<Accuracy_t>() * accuracyInverse;
-
-			const auto valuePlusDpsByAcc = (CAST(constants::Accuracy_t, val) + dpShifts) * accuracy;
-			const auto sigFigs = Floor(valuePlusDpsByAcc);
-			return static_cast<Accuracy_t>(sigFigs);
-		}
 
 		template<typename T>
 		USE_RESULT constexpr size_t GetDpShifts(T decimals)
@@ -61,33 +46,31 @@ namespace klib::kString::stringify
 			return count;
 		}
 
-		USE_RESULT inline size_t TrimZeros(size_t num)
+		template<class T, class = std::enable_if_t<std::is_integral_v<T>>>
+		constexpr void TrimZeros(T& num)
 		{
-			while (num != 0 && kmaths::Modulus<size_t>(num, 10) == 0)
+			while (num != 0 && (num % 10 == 0))
 			{
-				num /= static_cast<size_t>(10);
+				num /= static_cast<T>(10);
 			}
-			return num;
 		}
 
 		template<typename T>
-		USE_RESULT constexpr Figures GetFigures(T val, size_t decimalPlaces)
+		USE_RESULT constexpr Figures<T> GetFigures(T val, size_t decimalPlaces)
 		{
 			const auto isNeg = kmaths::IsNegative(val);
 			val = kmaths::Abs(val);
 			const auto justIntegers = static_cast<size_t>(kmaths::Floor(val));
-			const auto justDecimals = val - justIntegers;
+			const auto justDecimals = kmaths::GetDecimals(val);
 			const auto dpShifts = GetDpShifts(justDecimals);
-			const auto rawDecimalsToUse = GetSignificantFigures(justDecimals, decimalPlaces);
-			const auto decimalsToUse = static_cast<size_t>(rawDecimalsToUse);
-			return { justIntegers, decimalsToUse, dpShifts, isNeg };
+			return { justIntegers, justDecimals, dpShifts, isNeg };
 		}
 
 		template<class Char_t, typename T, typename = std::enable_if_t<
 			std::is_floating_point_v<T>
 			|| type_trait::Is_CharType_V<Char_t>>
 			>
-			const Char_t* FixedNotation(T val, size_t decimalPlaces, Figures& figs)
+			const Char_t* FixedNotation(T val, size_t decimalPlaces, Figures<T>& figs)
 		{
 			using namespace type_trait;
 
@@ -116,74 +99,84 @@ namespace klib::kString::stringify
 			std::is_floating_point_v<T>
 			|| type_trait::Is_CharType_V<Char_t>>
 			>
-			const Char_t* ScientificNotation(T val, size_t decimalPlaces, Figures& figs)
+			const Char_t* ScientificNotation(T val, size_t sigFigs, Figures<T>& figs)
 		{
 			using namespace type_trait;
-			using String_t = std::basic_string<Char_t>;
-
-			if (figs.integers != 0 && figs.integers < 10)
-				return FixedNotation<Char_t>(val, figs.dpShifts + kmaths::CountIntegerDigits(figs.decimals), figs);
-
-
-			
-			figs.decimals = TrimZeros(figs.decimals);
+			if (figs.integers == 0 && figs.decimals == 0)
+				return Convert<Char_t>("0");
 
 			Char_t buff[g_MaxFloatDigits<T>]{ g_NullTerminator<Char_t> };
 			Char_t* const end = std::end(buff) - 1;
 			Char_t* current = end;
 
-			size_t totalShifts = 0;
+			const auto isZeroInt = figs.integers == 0;
 
-			if (figs.integers > 0)
-			{
-				if (figs.integers > 9)
-				{
-					totalShifts += kmaths::CountIntegerDigits(figs.integers);
-					--totalShifts;
-				}
-				figs.integers = TrimZeros(figs.integers);
-			}
+			const auto direction = kmaths::IsDecimal(val)
+				? Char_t('-')
+				: Char_t('+');
 
-			if (figs.decimals > 0)
-			{
-				if (figs.decimals > 9
-					|| (figs.integers == 0 && figs.decimals > 0))
-					totalShifts += figs.dpShifts;
-			}
+			const auto intSize = kmaths::CountIntegerDigits(figs.integers);
+			const auto sizeMet = !isZeroInt && intSize >= sigFigs;
+			auto exponent = intSize - 1;
 
-			if (totalShifts > 0)
+			if (sizeMet) // Only need integer significant figures
 			{
-				current = UintToStr(current, totalShifts, 10);
-				if (val < 1)
-					PrependMinusSign(current);
+				current = UintToStr(current, exponent);
+				if (exponent < 10) current = UintToStr(current, 0);
+				*(--current) = direction;
 				*(--current) = g_ScientificFloatToken<Char_t>;
-			}
-
-			if (figs.decimals > 0)
-			{
-				current = UintToStr(current, figs.decimals, 10);
-			}
-
-			if (figs.integers > 0)
-			{
-				if (figs.dpShifts > 1)
+				if (intSize > sigFigs)
 				{
-					auto dpShifts = figs.dpShifts;
-					while (dpShifts-- > 0)
+					const auto limit = kmaths::PowerOf10(sigFigs + 1);
+					while (figs.integers >= limit)
 					{
-						*(--current) = s_DefaultPlaceHolder<Char_t>;
+						figs.integers = kmaths::Demote(figs.integers);
 					}
+					figs.integers += 5;
+					figs.integers = kmaths::Demote(figs.integers);
 				}
-				current = UintToStr(current, figs.integers, 10);
+			}
+			else // Need integer and decimals significant figures
+			{
+				const auto remaining = isZeroInt ? sigFigs : (sigFigs - intSize);
+				const auto rawDecimals = kmaths::GetDecimals(val);
+				const auto mag = kmaths::PowerOf10(remaining - 1);
+				size_t power = 1;
+				size_t shifts = 1;
+				size_t decimals = 0;
+
+				while (decimals < mag)
+				{
+					decimals = static_cast<size_t>(rawDecimals * kmaths::PowerOf10(power++));
+
+					if (decimals == 0)
+						++shifts;
+				}
+
+				exponent += isZeroInt ? shifts : shifts - 1;
+
+				current = UintToStr(current, exponent);
+				if (exponent < 10) current = UintToStr(current, 0);
+				*(--current) = direction;
+				*(--current) = g_ScientificFloatToken<Char_t>;
+
+				current = UintToStr(current, decimals);
+
+				while (!isZeroInt && shifts-- > 1)
+				{
+					*(--current) = Char_t('0');
+				}
 			}
 
-			const auto ePos = Find_First_Of(current, g_ScientificFloatToken<Char_t>);
-			if (ePos > 1)
+			if (!isZeroInt)
+				current = UintToStr(current, figs.integers);
+
+			if (current[1] != g_ScientificFloatToken<Char_t>)
 			{
 				*(--current) = Char_t('.');
 				kmaths::Swap(current[0], current[1]);
 			}
-
+			
 			if (figs.isNeg)
 				PrependMinusSign(current);
 
@@ -194,7 +187,7 @@ namespace klib::kString::stringify
 			std::is_floating_point_v<T>
 			|| type_trait::Is_CharType_V<Char_t>>
 			>
-			const Char_t* GeneralNotation(T val, size_t decimalPlaces, Figures& figs)
+			const Char_t* GeneralNotation(T val, size_t decimalPlaces, Figures<T>& figs)
 		{
 			const auto cstr = figs.dpShifts > 6 || decimalPlaces > 6
 				? ScientificNotation<Char_t>(val, decimalPlaces, figs)
@@ -263,7 +256,7 @@ namespace klib::kString::stringify
 		std::is_floating_point_v<T>
 		|| type_trait::Is_CharType_V<Char_t>>
 		>
-		const Char_t* StringFloatingPoint(T val, size_t decimalPlaces = s_NoSpecifier
+		const Char_t* StringFloatingPoint(T val, size_t significantFigures = s_NoSpecifier
 			, FloatingPointFormat fmt = FloatingPointFormat::FIX)
 	{
 		using namespace secret::impl;
@@ -272,19 +265,19 @@ namespace klib::kString::stringify
 		if (std::isnan(val)) return Convert<Char_t>("nan");
 		if (std::isinf(val)) return Convert<Char_t>("inf");
 
-		if (decimalPlaces == s_NoSpecifier)
-			decimalPlaces = 1;
+		if (significantFigures == s_NoSpecifier)
+			significantFigures = 1;
 		else
-			decimalPlaces = kmaths::Min<size_t>(decimalPlaces, 25);
+			significantFigures = kmaths::Min<size_t>(significantFigures, 25);
 
 		if (fmt.MaskCmp(FloatingPointFormat::GEN))
 		{
-			Figures figs = GetFigures(val, decimalPlaces);
+			Figures figs = GetFigures(val, significantFigures);
 
 			switch (fmt.ToEnum()) {
-			case FloatingPointFormat::FIX: return FixedNotation<Char_t>(val, decimalPlaces, figs);
-			case FloatingPointFormat::SCI: return ScientificNotation<Char_t>(val, decimalPlaces, figs);
-			case FloatingPointFormat::GEN: return GeneralNotation<Char_t>(val, decimalPlaces, figs);
+			case FloatingPointFormat::FIX: return FixedNotation<Char_t>(val, significantFigures, figs);
+			case FloatingPointFormat::SCI: return ScientificNotation<Char_t>(val, significantFigures + 1, figs);
+			case FloatingPointFormat::GEN: return GeneralNotation<Char_t>(val, significantFigures, figs);
 			default: throw kDebug::FormatError("Unknown floating point notation: " + ToWriter(fmt.ToString()));
 			}
 		}

@@ -40,7 +40,7 @@ namespace kmaths
 		}
 		else
 		{
-			T const rem = num % base;
+			const T rem = num % base;
 			if _CONSTEXPR_IF(-1 % 2 == 1)
 			{
 				return rem;

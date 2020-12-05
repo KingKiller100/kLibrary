@@ -60,9 +60,9 @@ namespace klib::kString::stringify
 	}
 
 	template<typename CharType>
-	void PrependPadding(CharType*& outHeadOfPtr, const size_t minDigits, CharType padding)
+	void PrependPadding(CharType*& outHead, const size_t minDigits, CharType padding)
 	{
-		const auto size = GetSize(outHeadOfPtr);
+		const auto size = GetSize(outHead);
 
 		if (size >= minDigits)
 			return;
@@ -70,7 +70,7 @@ namespace klib::kString::stringify
 		auto count = minDigits - size;
 		while (count > 0)
 		{
-			*(--outHeadOfPtr) = padding;
+			*(--outHead) = padding;
 			--count;
 		}
 	}

@@ -17,32 +17,32 @@ namespace kmaths
 	{
 		return x * x * x;
 	}
-	
+
 	namespace secret::impl
 	{
 		template<typename T>
 		USE_RESULT constexpr T PowerOfImpl(T base, BigInt_t power) noexcept
 		{
 #if MSVC_PLATFORM_TOOLSET > 142
-			return CAST(T, std::pow<T,T>(base, power));
+			return CAST(T, std::pow<T, T>(base, power));
 #else
-			if (power == 0)
-				return constants::One<T>();
-			if (power == 1)
-				return base;
-			if (power == 2)
-				return Square(base);
-			if (power == 3)
-				return Cube(base);
+			using namespace constants;
+			
+			if (IsNegative(power))
+			{
+				if _CONSTEXPR_IF(std::is_integral_v<T>)
+					return Zero<T>();
+				else
+					base = OneOver<T, T>(base);
+			}
 
-			const T temp = PowerOfImpl(base, power >> 1);
+			T result = One<T>();
+			for (; power > 0; power >>= 1)
+			{
+				result *= base;
+			}
 
-			if (power % 2 == 0)
-				return Square(temp);
-			else if (IsNegative(power))
-				return Square(temp) / base;
-			else
-				return base * Square(temp);
+			return result;
 #endif // MSVC_PLATFORM_TOOLSET > 142
 		}
 	}
@@ -54,7 +54,6 @@ namespace kmaths
 		const auto pow = PowerOfImpl<T>(base, power);
 		return pow;
 	}
-
 
 	template<typename T>
 	USE_RESULT constexpr T PowerOf10(T power) noexcept(std::is_arithmetic_v<T>)
@@ -75,10 +74,10 @@ namespace kmaths
 		1'000'000'000
 		};
 
-		if (IsInteger( power ) 
+		if (IsInteger(power)
 			&& power < 10 && power >= 0)
 			return _Small_powers_of_ten[power];
-		
+
 		constexpr auto ten = CAST(T, 10);
 		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
 		{
@@ -86,5 +85,11 @@ namespace kmaths
 				return 0;
 		}
 		return PowerOfImpl<T>(ten, power);
+	}
+
+	template<typename T>
+	USE_RESULT constexpr T PowerOf2(T power) noexcept(std::is_arithmetic_v<T>)
+	{
+
 	}
 }

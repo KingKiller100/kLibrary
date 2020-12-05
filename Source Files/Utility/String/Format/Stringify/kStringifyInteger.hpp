@@ -16,21 +16,21 @@ namespace klib::kString::stringify
 	template<class Char_t, typename Uint_t, typename = std::enable_if_t<
 		std::is_unsigned_v<Uint_t> || type_trait::Is_CharType_V<Char_t>>
 		>
-		USE_RESULT constexpr Char_t* UintToStr(Char_t* current, Uint_t uVal, const int base)
+		USE_RESULT constexpr Char_t* UintToStr(Char_t* outHead, Uint_t uVal, const unsigned base = 10)
 	{
 		do {
 			const auto index = uVal % static_cast<Uint_t>(base);
-			*(--current) = g_GeneralAlphaMap<Char_t>[index];
+			*(--outHead) = g_GeneralAlphaMap<Char_t>[index];
 			uVal /= static_cast<Uint_t>(base);
 		} while (uVal != 0);
-		return current;
+		return outHead;
 	}
 
 	template<class Char_t, typename Signed_t, typename = std::enable_if_t<
 		std::is_integral_v<Signed_t> || type_trait::Is_CharType_V<Char_t>>
 		>
 		USE_RESULT constexpr const Char_t* StringSignedIntegral(Signed_t val, size_t minDigits = s_NoSpecifier
-			, Char_t placeHolder = s_DefaultPlaceHolder<Char_t>, const int base = 10)
+			, Char_t placeHolder = s_DefaultPlaceHolder<Char_t>, const unsigned base = 10)
 	{
 		using Unsigned_t = std::make_unsigned_t<Signed_t>;
 
@@ -68,7 +68,7 @@ namespace klib::kString::stringify
 		std::is_integral_v<Unsigned_t> || type_trait::Is_CharType_V<Char_t>>
 		>
 		USE_RESULT constexpr const Char_t* StringUnsignedIntegral(Unsigned_t val, size_t minDigits = s_NoSpecifier
-			, Char_t placeHolder = s_DefaultPlaceHolder<Char_t>, const int base = 10)
+			, Char_t placeHolder = s_DefaultPlaceHolder<Char_t>, const unsigned base = 10)
 	{
 		if (minDigits == s_NoSpecifier)
 			minDigits = 1;
@@ -93,7 +93,7 @@ namespace klib::kString::stringify
 		std::is_integral_v<Integral_t>
 		>>
 		USE_RESULT constexpr const Char_t* StringIntegral(Integral_t val, size_t minDigits = s_NoSpecifier
-			, Char_t placeHolder = s_DefaultPlaceHolder<Char_t>, const int base = 10)
+			, Char_t placeHolder = s_DefaultPlaceHolder<Char_t>, const unsigned base = 10)
 	{
 		if constexpr (std::is_unsigned_v<Integral_t>)
 			return StringUnsignedIntegral<Char_t, Integral_t>(val, minDigits, placeHolder, base);
