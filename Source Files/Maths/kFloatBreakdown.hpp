@@ -7,12 +7,12 @@
 namespace kmaths
 {
 	template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	struct Figures
+	struct FloatBreakdown
 	{
-		bool isNeg;
-		T decimals;
 		size_t integers;
 		size_t dpShifts;
+		T decimals;
+		bool isNeg;
 	};
 
 	template<typename T>
@@ -38,13 +38,13 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr Figures<T> GetFigures(T val, size_t decimalPlaces)
+	USE_RESULT constexpr FloatBreakdown<T> GetFigures(T val, size_t decimalPlaces)
 	{
 		const auto isNeg = IsNegative(val);
 		val = Abs(val);
 		const auto justIntegers = static_cast<size_t>(Floor(val));
 		const auto justDecimals = GetDecimals(val);
 		const auto dpShifts = GetDpShifts(justDecimals);
-		return { justIntegers, justDecimals, dpShifts, isNeg };
+		return { justIntegers, dpShifts, justDecimals, isNeg };
 	}
 }

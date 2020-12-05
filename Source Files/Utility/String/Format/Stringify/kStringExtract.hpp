@@ -82,23 +82,23 @@ namespace klib::kString::stringify
 	template<typename CharT, typename T>
 	constexpr const CharT* HandleFloat(T value, StringWriter<CharT>& specifier)
 	{
-		FloatingPointFormat fmt = FloatingPointFormat::FIX;
+		FloatFormat fmt = FloatFormat::FIX;
 
 		if (Remove(specifier, g_ScientificFloatModeToken<CharT>))
 		{
-			fmt = FloatingPointFormat::SCI;
+			fmt = FloatFormat::SCI;
 		}
 		else if (Remove(specifier, g_GeneralFloatModeToken<CharT>))
 		{
-			fmt = FloatingPointFormat::GEN;
+			fmt = FloatFormat::GEN;
 		}
 		else if (Remove(specifier, g_HexModeToken<CharT>))
 		{
-			fmt = FloatingPointFormat::HEX;
+			fmt = FloatFormat::HEX;
 		}
 		else if (Remove(specifier, g_BinaryModeToken<CharT>))
 		{
-			fmt = FloatingPointFormat::BIN;
+			fmt = FloatFormat::BIN;
 		}
 
 		const auto padding = CStrTo<size_t>(specifier.data(), stringify::s_NoSpecifier);

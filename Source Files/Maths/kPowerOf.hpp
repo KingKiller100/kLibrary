@@ -37,7 +37,7 @@ namespace kmaths
 			}
 
 			T result = One<T>();
-			for (; power > 0; power >>= 1)
+			for (; power > 0; --power)
 			{
 				result *= base;
 			}
