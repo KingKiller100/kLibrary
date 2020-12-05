@@ -26,23 +26,23 @@ namespace kmaths
 #if MSVC_PLATFORM_TOOLSET > 142
 			return CAST(T, std::pow<T, T>(base, power));
 #else
-			using namespace constants;
-			
-			if (IsNegative(power))
-			{
-				if _CONSTEXPR_IF(std::is_integral_v<T>)
-					return Zero<T>();
-				else
-					base = OneOver<T, T>(base);
-			}
+			if (power == 0)
+				return constants::One<T>();
+			if (power == 1)
+				return base;
+			if (power == 2)
+				return Square(base);
+			if (power == 3)
+				return Cube(base);
 
-			T result = One<T>();
-			for (; power > 0; --power)
-			{
-				result *= base;
-			}
+			const T temp = PowerOfImpl(base, power >> 1);
 
-			return result;
+			if (power % 2 == 0)
+				return Square(temp);
+			else if (IsNegative(power))
+				return Square(temp) / base;
+			else
+				return base * Square(temp);
 #endif // MSVC_PLATFORM_TOOLSET > 142
 		}
 	}
@@ -88,8 +88,11 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T PowerOf2(T power) noexcept(std::is_arithmetic_v<T>)
+	USE_RESULT constexpr T PowerOf2(BigInt_t power) noexcept(std::is_arithmetic_v<T>)
 	{
-
+		if (IsNegative(power))
+			return static_cast<T>(1.l / PowerOf2<T>(Abs(power)));
+		else
+			return static_cast<T>(static_cast<size_t>(1) << power);
 	}
 }
