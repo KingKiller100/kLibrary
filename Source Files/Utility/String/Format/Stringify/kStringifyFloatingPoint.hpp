@@ -39,7 +39,9 @@ namespace klib::kString::stringify
 
 			if (decimalPlaces > 0)
 			{
-				const size_t decimals = static_cast<size_t>(breakdown.decimals * PowerOf10(decimalPlaces));
+				size_t decimals = static_cast<size_t>(breakdown.decimals * std::pow(10, decimalPlaces + 1));
+				decimals += 5;
+				Demote(decimals);
 				current = UintToStr(current, decimals);
 				const auto desiredCharacterCount = (end - current) + (breakdown.dpShifts - 1);
 				PrependPadding(current, desiredCharacterCount, Char_t('0'));
@@ -86,13 +88,13 @@ namespace klib::kString::stringify
 				*(--current) = g_ScientificFloatToken<Char_t>;
 				if (intDigits > sigFigs) // Integers size > significant figures
 				{
-					const auto limit = kmaths::PowerOf10(sigFigs + 1);
+					const auto limit = static_cast<size_t>(std::pow(10, sigFigs + 1));
 					while (breakdown.integers >= limit)
 					{
-						breakdown.integers = kmaths::Demote(breakdown.integers);
+						kmaths::Demote(breakdown.integers);
 					}
 					breakdown.integers += 5;
-					breakdown.integers = kmaths::Demote(breakdown.integers);
+					kmaths::Demote(breakdown.integers);
 				}
 				else // Integer == significant figures
 				{
@@ -102,23 +104,40 @@ namespace klib::kString::stringify
 					}
 				}
 			}
+			else if (intDigits + breakdown.dpShifts == sigFigs)
+			{
+				size_t decimals = static_cast<size_t>(breakdown.decimals * std::pow(10, breakdown.dpShifts + 1));
+				decimals += 5;
+				Demote(decimals);
+				
+				current = UintToStr(current, exponent);
+				if (exponent < 10) current = UintToStr(current, 0);
+				*(--current) = direction;
+				*(--current) = g_ScientificFloatToken<Char_t>;
+				
+				if (decimals != 0)
+					current = UintToStr(current, decimals);
+			}
 			else // Need integer and decimals significant figures
 			{
-				auto remaining = isZeroInt ? sigFigs : (sigFigs - intDigits);
+				auto remaining = isZeroInt ? sigFigs : (sigFigs - (intDigits + breakdown.dpShifts - 1));
+				const auto mag = std::pow(10, remaining);
 				size_t power = 1;
 				size_t shifts = 1;
 				size_t decimals = 0;
 
-				while (remaining--)
+				while (decimals < mag)
 				{
-					decimals = static_cast<size_t>(breakdown.decimals * PowerOf10(power++));
+					decimals = static_cast<size_t>(breakdown.decimals * std::pow(10, power++));
 
 					if (decimals == 0)
 						++shifts;
 				}
 
+				decimals += 5;
+				Demote(decimals);
+				
 				exponent += isZeroInt ? shifts : breakdown.integers > 9 ? shifts - 1 : 0;
-
 				current = UintToStr(current, exponent);
 				if (exponent < 10) current = UintToStr(current, 0);
 				*(--current) = direction;

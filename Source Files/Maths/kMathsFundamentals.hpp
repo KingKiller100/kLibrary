@@ -33,24 +33,24 @@ namespace kmaths
 		return x < 0;
 	}
 
-	template<typename DestType, typename SourceType>
-	USE_RESULT constexpr DestType Convert(SourceType&& source)
+	template<typename Dest_t, typename Source_t>
+	USE_RESULT constexpr Dest_t Convert(Source_t&& source)
 	{
-		if _CONSTEXPR_IF(std::is_arithmetic_v<DestType>)
+		if _CONSTEXPR_IF(std::is_arithmetic_v<Dest_t>)
 		{
-			constexpr auto max = std::numeric_limits<DestType>::max();
-			constexpr auto min = std::numeric_limits<DestType>::min();
+			constexpr auto max = std::numeric_limits<Dest_t>::max();
+			constexpr auto min = std::numeric_limits<Dest_t>::min();
 
 			if (source > max)
 				return max;
 			else if (source < min)
 				return min;
 
-			return DestType(source);
+			return Dest_t(source);
 		}
 		else
 		{
-			return DestType(std::forward<SourceType&&>(source));
+			return Dest_t(std::forward<Source_t>(source));
 		}
 	}
 
@@ -173,26 +173,14 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T Promote(T x)
+	constexpr void Promote(T& x)
 	{
-		return x * CAST(T, 10);
+		x *= 10;
 	}
 
 	template<typename T>
-	USE_RESULT constexpr T Demote(T x)
+	constexpr void Demote(T& x)
 	{
-		return x / CAST(T, 10);
-	}
-
-	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T GetDecimals(T x) noexcept
-	{
-		if (IsDecimal(x))
-			return x;
-
-		const auto isNeg = IsNegative(x);
-		if (isNeg) x = Abs(x);
-		x -= Floor(x);
-		return isNeg ? -x : x;
+		x /= 10;
 	}
 }

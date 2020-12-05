@@ -15,6 +15,18 @@ namespace kmaths
 		bool isNeg;
 	};
 
+	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	USE_RESULT constexpr T GetDecimals(T x) noexcept
+	{
+		if (IsDecimal(x))
+			return x;
+
+		const auto isNeg = IsNegative(x);
+		if (isNeg) x = Abs(x);
+		x -= Floor(x);
+		return isNeg ? -x : x;
+	}
+
 	template<typename T>
 	USE_RESULT constexpr size_t GetDpShifts(T decimals)
 	{

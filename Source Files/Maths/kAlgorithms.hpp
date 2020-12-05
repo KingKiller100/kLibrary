@@ -9,6 +9,7 @@
 #include "kCount.hpp"
 #include "kMathsTrig.hpp"
 #include "kMathsEpsilon.hpp"
+#include "kFloatBreakdown.hpp"
 #include "kModulus.hpp"
 
 #include "../HelperMacros.hpp"
