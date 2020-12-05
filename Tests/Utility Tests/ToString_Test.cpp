@@ -196,6 +196,7 @@ namespace kTest::utility
 		{
 			constexpr auto num = 6.25e-2;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
+			const auto expected = SprintfWrapper("%.3e", num);
 			VERIFY(result == "6.25e-02")
 		}
 
@@ -203,6 +204,7 @@ namespace kTest::utility
 			constexpr auto num = 6.25e-5;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatingPointFormat::SCI);
 			VERIFY(result == "6.25e-05")
+				const auto expected = SprintfWrapper("%.3e", num);
 		}
 
 		{

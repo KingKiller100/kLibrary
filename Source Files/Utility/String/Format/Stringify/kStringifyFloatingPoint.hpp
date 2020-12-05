@@ -105,7 +105,7 @@ namespace klib::kString::stringify
 			const Char_t* ScientificNotation(T val, size_t sigFigs, Figures<T>& figs)
 		{
 			using namespace type_trait;
-			if (figs.integers == 0 && figs.decimals == 0)
+			if (figs.integers == 0 && kmaths::ApproximatelyZero(figs.decimals))
 				return Convert<Char_t>("0");
 
 			Char_t buff[g_MaxFloatDigits<T>]{ g_NullTerminator<Char_t> };
