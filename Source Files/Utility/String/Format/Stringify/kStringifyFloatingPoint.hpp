@@ -19,6 +19,8 @@ namespace klib::kString::stringify
 {
 	namespace secret::impl
 	{
+		constexpr auto g_MaxPrecision = 25;
+
 		template<class T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 		struct Figures
 		{
@@ -34,9 +36,10 @@ namespace klib::kString::stringify
 			size_t count = 0;
 			if (!kmaths::constants::ApproximatelyZero<T>(decimals))
 			{
+				auto iter = g_MaxPrecision;
 				size_t magnitude = 1;
 				auto val = decimals * magnitude;
-				while (val < 1)
+				while (iter-- > 0 && val < 1)
 				{
 					++count;
 					magnitude *= 10;
@@ -80,9 +83,10 @@ namespace klib::kString::stringify
 
 			if (decimalPlaces > 0)
 			{
-				current = UintToStr(current, figs.decimals, 10);
-				const auto padding = (end - current) + (figs.dpShifts - 1);
-				PrependPadding(current, padding, Char_t('0'));
+				const size_t decimals = static_cast<size_t>(figs.decimals * kmaths::PowerOf10(decimalPlaces));
+				current = UintToStr(current, decimals);
+				const auto desiredCharacterCount = (end - current) + (figs.dpShifts - 1);
+				PrependPadding(current, desiredCharacterCount, Char_t('0'));
 				*(--current) = Char_t('.');
 			}
 
@@ -91,8 +95,7 @@ namespace klib::kString::stringify
 			if (figs.isNeg)
 				PrependMinusSign(current);
 
-			auto cstr = CreateNewCString(current);
-			return std::move(cstr);
+			return CreateNewCString(current);
 		}
 
 		template<class Char_t, typename T, typename = std::enable_if_t<
@@ -139,7 +142,6 @@ namespace klib::kString::stringify
 			else // Need integer and decimals significant figures
 			{
 				const auto remaining = isZeroInt ? sigFigs : (sigFigs - intSize);
-				const auto rawDecimals = kmaths::GetDecimals(val);
 				const auto mag = kmaths::PowerOf10(remaining - 1);
 				size_t power = 1;
 				size_t shifts = 1;
@@ -147,7 +149,7 @@ namespace klib::kString::stringify
 
 				while (decimals < mag)
 				{
-					decimals = static_cast<size_t>(rawDecimals * kmaths::PowerOf10(power++));
+					decimals = static_cast<size_t>(figs.decimals * kmaths::PowerOf10(power++));
 
 					if (decimals == 0)
 						++shifts;
@@ -176,7 +178,7 @@ namespace klib::kString::stringify
 				*(--current) = Char_t('.');
 				kmaths::Swap(current[0], current[1]);
 			}
-			
+
 			if (figs.isNeg)
 				PrependMinusSign(current);
 
@@ -187,12 +189,11 @@ namespace klib::kString::stringify
 			std::is_floating_point_v<T>
 			|| type_trait::Is_CharType_V<Char_t>>
 			>
-			const Char_t* GeneralNotation(T val, size_t decimalPlaces, Figures<T>& figs)
+			const Char_t* GeneralNotation(T val, size_t sigFigs, Figures<T>& figs)
 		{
-			const auto cstr = figs.dpShifts > 6 || decimalPlaces > 6
-				? ScientificNotation<Char_t>(val, decimalPlaces, figs)
-				: FixedNotation<Char_t>(val, decimalPlaces, figs);
-			return std::move(cstr);
+			return figs.dpShifts > 5 || sigFigs > 5
+				? ScientificNotation<Char_t>(val, sigFigs, figs)
+				: FixedNotation<Char_t>(val, sigFigs, figs);
 		}
 
 		// Big Endian
@@ -268,7 +269,7 @@ namespace klib::kString::stringify
 		if (significantFigures == s_NoSpecifier)
 			significantFigures = 1;
 		else
-			significantFigures = kmaths::Min<size_t>(significantFigures, 25);
+			significantFigures = kmaths::Min<size_t>(significantFigures, g_MaxPrecision);
 
 		if (fmt.MaskCmp(FloatingPointFormat::GEN))
 		{
