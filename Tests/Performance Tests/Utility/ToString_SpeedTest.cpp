@@ -69,12 +69,12 @@ namespace kTest::performance::util
 		{
 			{
 				START_TEST(participants[0]);
-				const auto output = kString::ToString("{0}", sint);
+				const auto output = kString::ToString("sint: {0}", sint);
 			}
 
 			{
 				START_TEST(participants[1]);
-				ss << sint;
+				ss << "sint: " << sint;
 			}
 
 			{
@@ -193,12 +193,12 @@ namespace kTest::performance::util
 		{
 			{
 				START_TEST(participants[0]);
-				const auto output = kString::ToString("{0}", str);
+				const auto output = kString::ToString("string: {0}", str);
 			}
 
 			{
 				START_TEST(participants[1]);
-				ss << str;
+				ss << "string: " << str;
 			}
 
 			constexpr auto format = "string: %s";
