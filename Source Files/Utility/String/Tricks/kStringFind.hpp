@@ -1,8 +1,9 @@
 #pragma once
-#include "../../../HelperMacros.hpp"
-#include "../../../TypeTraits/StringTraits.hpp"
 #include "kStringSize.hpp"
 #include "kStringCases.hpp"
+
+#include "../../../HelperMacros.hpp"
+#include "../../../TypeTraits/StringTraits.hpp"
 
 namespace klib::kString
 {
@@ -13,7 +14,7 @@ namespace klib::kString
 			&& type_trait::Is_CharType_V<Char_t>
 			&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
 			>>
-			USE_RESULT constexpr size_t FindCharImpl(const CStringA& str, Char_t search, size_t offset, CmpFunc_t&& cmpFunc, DirectionFunc_t&& directionFunc)
+			USE_RESULT constexpr size_t FindCharImpl(const CStringA& hayStack, Char_t needle, size_t offset, CmpFunc_t&& cmpFunc, DirectionFunc_t&& directionFunc)
 		{
 			using namespace type_trait;
 			using PossibleString_t = std::basic_string<Char_t>;
@@ -21,19 +22,19 @@ namespace klib::kString
 			constexpr Char_t nt = g_NullTerminator<Char_t>;
 			constexpr size_t npos = g_NoPos<PossibleString_t>;
 
-			if (str == nullptr)
+			if (hayStack == nullptr)
 				return npos;
 
-			auto strSize = GetSize(str);
-			if (offset >= strSize) return npos;
+			const auto size = GetSize(hayStack);
+			if (offset >= size)
+				return npos;
 
-			size_t strIndex(offset);
-			while (str[strIndex] != nt)
+			for (size_t index(offset); 
+				hayStack[index] != nt && index < size; 
+				index = directionFunc(index, 1))
 			{
-				if (cmpFunc(str[strIndex], search))
-					return strIndex;
-
-				strIndex = directionFunc(strIndex, 1);
+				if (cmpFunc(hayStack[index], needle))
+					return index;
 			}
 
 			return npos;
@@ -45,7 +46,7 @@ namespace klib::kString
 		&& type_trait::Is_CString_V<CStringB>
 		&& std::is_same_v<ONLY_TYPE(CStringA), ONLY_TYPE(CStringB)>
 		>>
-		USE_RESULT constexpr size_t Find(const CStringA& str, const CStringB& search, size_t offset = 0)
+		USE_RESULT constexpr size_t Find(const CStringA hayStack, const CStringB needle, size_t offset = 0)
 	{
 		using namespace type_trait;
 		using Char_t = typename type_trait::Is_CString<CStringA>::Char_t;
@@ -54,40 +55,22 @@ namespace klib::kString
 		constexpr Char_t nt = g_NullTerminator<Char_t>;
 		constexpr size_t npos = g_NoPos<PossibleString_t>;
 
-		if (str == nullptr || search == nullptr)
+		if (hayStack == nullptr || needle == nullptr)
 			return npos;
 
-		const auto searchSize = GetSize(search);
-
-		auto strSize = GetSize(str);
-		if (offset >= strSize) return npos;
-		strSize = GetSize(str + offset);
-
-		if (searchSize > strSize) // if search string longer than size of pointer
+		if (GetSize(hayStack) <= offset)
 			return npos;
 
-		size_t strIndex(offset);
-		size_t searchIndex(0);
-
-		while (str[strIndex] != nt)
+		std::make_signed_t<size_t> hIndex = offset, nIndex = 0;
+		for (; hayStack[hIndex] != nt && needle[nIndex] != nt;
+			++hIndex, ++nIndex)
 		{
-			if (str[strIndex] == search[searchIndex]
-				&& search[searchIndex] != nt)
-			{
-				++strIndex;
-				++searchIndex;
-				continue;
-			}
-
-			if (search[searchIndex] == nt)
-				return strIndex - searchIndex;
-
-			++strIndex;
-			searchIndex = 0;
+			if (hayStack[hIndex] != needle[nIndex])
+				nIndex = -1;
 		}
 
-		if (search[searchIndex] == nt)
-			return strIndex - searchIndex;
+		if (needle[nIndex] == nt)
+			return (hIndex - nIndex);
 
 		return npos;
 	}
@@ -170,7 +153,7 @@ namespace klib::kString
 			USE_RESULT constexpr bool Contains(const StringType & str, typename StringType::value_type search
 				, const size_t offset = 0)
 		{
-			return Find_First_Of( str.data(), search, offset ) != type_trait::g_NoPos<StringType>;
+			return Find_First_Of(str.data(), search, offset) != type_trait::g_NoPos<StringType>;
 		}
 
 		template<typename StringA, typename StringB
@@ -185,7 +168,7 @@ namespace klib::kString
 			USE_RESULT constexpr bool Contains(const StringA & str, const StringB & search
 				, const size_t offset = 0)
 		{
-			return Find( str.data(), search.data(), offset ) != type_trait::g_NoPos<StringA>;
+			return Find(str.data(), search.data(), offset) != type_trait::g_NoPos<StringA>;
 		}
 
 		template<typename StringType, typename Stringish

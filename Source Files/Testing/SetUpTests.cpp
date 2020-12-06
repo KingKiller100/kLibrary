@@ -74,7 +74,7 @@ namespace kTest
 	{
 		// AddTest<TesterManager>(new utility::StringConverterTester());
 		// AddTest<TesterManager>(new utility::EnumTester());
-		// AddTest<TesterManager>(new utility::StringManipulationTester());
+		 AddTest<TesterManager>(new utility::StringManipulationTester());
 		AddTest<TesterManager>(new utility::FormatToStringTester());
 		// AddTest<TesterManager>(new utility::CalendarTester());
 		// AddTest<TesterManager>(new utility::FileSystemTester());

@@ -22,17 +22,6 @@
 #include <cstdint>
 #include <type_traits>
 
-
-
-#ifdef max
-#	undef max
-#endif
-
-
-#ifdef min
-#	undef min
-#endif
-
 namespace kmaths
 {
 	namespace secret::impl
@@ -130,8 +119,7 @@ namespace kmaths
 			{
 				if ((root & 1) == 0) // Even root
 				{
-					const auto n = static_cast<ReturnType>(num);
-					throw klib::kDebug::NoRealRootError(n, root); // No real root
+					throw klib::kDebug::NoRealRootError(num, root); // No real root
 				}
 
 				if (num == minusOne)

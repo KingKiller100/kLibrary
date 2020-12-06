@@ -211,7 +211,7 @@ namespace kTest::utility
 			constexpr auto num = 2 + 6.25549769348e-5;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 19, stringify::FloatFormat::SCI);
 			const auto expected = SprintfWrapper("%.19e", num);
-			VERIFY(result == "2.0000625549769348588")
+			VERIFY(result == "2.0000625549769348588e+00")
 		}
 
 		return success;
@@ -244,6 +244,13 @@ namespace kTest::utility
 			constexpr auto input = 24;
 			const auto result = ToWriter(stringify::StringIntegralHex<char16_t>(input));
 			constexpr auto expected = u"0000000000000018";
+			VERIFY(expected == result);
+		}
+
+		{
+			constexpr auto input = 0xff100;
+			const auto result = ToWriter(stringify::StringIntegralHex<char16_t>(input, 3));
+			constexpr auto expected = u"f100";
 			VERIFY(expected == result);
 		}
 

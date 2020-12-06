@@ -4,6 +4,14 @@
 
 #include "../HelperMacros.hpp"
 
+#ifdef max
+#	undef max
+#endif
+
+#ifdef min
+#	undef min
+#endif
+
 namespace kmaths
 {
 	namespace secret::impl
@@ -31,6 +39,12 @@ namespace kmaths
 	USE_RESULT constexpr bool IsNegative(T x) noexcept
 	{
 		return x < 0;
+	}
+
+	template<typename T>
+	USE_RESULT constexpr bool IsPositive(T x) noexcept
+	{
+		return !IsNegative(x);
 	}
 
 	template<typename Dest_t, typename Source_t>

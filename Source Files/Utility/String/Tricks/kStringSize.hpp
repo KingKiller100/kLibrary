@@ -3,6 +3,8 @@
 
 #include "../../../TypeTraits/StringTraits.hpp"
 
+#include "../../../Maths/Length_Type.hpp"
+
 namespace klib::kString
 {
 	template<typename StringType
@@ -24,13 +26,10 @@ namespace klib::kString
 #endif
 		USE_RESULT constexpr size_t GetSize(const Char_t* str)
 	{
-		size_t count(0);
-		while ( *str != type_trait::g_NullTerminator<Char_t> )
-		{
-			++str;
-			++count;
-		}
-		return count;
+		kmaths::BigInt_t count(-1);
+		while (str[++count] != type_trait::g_NullTerminator<Char_t>)
+		{}
+		return static_cast<size_t>(count);
 	}
 
 	template<typename Char_t
@@ -41,12 +40,17 @@ namespace klib::kString
 #endif
 		USE_RESULT constexpr size_t GetSize(Char_t* str)
 	{
-		size_t count(0);
-		while ( *str != type_trait::g_NullTerminator<Char_t> )
-		{
-			++str;
-			++count;
-		}
-		return count;
+		return GetSize((const Char_t*)str);
+	}
+
+	template<typename Char_t, size_t Size
+#if MSVC_PLATFORM_TOOLSET >= 142
+				> requires type_trait::Is_Char_t<Char_t>
+#else
+		, typename = std::enable_if_t<type_trait::Is_CharType_V<Char_t>> >
+#endif
+		USE_RESULT constexpr size_t GetSize(const Char_t (&)[Size])
+	{
+		return Size;
 	}
 }

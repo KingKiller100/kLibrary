@@ -30,20 +30,20 @@ namespace klib::kString::secret::impl
 		*(--searchItem) = format::g_OpenerSymbol<Char_t>;
 
 		size_t openerPos = Find(outFmt.data(), searchItem, offset);
-		if (openerPos == npos)
-		{
-			openerPos = Find(outFmt.data(), searchItem, 0);
-		}
-		if (openerPos == npos)
-		{
-			*(end - 1) = format::g_SpecifierSymbol<Char_t>;
-			openerPos = Find(outFmt.data(), searchItem, offset);
-		}
-		if (openerPos == npos)
-		{
-			openerPos = Find(outFmt.data(), searchItem, 0);
-		}
+		if (openerPos != npos)
+			return openerPos;
 
+		openerPos = Find(outFmt.data(), searchItem, 0);
+		if (openerPos != npos)
+			return openerPos;
+
+		*(end - 1) = format::g_SpecifierSymbol<Char_t>;
+		openerPos = Find(outFmt.data(), searchItem, offset);
+
+		if (openerPos != npos)
+			return openerPos;
+
+		openerPos = Find(outFmt.data(), searchItem, 0);
 		return openerPos;
 	}
 
@@ -55,9 +55,11 @@ namespace klib::kString::secret::impl
 		constexpr auto npos = type_trait::g_NoPos<Str_t>;
 
 		size_t openerPos = FindOpenerPosition(outFmt, argIndex, offset);
-		size_t closerPos = Find_First_Of(outFmt.data(), format::g_CloserSymbol<Char_t>, openerPos);
+		if (openerPos == npos)
+			return;
 
-		if (openerPos == npos || closerPos == npos)
+		size_t closerPos = Find_First_Of(outFmt.data(), format::g_CloserSymbol<Char_t>, openerPos);
+		if (closerPos == npos)
 			return;
 
 		const auto initialOpenerPos = openerPos;
@@ -89,7 +91,8 @@ namespace klib::kString::secret::impl
 			}
 
 			openerPos = FindOpenerPosition(outFmt, argIndex, openerPos + repSize);
-			closerPos = Find_First_Of(outFmt.data(), format::g_CloserSymbol<Char_t>, openerPos);
+			if (openerPos != npos)
+				closerPos = Find_First_Of(outFmt.data(), format::g_CloserSymbol<Char_t>, openerPos);
 		}
 
 		ToStringImpl<Char_t, Ts...>(outFmt, argIndex + 1, initialOpenerPos + repSize, argPack...);

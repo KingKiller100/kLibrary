@@ -46,6 +46,7 @@ namespace klib::kString::stringify
 		}
 		if (isNeg)
 			++size;
+		
 		Char_t* buff = new Char_t[size]{ };
 		Char_t* const end = buff + (size - 1);
 		Char_t* current = end;
@@ -59,7 +60,7 @@ namespace klib::kString::stringify
 			PrependPadding(current, minDigits, placeHolder);
 
 		if (isNeg)
-			*(--current) = Char_t('-');
+			PrependMinusSign(current);
 
 		return (const Char_t*&&)buff;
 	}
@@ -113,6 +114,9 @@ namespace klib::kString::stringify
 		if (minCharacters == s_NoSpecifier)
 			minCharacters = sizeof(uintptr_t) * 2;
 
+		if (val < 0 && placeHolder == s_DefaultPlaceHolder<Char_t>)
+			placeHolder = hexMap[15];
+
 		using Unsigned_t = std::make_unsigned_t<Integral_t>;
 
 		Char_t buff[g_MaxDigits<size_t>]{ type_trait::g_NullTerminator<Char_t> };
@@ -127,18 +131,21 @@ namespace klib::kString::stringify
 			asUint /= static_cast<Unsigned_t>(hexMap.size());
 		}
 
-		if (val < 0 && current[0] == hexMap[15])
+		if (const auto size = (end - current);
+			static_cast<size_t>(size) > minCharacters)
 		{
-			const auto notFpos = Find_First_Not_Of(current, hexMap[15]);
-			current += (notFpos - 1);
-			if (placeHolder == s_DefaultPlaceHolder<Char_t>)
-				placeHolder = hexMap[15];
+			const auto notFPos = Find_First_Not_Of(current, hexMap[15]);
+			const auto difference =
+				static_cast<intptr_t>(minCharacters) - static_cast<intptr_t>(notFPos);
+			if (difference > 0)
+				current += difference;
+		}
+		else
+		{
+			PrependPadding(current, minCharacters, placeHolder);
 		}
 
-		PrependPadding(current, minCharacters, placeHolder);
-
-		auto cstr = CreateNewCString(current);
-		return std::move(cstr);
+		return CreateNewCString(current);
 	}
 
 	template<class Char_t, typename Integral_t, typename = std::enable_if_t<
@@ -154,21 +161,19 @@ namespace klib::kString::stringify
 		Char_t* const end = std::end(buff) - 1;
 		Char_t* current = end;
 
-		while (val > 0)
-		{
+		do {
 			const auto binVal = val % 2;
 			const Char_t digit = static_cast<Char_t>('0' + binVal);
 			*(--current) = digit;
 			val >>= 1;
-		}
+		} while (val > 0);
 
 		PrependPadding(current, minCharacters, placeHolder);
 
 		if (endian == EndianFormat::LITTLE)
 			std::reverse(current, end);
 
-		auto cstr = CreateNewCString(current);
-		return std::move(cstr);
+		return CreateNewCString(current);
 	}
 }
 
