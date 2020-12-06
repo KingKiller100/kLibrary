@@ -10,7 +10,7 @@ namespace kTest::performance::util
 {
 	using namespace klib;
 
-	constexpr auto maxIter = static_cast<size_t>(1e3);
+	constexpr auto maxIter = static_cast<size_t>(1e4);
 
 	ToStringSpeedTest::ToStringSpeedTest() noexcept
 		: PerformanceTestBase("ToString Speed Test")
@@ -38,6 +38,7 @@ namespace kTest::performance::util
 		SetUpParticipants(participants);
 
 		constexpr auto num = 6.015625;
+
 
 		const auto str = kString::ToString("{0:b}", 5.5);
 

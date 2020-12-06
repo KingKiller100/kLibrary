@@ -6,13 +6,15 @@ namespace klib::type_trait
 {
 	// STRUCT TEMPLATE _Is_specialization
 	template <class T, template <class...> class Template>
-	constexpr bool Is_Specialization_V = false; // true if and only if T is a specialization of Template
+	constexpr bool Is_SpecializationBase = false; // true if and only if T is a specialization of Template
 	template <template <class...> class Template, class... Ts>
-	constexpr bool Is_Specialization_V<Template<Ts...>, Template> = true;
+	constexpr bool Is_SpecializationBase<Template<Ts...>, Template> = true;
 
-	template <class _Type, template <class...> class _Template>
-	struct Is_Specialization : std::bool_constant<Is_Specialization_V<_Type, _Template>> {};
+	template <class T, template <class...> class Template>
+	struct Is_Specialization : std::bool_constant<Is_SpecializationBase<std::remove_cv_t<T>, Template>> {};
 
+	template <class T, template <class...> class Template>
+	constexpr bool Is_Specialization_V = Is_Specialization<T, Template>::value; // true if and only if T is a specialization of Template
 
 	// VARIABLE TEMPLATE _Is_any_of_v
 	template <class T, class... Ts>

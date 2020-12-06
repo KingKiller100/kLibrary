@@ -38,7 +38,7 @@
 
 #define ONLY_TYPE(type) std::remove_cv_t<std::remove_pointer_t<std::decay_t<type>>>
 
-#define BIT_SHIFT(n) (1 << n)
+#define BIT_SHIFT(n) (static_cast<size_t>(1) << n)
 
 // Class member getter & setters
 #define GETTER(type, name, field) USE_RESULT type& name() noexcept\
