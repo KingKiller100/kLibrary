@@ -17,6 +17,7 @@ namespace kTest::performance::util
 		void kSprintfTest();
 		void IntTest();
 		void DoubleTest();
+		void FloatTest();
 		void StringTest();
 
 		void OstreamSprintfTest();

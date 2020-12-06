@@ -26,6 +26,7 @@ namespace kTest::performance::util
 		kSprintfTest();
 		OstreamTest();
 		IntTest();
+		FloatTest();
 		DoubleTest();
 		StringTest();
 		SprintfTest();
@@ -93,7 +94,7 @@ namespace kTest::performance::util
 	void ToStringSpeedTest::DoubleTest()
 	{
 		const std::vector<std::string_view> participants = { "klib::kString::ToString double", "std::stringstream double"
-			, "C sprintf double", "klib::kString::SprintfWrapper" };
+			, "C sprintf double", "klib::kString::SprintfWrapper double" };
 		SetUpParticipants(participants);
 
 		const auto f64 = 125.625;
@@ -105,19 +106,17 @@ namespace kTest::performance::util
 		{
 			{
 				START_TEST(participants[0]);
-				(void)kString::ToString("{0:3}", f64);
+				(void)kString::ToString("f32: {0:3}", f64);
 			}
 
 			{
 				START_TEST(participants[1]);
-
-				ss << std::setprecision(3) << f64;
+				ss << "f64: " << std::setprecision(3) << f64;
 			}
 
 			constexpr auto format = "f64: %.3f";
 			{
 				START_TEST(participants[2]);
-
 				const auto length = _snprintf(nullptr, 0, format
 					, f64
 				);
@@ -127,8 +126,51 @@ namespace kTest::performance::util
 
 			{
 				START_TEST(participants[3]);
-
 				(void)kString::SprintfWrapper(format, f64);
+			}
+
+			ss.clear();
+			buffer.release();
+		}
+	}
+
+	void ToStringSpeedTest::FloatTest()
+	{
+
+		const std::vector<std::string_view> participants = { "klib::kString::ToString float", "std::stringstream float"
+			, "C sprintf float", "klib::kString::SprintfWrapper float" };
+		SetUpParticipants(participants);
+
+		const auto f32 = 125.625f;
+
+		std::unique_ptr<char[]> buffer;
+		std::stringstream ss;
+
+		for (auto i = 0; i < maxIter; ++i)
+		{
+			{
+				START_TEST(participants[0]);
+				(void)kString::ToString("f32: {0:3}", f32);
+			}
+
+			{
+				START_TEST(participants[1]);
+				ss << "f32: " << std::setprecision(3) << f32;
+			}
+
+			constexpr auto format = "f32: %.3f";
+			{
+				START_TEST(participants[2]);
+				const auto length = _snprintf(nullptr, 0, format
+					, f32
+				);
+				buffer.reset(new char[length + 1]);
+				sprintf(buffer.get(), format, f32);
+			}
+
+			{
+				START_TEST(participants[3]);
+				(void)kString::SprintfWrapper(format, f32);
 			}
 
 			ss.clear();
