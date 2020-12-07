@@ -8,5 +8,5 @@ namespace kmaths
 		RADIANS,
 	};
 
-	using ThetaType = AngleType;
+	using Theta = AngleType;
 }
