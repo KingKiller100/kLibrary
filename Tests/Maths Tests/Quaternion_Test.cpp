@@ -38,7 +38,7 @@ namespace kTest::maths
 		const auto mag = q1.MagnitudeSQ();
 		VERIFY(InRangeZero<float>(mag));
 
-		constexpr auto q2 = Quaternionf(1, 0, 0, 0, Theta_Format::DEGREES);
+		constexpr auto q2 = Quaternionf(1, 0, 0, 0, ThetaType::DEGREES);
 		const auto q3 = q1 * q2;
 
 		constexpr auto decimalAccuracy = CAST(uint8_t, 2);

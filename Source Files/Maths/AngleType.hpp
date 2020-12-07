@@ -2,11 +2,11 @@
 
 namespace kmaths
 {
-	enum class Angle_Format
+	enum class AngleType
 	{
 		DEGREES,
 		RADIANS,
 	};
 
-	using Theta_Format = Angle_Format;
+	using ThetaType = AngleType;
 }

@@ -3,7 +3,7 @@
 #include "../../HelperMacros.hpp"
 
 #include "../kMathsConstants.hpp"
-#include "../Angle_Format.hpp"
+#include "../AngleType.hpp"
 #include "../Vectors/Vector3.hpp"
 #include "../Matrices/TransformMatrix.hpp"
 
@@ -66,11 +66,11 @@ namespace kmaths
 		* \see
 				Normalize
 		*/
-		explicit constexpr Quaternion(T rotation = CAST(T, 0), const T x = CAST(T, 0), const T y = CAST(T, 0), const T z = CAST(T, 0), const Theta_Format angleType = Angle_Format::RADIANS) noexcept
+		explicit constexpr Quaternion(T rotation = CAST(T, 0), const T x = CAST(T, 0), const T y = CAST(T, 0), const T z = CAST(T, 0), const ThetaType angleType = AngleType::RADIANS) noexcept
 		{
 			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
 			
-			const auto rads = (angleType == Angle_Format::DEGREES) ? ToRadians(rotation) : rotation;
+			const auto rads = (angleType == AngleType::DEGREES) ? ToRadians(rotation) : rotation;
 			const auto halfRads = rads * zeroPointFive;
 
 			w = Cosine(halfRads);
@@ -80,10 +80,10 @@ namespace kmaths
 		}
 
 		// Vector must be normalized
-		explicit constexpr Quaternion(const T rotation, Vector<T, 3> n, const Theta_Format angleType = Angle_Format::RADIANS) noexcept
+		explicit constexpr Quaternion(const T rotation, Vector<T, 3> n, const ThetaType angleType = AngleType::RADIANS) noexcept
 		{
 			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
-			const auto rads = (angleType == Angle_Format::DEGREES) ? ToRadians(rotation) : rotation;
+			const auto rads = (angleType == AngleType::DEGREES) ? ToRadians(rotation) : rotation;
 			const auto halfRads = rads * zeroPointFive;
 
 			if (n.MagnitudeSQ() != 1)
@@ -203,9 +203,9 @@ namespace kmaths
 			return EulerToQuaternions(axis[0], axis[1], axis[2]);
 		}
 
-		USE_RESULT constexpr void Rotate(const T rotation, const Vector<Type, 3>& n, const Theta_Format angleType = Angle_Format::RADIANS) noexcept
+		USE_RESULT constexpr void Rotate(const T rotation, const Vector<Type, 3>& n, const ThetaType angleType = AngleType::RADIANS) noexcept
 		{
-			const auto rads = (angleType == Angle_Format::DEGREES) ? ToRadians(rotation) : rotation;
+			const auto rads = (angleType == AngleType::DEGREES) ? ToRadians(rotation) : rotation;
 			
 			const auto halfA = rads * constants::ZeroPointFive<T>();
 			const auto c = Cosine(halfA);
