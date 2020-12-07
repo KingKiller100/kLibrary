@@ -38,9 +38,7 @@ namespace klib::kString::stringify
 			Char_t* current = end;
 
 			const auto isNeg = IsNegative(val);
-
 			val = Abs(val);
-
 			size_t integers = static_cast<size_t>(Floor(val));
 
 			if (decimalPlaces > 0)
@@ -77,16 +75,15 @@ namespace klib::kString::stringify
 			std::is_floating_point_v<T>
 			|| type_trait::Is_CharType_V<Char_t>>
 			>
-			const Char_t* ScientificNotation(T val, size_t sigFigs, FloatBreakdown<T>& breakdown)
+			const Char_t* ScientificNotation(T val, size_t sigFigs)
 		{
 			using namespace type_trait;
-
-			if (breakdown.integers == 0 && breakdown.dpShifts == 0)
-				return Convert<Char_t>("0");
 
 			Char_t buff[g_MaxFloatDigits<T>]{ g_NullTerminator<Char_t> };
 			Char_t* const end = std::end(buff) - 1;
 			Char_t* current = end;
+
+			FloatBreakdown<T> breakdown = GetFigures(val, sigFigs);
 
 			const auto isZeroInt = breakdown.integers == 0;
 			const auto direction = kmaths::IsDecimal(val)
@@ -188,10 +185,10 @@ namespace klib::kString::stringify
 			std::is_floating_point_v<T>
 			|| type_trait::Is_CharType_V<Char_t>>
 			>
-			const Char_t* GeneralNotation(T val, size_t sigFigs, FloatBreakdown<T>& figs)
+			const Char_t* GeneralNotation(T val, size_t sigFigs)
 		{
-			return figs.dpShifts > 5 || sigFigs > 5
-				? ScientificNotation<Char_t>(val, sigFigs, figs)
+			return sigFigs > 5
+				? ScientificNotation<Char_t>(val, sigFigs)
 				: FixedNotation<Char_t>(val, sigFigs);
 		}
 
@@ -265,19 +262,19 @@ namespace klib::kString::stringify
 		if (std::isnan(val)) return Convert<Char_t>("nan");
 		if (std::isinf(val)) return Convert<Char_t>("inf");
 
-		if (figures == s_NoSpecifier)
-			figures = 1;
-		else
-			figures = kmaths::Min<size_t>(figures, g_MaxPrecision);
-
 		if (static_cast<std::uint8_t>(fmt) & static_cast<std::uint8_t>(FloatFormat::GEN))
 		{
-			FloatBreakdown breakdown = GetFigures(val, figures);
+			if (figures == s_NoSpecifier)
+				figures = 1;
+			else
+				figures = kmaths::Min<size_t>(figures, g_MaxPrecision);
+
+			if (ApproximatelyZero<T>(val)) return Convert<Char_t>("0");
 
 			switch (fmt) {
 			case FloatFormat::FIX: return FixedNotation<Char_t>(val, figures);
-			case FloatFormat::SCI: return ScientificNotation<Char_t>(val, figures + 1, breakdown);
-			case FloatFormat::GEN: return GeneralNotation<Char_t>(val, figures, breakdown);
+			case FloatFormat::SCI: return ScientificNotation<Char_t>(val, figures + 1);
+			case FloatFormat::GEN: return GeneralNotation<Char_t>(val, figures);
 			default: throw kDebug::FormatError("Unknown floating point notation format");
 			}
 		}
