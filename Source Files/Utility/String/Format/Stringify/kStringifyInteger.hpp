@@ -34,6 +34,9 @@ namespace klib::kString::stringify
 	{
 		using Unsigned_t = std::make_unsigned_t<Signed_t>;
 
+		if (minDigits == s_NoSpecifier)
+			minDigits = 1;
+		
 		const auto isNeg = kmaths::IsNegative(val);
 		size_t size = kmaths::CountIntegerDigits(val) + 1;
 		if (size < minDigits)
