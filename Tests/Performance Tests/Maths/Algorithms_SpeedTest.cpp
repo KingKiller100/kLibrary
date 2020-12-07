@@ -31,6 +31,10 @@ namespace kTest::performance::maths
 		TanTest();
 	}
 
+	using namespace kmaths;
+	using namespace constants;
+
+	
 	constexpr auto maxIter = kmaths::BigInt_t(1e3);
 
 	void AlgorithmsSpeedTest::PowerOfFractionsTest()
@@ -213,7 +217,7 @@ namespace kTest::performance::maths
 
 	void AlgorithmsSpeedTest::SineTest()
 	{
-		constexpr auto pi_over_4 = kmaths::constants::PI_OVER_4;
+		constexpr auto pi_over_4 = kmaths::constants::PI_OVER_4<kmaths::constants::Accuracy_t>;
 
 		const std::vector<std::string_view> participants = { "kmaths::Sine", "std::sin" };
 		SetUpParticipants(participants);
@@ -235,7 +239,7 @@ namespace kTest::performance::maths
 
 	void AlgorithmsSpeedTest::CosineTest()
 	{
-		constexpr auto pi_over_4 = kmaths::constants::PI_OVER_4;
+		constexpr auto pi_over_4 = kmaths::constants::PI_OVER_4<Accuracy_t>;
 
 		const std::vector<std::string_view> participants = { "kmaths::Cosine", "std::cos" };
 		SetUpParticipants(participants);
@@ -256,7 +260,7 @@ namespace kTest::performance::maths
 
 	void AlgorithmsSpeedTest::TanTest()
 	{
-		constexpr auto pi = kmaths::constants::PI;
+		constexpr auto pi = kmaths::constants::PI<Accuracy_t>;
 
 		const std::vector<std::string_view> participants = { "kmaths::Tan", "std::tan" };
 		SetUpParticipants(participants);

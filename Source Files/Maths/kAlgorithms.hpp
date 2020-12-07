@@ -41,10 +41,10 @@ namespace kmaths
 				throw klib::kDebug::NoRealRootError(square, 2);
 
 			if (square == constants::ZeroPointFive<T>())
-				return CAST(T, constants::SQRT_1_OVER_2);
+				return constants::SQRT_1_OVER_2<T>;
 
 			if (square == 2)
-				return CAST(T, constants::ROOT2);
+				return constants::ROOT2<T>;
 
 			const auto chooseStartValueFunc = [=]() -> Accuracy_t // Utilizes binary search if given square is between 0 and lookUpMap's size squared
 			{
@@ -455,12 +455,12 @@ namespace kmaths
 	{
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 		{
-			constexpr auto ln10 = CAST(T, constants::LN10);
+			constexpr auto ln10 = constants::LN10<T>;
 			return Round<T>(NaturalLogarithm<T>(x) / ln10, Max_Decimal_Precision_V<T>);
 		}
 		else
 		{
-			constexpr auto ln10 = CAST(float, constants::LN10);
+			constexpr auto ln10 = constants::LN10<float>;
 			const auto result = Round<float>(NaturalLogarithm<float>(CAST(float, x)) / ln10, Max_Decimal_Precision_V<T>);
 			return CAST(T, result);
 		}
@@ -471,12 +471,12 @@ namespace kmaths
 	{
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 		{
-			constexpr auto ln2 = CAST(T, constants::LN2);
+			constexpr auto ln2 = constants::LN2<T>;
 			return Round<T>(NaturalLogarithm<T>(x) / ln2, Max_Decimal_Precision_V<T>);
 		}
 		else
 		{
-			constexpr auto ln2 = CAST(float, constants::LN2);
+			constexpr auto ln2 = constants::LN2<float>;
 			const auto result = Round<float>(NaturalLogarithm<float>(CAST(float, x)) / ln2, Max_Decimal_Precision_V<T>);
 			return CAST(T, result);
 		}
@@ -510,12 +510,12 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Gamma(T z)
 	{
-		if (IsNegative(z)) return 0;
+		if (IsNegative(z)) return Zero<T>();
 
-		constexpr double gamma = constants::GAMMA;
+		constexpr auto gamma = constants::GAMMA<Accuracy_t>;
 
 		if (z < 0.001)
-			return CAST(T, constants::OneOver<double>(z * (1.0 + gamma * z)));
+			return CAST(T, constants::OneOver<Accuracy_t>(z * (1.0l + gamma * z)));
 
 		///////////////////////////////////////////////////////////////////////////
 		// Second interval: [0.001, 12)
@@ -525,7 +525,7 @@ namespace kmaths
 			// The algorithm directly approximates gamma over (1,2) and uses
 			// reduction identities to reduce other arguments to this interval.
 
-			double y = z;
+			Accuracy_t y = z;
 			BigInt_t n = 0;
 			const bool arg_was_less_than_one = (y < 1.0);
 
@@ -567,17 +567,17 @@ namespace kmaths
 				-1.15132259675553483497211E+5
 			};
 
-			double num = 0.0;
-			double den = 1.0;
+			Accuracy_t num = 0.0;
+			Accuracy_t den = 1.0;
 			int8_t i = 0;
 
-			const double zn = y - 1;
+			const Accuracy_t zn = y - 1;
 			for (i = 0; i < 8; i++)
 			{
 				num = (num + p[i]) * zn;
 				den = den * zn + q[i];
 			}
-			double result = num / den + 1.0;
+			Accuracy_t result = num / den + 1.0;
 
 			// Apply correction if argument was not initially in (1,2)
 			if (arg_was_less_than_one)

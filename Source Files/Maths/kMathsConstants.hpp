@@ -13,34 +13,33 @@ namespace kmaths
 	namespace constants
 	{
 		using Accuracy_t = long double;
-
-		constexpr Accuracy_t GAMMA = 0.57721566490153l; // Euler's gamma constant
-		constexpr Accuracy_t LOG2PI_OVER_2 = 0.91893853320467l;
-		constexpr Accuracy_t E = 2.71828182845905l;
-		constexpr Accuracy_t LOG_N = 0.57721566490153l;
-		constexpr Accuracy_t LOG2E = 1.44269504088896l;
-		constexpr Accuracy_t LOG10E = 0.43429448190325l;
-		constexpr Accuracy_t LN2 = 0.69314718055995l;
-		constexpr Accuracy_t LN10 = 2.30258509299405l;
-		constexpr Accuracy_t PI = static_cast<Accuracy_t>(M_PI);
-		constexpr Accuracy_t PI_OVER_2 = PI * static_cast<Accuracy_t>(0.5);//1.57079632679490l;
-		constexpr Accuracy_t PI_OVER_4 = PI * static_cast<Accuracy_t>(0.25); //0.78539816339745l;
-		constexpr Accuracy_t TAU = PI * static_cast<Accuracy_t>(2);
-		constexpr Accuracy_t ROOT2 = 1.41421356237310l;
-		constexpr Accuracy_t SQRT_1_OVER_2 = 0.70710678118655l;
-		constexpr Accuracy_t GOLDEN_RATIO = 1.61803398874989l;
-		constexpr Accuracy_t INVERSE_GOLDEN_RATIO = static_cast<Accuracy_t>(1) / GOLDEN_RATIO;
+		template<typename T = Accuracy_t> constexpr T GAMMA                = static_cast<T>(0.57721566490153l); // Euler's gamma constant
+		template<typename T = Accuracy_t> constexpr T LOG2PI_OVER_2        = static_cast<T>(0.91893853320467l);
+		template<typename T = Accuracy_t> constexpr T E                    = static_cast<T>(2.71828182845905l);
+		template<typename T = Accuracy_t> constexpr T LOG_N                = static_cast<T>(0.57721566490153l);
+		template<typename T = Accuracy_t> constexpr T LOG2E                = static_cast<T>(1.44269504088896l);
+		template<typename T = Accuracy_t> constexpr T LOG10E               = static_cast<T>(0.43429448190325l);
+		template<typename T = Accuracy_t> constexpr T LN2                  = static_cast<T>(0.69314718055995l);
+		template<typename T = Accuracy_t> constexpr T LN10                 = static_cast<T>(2.30258509299405l);
+		template<typename T = Accuracy_t> constexpr T PI                   = static_cast<T>(M_PI);
+		template<typename T = Accuracy_t> constexpr T PI_OVER_2            = static_cast<T>(PI<Accuracy_t> * static_cast<Accuracy_t>(0.5l)); // 1.57079632679490l;
+		template<typename T = Accuracy_t> constexpr T PI_OVER_4            = static_cast<T>(PI<Accuracy_t> * static_cast<Accuracy_t>(0.25l)); // 0.78539816339745l;
+		template<typename T = Accuracy_t> constexpr T TAU                  = static_cast<T>(PI<Accuracy_t> * static_cast<Accuracy_t>(2.l));
+		template<typename T = Accuracy_t> constexpr T ROOT2                = static_cast<T>(1.41421356237310l);
+		template<typename T = Accuracy_t> constexpr T SQRT_1_OVER_2        = static_cast<T>(0.70710678118655l);
+		template<typename T = Accuracy_t> constexpr T GOLDEN_RATIO         = static_cast<T>(1.61803398874989l);
+		template<typename T = Accuracy_t> constexpr T INVERSE_GOLDEN_RATIO = static_cast<T>(static_cast<Accuracy_t>(1) / GOLDEN_RATIO);
 
 		template<typename T>
 		USE_RESULT constexpr T RadiansToDegrees() noexcept
 		{
-			return (CAST(T, 360.l) / CAST(T, TAU));
+			return (CAST(T, 360.l) / TAU<T>);
 		}
 
 		template<typename T>
 		USE_RESULT constexpr T DegreesToRadians() noexcept
 		{
-			return (CAST(T, TAU) / CAST(T, 360.l));
+			return (TAU<T> / CAST(T, 360.l));
 		}
 
 		template<class T>

@@ -17,7 +17,7 @@ namespace kTest::maths
 	using namespace kmaths;
 
 	template<typename T>
-	constexpr auto InRangeEpsilon = [](const T val) -> bool {
+	constexpr auto InRangeZero = [](const T val) -> bool {
 		constexpr auto one = constants::One<T>();
 		constexpr auto epsilon = constants::Epsilon<T>();
 		constexpr auto ub = one + epsilon;
@@ -34,11 +34,11 @@ namespace kTest::maths
 			{ 4, 1, 0, 1 }
 		};
 
-		constexpr auto q1 = Quaternionf(CAST(float, constants::PI_OVER_2), 0, 0, 1);
+		constexpr auto q1 = Quaternionf(constants::PI_OVER_2<float>, 0, 0, 1);
 		const auto mag = q1.MagnitudeSQ();
-		VERIFY(InRangeEpsilon<float>(mag));
+		VERIFY(InRangeZero<float>(mag));
 
-		constexpr auto q2 = Quaternionf(1, 0, 0, 0, Theta_Type::DEGREES);
+		constexpr auto q2 = Quaternionf(1, 0, 0, 0, Theta_Format::DEGREES);
 		const auto q3 = q1 * q2;
 
 		constexpr auto decimalAccuracy = CAST(uint8_t, 2);

@@ -28,7 +28,7 @@ namespace kmaths
 		{
 			constexpr auto one = constants::One<constants::Accuracy_t>();
 			constexpr auto two = constants::Two<T>();
-			constexpr auto tau = CAST(T, constants::TAU);
+			constexpr auto tau = constants::TAU<T>;
 
 			x = Modulus<T>(x, tau);
 
@@ -66,12 +66,12 @@ namespace kmaths
 		constexpr constants::Accuracy_t epsilon_magnitude = 2;
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 		{
-			const auto xf = x + CAST(T, constants::PI_OVER_2);
+			const auto xf = x + constants::PI_OVER_2<T>;
 			return HandleEpsilon(SineImpl<T>(xf, n), epsilon_magnitude);
 		}
 		else
 		{
-			const auto xf = CAST(float, x) + CAST(float, constants::PI_OVER_2);
+			const auto xf = CAST(float, x) + constants::PI_OVER_2<float>;
 			return CAST(T, HandleEpsilon<float>(SineImpl<float>(xf, n), epsilon_magnitude));
 		}
 	}
