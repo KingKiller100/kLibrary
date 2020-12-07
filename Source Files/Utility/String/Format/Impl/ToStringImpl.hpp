@@ -11,41 +11,40 @@
 namespace klib::kString::secret::impl
 {
 	template<class Char_t>
-	constexpr void ToStringImpl(UNUSED const std::basic_string<Char_t>& fmt, UNUSED const size_t argIndex, const size_t offset)
-	{}
-
-	template<class Char_t>
 	USE_RESULT constexpr size_t FindOpenerPosition(std::basic_string<Char_t>& outFmt, const size_t argIndex, const size_t offset)
 	{
 		using namespace stringify;
 		using Str_t = std::basic_string<Char_t>;
 		constexpr size_t npos = type_trait::g_NoPos<Str_t>;
 
-		Char_t buff[5]{ type_trait::g_NullTerminator<Char_t> }; // '{' 'x' 'x' '}/:' '\0'
-		Char_t* const end = std::end(buff) - 1;
-		Char_t* searchItem = end;
+		Char_t buff[5]{ Char_t(), Char_t(), Char_t(), format::g_CloserSymbol<Char_t> }; // '{' 'x' 'x' '}/:' '\0'
+		Char_t* const pCloser = std::end(buff) - 2;
+		Char_t* searchStr = pCloser;
 
-		*(--searchItem) = format::g_CloserSymbol<Char_t>;
-		searchItem = stringify::UintToStr(searchItem, argIndex, 10);
-		*(--searchItem) = format::g_OpenerSymbol<Char_t>;
+		searchStr = stringify::UintToStr(searchStr, argIndex, 10);
+		*(--searchStr) = format::g_OpenerSymbol<Char_t>;
 
-		size_t openerPos = Find(outFmt.data(), searchItem, offset);
+		size_t openerPos = Find(outFmt.data(), searchStr, offset);
 		if (openerPos != npos)
 			return openerPos;
 
-		openerPos = Find(outFmt.data(), searchItem, 0);
+		openerPos = Find(outFmt.data(), searchStr, 0);
 		if (openerPos != npos)
 			return openerPos;
 
-		*(end - 1) = format::g_SpecifierSymbol<Char_t>;
-		openerPos = Find(outFmt.data(), searchItem, offset);
+		*pCloser = format::g_SpecifierSymbol<Char_t>;
+		openerPos = Find(outFmt.data(), searchStr, offset);
 
 		if (openerPos != npos)
 			return openerPos;
 
-		openerPos = Find(outFmt.data(), searchItem, 0);
+		openerPos = Find(outFmt.data(), searchStr, 0);
 		return openerPos;
 	}
+
+	template<class Char_t>
+	constexpr void ToStringImpl(const std::basic_string<Char_t>&, const size_t, const size_t)
+	{}
 
 	template<class Char_t, typename T, typename ...Ts>
 	constexpr void ToStringImpl(std::basic_string<Char_t>& outFmt, const size_t argIndex, const size_t offset, type_trait::SizeCondConstRef_t<T> arg, type_trait::SizeCondConstRef_t<Ts> ...argPack)

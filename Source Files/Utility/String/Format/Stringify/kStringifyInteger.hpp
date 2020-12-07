@@ -34,9 +34,6 @@ namespace klib::kString::stringify
 	{
 		using Unsigned_t = std::make_unsigned_t<Signed_t>;
 
-		if (minDigits == s_NoSpecifier)
-			minDigits = 1;
-
 		const auto isNeg = kmaths::IsNegative(val);
 		size_t size = kmaths::CountIntegerDigits(val) + 1;
 		if (size < minDigits)
@@ -56,13 +53,13 @@ namespace klib::kString::stringify
 
 		current = UintToStr(current, uVal, base);
 
-		if (minDigits < g_MaxDigits<Signed_t>)
+		if (minDigits != s_NoSpecifier && minDigits < g_MaxDigits<Signed_t>)
 			PrependPadding(current, minDigits, placeHolder);
 
 		if (isNeg)
 			PrependMinusSign(current);
 
-		return (const Char_t*&&)buff;
+		return (const Char_t*)buff;
 	}
 
 	template<class Char_t, typename Unsigned_t, typename = std::enable_if_t<

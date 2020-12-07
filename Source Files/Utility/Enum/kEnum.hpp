@@ -99,22 +99,21 @@ namespace klib::kEnum::secret::impl
 
 
 #define ENUM_CLASS(enumName, underlying, ...)											\
-struct secret_impl_##enumName															\
-{																						\
-	using underlying_t = underlying;													\
-	enum { __VA_ARGS__ };																\
-	static constexpr auto size = IDENTITY(COUNT(__VA_ARGS__));							\
-																						\
-	static constexpr std::array<underlying_t, size> values =							\
-	{ IDENTITY(IGNORE_ASSIGN(__VA_ARGS__)) };											\
-																						\
-	static constexpr std::array<std::string_view, size> raw_names =						\
-	{ IDENTITY(STRINGIZE(__VA_ARGS__)) };												\
-};																						\
-																						\
 class enumName																			\
 {																						\
 	using underlying_t = underlying;													\
+	struct secret_impl_##enumName														\
+	{																					\
+		enum { __VA_ARGS__ };															\
+		static constexpr auto size = IDENTITY(COUNT(__VA_ARGS__));						\
+																						\
+		static constexpr std::array<underlying_t, size> values =						\
+		{ IDENTITY(IGNORE_ASSIGN(__VA_ARGS__)) };										\
+																						\
+		static constexpr std::array<std::string_view, size> raw_names =					\
+		{ IDENTITY(STRINGIZE(__VA_ARGS__)) };											\
+	};																					\
+																						\
 																						\
 public:																					\
 	enum enum_t : underlying_t { __VA_ARGS__ };											\
@@ -152,10 +151,10 @@ public:																					\
 	template<typename T1, typename T2, typename = std::enable_if_t<						\
 	std::is_convertible_v<T2, T1>														\
 	>>																					\
-	USE_RESULT constexpr std::decay_t<T1> MaskCmp(enum_t target							\
+	USE_RESULT constexpr std::decay_t<T1> MaskCmp(enum_t mask							\
 		, T1&& successState, T2&& failState) const										\
 	{																					\
-		if (target & value)																\
+		if (mask & value)																\
 			return successState;														\
 		return failState;																\
 	}																					\

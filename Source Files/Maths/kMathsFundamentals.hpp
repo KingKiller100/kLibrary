@@ -90,7 +90,7 @@ namespace kmaths
 	}
 
 	template<typename T, size_t Size>
-	USE_RESULT constexpr size_t SizeOfCArray(const T(&array)[Size]) noexcept
+	USE_RESULT constexpr size_t SizeOfCArray(UNUSED const T(&)[Size]) noexcept
 	{
 		return Size;
 	}
@@ -113,13 +113,11 @@ namespace kmaths
 		{
 			if (x >= 0)
 				return x;
+
+			if _CONSTEXPR_IF(std::is_integral_v<T>)
+				return (~x + CAST(T, 1));
 			else
-			{
-				if _CONSTEXPR_IF(std::is_integral_v<T>)
-					return (~x + CAST(T, 1));
-				else
-					return -x;
-			}
+				return -x;
 		}
 	}
 
@@ -128,6 +126,9 @@ namespace kmaths
 	{
 		constexpr auto one = constants::One<T>();
 		constexpr auto minusOne = constants::MinusOne<T>();
+
+		if (ApproximatelyZero<T>(value))
+			return false;
 
 		return ((value > minusOne)
 			&& (value < one));

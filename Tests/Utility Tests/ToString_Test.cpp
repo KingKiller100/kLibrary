@@ -142,21 +142,45 @@ namespace kTest::utility
 	bool FormatToStringTester::StringifyFloatingPointTest()
 	{
 		{
+			const auto num = std::numeric_limits<float>::quiet_NaN();
+			const std::string result = stringify::StringFloatingPoint<char>(num);
+			VERIFY(result == "nan");
+		}
+
+		{
+			const auto num = std::numeric_limits<double>::signaling_NaN();
+			const std::string result = stringify::StringFloatingPoint<char>(num);
+			VERIFY(result == "nan");
+		}
+
+		{
+			const auto num = std::numeric_limits<long double>::infinity();
+			const std::string result = stringify::StringFloatingPoint<char>(num);
+			VERIFY(result == "inf");
+		}
+
+		{
 			constexpr auto num = 2.5;
-			const std::string result = stringify::StringFloatingPoint<char>(num, 1);
+			const std::string result = stringify::StringFloatingPoint<char>(num, 1, stringify::FloatFormat::FIX);
 			VERIFY(result == "2.5");
 		}
 
 		{
-			constexpr auto num = -2.75;
-			const std::u16string result = stringify::StringFloatingPoint<char16_t>(num, 0);
-			VERIFY(result == u"-2")
+			constexpr auto num = -2.0075;
+			const std::u16string result = stringify::StringFloatingPoint<char16_t>(num, 4);
+			VERIFY(result == u"-2.0075")
 		}
 
 		{
-			constexpr auto num = -2.125;
+			constexpr auto num = -200.125;
+			const std::u16string result = stringify::StringFloatingPoint<char16_t>(num, 2);
+			VERIFY(result == u"-200.13")
+		}
+
+		{
+			constexpr auto num = 50.75;
 			const std::u16string result = stringify::StringFloatingPoint<char16_t>(num, 0);
-			VERIFY(result == u"-2")
+			VERIFY(result == u"51")
 		}
 
 #if __cpp_char8_t

@@ -6,22 +6,22 @@ namespace kmaths
 {
 	namespace secret::impl
 	{
-		constexpr size_t GetCountImpl()
+		constexpr size_t GetCountImpl() noexcept
 		{
 			return 0;
 		}
 		template<typename T, typename ...Ts>
-		constexpr size_t GetCountImpl(const T&, const Ts& ...args)
+		constexpr size_t GetCountImpl(const T&, const Ts& ...args) noexcept
 		{
 			return 1 + GetCountImpl(args...);
 		}
 	}
 
 	template<typename T, typename ...Ts>
-	constexpr size_t Count(const T& arg, const Ts& ...args)
+	constexpr size_t Count(const T& arg, const Ts& ...args) noexcept
 	{
 		using namespace secret::impl;
-		const auto count(GetCountImpl(arg, args...));
+		const size_t count(GetCountImpl(arg, args...));
 		return count;
 	}
 
@@ -30,7 +30,8 @@ namespace kmaths
 	{
 		constexpr T ten = CAST(T, 10);
 		size_t count = 1;
-		while (ten <= Abs(x))
+		x = Abs(x);
+		while (ten <= x)
 		{
 			x /= ten;
 			count++;

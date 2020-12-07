@@ -12,7 +12,7 @@
 #include "../../../../Maths/kMathsFundamentals.hpp"
 #include "../../../../Maths/kModulus.hpp"
 #include "../../../../Maths/kRound.hpp"
-#include "../../../../Maths/kFloatBreakdown.hpp"
+#include "../../../../Maths/kFloat.hpp"
 
 #include <utility>
 
@@ -29,28 +29,45 @@ namespace klib::kString::stringify
 			std::is_floating_point_v<T>
 			|| type_trait::Is_CharType_V<Char_t>>
 			>
-			const Char_t* FixedNotation(T val, size_t decimalPlaces, FloatBreakdown<T>& breakdown)
+			const Char_t* FixedNotation(T val, size_t decimalPlaces)
 		{
 			using namespace type_trait;
 
-			Char_t buff[g_MaxFloatDigits<T>]{ g_NullTerminator<Char_t> };
+			Char_t buff[g_MaxFloatDigits<T>]{ };
 			Char_t* const end = std::end(buff) - 1;
 			Char_t* current = end;
 
+			const auto isNeg = IsNegative(val);
+
+			val = Abs(val);
+
+			size_t integers = static_cast<size_t>(Floor(val));
+
 			if (decimalPlaces > 0)
 			{
-				size_t decimals = static_cast<size_t>(breakdown.decimals * std::pow(10, decimalPlaces + 1));
+				const T realDecimal = GetDecimals(val);
+				size_t decimals = static_cast<size_t>(realDecimal * std::pow(10, decimalPlaces + 1));
 				decimals += 5;
 				Demote(decimals);
+				const size_t decDigits = CountIntegerDigits(decimals);
 				current = UintToStr(current, decimals);
-				const auto desiredCharacterCount = (end - current) + (breakdown.dpShifts - 1);
-				PrependPadding(current, desiredCharacterCount, Char_t('0'));
+				const size_t remaining = decimalPlaces - decDigits;
+				if (remaining > 0)
+				{
+					const size_t desiredCharacterCount = (end - current) + remaining;
+					PrependPadding(current, desiredCharacterCount, Char_t('0'));
+				}
 				*(--current) = Char_t('.');
 			}
+			else
+			{
+				if (GetDecimals(val) >= constants::ZeroPointFive<T>())
+					++integers;
+			}
 
-			current = UintToStr(current, breakdown.integers, 10);
+			current = UintToStr(current, integers, 10);
 
-			if (breakdown.isNeg)
+			if (isNeg)
 				PrependMinusSign(current);
 
 			return CreateNewCString(current);
@@ -109,12 +126,12 @@ namespace klib::kString::stringify
 				size_t decimals = static_cast<size_t>(breakdown.decimals * std::pow(10, breakdown.dpShifts + 1));
 				decimals += 5;
 				Demote(decimals);
-				
+
 				current = UintToStr(current, exponent);
 				if (exponent < 10) current = UintToStr(current, 0);
 				*(--current) = direction;
 				*(--current) = g_ScientificFloatToken<Char_t>;
-				
+
 				if (decimals != 0)
 					current = UintToStr(current, decimals);
 			}
@@ -136,7 +153,7 @@ namespace klib::kString::stringify
 
 				decimals += 5;
 				Demote(decimals);
-				
+
 				exponent += isZeroInt ? shifts : breakdown.integers > 9 ? shifts - 1 : 0;
 				current = UintToStr(current, exponent);
 				if (exponent < 10) current = UintToStr(current, 0);
@@ -175,7 +192,7 @@ namespace klib::kString::stringify
 		{
 			return figs.dpShifts > 5 || sigFigs > 5
 				? ScientificNotation<Char_t>(val, sigFigs, figs)
-				: FixedNotation<Char_t>(val, sigFigs, figs);
+				: FixedNotation<Char_t>(val, sigFigs);
 		}
 
 		// Big Endian
@@ -213,8 +230,7 @@ namespace klib::kString::stringify
 			if (!kmaths::IsNegative(val))
 				*current = Char_t('0');
 
-			auto cstr = CreateNewCString(current);
-			return std::move(cstr);
+			return CreateNewCString(current);
 		}
 
 	}
@@ -227,18 +243,19 @@ namespace klib::kString::stringify
 	/// <param name="GEN">General notation (either scientific or fixed)</param>
 	/// <param name="HEX">Hexadecimal format</param>
 	/// <param name="BIN">Binary format</param>
-	ENUM_CLASS(FloatFormat, std::uint8_t,
+	enum class FloatFormat : std::uint8_t
+	{
 		FIX = BIT_SHIFT(0),
 		SCI = BIT_SHIFT(1),
 		GEN = FIX | SCI,
 		HEX = BIT_SHIFT(2),
 		BIN = BIT_SHIFT(3)
-	);
+	};
 
 	template<class Char_t, typename T, typename = std::enable_if_t<
 		std::is_floating_point_v<T>
-		|| type_trait::Is_CharType_V<Char_t>>
-		>
+		|| type_trait::Is_CharType_V<Char_t>
+		>>
 		const Char_t* StringFloatingPoint(T val, size_t figures = s_NoSpecifier
 			, FloatFormat fmt = FloatFormat::FIX)
 	{
@@ -253,22 +270,21 @@ namespace klib::kString::stringify
 		else
 			figures = kmaths::Min<size_t>(figures, g_MaxPrecision);
 
-		if (fmt.MaskCmp(FloatFormat::GEN))
+		if (static_cast<std::uint8_t>(fmt) & static_cast<std::uint8_t>(FloatFormat::GEN))
 		{
 			FloatBreakdown breakdown = GetFigures(val, figures);
 
-			switch (fmt.ToEnum()) {
-			case FloatFormat::FIX: return FixedNotation<Char_t>(val, figures, breakdown);
+			switch (fmt) {
+			case FloatFormat::FIX: return FixedNotation<Char_t>(val, figures);
 			case FloatFormat::SCI: return ScientificNotation<Char_t>(val, figures + 1, breakdown);
 			case FloatFormat::GEN: return GeneralNotation<Char_t>(val, figures, breakdown);
-			default: throw kDebug::FormatError("Unknown floating point notation: " + ToWriter(fmt.ToString()));
+			default: throw kDebug::FormatError("Unknown floating point notation format");
 			}
 		}
 
-		return fmt.Compare(FloatFormat::HEX
-			, StringIntegralHex<Char_t>(Traits::UintBitCast(val))
-			, BinaryNotation<Char_t, T>(Traits::UintBitCast(val))
-		);
+		return fmt == FloatFormat::HEX
+			? StringIntegralHex<Char_t>(Traits::UintBitCast(val))
+			: BinaryNotation<Char_t, T>(Traits::UintBitCast(val));
 	}
 
 }
