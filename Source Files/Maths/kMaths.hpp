@@ -7,7 +7,7 @@
 #include "kAlgorithms.hpp"
 
 // Angles
-#include "AngleType.hpp"
+#include "kMathsTheta.hpp"
 
 // Bytes
 #include "BytesUnits.hpp"
