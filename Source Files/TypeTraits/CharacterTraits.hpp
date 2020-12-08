@@ -13,7 +13,8 @@ namespace klib::type_trait
 		using Integer_t = typename Base_t::int_type;
 		
 		// Character Compare Results
-		enum CompareResult : short {
+		enum CompareResult : std::int8_t
+		{
 			FIRST_BAD = -1,
 			EQUAL = 0,
 			SECOND_BAD
@@ -34,7 +35,7 @@ namespace klib::type_trait
 			const size_t srcSize) noexcept
 		{
 			if (srcSize > dstSize)
-				std::_Xout_of_range("Src size is bigger than the dstSize");
+				std::_Xout_of_range("srcSize is bigger than the dstSize");
 			
 			return Copy(dst, src, srcSize);
 		}
@@ -48,20 +49,15 @@ namespace klib::type_trait
 		USE_RESULT static constexpr CompareResult CompareRaw(const T* left, size_t leftSize,
 			const T* right, size_t rightSize) noexcept
 		{
-			const auto result = Base_t::compare(left, right, std::min(leftSize, rightSize));
+			const auto result = Base_t::compare(left, right, (std::min)(leftSize, rightSize));
 			return static_cast<CompareResult>(result);
 		}
 
 		USE_RESULT static constexpr bool Compare(const T* left, size_t leftSize,
 			const T* right, size_t rightSize) noexcept
 		{
-			const auto result = Base_t::compare(left, right, std::min(leftSize, rightSize));
+			const auto result = Base_t::compare(left, right, (std::min)(leftSize, rightSize));
 			return result == 0;
-		}
-
-		USE_RESULT static constexpr const T* Find(const T* str, size_t count, const T& c) noexcept 
-		{
-			return Base_t::find(str, count, c);
 		}
 
 		USE_RESULT static constexpr T* Assign(T* const str, size_t count, const T c) noexcept
