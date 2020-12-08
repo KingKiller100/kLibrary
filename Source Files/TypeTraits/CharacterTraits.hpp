@@ -10,13 +10,13 @@ namespace klib::type_trait
 	struct CharacterTraits : private std::char_traits<T>
 	{
 		using Base_t = std::char_traits<T>;
-
+		using Integer_t = typename Base_t::int_type;
+		
 		// Character Compare Results
 		enum CompareResult : short {
 			FIRST_BAD = -1,
 			EQUAL = 0,
-			SECOND_BAD,
-			DIFFERENT = 65535
+			SECOND_BAD
 		};
 		
 		USE_RESULT static constexpr size_t Length(const T* str) noexcept
@@ -57,6 +57,48 @@ namespace klib::type_trait
 		{
 			const auto result = Base_t::compare(left, right, std::min(leftSize, rightSize));
 			return result == 0;
+		}
+
+		USE_RESULT static constexpr const T* Find(const T* str, size_t count, const T& c) noexcept 
+		{
+			return Base_t::find(str, count, c);
+		}
+
+		USE_RESULT static constexpr T* Assign(T* const str, size_t count, const T c) noexcept
+		{
+			return Base_t::assign(str, count, c);
+		}
+
+		static constexpr void Assign(T& left, const T& right) noexcept {
+			Base_t::assign(left, right);
+		}
+
+		USE_RESULT static constexpr bool Eq(const T& left, const T& right) noexcept {
+			return Base_t::eq(left, right);
+		}
+
+		USE_RESULT static constexpr bool Lt(const T& left, const T& right) noexcept {
+			return Base_t::lt(left, right);
+		}
+
+		USE_RESULT static constexpr T ToChar(const Integer_t& integer) noexcept {
+			return Base_t::to_char_type(integer);
+		}
+
+		USE_RESULT static constexpr Integer_t ToInt(const T& c) noexcept {
+			return Base_t::to_int_type(c);
+		}
+
+		USE_RESULT static constexpr bool Eq_Integer(const Integer_t& left, const Integer_t& right) noexcept {
+			return Base_t::eq_int_type(left, right);
+		}
+
+		USE_RESULT static constexpr Integer_t Not_Eof(const Integer_t& integer) noexcept {
+			return Base_t::not_eof(integer);
+		}
+
+		USE_RESULT static constexpr Integer_t Eof() noexcept {
+			return Base_t::eof();
 		}
 	};
 	
