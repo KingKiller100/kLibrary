@@ -98,7 +98,7 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr bool IsInteger(T value) noexcept
 	{
-		if (std::is_signed_v<T> && IsNegative(value))
+		if (IsNegative(value))
 			return CAST(BigInt_t, value) == value;
 		else
 			return CAST(size_t, value) == value;
@@ -115,7 +115,7 @@ namespace kmaths
 				return x;
 
 			if _CONSTEXPR_IF(std::is_integral_v<T>)
-				return (~x + CAST(T, 1));
+				return ~x + constants::One<T>();
 			else
 				return -x;
 		}
@@ -124,8 +124,9 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr bool IsDecimal(T value) noexcept
 	{
-		constexpr auto one = constants::One<T>();
-		constexpr auto minusOne = constants::MinusOne<T>();
+		using namespace constants;
+		constexpr auto one = One<T>();
+		constexpr auto minusOne = MinusOne<T>();
 
 		if (constants::ApproximatelyZero<T>(value))
 			return false;

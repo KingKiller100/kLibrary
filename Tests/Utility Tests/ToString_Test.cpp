@@ -369,6 +369,7 @@ namespace kTest::utility
 
 #ifdef __cpp_char8_t
 		const auto binary = u8"0b" + std::u8string(stringify::StringIntegralBinary<char8_t>(num, 4, '0'));
+		VERIFY(binary == u8"0b1111101000");
 #endif
 
 		VERIFY(testStr == "This test 1 ");
@@ -380,10 +381,6 @@ namespace kTest::utility
 		VERIFY(testStr7 == "Repeat the same value in different ways. num:54321 hex:0000d431 bin:1101010000110001");
 		VERIFY(testStr8 == "Booleans - Text:true Int:1");
 		VERIFY(hex == "0x03e8");
-
-#ifdef __cpp_char8_t
-		VERIFY(binary == u8"0b1111101000");
-#endif
 
 		return success;
 	}

@@ -57,7 +57,7 @@ namespace kmaths
 		template<class T>
 		USE_RESULT constexpr T Zero() noexcept
 		{
-			return T();
+			return T(0);
 		}
 
 		template<class T>
@@ -145,13 +145,13 @@ namespace kmaths
 		template<class T>
 		USE_RESULT constexpr T OnePointFive() noexcept
 		{
-			return T(1.5);
+			return One<T>() + ZeroPointFive<T>();
 		}
 
 		template<class T>
 		USE_RESULT constexpr T OnePointFive(T&&) noexcept
 		{
-			return OnePointFive<T>();
+			return OnePointFive<ONLY_TYPE(T)>();
 		}
 
 		template<class ReturnType, class T>

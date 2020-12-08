@@ -143,11 +143,9 @@ namespace klib::kString::stringify
 				while (decimals < mag)
 				{
 					decimals = static_cast<size_t>(breakdown.decimals * std::pow(10, power++));
-
 					if (decimals == 0)
 						++shifts;
 				}
-
 				decimals += 5;
 				Demote(decimals);
 
@@ -257,6 +255,7 @@ namespace klib::kString::stringify
 			, FloatFormat fmt = FloatFormat::FIX)
 	{
 		using namespace secret::impl;
+		using namespace kmaths::constants;
 		using Traits = type_trait::FloatTraits<T>;
 
 		if (std::isnan(val)) return Convert<Char_t>("nan");

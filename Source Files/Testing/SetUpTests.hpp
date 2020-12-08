@@ -2,10 +2,10 @@
 
 namespace kTest
 {
-	template<class TesterMan>
-	void AddTest(typename TesterMan::Test_t* test)
+	template<class TestManager>
+	void AddTest(typename TestManager::Test_t* test)
 	{
-		TesterMan::Get().Add(test);
+		TestManager::Get().Add(test);
 	}
 	
 	namespace performance
