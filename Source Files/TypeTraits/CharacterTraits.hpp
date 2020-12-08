@@ -81,6 +81,10 @@ namespace klib::type_trait
 			return Base_t::lt(left, right);
 		}
 
+		USE_RESULT static constexpr bool Gt(const T& left, const T& right) noexcept {
+			return left > right;
+		}
+
 		USE_RESULT static constexpr T ToChar(const Integer_t& integer) noexcept {
 			return Base_t::to_char_type(integer);
 		}
@@ -89,7 +93,7 @@ namespace klib::type_trait
 			return Base_t::to_int_type(c);
 		}
 
-		USE_RESULT static constexpr bool Eq_Integer(const Integer_t& left, const Integer_t& right) noexcept {
+		USE_RESULT static constexpr bool Eq_Int(const Integer_t& left, const Integer_t& right) noexcept {
 			return Base_t::eq_int_type(left, right);
 		}
 
