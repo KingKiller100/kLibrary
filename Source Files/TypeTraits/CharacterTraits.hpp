@@ -10,6 +10,14 @@ namespace klib::type_trait
 	struct CharacterTraits : private std::char_traits<T>
 	{
 		using Base_t = std::char_traits<T>;
+
+		// Character Compare Results
+		enum CompareResult : short {
+			FIRST_BAD = -1,
+			EQUAL = 0,
+			SECOND_BAD,
+			DIFFERENT = 65535
+		};
 		
 		USE_RESULT static constexpr size_t Length(const T* str) noexcept
 		{
@@ -31,10 +39,24 @@ namespace klib::type_trait
 			return Copy(dst, src, srcSize);
 		}
 
-		USE_RESULT static constexpr T* move(T* const dst,
+		USE_RESULT static constexpr T* Move(T* const dst,
 			const T* const src, const size_t _Count) noexcept
 		{
 			return Base_t::move(dst, src, _Count);
+		}
+
+		USE_RESULT static constexpr CompareResult CompareRaw(const T* left, size_t leftSize,
+			const T* right, size_t rightSize) noexcept
+		{
+			const auto result = Base_t::compare(left, right, std::min(leftSize, rightSize));
+			return static_cast<CompareResult>(result);
+		}
+
+		USE_RESULT static constexpr bool Compare(const T* left, size_t leftSize,
+			const T* right, size_t rightSize) noexcept
+		{
+			const auto result = Base_t::compare(left, right, std::min(leftSize, rightSize));
+			return result == 0;
 		}
 	};
 	
