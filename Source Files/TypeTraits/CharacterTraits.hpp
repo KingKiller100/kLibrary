@@ -1,8 +1,43 @@
 #pragma once
 #include "TemplateTraits.hpp"
+#include <string>
+
+#include "../HelperMacros.hpp"
 
 namespace klib::type_trait
 {
+	template<typename T>
+	struct CharacterTraits : private std::char_traits<T>
+	{
+		using Base_t = std::char_traits<T>;
+		
+		USE_RESULT static constexpr size_t Length(const T* str) noexcept
+		{
+			return Base_t::length(str);
+		}
+
+		USE_RESULT static constexpr T* Copy(T* dst, const T* const src, const size_t size) noexcept
+		{
+			return Base_t::copy(dst, src, size);
+		}
+
+		USE_RESULT static constexpr  T* CopySafe(T* const dst,
+			const size_t dstSize, const T* const src,
+			const size_t srcSize) noexcept
+		{
+			if (srcSize > dstSize)
+				std::_Xout_of_range("Src size is bigger than the dstSize");
+			
+			return Copy(dst, src, srcSize);
+		}
+
+		USE_RESULT static constexpr T* move(T* const dst,
+			const T* const src, const size_t _Count) noexcept
+		{
+			return Base_t::move(dst, src, _Count);
+		}
+	};
+	
 	template<typename T>
 	struct Is_CharTypeBase : std::bool_constant<Is_It_V<T,
 		char, unsigned char, signed char, wchar_t, char16_t, char32_t
@@ -11,6 +46,7 @@ namespace klib::type_trait
 #endif
 		>>
 	{
+		using Traits = CharacterTraits<T>;
 		using Char_t = T;
 	};
 

@@ -28,7 +28,7 @@ namespace kmaths
 		template<typename T = Accuracy_t> constexpr T ROOT2                = static_cast<T>(1.41421356237310l);
 		template<typename T = Accuracy_t> constexpr T SQRT_1_OVER_2        = static_cast<T>(0.70710678118655l);
 		template<typename T = Accuracy_t> constexpr T GOLDEN_RATIO         = static_cast<T>(1.61803398874989l);
-		template<typename T = Accuracy_t> constexpr T INVERSE_GOLDEN_RATIO = static_cast<T>(static_cast<Accuracy_t>(1) / GOLDEN_RATIO);
+		template<typename T = Accuracy_t> constexpr T INVERSE_GOLDEN_RATIO = static_cast<T>(static_cast<Accuracy_t>(1) / GOLDEN_RATIO<Accuracy_t>);
 
 		template<typename T>
 		USE_RESULT constexpr T RadiansToDegrees() noexcept
@@ -167,5 +167,7 @@ namespace kmaths
 		}
 	}
 
+#ifdef KLIB_SHORT_NAMESPACE
 	using namespace constants;
+#endif
 }

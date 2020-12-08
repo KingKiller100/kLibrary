@@ -127,7 +127,7 @@ namespace kmaths
 		constexpr auto one = constants::One<T>();
 		constexpr auto minusOne = constants::MinusOne<T>();
 
-		if (ApproximatelyZero<T>(value))
+		if (constants::ApproximatelyZero<T>(value))
 			return false;
 
 		return ((value > minusOne)

@@ -11,12 +11,14 @@
 namespace klib::kString::secret::impl
 {
 	template<class Char_t>
-	USE_RESULT constexpr size_t FindOpenerPosition(std::basic_string<Char_t>& outFmt, const size_t argIndex, const size_t offset)
+	USE_RESULT constexpr size_t FindOpenerPosition(const std::basic_string<Char_t>& outFmt, const size_t argIndex, const size_t offset)
 	{
 		using namespace stringify;
 		using Str_t = std::basic_string<Char_t>;
 		constexpr size_t npos = type_trait::g_NoPos<Str_t>;
 
+		const auto data = outFmt.data();
+		
 		Char_t buff[5]{ Char_t(), Char_t(), Char_t(), format::g_CloserSymbol<Char_t> }; // '{' 'x' 'x' '}/:' '\0'
 		Char_t* const pCloser = std::end(buff) - 2;
 		Char_t* searchStr = pCloser;
@@ -24,21 +26,21 @@ namespace klib::kString::secret::impl
 		searchStr = stringify::UintToStr(searchStr, argIndex, 10);
 		*(--searchStr) = format::g_OpenerSymbol<Char_t>;
 
-		size_t openerPos = Find(outFmt.data(), searchStr, offset);
+		size_t openerPos = Find(data, searchStr, offset);
 		if (openerPos != npos)
 			return openerPos;
 
-		openerPos = Find(outFmt.data(), searchStr, 0);
+		openerPos = Find(data, searchStr, 0);
 		if (openerPos != npos)
 			return openerPos;
 
 		*pCloser = format::g_SpecifierSymbol<Char_t>;
-		openerPos = Find(outFmt.data(), searchStr, offset);
+		openerPos = Find(data, searchStr, offset);
 
 		if (openerPos != npos)
 			return openerPos;
 
-		openerPos = Find(outFmt.data(), searchStr, 0);
+		openerPos = Find(data, searchStr, 0);
 		return openerPos;
 	}
 
@@ -53,11 +55,13 @@ namespace klib::kString::secret::impl
 		using Str_t = std::basic_string<Char_t>;
 		constexpr auto npos = type_trait::g_NoPos<Str_t>;
 
+		const auto data = outFmt.data();
+		
 		size_t openerPos = FindOpenerPosition(outFmt, argIndex, offset);
 		if (openerPos == npos)
 			return;
 
-		size_t closerPos = Find_First_Of(outFmt.data(), format::g_CloserSymbol<Char_t>, openerPos);
+		size_t closerPos = Find_First_Of(data, format::g_CloserSymbol<Char_t>, openerPos);
 		if (closerPos == npos)
 			return;
 
@@ -67,7 +71,7 @@ namespace klib::kString::secret::impl
 		while (openerPos != npos && closerPos != npos)
 		{
 			const auto infoSize = closerPos - openerPos;
-			const size_t colonPos = Find_First_Of(outFmt.data(), format::g_SpecifierSymbol<Char_t>, openerPos);
+			const size_t colonPos = Find_First_Of(data, format::g_SpecifierSymbol<Char_t>, openerPos);
 
 			StringWriter<Char_t> specifier;
 
@@ -91,7 +95,7 @@ namespace klib::kString::secret::impl
 
 			openerPos = FindOpenerPosition(outFmt, argIndex, openerPos + repSize);
 			if (openerPos != npos)
-				closerPos = Find_First_Of(outFmt.data(), format::g_CloserSymbol<Char_t>, openerPos);
+				closerPos = Find_First_Of(data, format::g_CloserSymbol<Char_t>, openerPos);
 		}
 
 		ToStringImpl<Char_t, Ts...>(outFmt, argIndex + 1, initialOpenerPos + repSize, argPack...);

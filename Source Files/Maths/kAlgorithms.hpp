@@ -510,6 +510,8 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Gamma(T z)
 	{
+		using namespace constants;
+		
 		if (IsNegative(z)) return Zero<T>();
 
 		constexpr auto gamma = constants::GAMMA<Accuracy_t>;

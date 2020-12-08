@@ -112,7 +112,7 @@ namespace klib::kString::stringify
 				}
 				else // Integer == significant figures
 				{
-					if (breakdown.decimals >= kmaths::ZeroPointFive<T>())
+					if (breakdown.decimals >= constants::ZeroPointFive<T>())
 					{
 						++breakdown.integers;
 					}
@@ -269,7 +269,7 @@ namespace klib::kString::stringify
 			else
 				figures = kmaths::Min<size_t>(figures, g_MaxPrecision);
 
-			if (ApproximatelyZero<T>(val)) return Convert<Char_t>("0");
+			if (constants::ApproximatelyZero<T>(val)) return Convert<Char_t>("0");
 
 			switch (fmt) {
 			case FloatFormat::FIX: return FixedNotation<Char_t>(val, figures);
