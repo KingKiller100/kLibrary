@@ -11,10 +11,7 @@
 #include "../../../../Maths/Length_Type.hpp"
 #include "../../../../Maths/kMathsFundamentals.hpp"
 #include "../../../../Maths/kModulus.hpp"
-#include "../../../../Maths/kRound.hpp"
-#include "../../../../Maths/kFloat.hpp"
-
-#include <utility>
+#include "../../../../Maths/kMathsFloat.hpp"
 
 
 namespace klib::kString::stringify
@@ -252,14 +249,14 @@ namespace klib::kString::stringify
 		|| type_trait::Is_CharType_V<Char_t>
 		>>
 		const Char_t* StringFloatingPoint(T val, size_t figures = s_NoSpecifier
-			, FloatFormat fmt = FloatFormat::FIX)
+			, FloatFormat fmt = FloatFormat::GEN)
 	{
 		using namespace secret::impl;
 		using namespace kmaths::constants;
 		using Traits = type_trait::FloatTraits<T>;
 
-		if (std::isnan(val)) return Convert<Char_t>("nan");
-		if (std::isinf(val)) return Convert<Char_t>("inf");
+		if (IsNaN(val)) return Convert<Char_t>("nan");
+		if (IsInf(val)) return Convert<Char_t>("inf");
 
 		if (static_cast<std::uint8_t>(fmt) & static_cast<std::uint8_t>(FloatFormat::GEN))
 		{

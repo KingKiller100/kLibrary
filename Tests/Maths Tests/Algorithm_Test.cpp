@@ -23,6 +23,8 @@ namespace kTest::maths
 	{
 		VERIFY_MULTI_INIT();
 		
+		VERIFY_MULTI(IsInfTest());
+		VERIFY_MULTI(IsNaNTest());
 		VERIFY_MULTI(CountTest());
 		VERIFY_MULTI(AbsTest());
 		VERIFY_MULTI(TanTest());
@@ -271,18 +273,9 @@ namespace kTest::maths
 
 		// Tan(pi / 2) == Div/0
 		{
-			try
-			{
 				constexpr auto x = constants::PI_OVER_2<Accuracy_t>;
 				const auto result = Tan(x);
-				const auto expected = std::tan(x);
-
-				VERIFY(false);
-			}
-			catch (...)
-			{
-				VERIFY(true);
-			}
+				VERIFY(std::isinf(result));
 		}
 
 		// Tan(3*pi / 2) == Div/0
@@ -1808,6 +1801,65 @@ namespace kTest::maths
 			constexpr auto base = 12.2f;
 			const auto result = Modulus(num, base);
 			const auto expected = std::fmodf(num, base);
+			VERIFY(result == expected);
+		}
+
+		return success;
+	}
+
+	bool AlgorithmsTester::IsInfTest()
+	{
+		{
+			constexpr auto num = -5.5;
+			constexpr auto result = kmaths::IsInf(num);
+			const auto expected = std::isinf(num);
+			VERIFY(result == expected);
+		}
+		
+		{
+			constexpr auto num = 5.5;
+			const auto result = kmaths::IsInf(num);
+			const auto expected = std::isinf(num);
+			VERIFY(result == expected);
+		}
+		
+		{
+			constexpr auto num = -std::numeric_limits<double>::infinity();
+			const auto result = kmaths::IsInf(num);
+			const auto expected = std::isinf(num);
+			VERIFY(result == expected);
+		}
+		
+		{
+			constexpr auto num = std::numeric_limits<double>::infinity();
+			const auto result = kmaths::IsInf(num);
+			const auto expected = std::isinf(num);
+			VERIFY(result == expected);
+		}
+		
+		return success;
+	}
+
+	bool AlgorithmsTester::IsNaNTest()
+	{
+		{
+			constexpr auto num = 5.5f;
+			const auto result = kmaths::IsNaN(num);
+			const auto expected = std::isnan(num);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto num = std::numeric_limits<float>::quiet_NaN();
+			const auto result = kmaths::IsNaN(num);
+			const auto expected = std::isnan(num);
+			VERIFY(result == expected);
+		}
+
+		{
+			constexpr auto num = std::numeric_limits<float>::signaling_NaN();
+			const auto result = kmaths::IsNaN(num);
+			const auto expected = std::isnan(num);
 			VERIFY(result == expected);
 		}
 

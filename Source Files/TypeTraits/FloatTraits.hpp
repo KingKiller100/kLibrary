@@ -10,6 +10,7 @@ namespace klib::type_trait
 	union SingleFloatPrecision
 	{
 		float f;
+		std::uint32_t u;
 
 		struct Parts
 		{
@@ -17,12 +18,12 @@ namespace klib::type_trait
 			unsigned exponent : (CHAR_BIT * sizeof(float) - FLT_MANT_DIG);
 			unsigned sign : 1;
 		} parts;
-		std::uint32_t u;
 	};
 
 	union DoubleFloatPrecision
 	{
 		double f;
+		std::uint64_t u;
 
 		struct Parts
 		{
@@ -30,13 +31,12 @@ namespace klib::type_trait
 			unsigned long long exponent : (CHAR_BIT * sizeof(double) - DBL_MANT_DIG);
 			unsigned long long sign : 1;
 		} parts;
-
-		std::uint64_t u;
 	};
 
 	template<class T>
 	struct FloatTraits
 	{
+	public:
 		static_assert(std::is_floating_point_v<T>, "Type entered is not recognized as a floating point type");
 
 		using Unsigned_t = std::conditional_t<sizeof(T) == 4, std::uint32_t, std::uint64_t>;

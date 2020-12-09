@@ -9,8 +9,9 @@
 #include "kCount.hpp"
 #include "kMathsTrig.hpp"
 #include "kMathsEpsilon.hpp"
-#include "kFloat.hpp"
+#include "kMathsFloat.hpp"
 #include "kModulus.hpp"
+#include "kRound.hpp"
 
 #include "../HelperMacros.hpp"
 #include "../Utility/Debug/Exceptions/MathsExceptions.hpp"

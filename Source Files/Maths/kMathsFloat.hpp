@@ -2,6 +2,7 @@
 #include "kMathsConstants.hpp"
 #include "kMathsFundamentals.hpp"
 
+#include "../TypeTraits/FloatTraits.hpp"
 #include "../HelperMacros.hpp"
 
 namespace kmaths
@@ -58,5 +59,47 @@ namespace kmaths
 		const auto justDecimals = GetDecimals(val);
 		const auto dpShifts = GetDpShifts(justDecimals);
 		return { justIntegers, dpShifts, justDecimals, isNeg };
+	}
+
+	template<typename T>
+	USE_RESULT constexpr bool IsInfPos(T x)
+	{
+		constexpr auto inf = std::numeric_limits<T>::infinity();
+		return x == inf;
+	}
+
+	template<typename T>
+	USE_RESULT constexpr bool IsInfNeg(T x)
+	{
+		constexpr auto infNeg = -std::numeric_limits<T>::infinity();
+		return x == infNeg;
+	}
+
+	template<typename T>
+	USE_RESULT constexpr bool IsInf(T x)
+	{
+		return IsNegative(x)
+			? IsInfNeg(x)
+			: IsInfPos(x);
+	}
+
+	template<typename T>
+	USE_RESULT constexpr bool IsNaNQuiet(T x)
+	{
+		constexpr auto nanQ = std::numeric_limits<T>::quiet_NaN();
+		return x == nanQ;
+	}
+
+	template<typename T>
+	USE_RESULT constexpr bool IsNaNSignaling(T x)
+	{
+		constexpr auto nanS = std::numeric_limits<T>::signaling_NaN();
+		return x == nanS;
+	}
+
+	template<typename T>
+	USE_RESULT constexpr bool IsNaN(T x)
+	{
+		return IsNaNQuiet(x) || IsNaNSignaling(x);
 	}
 }

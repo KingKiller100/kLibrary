@@ -3,7 +3,7 @@
 #include "../../kStringTypes.hpp"
 #include "../Stringify/kStringifyHelper.hpp"
 
-#include "../Stringify/kStringifyFloatingPoint.hpp"
+#include "../Stringify/kStringifyFloat.hpp"
 #include "../Stringify/kStringifyInteger.hpp"
 #include "../Stringify/kStringifyBool.hpp"
 

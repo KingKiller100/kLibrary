@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "kMathsConstants.hpp"
-#include "kFloat.hpp"
+#include "kMathsFloat.hpp"
 #include "kMathsFundamentals.hpp"
 
 namespace kmaths

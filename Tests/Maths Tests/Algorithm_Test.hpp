@@ -47,6 +47,8 @@ namespace kTest::maths
 		bool PowerOfFractionTest();
 		bool FloatingPointRemainderTest();
 		bool ModulusTest();
+		bool IsInfTest();
+		bool IsNaNTest();
 	};
 }
 #endif
