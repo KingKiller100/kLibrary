@@ -280,17 +280,9 @@ namespace kTest::maths
 
 		// Tan(3*pi / 2) == Div/0
 		{
-			try
-			{
 				constexpr auto x = 3 * constants::PI_OVER_2<Accuracy_t>;
 				const auto result = Tan(x, 500);
-				const auto expected = std::tan(x);
-				VERIFY(false);
-			}
-			catch (...)
-			{
-				VERIFY(true);
-			}
+				VERIFY(std::isinf(result));
 		}
 
 		{
