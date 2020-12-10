@@ -34,24 +34,53 @@ namespace kTest::performance::util
 
 	void ToStringSpeedTest::kSprintfTest()
 	{
-		const std::vector<std::string_view> participants = { "klib::kString::ToString double", "klib::kString::SprintfWrapper" };
+		const std::vector<std::string_view> participants = { "klib::kString::ToString", "klib::kString::SprintfWrapper" };
 		SetUpParticipants(participants);
 
-		constexpr auto num = 6.015625;
-
-
-		const auto str = kString::ToString("{0:b}", 5.5);
+		const std::string string = "Input1";
+		const std::string_view string_view = "Input2";
+		const double f64 = 64.625;
+		const float f32 = 32.25;
+		const size_t ulong = 10000;
+		const long long slong = -5000;
+		const unsigned uint = 100;
+		const int sint = -50;
+		const bool boolean = true;
+		const auto ptr = std::make_shared<int64_t>(64);
 
 		for (auto i = 0; i < maxIter; ++i)
 		{
 			{
 				START_TEST(participants[0]);
-				(void)kString::ToString("{0:3}", num);
+				(void)kString::ToString("string: {0} - string_view: {1} - double: {2:5}"
+					" - float: {3:5} - ulong: {4} - slong: {5} - uint: {6} - sint: {7} - boolean: {8} - Pointer: {9}"
+					, string
+					, string_view
+					, f64
+					, f32
+					, ulong
+					, slong
+					, uint
+					, sint
+					, boolean
+					, ptr
+				);
 			}
 
 			{
 				START_TEST(participants[1]);
-				(void)kString::SprintfWrapper("%.3f", num);
+				(void)kString::SprintfWrapper("string: %s - string_view: %s - double: %.5f"
+					" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s - Pointer: %p"
+					, string.data()
+					, string_view.data()
+					, f64
+					, f32
+					, ulong
+					, slong
+					, uint
+					, sint
+					, boolean ? "true" : "false"
+					, ptr);
 			}
 		}
 	}
@@ -70,12 +99,13 @@ namespace kTest::performance::util
 		{
 			{
 				START_TEST(participants[0]);
-				const auto output = kString::ToString("sint: {0}", sint);
+				(void)kString::ToString("sint: {0}", sint);
 			}
 
 			{
 				START_TEST(participants[1]);
 				ss << "sint: " << sint;
+				(void)ss.str();
 			}
 
 			{
@@ -113,6 +143,7 @@ namespace kTest::performance::util
 			{
 				START_TEST(participants[1]);
 				ss << "f64: " << std::setprecision(3) << f64;
+				(void)ss.str();
 			}
 
 			constexpr auto format = "f64: %.3f";
@@ -157,6 +188,7 @@ namespace kTest::performance::util
 			{
 				START_TEST(participants[1]);
 				ss << "f32: " << std::setprecision(3) << f32;
+				(void)ss.str();
 			}
 
 			constexpr auto format = "f32: %.3f";
@@ -194,12 +226,13 @@ namespace kTest::performance::util
 		{
 			{
 				START_TEST(participants[0]);
-				const auto output = kString::ToString("string: {0}", str);
+				(void) kString::ToString("string: {0}", str);
 			}
 
 			{
 				START_TEST(participants[1]);
 				ss << "string: " << str;
+				(void)ss.str();
 			}
 
 			constexpr auto format = "string: %s";
@@ -278,6 +311,7 @@ namespace kTest::performance::util
 				START_TEST(participants[1]);
 				ss << "string: " << string << " - string_view: " << string_view << " - double: " << std::setprecision(5) << f64 <<
 					" - float: " << std::setprecision(5) << f32 << " - ulong: " << ulong << " - slong: " << slong << " - uint: " << uint << " - sint: " << sint << " - boolean: " << boolean;
+				(void)ss.str();
 			}
 			ss.clear();
 			buffer.release();
@@ -324,6 +358,7 @@ namespace kTest::performance::util
 				START_TEST(participants[1]);
 				ss << "string: " << string << " - string_view: " << string_view << " - double: " << std::setprecision(5) << f64 <<
 					" - float: " << std::setprecision(5) << f32 << " - ulong: " << ulong << " - slong: " << slong << " - uint: " << uint << " - sint: " << sint << " - boolean: " << boolean;
+				(void)ss.str();
 			}
 			ss.clear();
 		}
@@ -351,7 +386,7 @@ namespace kTest::performance::util
 		{
 			{
 				START_TEST(participants[0]);
-				const auto output = kString::ToString("string: {0} - string_view: {1} - double: {2:5}"
+				(void)kString::ToString("string: {0} - string_view: {1} - double: {2:5}"
 					" - float: {3:5} - ulong: {4} - slong: {5} - uint: {6} - sint: {7} - boolean: {8} - Pointer: {9}"
 					, string
 					, string_view
@@ -441,7 +476,7 @@ namespace kTest::performance::util
 		{
 			{
 				START_TEST(participants[0]);
-				const auto output = kString::ToString("string: {0} - string_view: {1} - double: {2:5}"
+				(void) kString::ToString("string: {0} - string_view: {1} - double: {2:5}"
 					" - float: {3:5} - ulong: {4} - slong: {5} - uint: {6} - sint: {7} - boolean: {8} - Pointer: {9}"
 					, string
 					, string_view

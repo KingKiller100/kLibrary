@@ -698,7 +698,7 @@ namespace kTest::maths
 		{
 			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearchClosest(list, -5.0);
-			VERIFY_COMPILE_TIME(idx == -1);
+			VERIFY_COMPILE_TIME(idx == 0);
 		}
 
 		{
@@ -716,13 +716,13 @@ namespace kTest::maths
 		{
 			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearchClosest(list, 7.0);
-			VERIFY_COMPILE_TIME(idx == -1);
+			VERIFY_COMPILE_TIME(idx == 6);
 		}
 
 		{
 			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
 			const auto idx = BinarySearchClosest(list, -1.0);
-			VERIFY_COMPILE_TIME(idx == -1);
+			VERIFY_COMPILE_TIME(idx == 0);
 		}
 
 		{

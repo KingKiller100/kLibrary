@@ -22,15 +22,8 @@ namespace klib::kString
 			constexpr Char_t nt = g_NullTerminator<Char_t>;
 			constexpr size_t npos = g_NoPos<PossibleString_t>;
 
-			if (hayStack == nullptr)
-				return npos;
-
-			const auto size = GetSize(hayStack);
-			if (offset >= size)
-				return npos;
-
-			for (size_t index(offset); 
-				hayStack[index] != nt && index < size; 
+			for (std::make_signed_t<size_t> index(offset); 
+				hayStack[index] != nt && index >= 0; 
 				index = directionFunc(index, 1))
 			{
 				if (cmpFunc(hayStack[index], needle))
@@ -55,14 +48,9 @@ namespace klib::kString
 		constexpr Char_t nt = g_NullTerminator<Char_t>;
 		constexpr size_t npos = g_NoPos<PossibleString_t>;
 
-		if (hayStack == nullptr || needle == nullptr)
-			return npos;
-
-		if (GetSize(hayStack) <= offset)
-			return npos;
-
 		std::make_signed_t<size_t> hIndex = offset, nIndex = 0;
-		for (; hayStack[hIndex] != nt && needle[nIndex] != nt;
+		for (; (hayStack[hIndex] != nt && needle[nIndex] != nt)
+			&& hIndex >= 0;
 			++hIndex, ++nIndex)
 		{
 			if (hayStack[hIndex] != needle[nIndex])

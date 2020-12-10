@@ -28,10 +28,14 @@ namespace kmaths
 		template<typename List, typename T>
 		USE_RESULT constexpr size_t BinarySearchClosestImpl(const List& list, T&& value, size_t lbIdx, size_t ubIdx, size_t size)
 		{
-			if (lbIdx > ubIdx
-				|| value < list[0]
-				|| value > list[size - 1])
-				return -1;
+			if (lbIdx > ubIdx)
+				return static_cast<size_t>(-1);
+
+			if (value < list[0])
+				return 0;
+
+			if (value > list[size - 1])
+				return size - 1;
 
 			const size_t midIdx = lbIdx + ((ubIdx - lbIdx) >> 1);
 

@@ -63,7 +63,7 @@ namespace kmaths
 				constexpr auto lookUpMapSize = SizeOfCArray(lookUpMap);
 
 				auto estimate = CAST(Accuracy_t, kmaths::secret::impl::BinarySearchClosestImpl(lookUpMap, square, 0, lookUpMapSize - 1, lookUpMapSize));
-				if (!estimate || estimate == constants::MinusOne<Accuracy_t>())
+				if (estimate == 0)
 				{
 					estimate = square;
 					do {

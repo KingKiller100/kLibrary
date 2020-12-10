@@ -84,22 +84,12 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr bool IsNaNQuiet(T x)
-	{
-		constexpr auto nanQ = std::numeric_limits<T>::quiet_NaN();
-		return x == nanQ;
-	}
-
-	template<typename T>
-	USE_RESULT constexpr bool IsNaNSignaling(T x)
-	{
-		constexpr auto nanS = std::numeric_limits<T>::signaling_NaN();
-		return x == nanS;
-	}
-
-	template<typename T>
 	USE_RESULT constexpr bool IsNaN(T x)
 	{
-		return IsNaNQuiet(x) || IsNaNSignaling(x);
+		const auto parts = klib::type_trait::FloatTraits<T>::Parts(x);
+		if _CONSTEXPR17(std::is_same_v<T, float>)
+			return parts.exponent == 255 && parts.mantissa != 0;
+		else
+			return parts.exponent == 2047 && parts.mantissa != 0;
 	}
 }

@@ -95,16 +95,16 @@ namespace klib::kEnum::secret::impl
 	}
 }
 
-
-
-
 #define ENUM_CLASS(enumName, underlying, ...)											\
 class enumName																			\
 {																						\
 	using underlying_t = underlying;													\
+public:																					\
+	enum enum_t : underlying_t { __VA_ARGS__ };											\
+																						\
+private:																				\
 	struct secret_impl_##enumName														\
 	{																					\
-		enum { __VA_ARGS__ };															\
 		static constexpr auto size = IDENTITY(COUNT(__VA_ARGS__));						\
 																						\
 		static constexpr std::array<underlying_t, size> values =						\
@@ -114,10 +114,7 @@ class enumName																			\
 		{ IDENTITY(STRINGIZE(__VA_ARGS__)) };											\
 	};																					\
 																						\
-																						\
 public:																					\
-	enum enum_t : underlying_t { __VA_ARGS__ };											\
-																						\
 	constexpr enumName(const enum_t value)												\
 		: value(value)																	\
 	{}																					\
