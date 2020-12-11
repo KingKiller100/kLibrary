@@ -18,9 +18,20 @@ namespace klib::kLogs
 			: time(calendarInfoSource)
 			, date(calendarInfoSource)
 			, text(text)
-			, file(file)
+			, file(file.data())
 			, line(line)
 		{}
+
+		LogMessage::LogMessage( const char* text, const kDebug::SourceInfo& sourceInfo,
+			CalendarInfoSourceType calendarInfoSource )
+				:LogMessage( text, sourceInfo.file, sourceInfo.line, calendarInfoSource )
+		{}
+
+		LogMessage::LogMessage( const std::string_view& text, const kDebug::SourceInfo& sourceInfo,
+			CalendarInfoSourceType calendarInfoSource )
+				: LogMessage( text.data(), sourceInfo.file, sourceInfo.line, calendarInfoSource )
+		{
+		}
 
 		LogMessage::LogMessage(const std::string& text, const LogMessage& other)
 			: time(other.time)
