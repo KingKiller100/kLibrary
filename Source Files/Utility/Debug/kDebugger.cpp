@@ -1,14 +1,17 @@
 #include "pch.hpp"
 #include "kDebugger.hpp"
 
+#include "Compiler/VisualStudio.hpp"
 #include "../FileSystem/kFileSystem.hpp"
+#include <thread>
+
 
 namespace klib::kDebug
 {
 	void CheckRemoteDebuggerAttached(const char* filename) noexcept
 	{
 #ifdef  _DEBUG
-		if (::IsDebuggerPresent() == KLIB_TRUE)
+		if ()
 			return;
 
 		while (kFileSystem::CheckFileExists(filename))
@@ -17,13 +20,16 @@ namespace klib::kDebug
 			{
 				return;
 			}
+			std::this_thread::sleep_for(std::chrono::seconds(1));
 		}
 #endif
 	}
 
-	void BreakPointHere() noexcept
+	void Break() noexcept
 	{
-		__debugbreak();
+#ifdef MSVC_PLATFORM_TOOLSET
+		compiler::vs::BreakPoint();
+#endif
 	}
 
 }
