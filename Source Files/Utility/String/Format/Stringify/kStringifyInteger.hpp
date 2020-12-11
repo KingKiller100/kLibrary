@@ -38,7 +38,7 @@ namespace klib::kString::stringify
 			minDigits = 1;
 		
 		const auto isNeg = kmaths::IsNegative(val);
-		size_t size = kmaths::CountIntegerDigits(val) + 1;
+		size_t size = kmaths::CountIntegerDigits(val);
 		if (size < minDigits)
 		{
 			const auto extra = minDigits - size;
@@ -47,8 +47,8 @@ namespace klib::kString::stringify
 		if (isNeg)
 			++size;
 		
-		Char_t* buff = new Char_t[size]{ };
-		Char_t* const end = buff + (size - 1);
+		Char_t* buff = new Char_t[size + 1]{ };
+		Char_t* const end = buff + size;
 		Char_t* current = end;
 		const auto uVal = isNeg
 			? 0 - static_cast<Unsigned_t>(val)
@@ -74,20 +74,20 @@ namespace klib::kString::stringify
 		if (minDigits == s_NoSpecifier)
 			minDigits = 1;
 
-		size_t size = kmaths::CountIntegerDigits(val) + 1;
+		size_t size = kmaths::CountIntegerDigits(val);
 		if (size < minDigits)
 		{
 			const auto extra = minDigits - size;
 			size += extra;
 		}
-		Char_t* buff = new Char_t[size]{ };
-		Char_t* const end = buff + (size - 1);
+		Char_t* buff = new Char_t[size + 1]{ };
+		Char_t* const end = buff + size;
 		Char_t* current = UintToStr(end, val, base);
 
 		if (minDigits < g_MaxDigits<Unsigned_t>)
 			PrependPadding(current, minDigits, placeHolder);
 
-		return (const Char_t*&&)buff;
+		return (const Char_t*)buff;
 	}
 
 	template<class Char_t, typename Integral_t, typename = std::enable_if_t<
