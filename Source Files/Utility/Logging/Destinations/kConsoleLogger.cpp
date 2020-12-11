@@ -19,7 +19,7 @@ namespace klib
 
 	namespace kLogs
 	{
-		std::mutex consoleMutex;
+		std::mutex g_ConsoleMutex;
 		
 		ConsoleLogger::ConsoleLogger(const std::string& newName)
 			: active(false)
@@ -177,7 +177,7 @@ namespace klib
 
 		void ConsoleLogger::Flush(const std::string_view& msg)
 		{
-			std::scoped_lock<decltype(consoleMutex)> scoped_lock(consoleMutex);
+			std::scoped_lock<decltype(g_ConsoleMutex)> scoped_lock(g_ConsoleMutex);
 			
 			if (!active)
 				return;

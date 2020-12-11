@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "kStringLocale.hpp"
+#include "../../Locale/kLocale.hpp"
 
 #include "../kStringTypes.hpp"
 #include "../../Enum/kEnum.hpp"
@@ -14,7 +14,7 @@ namespace klib::kString
 		>>
 		USE_RESULT constexpr bool IsUpper(CharT c) noexcept
 	{
-		return IsIt(c, std::ctype_base::upper);
+		return kLocale::Query(c, std::ctype_base::upper);
 	}
 
 	template<class CharT, class =
@@ -23,7 +23,7 @@ namespace klib::kString
 		>>
 		USE_RESULT constexpr bool IsLower(CharT c) noexcept
 	{
-		return IsIt(c, std::ctype_base::lower);
+		return kLocale::Query(c, std::ctype_base::lower);
 	}
 
 	template<class CharT, class =
@@ -34,7 +34,7 @@ namespace klib::kString
 	{
 		if (IsLower(c))
 		{
-			const auto& facet = secret::impl::GetFacet<std::ctype<CharT>>();
+			const auto& facet = kLocale::GetFacet<std::ctype<CharT>>();
 			c = facet.toupper(c);
 		}
 		return c;
@@ -71,7 +71,7 @@ namespace klib::kString
 	{
 		if (IsUpper(c))
 		{
-			const auto& facet = secret::impl::GetFacet<std::ctype<CharT>>();
+			const auto& facet = kLocale::GetFacet<std::ctype<CharT>>();
 			c = facet.tolower(c);
 		}
 		return c;

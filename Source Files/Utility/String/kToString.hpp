@@ -11,7 +11,7 @@
 
 namespace klib {
 	namespace kString
-	{		
+	{
 		// Outputs a interpolated string with data given for all string types. NOTE: Best performance with char and wchar_t type strings
 		template<class CharT, typename T, typename ...Ts>
 		USE_RESULT constexpr std::basic_string<CharT> ToString(const CharT* format, const T& arg, const Ts& ...argPack)
@@ -37,12 +37,15 @@ namespace klib {
 		USE_RESULT constexpr std::basic_string<CharT> ToString(const T& arg, const  Ts& ...argPack)
 		{
 			using DataTypes = std::variant<std::monostate, T, Ts...>;
-			constexpr size_t count = std::variant_size_v<DataTypes> - 1;
-			
-			const size_t reserveSize = count < 10
-				? count + 2 * count
-				: 27 + (count - 9) * 4;
-			
+			constexpr auto count = std::variant_size_v<DataTypes> - static_cast<size_t>(1);
+
+			size_t reserveSize = 0;
+
+			if _CONSTEXPR_IF(count < 10)
+				reserveSize = count + 2 * count;
+			else
+				reserveSize = 27 + (count - 9) * 4;
+
 			std::basic_string<CharT> output;
 			output.reserve(reserveSize);
 			for (size_t i = 0; i < count; ++i)

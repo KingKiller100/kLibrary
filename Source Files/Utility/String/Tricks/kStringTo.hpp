@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "kStringSize.hpp"
-#include "kStringLocale.hpp"
+#include "kStringDigitChar.hpp"
 #include "kStringRemove.hpp"
 
 #include "../kStringTypes.hpp"

@@ -2,7 +2,7 @@
 #include "../../../HelperMacros.hpp"
 #include "../../../TypeTraits/StringTraits.hpp"
 
-#include "kStringLocale.hpp"
+#include "../../Locale/kLocale.hpp"
 
 namespace klib::kString
 {
@@ -11,7 +11,7 @@ namespace klib::kString
 		>>
 		USE_RESULT constexpr bool IsWhiteSpace(CharT c)
 	{
-		const auto isWhiteSpace = IsIt(c, std::ctype_base::blank);
+		const auto isWhiteSpace = kLocale::Query(c, std::ctype_base::blank);
 		return isWhiteSpace;
 	}
 
@@ -38,7 +38,7 @@ namespace klib::kString
 			if (str == nullptr)
 				return false;
 
-			auto index = 0u;
+			size_t index = 0;
 			while (str[index] != g_NullTerminator<ONLY_TYPE(Stringish)>)
 			{
 				if (!IsWhiteSpace(str[index]))
