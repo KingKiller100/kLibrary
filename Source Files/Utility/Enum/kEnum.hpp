@@ -95,8 +95,8 @@ namespace klib::kEnum::secret::impl
 	}
 }
 
-#define ENUM_CLASS(enumName, underlying, ...)											\
-class enumName																			\
+#define ENUM_X(structure_t, enumName, underlying, ...)									\
+structure_t enumName																	\
 {																						\
 	using underlying_t = underlying;													\
 public:																					\
@@ -276,3 +276,6 @@ public:																					\
 private:																				\
 	underlying_t value;																	\
 };																						\
+
+#define ENUM_CLASS(enumName, underlying, ...) ENUM_X(class, enumName, underlying, __VA_ARGS__)
+#define ENUM_STRUCT(enumName, underlying, ...) ENUM_X(struct, enumName, underlying, __VA_ARGS__)

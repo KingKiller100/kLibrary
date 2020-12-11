@@ -35,7 +35,7 @@ namespace kTest::performance::maths
 	using namespace constants;
 
 	
-	constexpr auto maxIter = kmaths::BigInt_t(1e3);
+	constexpr auto maxIter = kmaths::BigInt_t(1e4);
 
 	void AlgorithmsSpeedTest::PowerOfFractionsTest()
 	{

@@ -47,7 +47,7 @@ namespace kTest::performance::maths
 	VectorSpeedTest::~VectorSpeedTest()
 		= default;
 
-	constexpr auto maxIter = kmaths::BigInt_t(1e3);
+	constexpr auto maxIter = kmaths::BigInt_t(1e4);
 
 	using namespace kmaths;
 	void VectorSpeedTest::Test()
