@@ -41,7 +41,7 @@ namespace klib
 		private:
 			bool active;
 			std::string name;
-			kMisc::ConsoleColour currentConsoleColour;
+			kMisc::ConsoleColour consoleColour;
 		};
 	}
 }

@@ -7,6 +7,8 @@
 #include "../../String/kToString.hpp"
 #include "../../FileSystem/kFileSystem.hpp"
 
+#include <mutex>
+
 namespace klib
 {
 	using namespace kString;
@@ -15,9 +17,11 @@ namespace klib
 
 	namespace kLogs
 	{
+		std::mutex fileMutex;
+
 		FileLogger::FileLogger(const std::string_view& newName, const std::filesystem::path& path)
 			: name(newName)
-			, path( path )
+			, path(path)
 		{}
 
 		FileLogger::~FileLogger() noexcept
@@ -41,7 +45,7 @@ namespace klib
 		void FileLogger::SetFileName(const std::string_view& newFilename)
 		{
 			Close(true);
-			path.replace_filename( GetFileNameWithoutExtension(newFilename) );
+			path.replace_filename(GetFileNameWithoutExtension(newFilename));
 			Open();
 		}
 
@@ -52,7 +56,7 @@ namespace klib
 
 		void FileLogger::SetExtension(const std::string_view& newExtension)
 		{
-			path.replace_extension(  newExtension );
+			path.replace_extension(newExtension);
 		}
 
 		std::string_view FileLogger::GetDirectory() const
@@ -63,7 +67,7 @@ namespace klib
 		void FileLogger::SetDirectory(const std::string_view& newDir)
 		{
 			Close(true);
-			const auto filename = kFileSystem::AppendFileExtension( GetFileName(), GetExtension() );
+			const auto filename = kFileSystem::AppendFileExtension(GetFileName(), GetExtension());
 			const auto pathSep = kFileSystem::pathSeparator<char>;
 			path.clear();
 			path.assign(ToString(newDir, pathSep, filename));
@@ -103,6 +107,8 @@ namespace klib
 
 		bool FileLogger::Open()
 		{
+			std::scoped_lock<decltype(fileMutex)> scoped_lock(fileMutex);
+
 			if (!IsOpen())
 			{
 				CreateNewDirectories(path.parent_path());
@@ -189,6 +195,8 @@ namespace klib
 
 		void FileLogger::Flush(const std::string_view& msg)
 		{
+			std::scoped_lock<decltype(fileMutex)> scoped_lock(fileMutex);
+			
 			if (!IsOpen())
 				return;
 

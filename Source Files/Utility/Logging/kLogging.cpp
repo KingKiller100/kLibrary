@@ -1,9 +1,6 @@
 #include "pch.hpp"
 #include "kLogging.hpp"
 
-#include <mutex>
-
-
 #include "kLogMessage.hpp"
 #include "Destinations/kFileLogger.hpp"
 #include "Destinations/kConsoleLogger.hpp"
@@ -22,8 +19,6 @@ namespace klib::kLogs
 
 	const LogEntry kLogs_Empty("NO ENTRIES! CACHE IS EMPTY", LogDescriptor("Empty"));
 
-	std::mutex mutex;
-	
 	Logging::Logging(const std::string_view& directory
 		, const std::string_view& filename
 		, const std::string_view& extension
@@ -74,7 +69,6 @@ namespace klib::kLogs
 
 	void Logging::OutputInitialized(const std::string_view& openingMsg)
 	{
-		std::scoped_lock<decltype(mutex)> scoped_lock(mutex);
 		
 		if (!isEnabled) { return; }
 		
@@ -92,7 +86,6 @@ namespace klib::kLogs
 
 	void Logging::SetName(const std::string_view& newName)
 	{
-		std::scoped_lock<decltype(mutex)> scoped_lock(mutex);
 		name = newName;
 		for (const auto& dest : destinations)
 		{
@@ -107,7 +100,6 @@ namespace klib::kLogs
 
 	void Logging::ToggleConsoleEnabled() noexcept
 	{
-		std::scoped_lock<decltype(mutex)> scoped_lock(mutex);
 		auto& consoleLogger = destinations.at(DestionationType::CONSOLE);
 		if (consoleLogger->IsOpen())
 		{
@@ -138,14 +130,12 @@ namespace klib::kLogs
 
 	void Logging::ChangeOutputDirectory(const std::string_view& directory)
 	{
-		std::scoped_lock<decltype(mutex)> scoped_lock(mutex);
 		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(DestionationType::FILE));
 		fLogger.SetDirectory(directory);
 	}
 
 	void Logging::ChangeFilename(const std::string_view& filename)
 	{
-		std::scoped_lock<decltype(mutex)> scoped_lock(mutex);
 		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(DestionationType::FILE));
 		fLogger.SetFileName(filename);
 	}
@@ -159,7 +149,6 @@ namespace klib::kLogs
 
 	void Logging::SuspendFileLogging()
 	{
-		std::scoped_lock<decltype(mutex)> scoped_lock(mutex);
 		constexpr char pauseLog[] = "************************************************************************";
 		AddVerbatim();
 		AddVerbatim(pauseLog);
@@ -171,7 +160,6 @@ namespace klib::kLogs
 
 	void Logging::ResumeFileLogging()
 	{
-		std::scoped_lock<decltype(mutex)> scoped_lock(mutex);
 		SetCacheMode(false);
 	}
 
@@ -225,8 +213,6 @@ namespace klib::kLogs
 
 	void Logging::AddLog(const LogEntry& entry)
 	{
-		std::scoped_lock<decltype(mutex)> scoped_lock(mutex);
-
 		entriesQ.push_back(entry);
 		if (!cacheMode)
 			Flush();
@@ -240,8 +226,6 @@ namespace klib::kLogs
 
 	void Logging::Flush()
 	{
-		std::scoped_lock<decltype(mutex)> scoped_lock(mutex);
-		
 		while (!entriesQ.empty())
 		{
 			for (auto& dest : destinations)
@@ -255,8 +239,6 @@ namespace klib::kLogs
 
 	void Logging::Close()
 	{
-		std::scoped_lock<decltype(mutex)> scoped_lock(mutex);
-		
 		Flush();
 		for (auto& dest : destinations)
 		{
@@ -271,8 +253,6 @@ namespace klib::kLogs
 
 	const LogEntry& Logging::GetLastCachedEntry() const
 	{
-		std::scoped_lock<decltype(mutex)> scoped_lock(mutex);
-		
 		if (entriesQ.empty() || !cacheMode)
 			return kLogs_Empty;
 
@@ -289,14 +269,11 @@ namespace klib::kLogs
 
 	void Logging::EnableConstantFlush(bool enable)
 	{
-		std::scoped_lock<decltype(mutex)> scoped_lock(mutex);
 		constantFlushing = enable;
 	}
 
 	bool Logging::ErasePrevious(size_t count)
 	{
-		std::scoped_lock<decltype(mutex)> scoped_lock(mutex);
-
 		if (entriesQ.empty())
 			return false;
 		

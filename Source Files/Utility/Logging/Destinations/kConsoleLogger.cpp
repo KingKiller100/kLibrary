@@ -7,8 +7,8 @@
 #include "../../Calendar/kCalendar.hpp"
 #include "../../String/kToString.hpp"
 
+#include <mutex>
 #include <Windows.h>
-#include <unordered_map>
 
 
 namespace klib
@@ -19,10 +19,12 @@ namespace klib
 
 	namespace kLogs
 	{
+		std::mutex consoleMutex;
+		
 		ConsoleLogger::ConsoleLogger(const std::string& newName)
 			: active(false)
 			, name(newName)
-			, currentConsoleColour(ConsoleColour::WHITE)
+			, consoleColour(ConsoleColour::WHITE)
 		{}
 
 		ConsoleLogger::~ConsoleLogger() noexcept
@@ -125,26 +127,26 @@ namespace klib
 			switch (lvl.ToEnum())
 			{
 			case LogLevel::DBUG:
-				currentConsoleColour = ConsoleColour::AQUA_BLUE;
+				consoleColour = ConsoleColour::AQUA_BLUE;
 				break;
 			case LogLevel::NORM:
-				currentConsoleColour = ConsoleColour::LIGHT_GREY;
+				consoleColour = ConsoleColour::LIGHT_GREY;
 				break;
 			case LogLevel::INFO:
-				currentConsoleColour = ConsoleColour::LIGHT_GREEN;
+				consoleColour = ConsoleColour::LIGHT_GREEN;
 				break;
 			case LogLevel::WARN:
-				currentConsoleColour = ConsoleColour::YELLOW;
+				consoleColour = ConsoleColour::YELLOW;
 				break;
 			case LogLevel::VBAT:
 			case LogLevel::BANR:
-				currentConsoleColour = ConsoleColour::WHITE;
+				consoleColour = ConsoleColour::WHITE;
 				break;
 			case LogLevel::ERRR:
-				currentConsoleColour = ConsoleColour::SCARLET_RED;
+				consoleColour = ConsoleColour::SCARLET_RED;
 				break;
 			case LogLevel::FATL:
-				currentConsoleColour = ConsoleColour::RED_BG_WHITE_TEXT;
+				consoleColour = ConsoleColour::RED_BG_WHITE_TEXT;
 				break;
 			default:
 				throw std::runtime_error("Unknown log level! Cannot map to a known console colour: " + std::string(lvl.ToString()));
@@ -175,6 +177,8 @@ namespace klib
 
 		void ConsoleLogger::Flush(const std::string_view& msg)
 		{
+			std::scoped_lock<decltype(consoleMutex)> scoped_lock(consoleMutex);
+			
 			if (!active)
 				return;
 
@@ -195,10 +199,10 @@ namespace klib
 
 			auto* handle = GetStdHandle(STD_OUTPUT_HANDLE);
 
-			SetConsoleTextAttribute(handle, currentConsoleColour);
+			SetConsoleTextAttribute(handle, consoleColour);
 			std::printf("%s", msg.data());
 			
-			if (whiteText != currentConsoleColour)
+			if (whiteText != consoleColour)
 				SetConsoleTextAttribute(handle, whiteText);
 		}
 	}
