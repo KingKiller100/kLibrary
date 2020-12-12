@@ -15,7 +15,7 @@ namespace klib::kString
 	template<class Integer_t, class Char_t, class = std::enable_if_t<
 		type_trait::Is_CharType_V<Char_t>
 		>>
-		USE_RESULT constexpr Integer_t CStrTo(const Char_t* const str)
+		USE_RESULT constexpr Integer_t CStrTo(const Char_t* const str, const Char_t* const end = nullptr)
 	{
 		static_assert(std::is_integral_v<Integer_t>, __FUNCTION__ " can only be used with integer types "
 			"(char, int, long, unsigned short, etc..");
@@ -36,11 +36,21 @@ namespace klib::kString
 			|| str[0] == type_trait::g_NullTerminator<Char_t>)
 			return static_cast<Integer_t>(0);
 
+		const auto endCond = end == nullptr
+			? [](const Char_t* const s, size_t pos, const Char_t* const) -> bool
+		{
+			return s[pos] != type_trait::g_NullTerminator<Char_t>;
+		}
+			: [](const Char_t* const s, size_t pos, const Char_t* const e) -> bool
+		{
+			return s + pos != e;
+		};
+
 		const auto isNeg = std::is_signed_v<Integer_t>
 			&& str[0] == Char_t('-');
 
 		Integer_t result = 0;
-		auto currentPos = isNeg ? 1 : 0;
+		size_t currentPos = isNeg ? 1 : 0;
 		size_t size = isNeg ? GetSize(str) - 1 : GetSize(str);
 		auto magnitude = static_cast<size_t>(std::pow(10, size - 1));
 
@@ -52,7 +62,7 @@ namespace klib::kString
 			CrashFunc(msg);
 		}
 
-		while (str[currentPos] != type_trait::g_NullTerminator<Char_t>)
+		while (endCond(str, currentPos, end))
 		{
 			if (!IsDigit(str[currentPos]))
 			{
@@ -73,26 +83,26 @@ namespace klib::kString
 
 		return result;
 	}
-	
+
 	template<class Integer_t, class Char_t, class = std::enable_if_t<
 		type_trait::Is_CharType_V<Char_t>
 		>>
-		USE_RESULT constexpr Integer_t CStrTo(const Char_t* const cstr, Integer_t defaultValue)
+		USE_RESULT constexpr Integer_t CStrTo(const Char_t* const cstr, Integer_t defaultValue, const Char_t* const end = nullptr)
 	{
-		const auto val = CStrTo<Integer_t>(cstr);
+		const auto val = CStrTo<Integer_t>(cstr, end);
 		if (val == 0)
 			return defaultValue;
 		return val;
 	}
-	
+
 	template<class Integer_t, class Char_t, class = std::enable_if_t<
 		type_trait::Is_CharType_V<Char_t>
 		>>
-		USE_RESULT constexpr Integer_t TryCStrTo(const Char_t* const cstr, Integer_t defaultValue)
+		USE_RESULT constexpr Integer_t TryCStrTo(const Char_t* const cstr, Integer_t defaultValue, const Char_t* const end = nullptr)
 	{
 		try
 		{
-			return CStrTo<Integer_t>(cstr);
+			return CStrTo<Integer_t>(cstr, end);
 		}
 		catch (...)
 		{
@@ -105,7 +115,7 @@ namespace klib::kString
 		, typename = std::enable_if_t<
 		type_trait::Is_Specialization_V<StringT, std::basic_string>
 		>>
-		USE_RESULT constexpr Integer_t StrTo(StringT string)
+		USE_RESULT constexpr Integer_t StrTo(StringT string, size_t count = type_trait::g_NoPos<StringT>)
 	{
 		using CharType = typename StringT::value_type;
 
@@ -121,7 +131,13 @@ namespace klib::kString
 		if (Contains(string, CharType('.')))
 			CrashFunc("string must contain only one integer number");
 
-		const auto result = CStrTo<Integer_t>(string.data());
+		const auto data = string.data();
+		
+		const auto end = count == type_trait::g_NoPos<StringT>
+			? nullptr
+			: data + count;
+		
+		const auto result = CStrTo<Integer_t>(data, end);
 
 		return result;
 	}
@@ -132,9 +148,9 @@ namespace klib::kString
 		, typename = std::enable_if_t<
 		type_trait::Is_Specialization_V<StringT, std::basic_string>
 		>>
-		USE_RESULT constexpr Integer_t StrTo(StringT string, Integer_t defaultValue)
+		USE_RESULT constexpr Integer_t StrTo(StringT string, Integer_t defaultValue, size_t count = type_trait::g_NoPos<StringT>)
 	{
-		const auto val = StrTo<Integer_t>(string);
+		const auto val = StrTo<Integer_t>(string, count);
 		if (val == 0)
 			return defaultValue;
 		return val;
@@ -146,11 +162,11 @@ namespace klib::kString
 		, typename = std::enable_if_t<
 		type_trait::Is_Specialization_V<StringT, std::basic_string>
 		>>
-		USE_RESULT constexpr Integer_t TryStrTo(StringT string, Integer_t defaultValue)
+		USE_RESULT constexpr Integer_t TryStrTo(StringT string, Integer_t defaultValue, size_t count = type_trait::g_NoPos<StringT>)
 	{
 		try
 		{
-			return StrTo<Integer_t>(string);
+			return StrTo<Integer_t>(string, count);
 		}
 		catch (...)
 		{

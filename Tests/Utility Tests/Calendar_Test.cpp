@@ -666,6 +666,7 @@ namespace kTest::utility
 			::GetLocalTime(&localTime);
 			const auto result = klib::kString::Convert<wchar_t>(GetDateInNumericalFormat(Date::SLASH));
 			const auto expected = klib::kString::Sprintf(L"%02d/%02d/%02d", localTime.wDay, localTime.wMonth, localTime.wYear);
+
 			VERIFY(result == expected)
 		}
 
