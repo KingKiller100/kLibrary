@@ -16,7 +16,7 @@ namespace klib::kDebug
 		
 	public:
 		FailedConditionException(const std::string_view& expected, const std::string_view& msg
-			, const SourceInfo& sourceInfo, const AssertFunc_t& cb);
+			, const char* file, std::int32_t line, const AssertFunc_t& cb);
 		~FailedConditionException() throw();
 
 		char const* what() const override;
@@ -31,7 +31,7 @@ namespace klib::kDebug
 #	define kAssert(condition, msg, cb)\
 	{\
 		if( (condition) == false )\
-			throw ::klib::kDebug::FailedConditionException(#condition, msg, SOURCE_INFO, cb);\
+			throw ::klib::kDebug::FailedConditionException(#condition, msg, __FILE__, __LINE__, cb);\
 	}\
 
 #else

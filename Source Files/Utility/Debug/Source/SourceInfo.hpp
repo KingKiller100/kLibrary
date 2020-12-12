@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../TypeTraits/CustomTraits.hpp"
+#include "../../../TypeTraits/CharacterTraits.hpp"
 #include "../../String/kStringConverter.hpp"
 #include <cstdint>
 
@@ -38,6 +38,7 @@ namespace klib::kDebug
 }
 
 
+#define SOURCE_INFO_NO_FUNC klib::kDebug::SourceInfo(__FILE__, __LINE__, "")
 #define SOURCE_INFO klib::kDebug::SourceInfo(__FILE__, __LINE__, __FUNCTION__)
 #define SOURCE_INFO_VS klib::kDebug::SourceInfo(__FILE__, __LINE__, __FUNCSIG__)
 #define WSOURCE_INFO klib::kDebug::wSourceInfo(__FILEW__, __LINE__, __FUNCTIONW__)

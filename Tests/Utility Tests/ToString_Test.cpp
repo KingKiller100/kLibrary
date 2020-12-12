@@ -5,7 +5,6 @@
 
 #ifdef TESTING_ENABLED
 
-
 struct ObjectWithoutToString
 {
 	std::string str = "String made using identity overloading";
