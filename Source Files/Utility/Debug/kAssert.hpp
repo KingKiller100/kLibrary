@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Source/SourceInfo.hpp"
+
 #include <exception>
 #include <string>
 #include <functional>
@@ -10,12 +12,11 @@ namespace klib::kDebug
 	class FailedConditionException final : public std::exception
 	{
 	public:
-		using AssertFunc = std::function<void(std::string&, const std::string_view&, std::int32_t)>;
+		using AssertFunc_t = std::function<void(std::string&, const SourceInfo&)>;
 		
 	public:
 		FailedConditionException(const std::string_view& expected, const std::string_view& msg
-			, const char* file, const std::int32_t line
-		, const AssertFunc& cb);
+			, const SourceInfo& sourceInfo, const AssertFunc_t& cb);
 		~FailedConditionException() throw();
 
 		char const* what() const override;
@@ -24,13 +25,13 @@ namespace klib::kDebug
 		std::string report;
 	};
 
-	static FailedConditionException::AssertFunc NoAssertCB = nullptr;
+	static FailedConditionException::AssertFunc_t NoAssertCB = nullptr;
 }
 
 #	define kAssert(condition, msg, cb)\
 	{\
 		if( (condition) == false )\
-			throw ::klib::kDebug::FailedConditionException(#condition, msg, __FILE__, (unsigned)(__LINE__), cb);\
+			throw ::klib::kDebug::FailedConditionException(#condition, msg, SOURCE_INFO, cb);\
 	}\
 
 #else

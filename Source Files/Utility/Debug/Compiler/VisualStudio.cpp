@@ -6,13 +6,13 @@
 
 namespace klib::kDebug::compiler::vs
 {
-	bool IsDebuggerPresent() noexcept
-	{
-		return ::IsDebuggerPresent() == KLIB_TRUE;
-	}
-
-	void BreakPoint() noexcept
+	void BreakPointImpl() noexcept
 	{
 		__debugbreak();
+	}
+
+	bool IsDebuggerAttachedImpl() noexcept
+	{
+		return ::IsDebuggerPresent() == KLIB_TRUE;
 	}
 }

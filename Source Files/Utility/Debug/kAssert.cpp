@@ -7,13 +7,11 @@
 namespace klib::kDebug
 {	
 	FailedConditionException::FailedConditionException(const std::string_view& expected,
-		const std::string_view& msg, const char* file, const std::int32_t line, const AssertFunc& cb)
+		const std::string_view& msg, const SourceInfo& sourceInfo, const AssertFunc_t& cb)
 		: report(kString::ToString("Condition \"{0}\" was not met! \n               [DETAILS]: {1}.", expected, msg))
 	{
 		if (cb != nullptr)
-			cb(report
-				, std::string_view(file)
-				, line);
+			cb(report, sourceInfo);
 	}
 
 	FailedConditionException::~FailedConditionException() throw()

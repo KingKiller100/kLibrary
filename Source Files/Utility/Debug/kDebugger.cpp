@@ -8,15 +8,19 @@
 
 namespace klib::kDebug
 {
-	void CheckRemoteDebuggerAttached(const char* filename) noexcept
+#ifdef MSVC_PLATFORM_TOOLSET
+	using namespace compiler::vs;
+#endif
+	
+	void IsDebuggerAttached(const char* filename) noexcept
 	{
 #ifdef  _DEBUG
-		if ()
+		if (IsDebuggerAttachedImpl())
 			return;
 
 		while (kFileSystem::CheckFileExists(filename))
 		{
-			if (::IsDebuggerPresent() == KLIB_TRUE)
+			if (IsDebuggerAttachedImpl() == KLIB_TRUE)
 			{
 				return;
 			}
@@ -25,11 +29,9 @@ namespace klib::kDebug
 #endif
 	}
 
-	void Break() noexcept
+	void BreakPoint() noexcept
 	{
-#ifdef MSVC_PLATFORM_TOOLSET
-		compiler::vs::BreakPoint();
-#endif
+		BreakPointImpl();
 	}
 
 }

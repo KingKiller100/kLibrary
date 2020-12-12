@@ -4,14 +4,19 @@
 #ifdef TESTING_ENABLED
 namespace kTest::utility
 {
-	class DebugHelpTester : public TesterBase
+	class DebugTester : public TesterBase
 	{
 	public:
-		DebugHelpTester();
-		~DebugHelpTester() override;
+		DebugTester();
+		~DebugTester() override;
 		
 	protected:
 		void Test() override;
+
+	private:
+		bool IsDebuggerAttachedTest();
+		bool BreakPointTest();
+		bool FailedConditionExceptionTest();
 	};
 }
 #endif

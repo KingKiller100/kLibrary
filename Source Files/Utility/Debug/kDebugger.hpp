@@ -4,8 +4,8 @@ namespace klib
 {
 	namespace kDebug
 	{
-		void CheckRemoteDebuggerAttached(const char* filename) noexcept;
-		void Break() noexcept;
+		void IsDebuggerAttached(const char* filename) noexcept;
+		void BreakPoint() noexcept;
 	}
 
 #ifdef KLIB_SHORT_NAMESPACE

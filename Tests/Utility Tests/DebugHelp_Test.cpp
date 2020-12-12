@@ -2,23 +2,50 @@
 #include "DebugHelp_Test.hpp"
 
 #include "../../Source Files/Utility/Debug/kDebugger.hpp"
+#include "../../Source Files/Utility/Debug/kAssert.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility
 {	
-	DebugHelpTester::DebugHelpTester()
+	DebugTester::DebugTester()
 		: TesterBase("Debug Help Test")
-	{
-	}
+	{}
 
-	DebugHelpTester::~DebugHelpTester()
+	DebugTester::~DebugTester()
 		= default;
 
-	void DebugHelpTester::Test()
+	using namespace klib::kDebug;
+	
+	void DebugTester::Test()
 	{
-		klib::kDebug::CheckRemoteDebuggerAttached("DebugTest");
-		//klib::kDebug::Break(); // Works Great!
-		//klib::kAssert(false, "Working Great!"); 
+		VERIFY_MULTI_INIT()
+		VERIFY_MULTI(IsDebuggerAttachedTest())
+		VERIFY_MULTI(BreakPointTest())
+		VERIFY_MULTI(FailedConditionExceptionTest())
+		VERIFY_MULTI_END()
+	}
+
+	bool DebugTester::IsDebuggerAttachedTest()
+	{
+		IsDebuggerAttached("DebugTest");
+		return success;
+	}
+
+	bool DebugTester::BreakPointTest()
+	{
+		//klib::kDebug::BreakPoint(); // Works Great!
+		return success;
+	}
+
+	bool DebugTester::FailedConditionExceptionTest()
+	{
+		success = false;
+		FailedConditionException("false", "Working Great!", SOURCE_INFO,
+			[&](std::string&, const SourceInfo&)
+			{
+				VERIFY(true);
+			});
+		return success;
 	}
 }
 #endif
