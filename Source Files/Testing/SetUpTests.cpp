@@ -15,6 +15,7 @@
 
 // Utility
 #include "../../Tests/Utility Tests/Enum_Test.hpp"
+#include "../../Tests/Utility Tests/SourceInfo_Test.hpp"
 #include "../../Tests/Utility Tests/Stopwatch_Test.hpp"
 #include "../../Tests/Utility Tests/Logging_Test.hpp"
 #include "../../Tests/Utility Tests/Calendar_Test.hpp"
@@ -76,6 +77,7 @@ namespace kTest
 		AddTest<TesterManager>(new utility::EnumTester());
 		AddTest<TesterManager>(new utility::StringManipulationTester());
 		AddTest<TesterManager>(new utility::FormatToStringTester());
+		AddTest<TesterManager>(new utility::SourceInfoTester());
 		AddTest<TesterManager>(new utility::CalendarTester());
 		AddTest<TesterManager>(new utility::FileSystemTester());
 		AddTest<TesterManager>(new utility::DebugTester());

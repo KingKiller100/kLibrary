@@ -16,11 +16,6 @@ namespace klib {
 		template<class CharT, typename T, typename ...Ts>
 		USE_RESULT constexpr std::basic_string<CharT> ToString(const CharT* format, const T& arg, const Ts& ...argPack)
 		{
-			if (Find_First_Of(format, format::g_PrintfSymbol<CharT>) != type_trait::g_NoPos<std::basic_string<CharT>>)
-			{
-				return SprintfWrapper<CharT>(format, arg, argPack...);
-			}
-
 			auto finalString = ToWriter(format);
 			secret::impl::ToStringImpl<CharT, T, Ts...>(finalString, 0, 0, arg, argPack...);
 			return finalString;
