@@ -47,7 +47,7 @@ namespace klib::kCalendar
 	{
 		if (hours > 23) hours = 23;
 		if (minutes > 59) minutes = 59;
-		const auto time = ToString("%02d:%02d", hours, minutes);
+		const auto time = ToString("{0:2}:{1:2}", hours, minutes);
 		return time;
 	}
 
@@ -56,7 +56,7 @@ namespace klib::kCalendar
 		if (hours > 23) hours = 23;
 		if (minutes > 59) minutes = 59;
 		if (seconds > 59) seconds = 59;
-		const auto time = ToString("%02d:%02d:%02d", hours, minutes, seconds);
+		const auto time = ToString("{0:2}:{1:2}:{2:2}", hours, minutes, seconds);
 		return time;
 	}
 
@@ -64,7 +64,7 @@ namespace klib::kCalendar
 	{
 		if (milliseconds > 999) milliseconds = 999;
 		auto time = CreateTime(hours, minutes, seconds);
-		time.append(ToString(":%03d", milliseconds));
+		time.append(ToString(":{0:3}", milliseconds));
 		return time;
 	}
 

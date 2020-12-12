@@ -30,7 +30,7 @@ namespace klib::kDebug
 
 	template <>
 	NoRealRootError::NoRealRootError(float value, const size_t root)
-		: MathsError(kString::SprintfWrapper(
+		: MathsError(kString::Sprintf(
 			"ERROR: Value \"%.f\" has no %u%s root",
 			value,
 			root,
@@ -40,7 +40,7 @@ namespace klib::kDebug
 	
 	template <>
 	NoRealRootError::NoRealRootError(double value, const size_t root)
-		: MathsError(kString::SprintfWrapper(
+		: MathsError(kString::Sprintf(
 			"ERROR: Value \"%.f\" has no %u%s root",
 			value,
 			root,
@@ -50,7 +50,7 @@ namespace klib::kDebug
 	
 	template <>
 	NoRealRootError::NoRealRootError(long double value, const size_t root)
-		: MathsError(kString::SprintfWrapper(
+		: MathsError(kString::Sprintf(
 			"ERROR: Value \"%.f\" has no %u%s root",
 			value,
 			root,
@@ -60,7 +60,7 @@ namespace klib::kDebug
 	
 	template <>
 	NoRealRootError::NoRealRootError(std::make_signed_t<size_t> value, const size_t root)
-		: MathsError(kString::SprintfWrapper(
+		: MathsError(kString::Sprintf(
 			"ERROR: Value \"%.d\" has no %u%s root",
 			value,
 			root,
@@ -70,7 +70,7 @@ namespace klib::kDebug
 	
 	template <>
 	NoRealRootError::NoRealRootError(size_t value, const size_t root)
-		: MathsError(kString::SprintfWrapper(
+		: MathsError(kString::Sprintf(
 			"ERROR: Value \"%.d\" has no %u%s root",
 			value,
 			root,

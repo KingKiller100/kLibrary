@@ -118,8 +118,8 @@ namespace kTest
 		const unsigned millis = CAST(unsigned
 			, units::Secs::Period_t::den * remainder);
 
-		auto timeStr = SprintfWrapper("Total Runtime: %us %ums | ", secs, millis);
-		timeStr.append(SprintfWrapper("Average Runtime: %.3fms", avgTime));
+		auto timeStr = Sprintf("Total Runtime: %us %ums | ", secs, millis);
+		timeStr.append(Sprintf("Average Runtime: %.3fms", avgTime));
 		kFileSystem::WriteFile(path, timeStr);
 
 		std::cout << "\n" << timeStr << "\n";
@@ -159,10 +159,10 @@ namespace kTest
 			= WriteResults(pass, testTime);
 
 		const auto resultTest = pass
-			? SprintfWrapper("Success: Test Name: %s %s\n\n",
+			? Sprintf("Success: Test Name: %s %s\n\n",
 				test.GetName(),
 				runtimeResultStr) // Success Case
-			: SprintfWrapper("Failure: Test Name: %s %s\n%s",
+			: Sprintf("Failure: Test Name: %s %s\n%s",
 				test.GetName(),
 				runtimeResultStr,
 				test.GetFailureData()); // Fail Case
@@ -180,13 +180,13 @@ namespace kTest
 			? kMisc::ConsoleColour::LIGHT_GREEN
 			: kMisc::ConsoleColour::SCARLET_RED);
 
-		auto resultStr = SprintfWrapper("%s", (pass ? "Pass" : "Fail"));
+		auto resultStr = Sprintf("%s", (pass ? "Pass" : "Fail"));
 		std::cout << resultStr;
 		SetConsoleTextAttribute(hConsole, 7);
 
 		resultStr.insert(0, "| ");
 
-		auto runtimeResultStr = SprintfWrapper("| Runtime: %.3f%s"
+		auto runtimeResultStr = Sprintf("| Runtime: %.3f%s"
 			, resTime
 			, units::GetUnitsStr<units::Millis>());
 		std::cout << " " << runtimeResultStr << "\n";

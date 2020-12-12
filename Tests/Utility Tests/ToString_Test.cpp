@@ -111,27 +111,27 @@ namespace kTest::utility
 				return str;
 			}
 
-			const std::u32string str = U"klib::SprintfWrapper using object with ToString func";
+			const std::u32string str = U"klib::Sprintf using object with ToString func";
 		} example;
 
 		{
-			const auto input = std::string("STL strings can be handled by klib::SprintfWrapper");
-			const auto result = SprintfWrapper("%s", input);
-			constexpr auto expected = "STL strings can be handled by klib::SprintfWrapper";
+			const auto input = std::string("STL strings can be handled by klib::Sprintf");
+			const auto result = Sprintf("%s", input);
+			constexpr auto expected = "STL strings can be handled by klib::Sprintf";
 			VERIFY(result == expected);
 		}
 
 		{
 			const auto input = 100;
-			const auto result = SprintfWrapper(L"%d", input);
+			const auto result = Sprintf(L"%d", input);
 			constexpr auto expected = L"100";
 			VERIFY(result == expected);
 		}
 
 		{
 			const auto format = ToWriter(U"%s");
-			const auto result = SprintfWrapper(format, example);
-			constexpr auto expected = U"klib::SprintfWrapper using object with ToString func";
+			const auto result = Sprintf(format, example);
+			constexpr auto expected = U"klib::Sprintf using object with ToString func";
 			VERIFY(result == expected);
 		}
 
@@ -205,35 +205,35 @@ namespace kTest::utility
 		{
 			constexpr auto num = 2e5;
 			const std::u32string result = stringify::StringFloatingPoint<char32_t>(num, 4, stringify::FloatFormat::SCI);
-			const auto expected = SprintfWrapper("%.4e", num);
+			const auto expected = Sprintf("%.4e", num);
 			VERIFY(result == U"2.0000e+05")
 		}
 
 		{
 			constexpr auto num = 5e-1f;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 0, stringify::FloatFormat::SCI);
-			const auto expected = SprintfWrapper("%.0e", num);
+			const auto expected = Sprintf("%.0e", num);
 			VERIFY(result == "5e-01")
 		}
 
 		{
 			constexpr auto num = 6.25e-2;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 3, stringify::FloatFormat::SCI);
-			const auto expected = SprintfWrapper("%.3e", num);
+			const auto expected = Sprintf("%.3e", num);
 			VERIFY(result == "6.250e-02")
 		}
 
 		{
 			constexpr auto num = 6.25e-5;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 2, stringify::FloatFormat::SCI);
-			const auto expected = SprintfWrapper("%.2e", num);
+			const auto expected = Sprintf("%.2e", num);
 			VERIFY(result == "6.25e-05")
 		}
 
 		{
 			constexpr auto num = 2 + 6.25549769348e-5;
 			const std::string result = stringify::StringFloatingPoint<char>(num, 19, stringify::FloatFormat::SCI);
-			const auto expected = SprintfWrapper("%.19e", num);
+			const auto expected = Sprintf("%.19e", num);
 			VERIFY(result == "2.0000625549769348588e+00")
 		}
 
@@ -355,7 +355,7 @@ namespace kTest::utility
 		const auto tempIntPtr = std::make_unique<int>(76);
 
 		const auto testStr = ToString("This test {0} ", 1U);
-		const auto testStr2 = ToString("will all %s printf function format specifiers like with string literals ", "work");
+		const auto testStr2 = ToString("will {0} with all string literals ", "work");
 		const auto testStr3W = ToString(L"and with different numerical types such as float {0:3}, ", 6.283f);
 		const auto testStr4 = ToString("doubles {0:7}, ", 2.7182818);
 		const auto testStr5 = ToString("unsigned ({1}) or signed integers ({0}), ", -50, 200U);
@@ -372,7 +372,7 @@ namespace kTest::utility
 #endif
 
 		VERIFY(testStr == "This test 1 ");
-		VERIFY(testStr2 == "will all work printf function format specifiers like with string literals ");
+		VERIFY(testStr2 == "will work with all string literals ");
 		VERIFY(testStr3W == L"and with different numerical types such as float 6.283, ");
 		VERIFY(testStr4 == "doubles 2.7182818, ");
 		VERIFY(testStr5 == "unsigned (200) or signed integers (-50), ");

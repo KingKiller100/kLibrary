@@ -34,7 +34,7 @@ namespace kTest::performance::util
 
 	void ToStringSpeedTest::kSprintfTest()
 	{
-		const std::vector<std::string_view> participants = { "klib::kString::ToString", "klib::kString::SprintfWrapper" };
+		const std::vector<std::string_view> participants = { "klib::kString::ToString", "klib::kString::Sprintf" };
 		SetUpParticipants(participants);
 
 		const std::string string = "Input1";
@@ -69,7 +69,7 @@ namespace kTest::performance::util
 
 			{
 				START_TEST(participants[1]);
-				(void)kString::SprintfWrapper("string: %s - string_view: %s - double: %.5f"
+				(void)kString::Sprintf("string: %s - string_view: %s - double: %.5f"
 					" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s - Pointer: %p"
 					, string.data()
 					, string_view.data()
@@ -125,7 +125,7 @@ namespace kTest::performance::util
 	void ToStringSpeedTest::DoubleTest()
 	{
 		const std::vector<std::string_view> participants = { "klib::kString::ToString double", "std::stringstream double"
-			, "C sprintf double", "klib::kString::SprintfWrapper double" };
+			, "C sprintf double", "klib::kString::Sprintf double" };
 		SetUpParticipants(participants);
 
 		const auto f64 = 125.625;
@@ -158,7 +158,7 @@ namespace kTest::performance::util
 
 			{
 				START_TEST(participants[3]);
-				(void)kString::SprintfWrapper(format, f64);
+				(void)kString::Sprintf(format, f64);
 			}
 
 			ss.clear();
@@ -170,7 +170,7 @@ namespace kTest::performance::util
 	{
 
 		const std::vector<std::string_view> participants = { "klib::kString::ToString float", "std::stringstream float"
-			, "C sprintf float", "klib::kString::SprintfWrapper float" };
+			, "C sprintf float", "klib::kString::Sprintf float" };
 		SetUpParticipants(participants);
 
 		const auto f32 = 125.625f;
@@ -203,7 +203,7 @@ namespace kTest::performance::util
 
 			{
 				START_TEST(participants[3]);
-				(void)kString::SprintfWrapper(format, f32);
+				(void)kString::Sprintf(format, f32);
 			}
 
 			ss.clear();
@@ -214,7 +214,7 @@ namespace kTest::performance::util
 	void ToStringSpeedTest::StringTest()
 	{
 		const std::vector<std::string_view> participants = { "klib::kString::ToString string", "std::stringstream string"
-			, "sprintf string", "klib::kString::SprintfWrapper string" };
+			, "sprintf string", "klib::kString::Sprintf string" };
 		SetUpParticipants(participants);
 
 		const auto str = "string";
@@ -247,7 +247,7 @@ namespace kTest::performance::util
 			{
 				START_TEST(participants[3]);
 
-				(void)kString::SprintfWrapper(format, str);
+				(void)kString::Sprintf(format, str);
 			}
 
 			ss.clear();
@@ -437,7 +437,7 @@ namespace kTest::performance::util
 			{
 				START_TEST(participants[2]);
 
-				(void)kString::SprintfWrapper("string: %s - string_view: %s - double: %.5f"
+				(void)kString::Sprintf("string: %s - string_view: %s - double: %.5f"
 					" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s - Pointer: %p"
 					, string.data()
 					, string_view.data()

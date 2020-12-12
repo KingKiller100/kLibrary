@@ -46,7 +46,7 @@ namespace kTest
 		catch (const std::exception& e)
 		{
 			std::cout << e.what();
-			failureData.append(klib::kString::SprintfWrapper("\tCondition: %s\n", e.what())); 
+			failureData.append(klib::kString::Sprintf("\tCondition: %s\n", e.what())); 
 			success = false;
 		}
 

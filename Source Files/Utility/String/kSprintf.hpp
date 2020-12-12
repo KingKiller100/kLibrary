@@ -67,21 +67,21 @@ namespace klib::kString
 
 
 	template<typename CharType, typename T, typename ...Ts>
-	USE_RESULT constexpr std::basic_string<CharType> SprintfWrapper(const CharType* format
+	USE_RESULT constexpr std::basic_string<CharType> Sprintf(const CharType* format
 		, const T& arg1, const Ts& ...argPack)
 	{
 		return secret::impl::SprintfWrapperImpl<CharType, T, Ts...>(format, arg1, argPack...);
 	}
 
 	template<typename CharType, typename T, typename ...Ts>
-	USE_RESULT constexpr std::basic_string<CharType> SprintfWrapper(const std::basic_string_view<CharType>& format
+	USE_RESULT constexpr std::basic_string<CharType> Sprintf(const std::basic_string_view<CharType>& format
 		, const T& arg1, const Ts& ...argPack)
 	{
 		return secret::impl::SprintfWrapperImpl<CharType, T, Ts...>(format.data(), arg1, argPack...);
 	}
 
 	template<typename CharType, typename T, typename ...Ts>
-	USE_RESULT constexpr std::basic_string<CharType> SprintfWrapper(const std::basic_string<CharType>& format
+	USE_RESULT constexpr std::basic_string<CharType> Sprintf(const std::basic_string<CharType>& format
 		, const T& arg1, const Ts& ...argPack)
 	{
 		return secret::impl::SprintfWrapperImpl<CharType, T, Ts...>(format.data(), arg1, argPack...);
