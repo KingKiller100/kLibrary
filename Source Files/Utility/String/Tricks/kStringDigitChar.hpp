@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "../../../TypeTraits/CharacterTraits.hpp"
-#include "../../Locale/kLocale.hpp"
+#include "../../Localization/kLocale.hpp"
 
 namespace klib::kString
 {

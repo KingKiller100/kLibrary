@@ -2,7 +2,7 @@
 #include "../../../HelperMacros.hpp"
 #include "../../../TypeTraits/StringTraits.hpp"
 
-#include "../../Locale/kLocale.hpp"
+#include "../../Localization/kLocale.hpp"
 
 namespace klib::kString
 {

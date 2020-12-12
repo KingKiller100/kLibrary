@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../../Locale/kLocale.hpp"
+#include "../../Localization/kLocale.hpp"
 
 #include "../kStringTypes.hpp"
 #include "../../Enum/kEnum.hpp"

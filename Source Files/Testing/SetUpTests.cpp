@@ -18,7 +18,7 @@
 #include "../../Tests/Utility Tests/Stopwatch_Test.hpp"
 #include "../../Tests/Utility Tests/Logging_Test.hpp"
 #include "../../Tests/Utility Tests/Calendar_Test.hpp"
-#include "../../Tests/Utility Tests/DebugHelp_Test.hpp"
+#include "../../Tests/Utility Tests/Debug_Test.hpp"
 #include "../../Tests/Utility Tests/FileSystem_Test.hpp"
 #include "../../Tests/Utility Tests/StringView_Test.hpp"
 #include "../../Tests/Utility Tests/StringConverter_Test.hpp"

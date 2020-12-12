@@ -37,14 +37,11 @@ namespace klib {
 		USE_RESULT constexpr std::basic_string<CharT> ToString(const T& arg, const  Ts& ...argPack)
 		{
 			using DataTypes = std::variant<std::monostate, T, Ts...>;
-			constexpr auto count = std::variant_size_v<DataTypes> - static_cast<size_t>(1);
+			constexpr auto count = std::variant_size_v<DataTypes> -1;
 
-			size_t reserveSize = 0;
-
-			if _CONSTEXPR_IF(count < 10)
-				reserveSize = count + 2 * count;
-			else
-				reserveSize = 27 + (count - 9) * 4;
+			constexpr size_t reserveSize = (count < 10)
+				? count + 2 * count
+				: 27 + (count - 9) * 4;
 
 			std::basic_string<CharT> output;
 			output.reserve(reserveSize);

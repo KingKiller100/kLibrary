@@ -1,5 +1,5 @@
 #include "pch.hpp"
-#include "DebugHelp_Test.hpp"
+#include "Debug_Test.hpp"
 
 #include "../../Source Files/Utility/Debug/kDebugger.hpp"
 #include "../../Source Files/Utility/Debug/kAssert.hpp"
@@ -8,7 +8,7 @@
 namespace kTest::utility
 {	
 	DebugTester::DebugTester()
-		: TesterBase("Debug Help Test")
+		: TesterBase("Debug Test")
 	{}
 
 	DebugTester::~DebugTester()
@@ -40,7 +40,7 @@ namespace kTest::utility
 	bool DebugTester::FailedConditionExceptionTest()
 	{
 		success = false;
-		FailedConditionException("Assert", "Working Great!", __FILE__, __LINE__,
+		FailedConditionException("Assert", "Working Great!", SOURCE_INFO,
 			[&](std::string&, const SourceInfo&)
 			{
 				VERIFY(true);
