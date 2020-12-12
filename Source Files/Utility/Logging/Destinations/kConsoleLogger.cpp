@@ -111,7 +111,7 @@ namespace klib
 			{
 				logLine.append(ToString(R"(
                [FILE]: {0}
-               [LINE]: {1})
+               [LINE]: {1}
                [FUNC]: {2})",
 					msg.sourceInfo.file
 					, msg.sourceInfo.line
