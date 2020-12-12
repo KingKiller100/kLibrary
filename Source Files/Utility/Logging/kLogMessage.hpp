@@ -25,7 +25,6 @@ namespace klib::kLogs
 		const Time time;
 		const Date date;
 		const std::string text;
-		const char* file;
-		const std::int32_t line;
+		const kDebug::SourceInfo sourceInfo;
 	};
 }

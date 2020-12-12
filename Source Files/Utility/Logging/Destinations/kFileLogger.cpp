@@ -161,9 +161,11 @@ namespace klib
 			{
 				logLine.append(ToString(R"(
                [FILE]: {0}
-               [LINE]: {1})",
-					message.file,
-					message.line)
+               [LINE]: {1})
+               [FUNC]: {2})",
+					message.sourceInfo.file
+					, message.sourceInfo.line
+					, message.sourceInfo.func)
 				);
 			}
 
@@ -196,7 +198,7 @@ namespace klib
 		void FileLogger::Flush(const std::string_view& msg)
 		{
 			std::scoped_lock<decltype(g_kFileLoggerMutex)> scoped_lock(g_kFileLoggerMutex);
-			
+
 			if (!IsOpen())
 				return;
 

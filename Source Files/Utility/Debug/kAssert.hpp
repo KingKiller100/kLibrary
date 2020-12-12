@@ -31,10 +31,13 @@ namespace klib::kDebug
 #	define kAssert(condition, msg, cb)\
 	{\
 		if( (condition) == false )\
-			throw ::klib::kDebug::FailedConditionException(#condition, msg, SOURCE_INFO, cb);\
+			throw ::klib::kDebug::FailedConditionException(#condition, msg, SOURCE_INFO(), cb);\
 	}\
 
+#	define Assert(condition, msg) kAssert(condition, msg, klib::kDebug::NoAssertCB)
+
 #else
-#	define kAssert(condition, msg) ((void)0);
+#	define kAssert(condition, msg, cb) ((void)0);
+#	define Assert(condition, msg) kAssert(condition, msg, klib::kDebug::NoAssertCB)
 #endif
 

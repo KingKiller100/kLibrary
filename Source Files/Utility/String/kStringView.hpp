@@ -161,13 +161,13 @@ namespace klib
 
 			USE_RESULT constexpr Const_Ref Front() const
 			{
-				kAssert(string != nullptr, "string is null", kDebug::NoAssertCB);
+				Assert(string != nullptr, "string is null");
 				return string[0];
 			}
 
 			USE_RESULT constexpr Const_Ref Back() const
 			{
-				kAssert(string != nullptr, "string is null", kDebug::NoAssertCB);
+				Assert(string != nullptr, "string is null");
 				return string[length - 1];
 			}
 

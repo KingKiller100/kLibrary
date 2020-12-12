@@ -40,10 +40,10 @@ namespace kTest::utility
 	bool DebugTester::FailedConditionExceptionTest()
 	{
 		success = false;
-		FailedConditionException("Assert", "Working Great!", SOURCE_INFO,
+		FailedConditionException("Assert", "Working Great!", SOURCE_INFO(),
 			[&](std::string&, const SourceInfo&)
 			{
-				VERIFY(true);
+				success = true;
 			});
 		return success;
 	}

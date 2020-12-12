@@ -20,7 +20,7 @@ namespace klib
 	namespace kLogs
 	{
 		std::mutex g_kConsoleLoggerMutex;
-		
+
 		ConsoleLogger::ConsoleLogger(const std::string& newName)
 			: active(false)
 			, name(newName)
@@ -62,7 +62,7 @@ namespace klib
 			const std::string prefixSpaces(19, ' ');
 			const auto date = GetDateInTextFormat(Date::DateTextLength::SHORT);
 			const auto time = GetTimeText();
-			
+
 			std::string format = newLine + padding + newLine;
 			format += prefixSpaces + "{0} - ";
 			format += openingMsg;
@@ -111,9 +111,11 @@ namespace klib
 			{
 				logLine.append(ToString(R"(
                [FILE]: {0}
-               [LINE]: {1})",
-					msg.file,
-					msg.line)
+               [LINE]: {1})
+               [FUNC]: {2})",
+					msg.sourceInfo.file
+					, msg.sourceInfo.line
+					, msg.sourceInfo.func)
 				);
 			}
 
@@ -154,7 +156,7 @@ namespace klib
 		}
 
 
-		
+
 		void ConsoleLogger::Close(const bool outputClosingMsg)
 		{
 			if (outputClosingMsg)
@@ -178,7 +180,7 @@ namespace klib
 		void ConsoleLogger::Flush(const std::string_view& msg)
 		{
 			std::scoped_lock<decltype(g_kConsoleLoggerMutex)> scoped_lock(g_kConsoleLoggerMutex);
-			
+
 			if (!active)
 				return;
 
@@ -201,7 +203,7 @@ namespace klib
 
 			SetConsoleTextAttribute(handle, consoleColour);
 			std::printf("%s", msg.data());
-			
+
 			if (whiteText != consoleColour)
 				SetConsoleTextAttribute(handle, whiteText);
 		}
