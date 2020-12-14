@@ -39,6 +39,28 @@ namespace klib::kString
 		return c;
 	}
 
+	template<typename CharT, size_t Size
+#if MSVC_PLATFORM_TOOLSET >= 142
+				> requires type_trait::Is_Char_t<CharT>
+#else
+		, typename = std::enable_if_t<type_trait::Is_CharType_V<CharT>> >
+#endif
+		USE_RESULT constexpr const CharT* GetData(const CharT (&c)[Size]) noexcept
+	{
+		return c;
+	}
+
+	template<typename CharT, size_t Size
+#if MSVC_PLATFORM_TOOLSET >= 142
+				> requires type_trait::Is_Char_t<CharT>
+#else
+		, typename = std::enable_if_t<type_trait::Is_CharType_V<CharT>> >
+#endif
+		USE_RESULT constexpr const CharT* GetData(CharT (&c)[Size]) noexcept
+	{
+		return (const CharT*)c;
+	}
+
 	template<typename SmartPtr_t
 #if MSVC_PLATFORM_TOOLSET >= 142
 				> requires type_trait::Is_SmartPtr_t<SmartPtr_t>

@@ -39,7 +39,7 @@ namespace kTest::utility
 		}
 		
 		{
-			constexpr auto source = ::klib::kDebug::wSourceInfo(WIDE_STR(__FILE__), kSOURCEINFOIMPL_FILELINE, WIDE_STR(__FUNCTION__), WIDE_STR(__TIMESTAMP__));
+			constexpr auto source = WSOURCE_INFO();
 			VERIFY_COMPILE_TIME(source.file == __FILEW__);
 			VERIFY_COMPILE_TIME(source.line == 42);
 			VERIFY_COMPILE_TIME(source.func == __FUNCTIONW__);
@@ -88,6 +88,18 @@ namespace kTest::utility
 			VERIFY_COMPILE_TIME(source.timeStamp == u"Mon Dec 14 01:03:52 2020");
 		}
 		
+		{
+			using Char_t = char32_t;
+			const std::basic_string<Char_t> file = Convert<Char_t>(__FILE__);
+			const std::basic_string<Char_t> func = Convert<Char_t>(__FUNCTION__);
+			const std::int32_t line = 73;
+			constexpr auto timeStamp = "Mon Dec 14 01:03:52 2020";
+			const auto source = BasicSourceInfo<Char_t>(file, line, func, U"");
+			VERIFY(source.file == file);
+			VERIFY(source.line == 73);
+			VERIFY(source.func == func);
+		}
+		
 #ifdef __cpp_char8_t
 		{
 			using Char_t = char8_t;
@@ -95,7 +107,7 @@ namespace kTest::utility
 			const std::basic_string<Char_t> func = Convert<Char_t>(__FUNCTION__);
 			const std::int32_t line = 73;
 			constexpr auto timeStamp = "Mon Dec 14 01:03:52 2020";
-			const auto source = BasicSourceInfo<Char_t>(file, line, func, "");
+			const auto source = BasicSourceInfo<Char_t>(file, line, func, u8"");
 			VERIFY(source.file == file);
 			VERIFY(source.line == 73);
 			VERIFY(source.func == func);
@@ -108,7 +120,7 @@ namespace kTest::utility
 	bool SourceInfoTester::InfoNoFuncTest()
 	{
 		{
-			constexpr auto source = SOURCE_INFO_NO_FUNC();
+			const auto source = SOURCE_INFO_NO_FUNC();
 			VERIFY_COMPILE_TIME(source.file == __FILE__);
 			VERIFY_COMPILE_TIME(source.line == 99);
 			VERIFY_COMPILE_TIME(source.func == "");
@@ -127,9 +139,8 @@ namespace kTest::utility
 	bool SourceInfoTester::ToStringTest()
 	{
 		{
-			constexpr auto source = SOURCE_INFO();
+			const auto source = SOURCE_INFO();
 			const auto result = kString::ToString("{0:l}", source);
-			
 		}
 		
 		return success;

@@ -95,12 +95,12 @@ namespace klib::kEnum::secret::impl
 	}
 }
 
-#define ENUM_X(structure_t, enumName, underlying, ...)									\
-structure_t enumName																	\
+#define ENUM_X(x, enumName, underlying, ...)											\
+x enumName																				\
 {																						\
 	using underlying_t = underlying;													\
 public:																					\
-	enum enum_t : underlying_t { __VA_ARGS__ };											\
+	enum InternalEnum_t : underlying_t { __VA_ARGS__ };									\
 																						\
 private:																				\
 	struct secret_impl_##enumName														\
@@ -115,24 +115,24 @@ private:																				\
 	};																					\
 																						\
 public:																					\
-	constexpr enumName(const enum_t value)												\
+	constexpr enumName(const InternalEnum_t value)										\
 		: value(value)																	\
 	{}																					\
 																						\
-	constexpr enumName& operator=(const enum_t value)									\
+	constexpr enumName& operator=(const InternalEnum_t value)							\
 	{																					\
 		this->value = value;															\
 		return *this;																	\
 	}																					\
 																						\
-	constexpr operator enum_t() const													\
+	constexpr operator InternalEnum_t() const											\
 	{																					\
-		return static_cast<enum_t>(value);												\
+		return static_cast<InternalEnum_t>(value);										\
 	}																					\
 																						\
-	USE_RESULT constexpr enum_t ToEnum() const											\
+	USE_RESULT constexpr InternalEnum_t ToEnum() const									\
 	{																					\
-		return static_cast<enum_t>(value);												\
+		return static_cast<InternalEnum_t>(value);										\
 	}																					\
 																						\
 	USE_RESULT constexpr underlying_t ToUnderlying() const								\
@@ -140,7 +140,7 @@ public:																					\
 		return value;																	\
 	}																					\
 																						\
-	USE_RESULT constexpr bool MaskCmp(enum_t target) const								\
+	USE_RESULT constexpr bool MaskCmp(InternalEnum_t target) const						\
 	{																					\
 		return MaskCmp(target, true, false);											\
 	}																					\
@@ -148,7 +148,7 @@ public:																					\
 	template<typename T1, typename T2, typename = std::enable_if_t<						\
 	std::is_convertible_v<T2, T1>														\
 	>>																					\
-	USE_RESULT constexpr std::decay_t<T1> MaskCmp(enum_t mask							\
+	USE_RESULT constexpr std::decay_t<T1> MaskCmp(InternalEnum_t mask					\
 		, T1&& successState, T2&& failState) const										\
 	{																					\
 		if (mask & value)																\
@@ -156,13 +156,13 @@ public:																					\
 		return failState;																\
 	}																					\
 																						\
-	USE_RESULT constexpr bool Compare(enum_t target) const								\
+	USE_RESULT constexpr bool Compare(InternalEnum_t target) const						\
 	{																					\
 		return Compare(target, true, false);											\
 	}																					\
 																						\
 	template<typename T1, typename T2>													\
-	USE_RESULT constexpr std::decay_t<T1> Compare(enum_t target							\
+	USE_RESULT constexpr std::decay_t<T1> Compare(InternalEnum_t target					\
 		, T1&& successState, T2&& failState) const										\
 	{																					\
 		if (target == value)															\
@@ -170,7 +170,7 @@ public:																					\
 		return failState;																\
 	}																					\
 																						\
-	static constexpr enum_t FromString(const std::string_view& search)					\
+	static constexpr InternalEnum_t FromString(const std::string_view& search)			\
 	{																					\
 		return FromStringImpl(search.data(), 0);										\
 	}																					\
@@ -195,6 +195,28 @@ public:																					\
 	{																					\
 		const auto name = ToStringImpl<Char_t>();										\
 		return name;																	\
+	}																					\
+																						\
+	USE_RESULT constexpr bool operator<(const enumName& other) const 					\
+	{																					\
+		return value < other.value;														\
+	}																					\
+																						\
+	USE_RESULT constexpr bool operator<=(const enumName& other) const 					\
+	{																					\
+		return value <= other.value;													\
+	}																					\
+																						\
+	template<typename T>																\
+	USE_RESULT constexpr bool operator<(const T& other) const 							\
+	{																					\
+		return value < other;															\
+	}																					\
+																						\
+	template<typename T>																\
+	USE_RESULT constexpr bool operator<=(const T& other) const 							\
+	{																					\
+		return value <= other;															\
 	}																					\
 																						\
 	private:																			\
@@ -255,7 +277,7 @@ public:																					\
 		}																				\
 	}																					\
 																						\
-	static constexpr enum_t FromStringImpl(const char* s, size_t index)					\
+	static constexpr InternalEnum_t FromStringImpl(const char* s, size_t index)			\
 	{																					\
 		using namespace klib::kEnum::secret::impl;										\
 																						\
@@ -267,7 +289,7 @@ public:																					\
 				secret_impl_##enumName::raw_names[index].data(), s);					\
 																						\
 		const auto ret = matches														\
-			? static_cast<enum_t>(secret_impl_##enumName::values[index])				\
+			? static_cast<InternalEnum_t>(secret_impl_##enumName::values[index])		\
 			: FromStringImpl(s, index + 1);												\
 																						\
 		return ret;																		\

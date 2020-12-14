@@ -29,7 +29,7 @@ namespace klib
 			
 		public:
 			using LogEntries = std::deque<LogEntry>;
-			using LogDestinationsMap = std::unordered_map<DestionationType::enum_t
+			using LogDestinationsMap = std::unordered_map<DestionationType::InternalEnum_t
 			, std::unique_ptr<iLoggerDestination>>;
 
 		public:
