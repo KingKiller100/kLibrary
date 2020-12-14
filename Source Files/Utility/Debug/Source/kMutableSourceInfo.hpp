@@ -48,10 +48,6 @@ namespace klib {
 #endif
 }
 
-#define kSOURCEINFOIMPL_CONCATENATE(x,y) kSOURCEINFOIMPL_CONCATENATE2(x,y) 
-#define kSOURCEINFOIMPL_CONCATENATE2(x,y) x##y 
-#define kSOURCEINFOIMPL_FILELINE size_t(kSOURCEINFOIMPL_CONCATENATE(__LINE__, U))
-
 #define MUT_SRC_INFO()              ::klib::kDebug::MutSourceInfo(__FILE__, kSOURCEINFOIMPL_FILELINE, __FUNCTION__, __TIMESTAMP__)
 #define WMUT_SRC_INFO()             ::klib::kDebug::wMutSourceInfo(WIDE_STR(__FILE__), kSOURCEINFOIMPL_FILELINE, WIDE_STR(__FUNCTION__), WIDE_STR(__TIMESTAMP__))
 #define U16MUT_SRC_INFO()           ::klib::kDebug::u16MutSourceInfo(U16_STR(__FILE__), kSOURCEINFOIMPL_FILELINE, U16_STR(__FUNCTION__), U16_STR(__TIMESTAMP__))

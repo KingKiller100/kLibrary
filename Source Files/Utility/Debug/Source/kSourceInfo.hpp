@@ -83,10 +83,6 @@ namespace klib {
 #endif
 }
 
-#define kSOURCEINFOIMPL_CONCATENATE(x,y) kSOURCEINFOIMPL_CONCATENATE2(x,y) 
-#define kSOURCEINFOIMPL_CONCATENATE2(x,y) x##y 
-#define kSOURCEINFOIMPL_FILELINE size_t(kSOURCEINFOIMPL_CONCATENATE(__LINE__, U))
-
 #define SOURCE_INFO()              ::klib::kDebug::SourceInfo(__FILE__, kSOURCEINFOIMPL_FILELINE, __FUNCTION__, __TIMESTAMP__)
 #define WSOURCE_INFO()             ::klib::kDebug::wSourceInfo(WIDE_STR(__FILE__), kSOURCEINFOIMPL_FILELINE, WIDE_STR(__FUNCTION__), WIDE_STR(__TIMESTAMP__))
 #define U16SOURCE_INFO()           ::klib::kDebug::u16SourceInfo(U16_STR(__FILE__), kSOURCEINFOIMPL_FILELINE, U16_STR(__FUNCTION__), U16_STR(__TIMESTAMP__))

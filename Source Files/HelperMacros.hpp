@@ -40,6 +40,10 @@
 
 #define BIT_SHIFT(n) (static_cast<size_t>(1) << n)
 
+#define kSOURCEINFOIMPL_CONCATENATE(x,y) kSOURCEINFOIMPL_CONCATENATE2(x,y) 
+#define kSOURCEINFOIMPL_CONCATENATE2(x,y) x##y 
+#define kSOURCEINFOIMPL_FILELINE size_t(kSOURCEINFOIMPL_CONCATENATE(__LINE__, U))
+
 // Class member getter & setters
 #define GETTER(type, name, field) USE_RESULT type& name() noexcept\
 {\
