@@ -37,23 +37,16 @@ namespace kTest::utility
 		}
 		
 		{
-			constexpr auto source = SOURCE_INFO_NO_FUNC();
-			VERIFY_COMPILE_TIME(source.file == __FILE__);
-			VERIFY_COMPILE_TIME(source.line == 40);
-			VERIFY_COMPILE_TIME(source.func == "");
-		}
-		
-		{
 			constexpr auto source = WSOURCE_INFO();
 			VERIFY_COMPILE_TIME(source.file == __FILEW__);
-			VERIFY_COMPILE_TIME(source.line == 47);
+			VERIFY_COMPILE_TIME(source.line == 40);
 			VERIFY_COMPILE_TIME(source.func == __FUNCTIONW__);
 		}
 		
 		{
 			constexpr auto source = WSOURCE_INFO_NO_FUNC();
 			VERIFY_COMPILE_TIME(source.file == __FILEW__);
-			VERIFY_COMPILE_TIME(source.line == 54);
+			VERIFY_COMPILE_TIME(source.line == 47);
 			VERIFY_COMPILE_TIME(source.func == L"");
 		}
 
@@ -61,7 +54,7 @@ namespace kTest::utility
 		{
 			constexpr auto source = SOURCE_INFO_VS();
 			VERIFY_COMPILE_TIME(source.file == __FILE__);
-			VERIFY_COMPILE_TIME(source.line == 62);
+			VERIFY_COMPILE_TIME(source.line == 58);
 			VERIFY_COMPILE_TIME(source.func == __FUNCSIG__);
 		}
 #endif
@@ -71,7 +64,8 @@ namespace kTest::utility
 			constexpr auto  file = u"Test.txt";
 			constexpr std::int32_t line = 212;
 			constexpr auto func = u"void Test()";
-			constexpr auto source = BasicSourceInfo<Char_t>(file, line, func);
+			constexpr auto timeStamp = u"Mon Dec 14 01:03:52 2020";
+			const auto source = BasicSourceInfo<Char_t>(file, line, func, timeStamp);
 			VERIFY_COMPILE_TIME(source.file == u"Test.txt");
 			VERIFY_COMPILE_TIME(source.line == 212);
 			VERIFY_COMPILE_TIME(source.func == u"void Test()");
@@ -83,17 +77,33 @@ namespace kTest::utility
 			const std::basic_string<Char_t> file = Convert<Char_t>(__FILE__);
 			const std::basic_string<Char_t> func = Convert<Char_t>(__FUNCTION__);
 			const std::int32_t line = 73;
-			const auto source = BasicSourceInfo<Char_t>(file, line, func);
+			constexpr auto timeStamp = "Mon Dec 14 01:03:52 2020";
+			const auto source = BasicSourceInfo<Char_t>(file, line, func, "");
 			VERIFY(source.file == file);
 			VERIFY(source.line == 73);
 			VERIFY(source.func == func);
 		}
 #endif
+		
 		return success;
 	}
 
 	bool SourceInfoTester::InfoNoFuncTest()
 	{
+		{
+			constexpr auto source = SOURCE_INFO_NO_FUNC();
+			VERIFY_COMPILE_TIME(source.file == __FILE__);
+			VERIFY_COMPILE_TIME(source.line == 99);
+			VERIFY_COMPILE_TIME(source.func == "");
+		}
+
+		{
+			constexpr auto source = WSOURCE_INFO_NO_FUNC();
+			VERIFY_COMPILE_TIME(source.file == __FILEW__);
+			VERIFY_COMPILE_TIME(source.line == 106);
+			VERIFY_COMPILE_TIME(source.func == L"");
+		}
+		
 		return success;
 	}
 

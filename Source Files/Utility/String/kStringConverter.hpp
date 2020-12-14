@@ -69,5 +69,13 @@ namespace klib
 	}
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kString;
-#endif
+#endif
 }
+
+#define kCHARACTERCONVERTSECRETIMPL(literal_prefix, string) literal_prefix ## string
+#define U8_STR(string) kCHARACTERCONVERTSECRETIMPL( u8, string )
+#define U16_STR(string) kCHARACTERCONVERTSECRETIMPL( u, string )
+#define U32_STR(string) kCHARACTERCONVERTSECRETIMPL( U, string )
+#define WIDE_STR(string) kCHARACTERCONVERTSECRETIMPL( L, string )
+#define WIDE_STR(string) kCHARACTERCONVERTSECRETIMPL( L, string )
+
