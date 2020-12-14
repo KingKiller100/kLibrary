@@ -323,7 +323,7 @@ namespace kTest::utility
 	bool FormatToStringTester::CustomTypeWithToStringTest()
 	{
 		const struct ObjectWithToString
-		{
+		{			
 			USE_RESULT const std::string& ToString() const
 			{
 				return str;

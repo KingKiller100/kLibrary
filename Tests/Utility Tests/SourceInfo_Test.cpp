@@ -1,8 +1,10 @@
 ﻿#include "pch.hpp"
 #include "SourceInfo_Test.hpp"
 
+#include "../../Source Files/Utility/String/kToString.hpp"
 #include "../../Source Files/Utility/String/kStringConverter.hpp"
 #include "../../Source Files/Utility/Debug/Source/kSourceInfo.hpp"
+#include "../../Source Files/Utility/Debug/Source/kSourceInfoToString.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility
@@ -32,28 +34,28 @@ namespace kTest::utility
 		{
 			constexpr auto source = SOURCE_INFO();
 			VERIFY_COMPILE_TIME(source.file == __FILE__);
-			VERIFY_COMPILE_TIME(source.line == 33);
+			VERIFY_COMPILE_TIME(source.line == 35);
 			VERIFY_COMPILE_TIME(source.func == __FUNCTION__);
 		}
 		
 		{
 			constexpr auto source = ::klib::kDebug::wSourceInfo(WIDE_STR(__FILE__), kSOURCEINFOIMPL_FILELINE, WIDE_STR(__FUNCTION__), WIDE_STR(__TIMESTAMP__));
 			VERIFY_COMPILE_TIME(source.file == __FILEW__);
-			VERIFY_COMPILE_TIME(source.line == 40);
+			VERIFY_COMPILE_TIME(source.line == 42);
 			VERIFY_COMPILE_TIME(source.func == __FUNCTIONW__);
 		}
 		
 		{
 			const auto source = U16SOURCE_INFO();
 			VERIFY_COMPILE_TIME(source.file == U16_STR( __FILE__ ));
-			VERIFY_COMPILE_TIME(source.line == 47);
+			VERIFY_COMPILE_TIME(source.line == 49);
 			VERIFY_COMPILE_TIME(source.func == U16_STR( __FUNCTION__ ));
 		}
 		
 		{
 			const auto source = U32SOURCE_INFO();
 			VERIFY_COMPILE_TIME(source.file == U32_STR( __FILE__ ));
-			VERIFY_COMPILE_TIME(source.line == 54);
+			VERIFY_COMPILE_TIME(source.line == 56);
 			VERIFY_COMPILE_TIME(source.func == U32_STR( __FUNCTION__ ));
 		}
 
@@ -61,8 +63,15 @@ namespace kTest::utility
 		{
 			constexpr auto source = SOURCE_INFO_VS();
 			VERIFY_COMPILE_TIME(source.file == __FILE__);
-			VERIFY_COMPILE_TIME(source.line == 58);
+			VERIFY_COMPILE_TIME(source.line == 64);
 			VERIFY_COMPILE_TIME(source.func == __FUNCSIG__);
+		}
+		
+		{
+			constexpr auto source = U16SOURCE_INFO_VS();
+			VERIFY_COMPILE_TIME(source.file == U16_STR(__FILE__));
+			VERIFY_COMPILE_TIME(source.line == 71);
+			VERIFY_COMPILE_TIME(source.func == U16_STR(__FUNCSIG__));
 		}
 #endif
 
@@ -117,7 +126,11 @@ namespace kTest::utility
 
 	bool SourceInfoTester::ToStringTest()
 	{
-		
+		{
+			constexpr auto source = SOURCE_INFO();
+			const auto result = kString::ToString("{0:l}", source);
+			
+		}
 		
 		return success;
 	}

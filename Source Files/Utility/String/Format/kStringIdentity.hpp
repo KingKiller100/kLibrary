@@ -60,8 +60,7 @@ namespace klib::kString::stringify
 	template<typename Char_t, typename T>
 	const StringWriter<Char_t>& GetObjectString(const T& obj)
 	{
-		static std::vector<StringWriter<Char_t>> storage =
-			decltype(storage)();
+		static std::vector<StringWriter<Char_t>> storage = decltype(storage)();
 
 		const auto temp = Convert<Char_t>(obj.ToString());
 

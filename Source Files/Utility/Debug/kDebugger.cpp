@@ -5,7 +5,6 @@
 #include "../FileSystem/kFileSystem.hpp"
 #include <thread>
 
-
 namespace klib::kDebug
 {
 #ifdef MSVC_PLATFORM_TOOLSET

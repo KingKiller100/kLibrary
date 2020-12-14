@@ -58,7 +58,6 @@ namespace klib {
 		{
 			using DataTypes = std::variant<std::monostate, T, Ts...>;
 			constexpr auto argCount = std::variant_size_v<DataTypes> - 1;
-
 			constexpr size_t reserveSize = secret::impl::InitialFormatStringSize<argCount>();
 
 			std::basic_string<CharT> output;
