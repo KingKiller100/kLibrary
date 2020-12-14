@@ -9,7 +9,7 @@ namespace klib::kLogs
 			: time (calendarInfoSource)
 			, date(calendarInfoSource)
 			, text(text)
-			, sourceInfo(file, line, "")
+			, sourceInfo(file, line, "", "")
 		{}
 
 		LogMessage::LogMessage(const std::string& text, const std::string_view& file, const std::int32_t line,
@@ -17,7 +17,7 @@ namespace klib::kLogs
 			: time(calendarInfoSource)
 			, date(calendarInfoSource)
 			, text(text)
-			, sourceInfo(file.data(), line, "")
+			, sourceInfo(file.data(), line, "", "")
 		{}
 
 		LogMessage::LogMessage( const char* text, const kDebug::SourceInfo& sourceInfo,

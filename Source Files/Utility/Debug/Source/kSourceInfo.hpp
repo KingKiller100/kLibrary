@@ -7,7 +7,7 @@
 namespace klib {
 	namespace kDebug
 	{
-		template<class Char, class = std::enable_if_t<type_trait::Is_CharType_V<Char>>>
+		template<class Char>
 		struct BasicSourceInfo
 		{
 		public:
@@ -37,6 +37,11 @@ namespace klib {
 
 		using SourceInfo = BasicSourceInfo<char>;
 		using wSourceInfo = BasicSourceInfo<wchar_t>;
+		using u16SourceInfo = BasicSourceInfo<char16_t>;
+		using u32SourceInfo = BasicSourceInfo<char32_t>;
+#ifdef __cpp_char8_t
+		using u8SourceInfo = BasicSourceInfo<char8_t>;
+#endif
 	}
 
 #ifdef KLIB_SHORT_NAMESPACE
@@ -49,13 +54,29 @@ namespace klib {
 #define kSOURCEINFOIMPL_FILELINE size_t(kSOURCEINFOIMPL_CONCATENATE(__LINE__, U))
 
 #define SOURCE_INFO()          ::klib::kDebug::SourceInfo(__FILE__, kSOURCEINFOIMPL_FILELINE, __FUNCTION__, __TIMESTAMP__)
+#define WSOURCE_INFO()         ::klib::kDebug::wSourceInfo(WIDE_STR(__FILE__), kSOURCEINFOIMPL_FILELINE, WIDE_STR(__FUNCTION__), WIDE_STR(__TIMESTAMP__))
+#define U16SOURCE_INFO()       ::klib::kDebug::u16SourceInfo(U16_STR(__FILE__), kSOURCEINFOIMPL_FILELINE, U16_STR(__FUNCTION__), U16_STR(__TIMESTAMP__))
+#define U32SOURCE_INFO()       ::klib::kDebug::u32SourceInfo(U32_STR(__FILE__), kSOURCEINFOIMPL_FILELINE, U32_STR(__FUNCTION__), U32_STR(__TIMESTAMP__))
+
+#ifdef __cpp_char8_t
+#	define U8SOURCE_INFO()     ::klib::kDebug::u8SourceInfo(U8_STR(__FILE__), kSOURCEINFOIMPL_FILELINE, U8_STR(__FUNCTION__), U8_STR(__TIMESTAMP__))
+#endif
 
 #define SOURCE_INFO_NO_FUNC()  ::klib::kDebug::SourceInfo(__FILE__, kSOURCEINFOIMPL_FILELINE, "", __TIMESTAMP__)
-
 #define WSOURCE_INFO_NO_FUNC() ::klib::kDebug::wSourceInfo(__FILEW__, kSOURCEINFOIMPL_FILELINE, L"", WIDE_STR(__TIMESTAMP__))
-#define WSOURCE_INFO()         ::klib::kDebug::wSourceInfo(__FILEW__, kSOURCEINFOIMPL_FILELINE, __FUNCTIONW__, WIDE_STR(__TIMESTAMP__))
+#define U16SOURCE_INFO_NO_FUNC() ::klib::kDebug::u16SourceInfo(U16_STR(__FILE__), kSOURCEINFOIMPL_FILELINE, u"", U16_STR(__TIMESTAMP__))
+#define U32SOURCE_INFO_NO_FUNC() ::klib::kDebug::u32SourceInfo(U32_STR(__FILE__), kSOURCEINFOIMPL_FILELINE, U"", U32_STR(__TIMESTAMP__))
+
+#ifdef __cpp_char8_t
+#	define U8SOURCE_INFO_NO_FUNC() ::klib::kDebug::u8SourceInfo(U8_STR(__FILE__), kSOURCEINFOIMPL_FILELINE, u8"", U8_STR(__TIMESTAMP__))
+#endif
 
 #ifdef MSVC_PLATFORM_TOOLSET
 #	define SOURCE_INFO_VS()    ::klib::kDebug::SourceInfo(__FILE__, kSOURCEINFOIMPL_FILELINE, __FUNCSIG__, __TIMESTAMP__)
-#	define WSOURCE_INFO_VS()    ::klib::kDebug::SourceInfo(__FILE__, kSOURCEINFOIMPL_FILELINE, _CRT_WIDE(__FUNCSIG__), WIDE_STR(__TIMESTAMP__))
+#	define WSOURCE_INFO_VS()    ::klib::kDebug::wSourceInfo(__FILEW__, kSOURCEINFOIMPL_FILELINE, WIDE_STR(__FUNCSIG__), WIDE_STR(__TIMESTAMP__))
+#	define U16SOURCE_INFO_VS() ::klib::kDebug::u16SourceInfo(U16_STR(__FILE__), kSOURCEINFOIMPL_FILELINE,  U16_STR(__FUNCSIG__), U16_STR(__TIMESTAMP__))
+#	define U32SOURCE_INFO_VS() ::klib::kDebug::u32SourceInfo(U32_STR(__FILE__), kSOURCEINFOIMPL_FILELINE,  U32_STR(__FUNCSIG__), U32_STR(__TIMESTAMP__))
+#	ifdef __cpp_char8_t
+#		define U8SOURCE_INFO_NO_FUNC() ::klib::kDebug::u8SourceInfo(U8_STR(__FILE__), kSOURCEINFOIMPL_FILELINE,  U8_STR(__FUNCSIG__), U8_STR(__TIMESTAMP__))
+#	endif
 #endif

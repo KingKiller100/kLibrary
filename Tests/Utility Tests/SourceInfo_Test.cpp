@@ -37,17 +37,24 @@ namespace kTest::utility
 		}
 		
 		{
-			constexpr auto source = WSOURCE_INFO();
+			constexpr auto source = ::klib::kDebug::wSourceInfo(WIDE_STR(__FILE__), kSOURCEINFOIMPL_FILELINE, WIDE_STR(__FUNCTION__), WIDE_STR(__TIMESTAMP__));
 			VERIFY_COMPILE_TIME(source.file == __FILEW__);
 			VERIFY_COMPILE_TIME(source.line == 40);
 			VERIFY_COMPILE_TIME(source.func == __FUNCTIONW__);
 		}
 		
 		{
-			constexpr auto source = WSOURCE_INFO_NO_FUNC();
-			VERIFY_COMPILE_TIME(source.file == __FILEW__);
+			const auto source = U16SOURCE_INFO();
+			VERIFY_COMPILE_TIME(source.file == U16_STR( __FILE__ ));
 			VERIFY_COMPILE_TIME(source.line == 47);
-			VERIFY_COMPILE_TIME(source.func == L"");
+			VERIFY_COMPILE_TIME(source.func == U16_STR( __FUNCTION__ ));
+		}
+		
+		{
+			const auto source = U32SOURCE_INFO();
+			VERIFY_COMPILE_TIME(source.file == U32_STR( __FILE__ ));
+			VERIFY_COMPILE_TIME(source.line == 54);
+			VERIFY_COMPILE_TIME(source.func == U32_STR( __FUNCTION__ ));
 		}
 
 #ifdef MSVC_PLATFORM_TOOLSET
@@ -69,6 +76,7 @@ namespace kTest::utility
 			VERIFY_COMPILE_TIME(source.file == u"Test.txt");
 			VERIFY_COMPILE_TIME(source.line == 212);
 			VERIFY_COMPILE_TIME(source.func == u"void Test()");
+			VERIFY_COMPILE_TIME(source.timeStamp == u"Mon Dec 14 01:03:52 2020");
 		}
 		
 #ifdef __cpp_char8_t

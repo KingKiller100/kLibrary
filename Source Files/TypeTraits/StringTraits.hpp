@@ -58,4 +58,25 @@ namespace klib::type_trait
 	
 	template<class StringT, class = std::enable_if_t<Is_StringType_V<StringT>>>
 	constexpr auto g_NoPos = StringT::npos;
+	
+	template<class CharT>
+	constexpr const CharT * EmptyString() { return nullptr; }
+
+	template<>
+	constexpr const char * EmptyString<char>() { return ""; }
+
+	template<>
+	constexpr const wchar_t * EmptyString<wchar_t>() { return L""; }
+
+	template<>
+	constexpr const char16_t * EmptyString<char16_t>() { return u""; }
+
+	template<>
+	constexpr const char32_t * EmptyString<char32_t>() { return U""; }
+
+#if __cpp_char8_t
+	template<>
+	constexpr const char8_t * EmptyString<char8_t>() { return u8""; }
+#endif
+
 }
