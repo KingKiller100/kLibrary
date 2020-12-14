@@ -9,6 +9,7 @@
 #include "../../../TypeTraits/StringTraits.hpp"
 #include "../../Debug/Exceptions/StringExceptions.hpp"
 
+#include <functional>
 
 namespace klib::kString
 {
@@ -36,15 +37,21 @@ namespace klib::kString
 			|| str[0] == type_trait::g_NullTerminator<Char_t>)
 			return static_cast<Integer_t>(0);
 
-		const auto endCond = end == nullptr
-			? [](const Char_t* const s, size_t pos, const Char_t* const) -> bool
+		std::function<bool(const Char_t* const s, size_t pos, const Char_t* const)> endCond;
+		if (end == nullptr)
 		{
-			return s[pos] != type_trait::g_NullTerminator<Char_t>;
+			endCond = [](const Char_t* const s, size_t pos, const Char_t* const) -> bool
+			{
+				return s[pos] != type_trait::g_NullTerminator<Char_t>;
+			};
 		}
-			: [](const Char_t* const s, size_t pos, const Char_t* const e) -> bool
+		else
 		{
-			return s + pos != e;
-		};
+			endCond = [](const Char_t* const s, size_t pos, const Char_t* const e) -> bool
+			{
+				return s + pos != e;
+			};
+		}
 
 		const auto isNeg = std::is_signed_v<Integer_t>
 			&& str[0] == Char_t('-');
@@ -132,11 +139,11 @@ namespace klib::kString
 			CrashFunc("string must contain only one integer number");
 
 		const auto data = string.data();
-		
+
 		const auto end = count == type_trait::g_NoPos<StringT>
 			? nullptr
 			: data + count;
-		
+
 		const auto result = CStrTo<Integer_t>(data, end);
 
 		return result;

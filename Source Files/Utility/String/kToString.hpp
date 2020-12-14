@@ -12,6 +12,31 @@
 namespace klib {
 	namespace kString
 	{
+		namespace secret::impl
+		{
+			/**
+			 * \brief
+			 *		Estimates the initial size of the dynamically created format string for ToString uses
+			 *		Work around function needed to compile on v141 toolset without any compiler warnings
+			 * \tparam Count
+			 *		Number of arguments
+			 * \return
+			 *	Number of characters needed for the format string
+			 */
+			template<size_t Count>
+			constexpr size_t InitialFormatStringSize()
+			{
+				if _CONSTEXPR_IF(Count < 10)
+				{
+					return Count + 2 * Count;
+				}
+				else
+				{
+					return 27 + (Count - 9) * 4;
+				}
+			}
+		}
+		
 		// Outputs a interpolated string with data given for all string types. NOTE: Best performance with char and wchar_t type strings
 		template<class CharT, typename T, typename ...Ts>
 		USE_RESULT constexpr std::basic_string<CharT> ToString(const CharT* format, const T& arg, const Ts& ...argPack)
@@ -32,15 +57,13 @@ namespace klib {
 		USE_RESULT constexpr std::basic_string<CharT> ToString(const T& arg, const  Ts& ...argPack)
 		{
 			using DataTypes = std::variant<std::monostate, T, Ts...>;
-			constexpr auto count = std::variant_size_v<DataTypes> -1;
+			constexpr auto argCount = std::variant_size_v<DataTypes> - 1;
 
-			constexpr size_t reserveSize = (count < 10)
-				? count + 2 * count
-				: 27 + (count - 9) * 4;
+			constexpr size_t reserveSize = secret::impl::InitialFormatStringSize<argCount>();
 
 			std::basic_string<CharT> output;
 			output.reserve(reserveSize);
-			for (size_t i = 0; i < count; ++i)
+			for (size_t i = 0; i < argCount; ++i)
 			{
 				output.push_back(format::g_OpenerSymbol<CharT>);
 				output.append(stringify::StringUnsignedIntegral<CharT>(i));

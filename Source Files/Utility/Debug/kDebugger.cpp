@@ -14,7 +14,7 @@ namespace klib::kDebug
 	
 	void IsDebuggerAttached(const char* filename) noexcept
 	{
-#ifdef  _DEBUG
+#if defined(_DEBUG) || defined(KLIB_DEBUG) || defined(KLIB_TEST)
 		if (IsDebuggerAttachedImpl())
 			return;
 
