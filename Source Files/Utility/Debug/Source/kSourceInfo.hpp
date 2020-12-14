@@ -7,6 +7,7 @@
 namespace klib {
 	namespace kDebug
 	{
+		// Non-Mutable Source Code Object
 		template<class Char>
 		struct BasicSourceInfo
 		{
@@ -39,6 +40,41 @@ namespace klib {
 		using u32SourceInfo = BasicSourceInfo<char32_t>;
 #ifdef __cpp_char8_t
 		using u8SourceInfo = BasicSourceInfo<char8_t>;
+#endif
+
+		// Mutable Source Code Object
+		template<class Char>
+		struct BasicMutableSourceInfo
+		{
+		public:
+			using Char_t = Char;
+
+			template<typename StringishA_t, typename StringishB_t, typename StringishC_t, class = std::enable_if_t<
+				type_trait::Is_Stringish_V<StringishA_t>
+				&& type_trait::Is_Stringish_V<StringishB_t>
+				&& type_trait::Is_Stringish_V<StringishC_t>
+				>>
+				constexpr BasicMutableSourceInfo(const StringishA_t& filename, const size_t fileLine
+					, const StringishB_t& function, const StringishC_t& modificationTimeStamp)
+				: file(filename)
+				, line(fileLine)
+				, func(function)
+				, timeStamp(modificationTimeStamp)
+			{}
+
+		public:
+			std::basic_string<Char_t> file;
+			size_t line;
+			std::basic_string<Char_t> func;
+			std::basic_string<Char_t> timeStamp;
+		};
+
+		using MutSourceInfo = BasicMutableSourceInfo<char>;
+		using wMutSourceInfo = BasicMutableSourceInfo<wchar_t>;
+		using u16MutSourceInfo = BasicMutableSourceInfo<char16_t>;
+		using u32MutSourceInfo = BasicMutableSourceInfo<char32_t>;
+#ifdef __cpp_char8_t
+		using u8MutSourceInfo = BasicMutableSourceInfo<char8_t>;
 #endif
 	}
 
