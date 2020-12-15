@@ -52,7 +52,7 @@ namespace kTest::utility
 		}
 		
 		{
-			const auto source = U16SOURCE_INFO();
+			constexpr auto source = U16SOURCE_INFO();
 			VERIFY_COMPILE_TIME(source.file == U16_STR( __FILE__ ));
 			VERIFY_COMPILE_TIME(source.line == kFILELINE - 2);
 			VERIFY_COMPILE_TIME(source.func == U16_STR( __FUNCTION__ ));
@@ -60,9 +60,9 @@ namespace kTest::utility
 		
 		{
 			const auto source = U32SOURCE_INFO();
-			VERIFY_COMPILE_TIME(source.file == U32_STR( __FILE__ ));
-			VERIFY_COMPILE_TIME(source.line == kFILELINE - 2);
-			VERIFY_COMPILE_TIME(source.func == U32_STR( __FUNCTION__ ));
+			VERIFY(source.file == U32_STR( __FILE__ ));
+			VERIFY(source.line == kFILELINE - 2);
+			VERIFY(source.func == U32_STR( __FUNCTION__ ));
 		}
 
 #ifdef MSVC_PLATFORM_TOOLSET
@@ -88,10 +88,10 @@ namespace kTest::utility
 			constexpr auto func = u"void Test()";
 			constexpr auto timeStamp = u"Mon Dec 14 01:03:52 2020";
 			const auto source = BasicSourceInfo<Char_t>(file, line, func, timeStamp);
-			VERIFY_COMPILE_TIME(source.file == u"Test.txt");
-			VERIFY_COMPILE_TIME(source.line == 212);
-			VERIFY_COMPILE_TIME(source.func == u"void Test()");
-			VERIFY_COMPILE_TIME(source.timeStamp == u"Mon Dec 14 01:03:52 2020");
+			VERIFY(source.file == u"Test.txt");
+			VERIFY(source.line == 212);
+			VERIFY(source.func == u"void Test()");
+			VERIFY(source.timeStamp == u"Mon Dec 14 01:03:52 2020");
 		}
 		
 		{
@@ -127,9 +127,9 @@ namespace kTest::utility
 	{
 		{
 			const auto source = SOURCE_INFO_NO_FUNC();
-			VERIFY_COMPILE_TIME(source.file == __FILE__);
-			VERIFY_COMPILE_TIME(source.line == kFILELINE - 2);
-			VERIFY_COMPILE_TIME(source.func == "");
+			VERIFY(source.file == __FILE__);
+			VERIFY(source.line == kFILELINE - 2);
+			VERIFY(source.func == "");
 		}
 
 		{
@@ -239,7 +239,7 @@ namespace kTest::utility
 
 		{
 			const auto source = MUT_SRC_INFO();
-			const auto result = ToString("{0:f}", source);
+			const auto result = ToString("{0:l}", source);
 			VERIFY(result == "Line: 151");
 		}
 		

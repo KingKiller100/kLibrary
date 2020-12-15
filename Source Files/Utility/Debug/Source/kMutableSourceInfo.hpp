@@ -73,6 +73,6 @@ namespace klib {
 #	define U16MUT_SRC_INFO_VS()     ::klib::kDebug::u16MutSourceInfo(U16_STR(__FILE__), kFILELINE,  U16_STR(__FUNCSIG__), U16_STR(__TIMESTAMP__))
 #	define U32MUT_SOURCE_INFO_VS()     ::klib::kDebug::u32MutSourceInfo(U32_STR(__FILE__), kFILELINE,  U32_STR(__FUNCSIG__), U32_STR(__TIMESTAMP__))
 #	ifdef __cpp_char8_t
-#		define U8MUT_SRC_INFO_NO_FUNC() ::klib::kDebug::u8MutSourceInfo(U8_STR(__FILE__), kFILELINE,  U8_STR(__FUNCSIG__), U8_STR(__TIMESTAMP__))
+#		define U8MUT_SRC_INFO_VS() ::klib::kDebug::u8MutSourceInfo(U8_STR(__FILE__), kFILELINE,  U8_STR(__FUNCSIG__), U8_STR(__TIMESTAMP__))
 #	endif
 #endif

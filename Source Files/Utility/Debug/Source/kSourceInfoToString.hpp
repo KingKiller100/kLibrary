@@ -12,39 +12,40 @@ namespace klib::kString::stringify
 		using Type = kDebug::SourceInfo;
 		static_assert(std::is_same_v<Char_t, typename Type::Char_t>
 			, "SourceInfo:char does not match the string's char type");
-		
+
 		USE_RESULT static decltype(auto) MakeStr(const kDebug::SourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
 		{
 			if (Contains(specifier, Char_t('a')))
 			{
 				return ToString("File: {0} Line: {1} Function: {2} Time Stamp: {3}"
-				                , sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
+					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
 			}
 			else if (Contains(specifier, "fl"))
 			{
-				return ToString("File: {0} [{1}]", sourceInfo.file, sourceInfo.line);
+				return ToString("{0} [{1}]", sourceInfo.file, sourceInfo.line);
 			}
 			else if (Contains(specifier, Char_t('f')))
 			{
-				return ToString("File: {0}", sourceInfo.file);
+				return ToString("{0}", sourceInfo.file);
 			}
 			else if (Contains(specifier, Char_t('l')))
 			{
-				return ToString("Line: {0}", sourceInfo.line);
+				return ToString("{0}", sourceInfo.line);
 			}
 			else if (Contains(specifier, Char_t('z')))
 			{
-				return ToString("Function: {0}", sourceInfo.func);
+				return ToString("{0}", sourceInfo.func);
 			}
 			else if (Contains(specifier, Char_t('t')))
 			{
-				return ToString("Time Stamp: {0}", sourceInfo.timeStamp);
+				return ToString("{0}", sourceInfo.timeStamp);
 			}
 
-			return ToString("File: {0} Line: {1} Function: {2}", sourceInfo.file, sourceInfo.line, sourceInfo.func);
+			return ToString("File: {0} Line: {1} Function: {2}"
+				, sourceInfo.file, sourceInfo.line, sourceInfo.func);
 		}
 	};
-	
+
 	template<typename Char_t>
 	class Identity<Char_t, kDebug::wSourceInfo>
 	{
@@ -52,29 +53,29 @@ namespace klib::kString::stringify
 		using Type = kDebug::wSourceInfo;
 		static_assert(std::is_same_v<Char_t, typename Type::Char_t>
 			, "SourceInfo:wchar_t does not match the string's char type");
-		
+
 		USE_RESULT static decltype(auto) MakeStr(const kDebug::wSourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
 		{
 			if (Contains(specifier, Char_t('a')))
 			{
 				return ToString(L"File: {0} Line: {1} Function: {2} Time Stamp: {3}"
-				                , sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
+					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
 			}
 			else if (Contains(specifier, L"fl"))
 			{
-				return ToString(L"File: {0} [{1}]", sourceInfo.file, sourceInfo.line);
+				return ToString(L"{0} [{1}]", sourceInfo.file, sourceInfo.line);
 			}
 			else if (Contains(specifier, Char_t('f')))
 			{
-				return ToString(L"File: {0}", sourceInfo.file);
+				return ToString(L"{0}", sourceInfo.file);
 			}
 			else if (Contains(specifier, Char_t('l')))
 			{
-				return ToString(L"Line: {0}", sourceInfo.line);
+				return ToString(L"{0}", sourceInfo.line);
 			}
 			else if (Contains(specifier, Char_t('z')))
 			{
-				return ToString(L"Function: {0}", sourceInfo.func);
+				return ToString(L"{0}", sourceInfo.func);
 			}
 			else if (Contains(specifier, Char_t('t')))
 			{
@@ -84,7 +85,7 @@ namespace klib::kString::stringify
 			return ToString(L"File: {0} Line: {1} Function: {2}", sourceInfo.file, sourceInfo.line, sourceInfo.func);
 		}
 	};
-	
+
 	template<typename Char_t>
 	class Identity<Char_t, kDebug::u16SourceInfo>
 	{
@@ -98,23 +99,23 @@ namespace klib::kString::stringify
 			if (Contains(specifier, Char_t('a')))
 			{
 				return ToString(u"File: {0} Line: {1} Function: {2} Time Stamp: {3}"
-				                , sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
+					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
 			}
 			else if (Contains(specifier, u"fl"))
 			{
-				return ToString(u"File: {0} [{1}]", sourceInfo.file, sourceInfo.line);
+				return ToString(u"{0} [{1}]", sourceInfo.file, sourceInfo.line);
 			}
 			else if (Contains(specifier, Char_t('f')))
 			{
-				return ToString(u"File: {0}", sourceInfo.file);
+				return ToString(u"{0}", sourceInfo.file);
 			}
 			else if (Contains(specifier, Char_t('l')))
 			{
-				return ToString(u"Line: {0}", sourceInfo.line);
+				return ToString(u"{0}", sourceInfo.line);
 			}
 			else if (Contains(specifier, Char_t('z')))
 			{
-				return ToString(u"Function: {0}", sourceInfo.func);
+				return ToString(u"{0}", sourceInfo.func);
 			}
 			else if (Contains(specifier, Char_t('t')))
 			{
@@ -124,7 +125,7 @@ namespace klib::kString::stringify
 			return ToString(u"File: {0} Line: {1} Function: {2}", sourceInfo.file, sourceInfo.line, sourceInfo.func);
 		}
 	};
-	
+
 	template<typename Char_t>
 	class Identity<Char_t, kDebug::u32SourceInfo>
 	{
@@ -132,29 +133,29 @@ namespace klib::kString::stringify
 		using Type = kDebug::u32SourceInfo;
 		static_assert(std::is_same_v<Char_t, typename Type::Char_t>
 			, "SourceInfo:char32_t does not match the string's char type");
-		
+
 		USE_RESULT static decltype(auto) MakeStr(const kDebug::u32SourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
 		{
 			if (Contains(specifier, Char_t('a')))
 			{
 				return ToString(U"File: {0} Line: {1} Function: {2} Time Stamp: {3}"
-				                , sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
+					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
 			}
 			else if (Contains(specifier, U"fl"))
 			{
-				return ToString(U"File: {0} [{1}]", sourceInfo.file, sourceInfo.line);
+				return ToString(U"{0} [{1}]", sourceInfo.file, sourceInfo.line);
 			}
 			else if (Contains(specifier, Char_t('f')))
 			{
-				return ToString(U"File: {0}", sourceInfo.file);
+				return ToString(U"{0}", sourceInfo.file);
 			}
 			else if (Contains(specifier, Char_t('l')))
 			{
-				return ToString(U"Line: {0}", sourceInfo.line);
+				return ToString(U"{0}", sourceInfo.line);
 			}
 			else if (Contains(specifier, Char_t('z')))
 			{
-				return ToString(U"Function: {0}", sourceInfo.func);
+				return ToString(U"{0}", sourceInfo.func);
 			}
 			else if (Contains(specifier, Char_t('t')))
 			{
@@ -173,29 +174,29 @@ namespace klib::kString::stringify
 		using Type = kDebug::u8SourceInfo;
 		static_assert(std::is_same_v<Char_t, typename Type::Char_t>
 			, "SourceInfo:char8_t does not match the string's char type");
-		
+
 		USE_RESULT static decltype(auto) MakeStr(const kDebug::u8SourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
 		{
 			if (Contains(specifier, Char_t('a')))
 			{
 				return ToString(u8"File: {0} Line: {1} Function: {2} Time Stamp: {3}"
-				                , sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
+					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
 			}
 			else if (Contains(specifier, u8"fl"))
 			{
-				return ToString(u8"File: {0} [{1}]", sourceInfo.file, sourceInfo.line);
+				return ToString(u8"{0} [{1}]", sourceInfo.file, sourceInfo.line);
 			}
 			else if (Contains(specifier, Char_t('f')))
 			{
-				return ToString(u8"File: {0}", sourceInfo.file);
+				return ToString(u8"{0}", sourceInfo.file);
 			}
 			else if (Contains(specifier, Char_t('l')))
 			{
-				return ToString(u8"Line: {0}", sourceInfo.line);
+				return ToString(u8"{0}", sourceInfo.line);
 			}
 			else if (Contains(specifier, Char_t('z')))
 			{
-				return ToString(u8"Function: {0}", sourceInfo.func);
+				return ToString(u8"{0}", sourceInfo.func);
 			}
 			else if (Contains(specifier, Char_t('t')))
 			{

@@ -72,6 +72,6 @@ namespace klib {
 #	define U16SOURCE_INFO_VS()     ::klib::kDebug::u16SourceInfo(U16_STR(__FILE__), kFILELINE,  U16_STR(__FUNCSIG__), U16_STR(__TIMESTAMP__))
 #	define U32SOURCE_INFO_VS()     ::klib::kDebug::u32SourceInfo(U32_STR(__FILE__), kFILELINE,  U32_STR(__FUNCSIG__), U32_STR(__TIMESTAMP__))
 #	ifdef __cpp_char8_t
-#		define U8SOURCE_INFO_NO_FUNC() ::klib::kDebug::u8SourceInfo(U8_STR(__FILE__), kFILELINE,  U8_STR(__FUNCSIG__), U8_STR(__TIMESTAMP__))
+#		define U8SOURCE_INFO_VS() ::klib::kDebug::u8SourceInfo(U8_STR(__FILE__), kFILELINE,  U8_STR(__FUNCSIG__), U8_STR(__TIMESTAMP__))
 #	endif
 #endif
