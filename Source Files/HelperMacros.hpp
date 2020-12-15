@@ -42,7 +42,7 @@
 
 #define kSOURCEINFOIMPL_CONCATENATE(x,y) kSOURCEINFOIMPL_CONCATENATE2(x,y) 
 #define kSOURCEINFOIMPL_CONCATENATE2(x,y) x##y 
-#define kSOURCEINFOIMPL_FILELINE size_t(kSOURCEINFOIMPL_CONCATENATE(__LINE__, U))
+#define kFILELINE size_t(kSOURCEINFOIMPL_CONCATENATE(__LINE__, U))
 
 // Class member getter & setters
 #define GETTER(type, name, field) USE_RESULT type& name() noexcept\

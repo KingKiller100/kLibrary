@@ -1,28 +1,25 @@
 ﻿#pragma once
 
-#include "kSourceInfo.hpp"
+#include "kMutableSourceInfo.hpp"
 #include "../../String/kToString.hpp"
+#include "../../FileSystem/kFileSystemToString.hpp"
 
 namespace klib::kString::stringify
 {
 	template<typename Char_t>
-	class Identity<Char_t, kDebug::SourceInfo>
+	class Identity<Char_t, kDebug::MutSourceInfo>
 	{
 	public:
-		using Type = kDebug::SourceInfo;
+		using Type = kDebug::MutSourceInfo;
 		static_assert(std::is_same_v<Char_t, typename Type::Char_t>
-			, "SourceInfo:char does not match the string's char type");
-		
-		USE_RESULT static decltype(auto) MakeStr(const kDebug::SourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
+			, "MutSourceInfo:char does not match the string's char type");
+
+		USE_RESULT static decltype(auto) MakeStr(const kDebug::MutSourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
 		{
 			if (Contains(specifier, Char_t('a')))
 			{
-				return ToString("File: {0} Line: {1} Function: {2} Time Stamp: {3}"
-				                , sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
-			}
-			else if (Contains(specifier, "fl"))
-			{
-				return ToString("File: {0} [{1}]", sourceInfo.file, sourceInfo.line);
+				return ToString("File: {0} [{1}] Function: {2} Time Stamp: {3}"
+					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
 			}
 			else if (Contains(specifier, Char_t('f')))
 			{
@@ -41,28 +38,24 @@ namespace klib::kString::stringify
 				return ToString("Time Stamp: {0}", sourceInfo.timeStamp);
 			}
 
-			return ToString("File: {0} Line: {1} Function: {2}", sourceInfo.file, sourceInfo.line, sourceInfo.func);
+			return ToString("File: {0} [{1}] Function: {2}", sourceInfo.file, sourceInfo.line, sourceInfo.func);
 		}
 	};
-	
+
 	template<typename Char_t>
-	class Identity<Char_t, kDebug::wSourceInfo>
+	class Identity<Char_t, kDebug::wMutSourceInfo>
 	{
 	public:
-		using Type = kDebug::wSourceInfo;
+		using Type = kDebug::wMutSourceInfo;
 		static_assert(std::is_same_v<Char_t, typename Type::Char_t>
-			, "SourceInfo:wchar_t does not match the string's char type");
-		
-		USE_RESULT static decltype(auto) MakeStr(const kDebug::wSourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
+			, "MutSourceInfo:wchar_t does not match the string's char type");
+
+		USE_RESULT static decltype(auto) MakeStr(const kDebug::wMutSourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
 		{
 			if (Contains(specifier, Char_t('a')))
 			{
 				return ToString(L"File: {0} Line: {1} Function: {2} Time Stamp: {3}"
-				                , sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
-			}
-			else if (Contains(specifier, L"fl"))
-			{
-				return ToString(L"File: {0} [{1}]", sourceInfo.file, sourceInfo.line);
+					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
 			}
 			else if (Contains(specifier, Char_t('f')))
 			{
@@ -84,25 +77,21 @@ namespace klib::kString::stringify
 			return ToString(L"File: {0} Line: {1} Function: {2}", sourceInfo.file, sourceInfo.line, sourceInfo.func);
 		}
 	};
-	
+
 	template<typename Char_t>
-	class Identity<Char_t, kDebug::u16SourceInfo>
+	class Identity<Char_t, kDebug::u16MutSourceInfo>
 	{
 	public:
-		using Type = kDebug::u16SourceInfo;
+		using Type = kDebug::u16MutSourceInfo;
 		static_assert(std::is_same_v<Char_t, typename Type::Char_t>
-			, "SourceInfo:char16_t does not match the string's char type");
+			, "MutSourceInfo:char16_t does not match the string's char type");
 
-		USE_RESULT static decltype(auto) MakeStr(const kDebug::u16SourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
+		USE_RESULT static decltype(auto) MakeStr(const kDebug::u16MutSourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
 		{
 			if (Contains(specifier, Char_t('a')))
 			{
 				return ToString(u"File: {0} Line: {1} Function: {2} Time Stamp: {3}"
-				                , sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
-			}
-			else if (Contains(specifier, u"fl"))
-			{
-				return ToString(u"File: {0} [{1}]", sourceInfo.file, sourceInfo.line);
+					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
 			}
 			else if (Contains(specifier, Char_t('f')))
 			{
@@ -124,25 +113,21 @@ namespace klib::kString::stringify
 			return ToString(u"File: {0} Line: {1} Function: {2}", sourceInfo.file, sourceInfo.line, sourceInfo.func);
 		}
 	};
-	
+
 	template<typename Char_t>
-	class Identity<Char_t, kDebug::u32SourceInfo>
+	class Identity<Char_t, kDebug::u32MutSourceInfo>
 	{
 	public:
-		using Type = kDebug::u32SourceInfo;
+		using Type = kDebug::u32MutSourceInfo;
 		static_assert(std::is_same_v<Char_t, typename Type::Char_t>
-			, "SourceInfo:char32_t does not match the string's char type");
-		
-		USE_RESULT static decltype(auto) MakeStr(const kDebug::u32SourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
+			, "MutSourceInfo:char32_t does not match the string's char type");
+
+		USE_RESULT static decltype(auto) MakeStr(const kDebug::u32MutSourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
 		{
 			if (Contains(specifier, Char_t('a')))
 			{
 				return ToString(U"File: {0} Line: {1} Function: {2} Time Stamp: {3}"
-				                , sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
-			}
-			else if (Contains(specifier, U"fl"))
-			{
-				return ToString(U"File: {0} [{1}]", sourceInfo.file, sourceInfo.line);
+					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
 			}
 			else if (Contains(specifier, Char_t('f')))
 			{
@@ -167,23 +152,19 @@ namespace klib::kString::stringify
 
 #if __cpp_char8_t
 	template<typename Char_t>
-	class Identity<Char_t, kDebug::u8SourceInfo>
+	class Identity<Char_t, kDebug::u8MutSourceInfo>
 	{
 	public:
-		using Type = kDebug::u8SourceInfo;
+		using Type = kDebug::u8MutSourceInfo;
 		static_assert(std::is_same_v<Char_t, typename Type::Char_t>
-			, "SourceInfo:char8_t does not match the string's char type");
-		
-		USE_RESULT static decltype(auto) MakeStr(const kDebug::u8SourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
+			, "MutSourceInfo:char8_t does not match the string's char type");
+
+		USE_RESULT static decltype(auto) MakeStr(const kDebug::u8MutSourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
 		{
 			if (Contains(specifier, Char_t('a')))
 			{
 				return ToString(u8"File: {0} Line: {1} Function: {2} Time Stamp: {3}"
-				                , sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
-			}
-			else if (Contains(specifier, u8"fl"))
-			{
-				return ToString(u8"File: {0} [{1}]", sourceInfo.file, sourceInfo.line);
+					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
 			}
 			else if (Contains(specifier, Char_t('f')))
 			{

@@ -73,10 +73,8 @@ namespace klib
 }
 
 #define kCHARACTERCONVERTSECRETIMPL(literal_prefix, string) (literal_prefix ## string)
-#define U16_STR(string) kCHARACTERCONVERTSECRETIMPL( u, string )
-#define U32_STR(string) kCHARACTERCONVERTSECRETIMPL( U, string )
+#define U16_STR(string)  kCHARACTERCONVERTSECRETIMPL( u, string )
+#define U32_STR(string)  kCHARACTERCONVERTSECRETIMPL( U, string )
 #define WIDE_STR(string) kCHARACTERCONVERTSECRETIMPL( L, string )
+#define U8_STR(string)   kCHARACTERCONVERTSECRETIMPL( u8, string )
 
-#if __cpp_char8_t
-#	define U8_STR(string) kCHARACTERCONVERTSECRETIMPL( u8, string )
-#endif

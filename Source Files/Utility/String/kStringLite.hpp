@@ -8,6 +8,7 @@ namespace klib::kString
 	struct StringLite
 	{
 		using String_t = std::basic_string<CharT>;
+		constexpr auto nPos = String_t::npos;
 		
 		StringLite(const String_t& s)
 			: str(s)
@@ -19,12 +20,12 @@ namespace klib::kString
 			return str;
 		}
 
-		USE_RESULT const String_t& Str() const
+		USE_RESULT constexpr String_t& Str() const
 		{
 			return str;
 		}
 
-		USE_RESULT String_t& Str()
+		USE_RESULT constexpr String_t& Str()
 		{
 			return str;
 		}
@@ -37,7 +38,8 @@ namespace klib::kString
 	struct StringLite<std::basic_string_view<CharT>, false>
 	{
 		using String_t = std::basic_string_view<CharT>;
-		
+		constexpr auto nPos = String_t::npos;
+
 		StringLite(const String_t& s)
 			: str(s)
 		{}

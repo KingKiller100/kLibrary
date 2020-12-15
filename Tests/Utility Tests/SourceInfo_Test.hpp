@@ -15,8 +15,11 @@ namespace kTest::utility
 
 	private:
 		bool InfoTest();
+		bool MutInfoTest();
 		bool InfoNoFuncTest();
+		bool MutInfoNoFuncTest();
 		bool ToStringTest();
+		bool MutToStringTest();
 	};
 }
 #endif
