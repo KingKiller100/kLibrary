@@ -150,31 +150,31 @@ namespace kTest::utility
 		{
 			const auto source = SOURCE_INFO();
 			const auto result = ToString("{0:l}", source);
-			VERIFY(result == "Line: 151");
+			VERIFY(result == "151");
 		}
 		
 		{
 			const auto source = SOURCE_INFO();
 			const auto result = ToString("{0:f}", source);
-			VERIFY(result == "File: " + file);
+			VERIFY(result == file);
 		}
 		
 		{
 			const auto source = SOURCE_INFO();
 			const auto result = ToString("{0:fl}", source);
-			VERIFY(result == "File: " + file + " [163]");
+			VERIFY(result == file + " [163]");
 		}
 		
 		{
 			const auto source = SOURCE_INFO();
 			const auto result = ToString("{0:z}", source);
-			VERIFY(result == "Function: " + func);
+			VERIFY(result == func);
 		}
 		
 		{
 			const auto source = SOURCE_INFO();
 			const auto result = ToString("{0:t}", source);
-			VERIFY(result.find("Time Stamp: ") != std::string::npos);
+			VERIFY(!result.empty());
 		}
 		
 		{
@@ -234,13 +234,43 @@ namespace kTest::utility
 
 	bool SourceInfoTester::MutToStringTest()
 	{
-		std::string file = __FILE__;
-		std::string func = __FUNCTION__;
+		std::wstring file = __FILEW__;
+		std::wstring func = __FUNCTIONW__;
 
 		{
 			const auto source = MUT_SRC_INFO();
 			const auto result = ToString("{0:l}", source);
-			VERIFY(result == "Line: 151");
+			VERIFY(result == "241");
+		}
+
+		{
+			const auto source = WMUT_SRC_INFO();
+			const auto result = ToString(L"{0:f}", source);
+			VERIFY(result == file);
+		}
+
+		{
+			const auto source = WMUT_SRC_INFO();
+			const auto result = ToString(L"{0:z}", source);
+			VERIFY(result == func);
+		}
+
+		{
+			const auto source = WMUT_SRC_INFO();
+			const auto result = ToString(L"{0:t}", source);
+			VERIFY(!result.empty());
+		}
+
+		{
+			const auto source = WSOURCE_INFO();
+			const auto result = ToString(L"{0:a}", source);
+			VERIFY(result.find(L"File: " + file + L" Line: 265 Function: " + func + L" Time Stamp: ") != std::string::npos);
+		}
+
+		{
+			const auto source = WSOURCE_INFO();
+			const auto result = ToString(L"{0}", source);
+			VERIFY(result.find(L"File: " + file + L" Line: 271 Function: " + func) != std::string::npos);
 		}
 		
 		return success;
