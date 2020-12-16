@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <mutex>
+#include <thread>
 
 
 #ifdef TESTING_ENABLED
@@ -28,11 +29,11 @@ namespace kTest
 	using namespace kStopwatch;
 	using namespace kString;
 
-	namespace 
+	namespace
 	{
 		std::mutex g_TestManagerOutputMutex;
 	}
-	
+
 	TesterManager::TesterManager(Token&)
 		: success(true)
 	{
@@ -61,8 +62,8 @@ namespace kTest
 
 	void TesterManager::ClearAllTests()
 	{
-		if (!testsSet.empty())
-			testsSet.clear();
+		if (!tests.empty())
+			tests.clear();
 	}
 
 	void TesterManager::Initialize()
@@ -98,30 +99,35 @@ namespace kTest
 
 	void TesterManager::Add(TesterBase* test)
 	{
-		testsSet.insert(std::unique_ptr<TesterBase>(std::move(test)));
+		tests.push_back(std::unique_ptr<TesterBase>(std::move(test)));
 	}
 
 	void TesterManager::RunAll()
 	{
-		const auto numOfThreads = std::thread::hardware_concurrency();
+		const size_t numOfThreads = std::thread::hardware_concurrency();
 
 		std::vector<std::thread> threads;
 		threads.reserve(numOfThreads);
-		
+
 		const HighAccuracyStopwatch timer("Total Test Run Time");
-		timesRecorded.reserve(testsSet.size());
+		timesRecorded.reserve(tests.size());
 
-		for (const auto& test : testsSet)
+		while (!tests.empty())
 		{
-			auto thread = std::thread(Run, *test);
-			threads.emplace_back();
+			for (size_t i = 0; i < numOfThreads && !tests.empty(); ++i)
+			{
+				const auto& test = tests.front();
+				std::thread thread(&TesterManager::Run, *test);
+				threads.emplace_back(thread);
+				tests.pop_front();
+			}
+
+			for (auto&& thread : threads)
+			{
+				thread.join();
+			}
 		}
 
-		for ( auto&& thread : threads )
-		{
-			thread.join();
-		}
-		
 		const auto finalTime = timer.GetLifeTime<units::Secs>();
 		double avgTime(0);
 
@@ -129,7 +135,7 @@ namespace kTest
 			avgTime += t;
 
 		avgTime /= timesRecorded.size();
-		
+
 		const auto secs = CAST(unsigned, finalTime);
 		const auto remainder = finalTime - secs;
 		const unsigned millis = CAST(unsigned
@@ -168,7 +174,7 @@ namespace kTest
 		const auto testTime = timer.GetLifeTime<units::Millis>();
 
 		timesRecorded.push_back(testTime);
-		
+
 		if (!pass)
 			success = false;
 
@@ -189,10 +195,8 @@ namespace kTest
 
 	std::string TesterManager::WriteResults(const bool pass, const double resTime) const
 	{
-		using namespace kString;
+		auto lock = std::lock_guard(g_TestManagerOutputMutex);
 
-		auto scoped_lock = std::scoped_lock(g_TestManagerOutputMutex);
-		
 		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 		SetConsoleTextAttribute(hConsole, pass

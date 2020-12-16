@@ -2,7 +2,7 @@
 
 #include "../HelperMacros.hpp"
 #include <memory>
-#include <set>
+#include <deque>
 #include <vector>
 #include <string>
 
@@ -38,7 +38,7 @@ namespace kTest
 		
 	private:
 		std::string path;
-		std::set< std::unique_ptr<TesterBase> > testsSet;
+		std::deque< std::unique_ptr<TesterBase> > tests;
 		std::vector<double> timesRecorded;
 		bool success;
 	};
