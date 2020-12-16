@@ -37,7 +37,7 @@ namespace klib::kString::stringify
 				filenameToken = U"fe";
 			}
 #if __cpp_char8_t
-			else if _CONSTEXPR17(std::is_same_v<Char_t, char32_t>)
+			else if _CONSTEXPR17(std::is_same_v<Char_t, char8_t>)
 			{
 				format = u8"{0}";
 				filenameToken = u8"fe";
