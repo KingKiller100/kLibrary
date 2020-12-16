@@ -7,10 +7,10 @@
 namespace klib::type_trait
 {
 	template<typename T>
-	struct CharacterTraits : private std::char_traits<T>
+	struct CharacterTraits
 	{
-		using Base_t = std::char_traits<T>;
-		using Integer_t = typename Base_t::int_type;
+		using Blueprint_t = std::char_traits<T>;
+		using Integer_t = typename Blueprint_t::int_type;
 		
 		// Character Compare Results
 		enum CompareResult : std::int8_t
@@ -22,12 +22,12 @@ namespace klib::type_trait
 		
 		USE_RESULT static constexpr size_t Length(const T* str) noexcept
 		{
-			return Base_t::length(str);
+			return Blueprint_t::length(str);
 		}
 
 		USE_RESULT static constexpr T* Copy(T* dst, const T* const src, const size_t size) noexcept
 		{
-			return Base_t::copy(dst, src, size);
+			return Blueprint_t::copy(dst, src, size);
 		}
 
 		USE_RESULT static constexpr  T* CopySafe(T* const dst,
@@ -43,38 +43,38 @@ namespace klib::type_trait
 		USE_RESULT static constexpr T* Move(T* const dst,
 			const T* const src, const size_t _Count) noexcept
 		{
-			return Base_t::move(dst, src, _Count);
+			return Blueprint_t::move(dst, src, _Count);
 		}
 
 		USE_RESULT static constexpr CompareResult CompareRaw(const T* left, size_t leftSize,
 			const T* right, size_t rightSize) noexcept
 		{
-			const auto result = Base_t::compare(left, right, (std::min)(leftSize, rightSize));
+			const auto result = Blueprint_t::compare(left, right, (std::min)(leftSize, rightSize));
 			return static_cast<CompareResult>(result);
 		}
 
 		USE_RESULT static constexpr bool Compare(const T* left, size_t leftSize,
 			const T* right, size_t rightSize) noexcept
 		{
-			const auto result = Base_t::compare(left, right, (std::min)(leftSize, rightSize));
+			const auto result = Blueprint_t::compare(left, right, (std::min)(leftSize, rightSize));
 			return result == 0;
 		}
 
 		USE_RESULT static constexpr T* Assign(T* const str, size_t count, const T c) noexcept
 		{
-			return Base_t::assign(str, count, c);
+			return Blueprint_t::assign(str, count, c);
 		}
 
 		static constexpr void Assign(T& left, const T& right) noexcept {
-			Base_t::assign(left, right);
+			Blueprint_t::assign(left, right);
 		}
 
 		USE_RESULT static constexpr bool Eq(const T& left, const T& right) noexcept {
-			return Base_t::eq(left, right);
+			return Blueprint_t::eq(left, right);
 		}
 
 		USE_RESULT static constexpr bool Lt(const T& left, const T& right) noexcept {
-			return Base_t::lt(left, right);
+			return Blueprint_t::lt(left, right);
 		}
 
 		USE_RESULT static constexpr bool Gt(const T& left, const T& right) noexcept {
@@ -82,23 +82,23 @@ namespace klib::type_trait
 		}
 
 		USE_RESULT static constexpr T ToChar(const Integer_t& integer) noexcept {
-			return Base_t::to_char_type(integer);
+			return Blueprint_t::to_char_type(integer);
 		}
 
 		USE_RESULT static constexpr Integer_t ToInt(const T& c) noexcept {
-			return Base_t::to_int_type(c);
+			return Blueprint_t::to_int_type(c);
 		}
 
 		USE_RESULT static constexpr bool Eq_Int(const Integer_t& left, const Integer_t& right) noexcept {
-			return Base_t::eq_int_type(left, right);
+			return Blueprint_t::eq_int_type(left, right);
 		}
 
 		USE_RESULT static constexpr Integer_t Not_Eof(const Integer_t& integer) noexcept {
-			return Base_t::not_eof(integer);
+			return Blueprint_t::not_eof(integer);
 		}
 
 		USE_RESULT static constexpr Integer_t Eof() noexcept {
-			return Base_t::eof();
+			return Blueprint_t::eof();
 		}
 	};
 	

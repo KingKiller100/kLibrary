@@ -92,8 +92,6 @@ namespace klib::kStopwatch
 		{
 			return GetUnitsStr<Units, CharT>(length);
 		}
-
-
 	}
 
 	template<class Units = units::Micros, typename = std::enable_if_t<
