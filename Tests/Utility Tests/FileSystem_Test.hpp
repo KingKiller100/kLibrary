@@ -10,9 +10,13 @@ namespace kTest::utility
 		FileSystemTester();
 		~FileSystemTester() override;
 		
-	private:
+	protected:
 		void Test() override;
 
+	private:
+		bool FunctionalityTest();
+		bool PathToStringTest();
+		
 		template<typename Dest, typename Source>
 		std::basic_string<Dest> SwitchStringFormat(Source source)
 		{

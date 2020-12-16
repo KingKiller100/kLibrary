@@ -99,14 +99,14 @@ namespace klib::kStopwatch
 	template<class Units = units::Micros, typename = std::enable_if_t<
 		type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
 		>>
-		struct HighAccuracyClock : private std::chrono::high_resolution_clock
-	{   // wraps std::chrono::high_resolution_clock
+		struct HighAccuracyClock
+	{   // Based on std::chrono::high_resolution_clock
 		using Units_t = Units;
 		using Rep_t = typename Units_t::Rep_t;
 		using Period_t = typename Units_t::Period_t;
 		using Duration_t = typename Units_t::Duration_t;
-		using Base_t = std::chrono::high_resolution_clock;
-		using TimePoint_t = std::chrono::time_point<Base_t, Duration_t>;
+		using Blueprint_t = std::chrono::high_resolution_clock;
+		using TimePoint_t = std::chrono::time_point<Blueprint_t, Duration_t>;
 
 		USE_RESULT static constexpr decltype(auto) Now() noexcept
 		{
@@ -123,14 +123,14 @@ namespace klib::kStopwatch
 	template<class Units = units::Micros, typename = std::enable_if_t<
 		type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
 		>>
-		struct SteadyClock : private std::chrono::steady_clock
-	{   // wraps std::chrono::high_resolution_clock
+		struct SteadyClock
+	{   // Based on std::chrono::steady_clock
 		using Units_t = Units;
 		using Rep_t = typename Units_t::Rep_t;
 		using Period_t = typename Units_t::Period_t;
 		using Duration_t = typename Units_t::Duration_t;
-		using Base_t = steady_clock;
-		using TimePoint_t = std::chrono::time_point<Base_t, Duration_t>;
+		using Blueprint_t = std::chrono::steady_clock;
+		using TimePoint_t = std::chrono::time_point<Blueprint_t, Duration_t>;
 
 		USE_RESULT static constexpr decltype(auto) Now() noexcept
 		{
@@ -142,13 +142,13 @@ namespace klib::kStopwatch
 		type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
 		>>
 		struct SystemClock : private std::chrono::system_clock
-	{   // wraps std::chrono::steady_clock
+	{   // Based on std::chrono::steady_clock
 		using Units_t = Units;
 		using Rep_t = typename Units_t::Rep_t;
 		using Period_t = std::ratio_multiply<std::ratio<_XTIME_NSECS_PER_TICK, 1>, typename Units_t::Period_t>;
 		using Duration_t = std::chrono::duration<Rep_t, Period_t>;
-		using Base_t = system_clock;
-		using TimePoint_t = std::chrono::time_point<Base_t, Duration_t>;
+		using Blueprint_t = system_clock;
+		using TimePoint_t = std::chrono::time_point<Blueprint_t, Duration_t>;
 
 		USE_RESULT static constexpr decltype(auto) Now() noexcept
 		{

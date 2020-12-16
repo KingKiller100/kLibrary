@@ -3,7 +3,8 @@
 
 #ifdef TESTING_ENABLED
 #include "../../Source Files/Utility/FileSystem/kFileSystem.hpp"
-
+#include "../../Source Files/Utility/FileSystem/kFileSystemToString.hpp"
+#include "../../Source Files/Utility/String/kToString.hpp"
 
 namespace kTest::utility
 {
@@ -17,7 +18,16 @@ namespace kTest::utility
 
 	void FileSystemTester::Test()
 	{
-		using namespace klib::kFileSystem;
+		VERIFY_MULTI_INIT();
+		VERIFY_MULTI(FunctionalityTest());
+		VERIFY_MULTI(PathToStringTest());
+		VERIFY_MULTI_END();
+	}
+
+	using namespace klib::kFileSystem;
+
+	bool FileSystemTester::FunctionalityTest()
+	{
 
 		const auto exeDir = std::string(GetExeDirectory<char>());
 		const auto w_exeDir = GetExeDirectory<wchar_t>();
@@ -125,6 +135,46 @@ namespace kTest::utility
 		VERIFY(fileTestExt2 == "File.win");
 		const auto fileTestExt3 = AppendFileExtension(fileNoExt, "win.test");
 		VERIFY(fileTestExt3 == "File.win.test");
+
+		return success;
+	}
+
+	using namespace klib::kString::operators;
+
+	bool FileSystemTester::PathToStringTest()
+	{
+		const auto dir = GetCurrentWorkingDirectory();
+		const auto file = std::string("FileTest");
+		const auto ext = std::string(".txt");
+		
+		const Path path = dir + file + ext;
+
+		{
+			const auto result = klib::kString::ToString("{0:p}", path);
+			VERIFY(result == dir.substr(0, dir.size() - 1));
+		}
+		
+		{
+			const auto result = klib::kString::ToString("{0:d}", path);
+			VERIFY(result == dir.substr(0, dir.size() - 1));
+		}
+
+		{
+			const auto result = klib::kString::ToString(u"{0:f}", path);
+			VERIFY(result == u"FileTest");
+		}
+
+		{
+			const auto result = klib::kString::ToString(u"{0:e}", path);
+			VERIFY(result == u".txt");
+		}
+
+		{
+			const auto result = klib::kString::ToString(u"{0:fe}", path);
+			VERIFY(result == u"FileTest.txt");
+		}
+
+		return success;
 	}
 }
 #endif

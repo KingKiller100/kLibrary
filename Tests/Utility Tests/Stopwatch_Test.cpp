@@ -17,30 +17,24 @@ namespace kTest::utility
 	StopWatchTester::~StopWatchTester()
 		= default;
 
+	using namespace klib::kStopwatch;
+	using namespace std::chrono_literals;
+	
 	void StopWatchTester::Test()
 	{
-		std::string outputStr;
+		VERIFY_MULTI_INIT();
+		VERIFY_MULTI(OneSecondTest());
+		VERIFY_MULTI_END();
+	}
 
-		const auto maxCount = 99999;
-		int nums[maxCount];
+	bool StopWatchTester::OneSecondTest()
+	{
+		Stopwatch<std::time_t, HighAccuracyClock<units::Secs>> oneSec("Timer");
+		std::this_thread::sleep_for(1s);
+		const auto now = oneSec.GetDeltaTime();
+		VERIFY(kmaths::constants::ApproximatelyOne(now));
 
-		const auto processorCount = std::thread::hardware_concurrency();
-		const size_t size = 5000 * processorCount;
-
-		const auto loops = kmaths::Min(size, maxCount);
-
-		klib::kStopwatch::HighAccuracyStopwatch testTime("Stopwatch Timer");
-
-		for (auto i = 0; i < loops; i++)
-		{
-			const auto dt = testTime.GetDeltaTime<klib::kStopwatch::units::Micros>();
-			nums[i] = i;
-			VERIFY(nums[i] == i && dt != 0);
-			outputStr = klib::kString::Sprintf("Test Time %d : %fus (Microseconds)\n", i, dt);
-		}
-
-		const auto lifetime = testTime.GetLifeTime<klib::kStopwatch::units::Micros>();
-		const auto lifetimeInSeconds = lifetime / 1000000;
+		return success;
 	}
 }
 #endif

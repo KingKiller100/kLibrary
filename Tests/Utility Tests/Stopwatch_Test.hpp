@@ -12,6 +12,9 @@ namespace kTest::utility
 		
 	protected:
 		void Test() override;
+		
+	private:
+		bool OneSecondTest();
 	};
 }
 #endif

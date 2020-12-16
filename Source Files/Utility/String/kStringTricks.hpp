@@ -4,6 +4,7 @@
 #include "../Enum/kEnum.hpp"
 #include "../../TypeTraits/StringTraits.hpp"
 
+#include "Tricks/kStringOperators.hpp"
 #include "Tricks/kStringFind.hpp"
 #include "Tricks/kStringSize.hpp"
 #include "Tricks/kStringCases.hpp"
