@@ -18,6 +18,7 @@
 #include "../Utility/Misc/kConsoleColour.hpp"
 
 #include <iostream>
+#include <mutex>
 
 
 #ifdef TESTING_ENABLED
@@ -27,6 +28,11 @@ namespace kTest
 	using namespace kStopwatch;
 	using namespace kString;
 
+	namespace 
+	{
+		std::mutex g_TestManagerOutputMutex;
+	}
+	
 	TesterManager::TesterManager(Token&)
 		: success(true)
 	{
@@ -97,15 +103,26 @@ namespace kTest
 
 	void TesterManager::RunAll()
 	{
-		HighAccuracyStopwatch totalRunTimeTimer("Total Test Run Time");
+		const auto numOfThreads = std::thread::hardware_concurrency();
+
+		std::vector<std::thread> threads;
+		threads.reserve(numOfThreads);
+		
+		const HighAccuracyStopwatch timer("Total Test Run Time");
 		timesRecorded.reserve(testsSet.size());
 
 		for (const auto& test : testsSet)
 		{
-			Run(*test);
+			auto thread = std::thread(Run, *test);
+			threads.emplace_back();
 		}
 
-		const auto finalTime = totalRunTimeTimer.GetLifeTime<units::Secs>();
+		for ( auto&& thread : threads )
+		{
+			thread.join();
+		}
+		
+		const auto finalTime = timer.GetLifeTime<units::Secs>();
 		double avgTime(0);
 
 		for (auto t : timesRecorded)
@@ -174,6 +191,8 @@ namespace kTest
 	{
 		using namespace kString;
 
+		auto scoped_lock = std::scoped_lock(g_TestManagerOutputMutex);
+		
 		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 		SetConsoleTextAttribute(hConsole, pass

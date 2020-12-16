@@ -29,10 +29,10 @@ namespace kTest::utility
 
 	bool StopWatchTester::OneSecondTest()
 	{
-		Stopwatch<std::time_t, HighAccuracyClock<units::Secs>> oneSec("Timer");
-		std::this_thread::sleep_for(1s);
-		const auto now = oneSec.GetDeltaTime();
-		VERIFY(kmaths::ApproximatelyOne(now));
+		Stopwatch<std::time_t, HighAccuracyClock<units::Millis>> sw("500ms Timer");
+		std::this_thread::sleep_for(500ms);
+		const auto now = sw.GetDeltaTime();
+		VERIFY(kmaths::Approximately(now, 500, 1));
 
 		return success;
 	}
