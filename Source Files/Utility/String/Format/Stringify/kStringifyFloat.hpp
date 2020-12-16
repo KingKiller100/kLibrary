@@ -12,6 +12,7 @@
 #include "../../../../Maths/kMathsFundamentals.hpp"
 #include "../../../../Maths/kModulus.hpp"
 #include "../../../../Maths/kMathsFloat.hpp"
+#include "../../../../Maths/kMathsApproximately.hpp"
 
 
 namespace klib::kString::stringify
@@ -265,7 +266,7 @@ namespace klib::kString::stringify
 			else
 				figures = kmaths::Min<size_t>(figures, g_MaxPrecision);
 
-			if (constants::ApproximatelyZero<T>(val)) return Convert<Char_t>("0");
+			if (ApproximatelyZero<T>(val)) return Convert<Char_t>("0");
 
 			switch (fmt) {
 			case FloatFormat::FIX: return FixedNotation<Char_t>(val, figures);

@@ -33,15 +33,18 @@ namespace klib::type_trait
 		} parts;
 	};
 
-	template<class T>
+	template<class T
+	, typename UnsignedT = std::conditional_t<sizeof(T) == 4, std::uint32_t, std::uint64_t>
+	, typename PrecisionT = std::conditional_t<std::is_same_v<T, float>, SingleFloatPrecision, DoubleFloatPrecision>
+	>
 	struct FloatTraits
 	{
 	public:
 		static_assert(std::is_floating_point_v<T>, "Type entered is not recognized as a floating point type");
 
-		using Unsigned_t = std::conditional_t<sizeof(T) == 4, std::uint32_t, std::uint64_t>;
+		using Unsigned_t = UnsignedT;
+		using Precision_t = PrecisionT;
 		using Limits_t = std::numeric_limits<T>;
-		using Precision_t = std::conditional_t<std::is_same_v<T, float>, SingleFloatPrecision, DoubleFloatPrecision>;
 
 		static constexpr auto Bytes = sizeof(T);
 		static constexpr auto Mantissa = Limits_t::digits;

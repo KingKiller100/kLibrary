@@ -4,6 +4,7 @@
 
 #include "../Debug/kAssert.hpp"
 
+#include "../../TypeTraits/CharacterTraits.hpp"
 #include "kStringTricks.hpp"
 
 #include <limits>
@@ -14,7 +15,7 @@ namespace klib
 {
 	namespace kString
 	{
-		template<class CharType, class Traits>
+		template<class CharType, class Traits = type_trait::CharacterTraits<CharType>>
 		class Template_String_View
 		{
 			template<typename T>
@@ -161,13 +162,13 @@ namespace klib
 
 			USE_RESULT constexpr Const_Ref Front() const
 			{
-				Assert(string != nullptr, "string is null");
+				kAssert(string != nullptr, "string is null");
 				return string[0];
 			}
 
 			USE_RESULT constexpr Const_Ref Back() const
 			{
-				Assert(string != nullptr, "string is null");
+				kAssert(string != nullptr, "string is null");
 				return string[length - 1];
 			}
 

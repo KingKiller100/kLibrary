@@ -72,28 +72,6 @@ namespace kmaths
 			return One<ONLY_TYPE(T)>();
 		}
 
-		template<class T1, typename T2>
-		USE_RESULT constexpr bool Approximately(T1 value, T2 target) noexcept
-		{
-			constexpr auto epsilon = Epsilon<T1>();
-			const auto lb = static_cast<T1>(target) - epsilon;
-			const auto ub = static_cast<T1>(target) + epsilon;
-
-			return (value >= lb) && (value <= ub);
-		}
-
-		template<class T>
-		USE_RESULT constexpr bool ApproximatelyOne(T value) noexcept
-		{
-			return Approximately(value, One<T>());
-		}
-
-		template<class T>
-		USE_RESULT constexpr bool ApproximatelyZero(T value) noexcept
-		{
-			return Approximately(value, Zero<T>());
-		}
-
 		template<class T>
 		USE_RESULT constexpr T MinusOne() noexcept
 		{

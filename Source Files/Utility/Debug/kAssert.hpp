@@ -28,13 +28,13 @@ namespace klib::kDebug
 	static FailedConditionException::AssertFunc_t NoAssertCB = nullptr;
 }
 
-#	define kAssert(condition, msg, cb)\
+#	define kAssertCB(condition, msg, cb)\
 	{\
 		if( (condition) == false )\
 			throw ::klib::kDebug::FailedConditionException(#condition, msg, SOURCE_INFO(), cb);\
 	}\
 
-#	define Assert(condition, msg) kAssert(condition, msg, klib::kDebug::NoAssertCB)
+#	define kAssert(condition, msg) kAssertCB(condition, msg, klib::kDebug::NoAssertCB)
 
 #else
 #	define kAssert(condition, msg, cb) ((void)0);

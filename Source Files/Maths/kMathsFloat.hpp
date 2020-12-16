@@ -34,7 +34,7 @@ namespace kmaths
 		size_t count = 0;
 		if constexpr (std::is_floating_point_v<T>)
 		{
-			if (!constants::ApproximatelyZero<T>(decimals))
+			if (!ApproximatelyZero<T>(decimals))
 			{
 				int maxIterations = 22;
 				size_t magnitude = 1;

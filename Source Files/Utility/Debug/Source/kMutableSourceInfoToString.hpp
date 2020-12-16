@@ -6,15 +6,16 @@
 
 namespace klib::kString::stringify
 {
-	template<typename Char_t>
-	class Identity<Char_t, kDebug::MutSourceInfo>
+	template<>
+	class Identity<char, kDebug::MutSourceInfo>
 	{
 	public:
 		using Type = kDebug::MutSourceInfo;
-		static_assert(std::is_same_v<Char_t, typename Type::Char_t>
+		using Char_t = char;
+		static_assert(std::is_same_v<char, Type::Char_t>
 			, "MutSourceInfo:char does not match the string's char type");
 
-		USE_RESULT static decltype(auto) MakeStr(const kDebug::MutSourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
+		USE_RESULT static decltype(auto) MakeStr(const kDebug::MutSourceInfo& sourceInfo, StringWriter<char>& specifier)
 		{
 			if (Contains(specifier, Char_t('a')))
 			{
@@ -47,7 +48,7 @@ namespace klib::kString::stringify
 	{
 	public:
 		using Type = kDebug::wMutSourceInfo;
-		static_assert(std::is_same_v<Char_t, typename Type::Char_t>
+		static_assert(std::is_same_v<Char_t, Type::Char_t>
 			, "MutSourceInfo:wchar_t does not match the string's char type");
 
 		USE_RESULT static decltype(auto) MakeStr(const kDebug::wMutSourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
@@ -83,7 +84,7 @@ namespace klib::kString::stringify
 	{
 	public:
 		using Type = kDebug::u16MutSourceInfo;
-		static_assert(std::is_same_v<Char_t, typename Type::Char_t>
+		static_assert(std::is_same_v<Char_t, Type::Char_t>
 			, "MutSourceInfo:char16_t does not match the string's char type");
 
 		USE_RESULT static decltype(auto) MakeStr(const kDebug::u16MutSourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
@@ -119,7 +120,7 @@ namespace klib::kString::stringify
 	{
 	public:
 		using Type = kDebug::u32MutSourceInfo;
-		static_assert(std::is_same_v<Char_t, typename Type::Char_t>
+		static_assert(std::is_same_v<Char_t, Type::Char_t>
 			, "MutSourceInfo:char32_t does not match the string's char type");
 
 		USE_RESULT static decltype(auto) MakeStr(const kDebug::u32MutSourceInfo& sourceInfo, StringWriter<Char_t>& specifier)
@@ -156,7 +157,7 @@ namespace klib::kString::stringify
 	{
 	public:
 		using Type = kDebug::u8MutSourceInfo;
-		static_assert(std::is_same_v<Char_t, typename Type::Char_t>
+		static_assert(std::is_same_v<Char_t, Type::Char_t>
 			, "MutSourceInfo:char8_t does not match the string's char type");
 
 		USE_RESULT static decltype(auto) MakeStr(const kDebug::u8MutSourceInfo& sourceInfo, StringWriter<Char_t>& specifier)

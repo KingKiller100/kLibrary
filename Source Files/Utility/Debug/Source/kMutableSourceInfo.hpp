@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "../../FileSystem/kFileSystemTypes.hpp"
-
 #include "../../../TypeTraits/StringTraits.hpp"
 #include "../../String/kStringConverter.hpp"
 #include <string>

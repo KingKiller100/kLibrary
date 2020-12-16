@@ -1,8 +1,10 @@
 ﻿#pragma once
-#include "kMathsConstants.hpp"
 #include "Length_Type.hpp"
+#include "kMathsConstants.hpp"
+#include "kMathsApproximately.hpp"
 
 #include "../HelperMacros.hpp"
+
 
 #ifdef max
 #	undef max
@@ -128,7 +130,7 @@ namespace kmaths
 		constexpr auto one = One<T>();
 		constexpr auto minusOne = MinusOne<T>();
 
-		if (constants::ApproximatelyZero<T>(value))
+		if (ApproximatelyZero<T>(value))
 			return false;
 
 		return ((value > minusOne)
