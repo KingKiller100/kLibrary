@@ -3,78 +3,48 @@
 #include <mutex>
 #include <queue>
 
-class ThreadPool
+namespace klib::kThread
 {
-public:
+	class ThreadPool
+	{
+	public:
+		using Func_t = std::function<void()>;
 
-    ThreadPool(int threads) : shutdown_(false)
-    {
-        // Create the specified number of threads
-        threads_.reserve(threads);
-        for (int i = 0; i < threads; ++i)
-            threads_.emplace_back(std::bind(&ThreadPool::threadEntry, this, i));
-    }
+	public:
+		ThreadPool(size_t count);
 
-    ~ThreadPool()
-    {
-        {
-            // Unblock any threads and tell them to stop
-            std::unique_lock<std::mutex> l(lock_);
+		~ThreadPool();
 
-            shutdown_ = true;
-            condVar_.notify_all();
-        }
+		void Shutdown(size_t index);
+		
+		void ShutdownAll();
 
-        // Wait for all threads to stop
-        // std::cerr << "Joining threads" << std::endl;
-        for (auto& thread : threads_)
-            thread.join();
-    }
+		void JoinAll();
 
-    void doJob(std::function <void(void)> func)
-    {
-        // Place a job on the queu and unblock a thread
-        std::unique_lock <std::mutex> l(lock_);
+		void Join(size_t index);
 
-        jobs_.emplace(std::move(func));
-        condVar_.notify_one();
-    }
+		void Detach(size_t index);
 
-protected:
+		void DetachAll();
 
-    void threadEntry(int i)
-    {
-        std::function <void(void)> job;
+		std::thread::id GetID(size_t index);
 
-        while (1)
-        {
-            {
-                std::unique_lock <std::mutex> l(lock_);
+		std::vector<std::thread::id> GetIDs();
 
-                while (!shutdown_ && jobs_.empty())
-                    condVar_.wait(l);
+		void DoJob(Func_t func);
 
-                if (jobs_.empty())
-                {
-                    // No jobs to do and we are shutting down
-                    // std::cerr << "Thread " << i << " terminates" << std::endl;
-                    return;
-                }
+		std::thread& GetThread(size_t index);
 
-                // std::cerr << "Thread " << i << " does a job" << std::endl;
-                job = std::move(jobs_.front());
-                jobs_.pop();
-            }
+		static std::uint32_t MaxCores() noexcept;
 
-            // Do the job without holding any locks
-            job();
-        }
+	protected:
+		void threadEntry(const bool& sd);
 
-    }
-
-    std::mutex lock_;
-    std::condition_variable condVar_;
-    bool shutdown_;
-    std::queue<std::function <void(void)>> jobs_;
-    std::vector <std::thread> threads_;
-};
+	protected:
+		std::mutex lock;
+		std::condition_variable condVar;
+		std::vector<bool> shutdowns;
+		std::queue<Func_t> jobs;
+		std::vector<std::thread> threads;
+	};
+}

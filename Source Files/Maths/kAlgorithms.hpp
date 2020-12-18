@@ -296,13 +296,13 @@ namespace kmaths
 			return x0;
 	}
 
-	template<typename T>
-	USE_RESULT constexpr T Clamp(const T value, const T min, const T max)
+	template<typename T1, typename T2, typename T3>
+	USE_RESULT constexpr T1 Clamp(const T1 value, const T2 min, const T3 max)
 	{
 		if (max <= min)
 			throw klib::kDebug::MathsLogicError("Max value cannot be less than or equal to min value");
 
-		return (Min(max, Max(value, min)));
+		return  static_cast<T1>(Min(max, Max(value, min)));
 	}
 
 	template<typename T>

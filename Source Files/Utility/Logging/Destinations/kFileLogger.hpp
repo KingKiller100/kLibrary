@@ -3,6 +3,7 @@
 #include "kiLoggerDestination.hpp"
 #include <filesystem>
 #include <fstream>
+#include <mutex>
 
 namespace klib
 {
@@ -47,6 +48,7 @@ namespace klib
 
 			std::filesystem::path path;
 			std::fstream fileStream;
+			std::mutex lock;
 		};
 		
 	}

@@ -22,6 +22,8 @@
 #include <stack>
 #include <thread>
 
+#include "../Utility/Thread/kThreadPool.hpp"
+
 
 #ifdef TESTING_ENABLED
 namespace kTest
@@ -107,33 +109,21 @@ namespace kTest
 	{
 		const size_t numOfThreads = std::thread::hardware_concurrency();
 
-		std::vector<std::thread> threads;
-
 		const HighAccuracyStopwatch timer("Total Test Run Time");
 		timesRecorded.reserve(tests.size());
 		std::stack<std::shared_ptr<TesterBase>> finishedTests;
+		
 		while (!tests.empty())
 		{
+			const auto count = (std::min)(numOfThreads, tests.size());
+			kThread::ThreadPool threads (count);
+
 			for (size_t i = 0; i < numOfThreads && !tests.empty(); ++i)
 			{
 				const auto& test = tests.front();
-				
-				if (threads.empty())
-				{
-					threads.emplace_back(&TesterManager::Run, this, std::ref(*test));
-				}
-				else
-				{
-					threads[i] = std::move(std::thread(&TesterManager::Run, this, std::ref(*test)));
-				}
-				
+				threads.DoJob(std::bind(&TesterManager::Run, this, std::ref(*test)));
 				finishedTests.push(test);
 				tests.pop_front();
-			}
-
-			for (auto&& thread : threads)
-			{
-				thread.join();
 			}
 		}
 
@@ -173,8 +163,6 @@ namespace kTest
 
 	void TesterManager::Run(TesterBase& test)
 	{
-		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
 		const HighAccuracyStopwatch timer("Test Run Time");
 
 		std::cout << "Now running: " << test.GetName() << " | ";

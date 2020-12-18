@@ -17,8 +17,6 @@ namespace klib
 
 	namespace kLogs
 	{
-		std::mutex g_kFileLoggerMutex;
-
 		FileLogger::FileLogger(const std::string_view& newName, const std::filesystem::path& path)
 			: name(newName)
 			, path(path)
@@ -107,7 +105,7 @@ namespace klib
 
 		bool FileLogger::Open()
 		{
-			std::scoped_lock<decltype(g_kFileLoggerMutex)> scoped_lock(g_kFileLoggerMutex);
+			std::scoped_lock<decltype(lock)> scoped_lock(lock);
 
 			if (!IsOpen())
 			{
@@ -197,7 +195,7 @@ namespace klib
 
 		void FileLogger::Flush(const std::string_view& msg)
 		{
-			std::scoped_lock<decltype(g_kFileLoggerMutex)> scoped_lock(g_kFileLoggerMutex);
+			std::scoped_lock<decltype(lock)> scoped_lock(lock);
 
 			if (!IsOpen())
 				return;
