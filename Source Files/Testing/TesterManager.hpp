@@ -38,7 +38,7 @@ namespace kTest
 		
 	private:
 		std::string path;
-		std::deque< std::unique_ptr<TesterBase> > tests;
+		std::deque<std::shared_ptr<TesterBase>> tests;
 		std::vector<double> timesRecorded;
 		bool success;
 	};

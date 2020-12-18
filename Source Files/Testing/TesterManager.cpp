@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <mutex>
+#include <stack>
 #include <thread>
 
 
@@ -107,18 +108,26 @@ namespace kTest
 		const size_t numOfThreads = std::thread::hardware_concurrency();
 
 		std::vector<std::thread> threads;
-		threads.reserve(numOfThreads);
 
 		const HighAccuracyStopwatch timer("Total Test Run Time");
 		timesRecorded.reserve(tests.size());
-
+		std::stack<std::shared_ptr<TesterBase>> finishedTests;
 		while (!tests.empty())
 		{
 			for (size_t i = 0; i < numOfThreads && !tests.empty(); ++i)
 			{
 				const auto& test = tests.front();
-				std::thread thread(&TesterManager::Run, *test);
-				threads.emplace_back(thread);
+				
+				if (threads.empty())
+				{
+					threads.emplace_back(&TesterManager::Run, this, std::ref(*test));
+				}
+				else
+				{
+					threads[i] = std::move(std::thread(&TesterManager::Run, this, std::ref(*test)));
+				}
+				
+				finishedTests.push(test);
 				tests.pop_front();
 			}
 

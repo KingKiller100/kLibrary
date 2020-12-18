@@ -18,7 +18,7 @@ namespace klib::type_trait
 	{
 		using String_t = T;
 	};
-
+	
 	// Determines whether type is an STL string class type
 	template<typename T>
 	struct Is_StringType : Is_StringTypeBase<std::remove_cv_t<T>> {};
