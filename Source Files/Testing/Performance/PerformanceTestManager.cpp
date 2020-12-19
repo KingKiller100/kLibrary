@@ -1,12 +1,14 @@
 ﻿#include "pch.hpp"
 #include "PerformanceTestManager.hpp"
-
 #include "PerformanceTestBase.hpp"
+
 #include "../SetUpTests.hpp"
+#include "../../Utility/Stopwatch/kStopwatch.hpp"
 
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+
 
 
 #ifdef TESTING_ENABLED
@@ -67,7 +69,7 @@ namespace kTest::performance
 
 	void PerformanceTestManager::RunTest(PerformanceTestBase * test)
 	{
-		const klib::kStopwatch::HighAccuracyStopwatch runTimeTimer("Test Run Time");
+		const klib::kStopwatch::HighAccuracyStopwatch runTimeTimer;
 
 		std::cout << "\tNow Testing: " << test->GetName() << " ";
 

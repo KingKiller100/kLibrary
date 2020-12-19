@@ -20,16 +20,12 @@ namespace klib
 			using TimePoint_t = typename ClockType::TimePoint_t;
 
 		public:
-			constexpr Stopwatch(const char* name) noexcept
-				: name(name)
-				, startTimePoint(Clock_t::Now())
+			constexpr Stopwatch() noexcept
+				: startTimePoint(Clock_t::Now())
 				, lastTimePoint(startTimePoint)
+				, currentTimePoint(lastTimePoint)
+				, isRunning(true)
 			{ }
-
-			USE_RESULT constexpr const char* GetName() const noexcept
-			{
-				return name;
-			}
 
 			template<typename Units2 = Units_t, typename = std::enable_if_t<
 				type_trait::Is_Specialization_V<Units2, kCalendar::TimeComponentBase>
@@ -49,7 +45,9 @@ namespace klib
 			{
 				std::atomic_thread_fence(std::memory_order_relaxed);
 
-				const auto currentTimePoint = Clock_t::Now();
+				if (IsRunning())
+					currentTimePoint = Clock_t::Now();
+
 				const auto deltaTime = ConvertToUsableValue<Units2>(currentTimePoint, lastTimePoint);
 				lastTimePoint = currentTimePoint;
 
@@ -75,10 +73,24 @@ namespace klib
 				USE_RESULT constexpr Rep_t Now() const noexcept(std::is_arithmetic_v<Rep_t>)
 			{
 				using UnitsDuration_t = typename Units2::Duration_t;
-				const auto currentTimePoint = Clock_t::Now();
 				return static_cast<Rep_t>(
-					std::chrono::time_point_cast<UnitsDuration_t>(currentTimePoint).time_since_epoch().count()
+					std::chrono::time_point_cast<UnitsDuration_t>(Clock_t::Now()).time_since_epoch().count()
 					);
+			}
+
+			void Pause()
+			{
+				isRunning = false;
+			}
+
+			void Resume()
+			{
+				isRunning = true;
+			}
+
+			bool IsRunning() const
+			{
+				return isRunning;
 			}
 
 		protected:
@@ -117,10 +129,10 @@ namespace klib
 			}
 
 		private:
-			const char* name;
-
 			const TimePoint_t startTimePoint;
 			TimePoint_t lastTimePoint;
+			TimePoint_t currentTimePoint;
+			bool isRunning;
 		};
 
 		using HighAccuracyStopwatch = Stopwatch<double>;
@@ -133,4 +145,4 @@ namespace klib
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kStopwatch;
 #endif
-	}
+}

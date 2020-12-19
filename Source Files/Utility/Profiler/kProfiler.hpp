@@ -1,62 +1,82 @@
 #pragma once
 
-#include "../Stopwatch/kStopwatch.hpp"
+#include "../Stopwatch/Clock/kClock.hpp"
+#include "../Thread/kThreadID.hpp"
 
 #include <functional>
 #include <string>
 #include <cstdint>
-#include <thread>
 
-namespace klib::kProfiler
-{
-	template<class Representation>
-	struct ProfilerResult
+namespace klib {
+	namespace kProfiler
 	{
-		const std::string name;
-		Representation start, end;
-		uint32_t threadID{};
-	};
-
-	template<typename TimeUnits = kStopwatch::units::Millis, class Representation = std::int64_t, typename ProfilerFunc = std::function<void(const ProfilerResult<Representation>&)>>
-	class Profiler
-	{
-	private:
-		using TimeUnits_t = TimeUnits;
-		using Func_t = ProfilerFunc;
-		using Rep_t = Representation;
-		
-	public:
-		Profiler(const std::string_view& name, Func_t&& cb)
-			: result({ name.data(), 0, 0, 0 }), isRunning(true),
-			callback(std::forward<Func_t>(cb)),
-			timer("Profiler")
-		{}
-
-		~Profiler()
+		template<class Representation>
+		struct ProfilerResult
 		{
-			if (isRunning)
-				Stop();
-		}
+			using Rep_t = Representation;
 
-	private:
-		void Stop()
+			const std::string name;
+			Rep_t start, end;
+			std::uint32_t threadID;
+		};
+
+		template<class CharType,
+			typename TimeUnits = kStopwatch::units::Millis,
+			class Representation = size_t,
+			class Clock = kStopwatch::HighAccuracyClock<TimeUnits>,
+			typename ProfilerFunc = std::function<void(const ProfilerResult<Representation>&)>>
+			class BasicScopeProfiler
 		{
-			result.end = timer.template Now<TimeUnits_t>();
-			result.start = timer.template GetStartTime<TimeUnits_t>();
-			result.threadID = static_cast<uint32_t>(
-				std::hash<std::thread::id>{}
-			( std::this_thread::get_id() ));
+		private:
+			using TimeUnits_t = TimeUnits;
+			using Func_t = ProfilerFunc;
+			using Rep_t = Representation;
+			using Clock_t = Clock;
 
-			callback(result);
+		public:
+			BasicScopeProfiler(const std::basic_string_view<CharType>& name, Func_t&& cb)
+				: result({ name.data(), Now(), 0, 0 })
+				, isRunning(true)
+				, callback(std::forward<Func_t>(cb))
+			{}
 
-			isRunning = false;
-		}
+			~BasicScopeProfiler()
+			{
+				if (isRunning)
+					Stop();
+			}
 
-	private:
-		ProfilerResult<Rep_t> result;
-		bool isRunning;
-		Func_t callback;
+		private:
+			void Stop()
+			{
+				result.end = Now();
+				result.threadID = kThread::ThreadID<std::uint32_t>();
 
-		kStopwatch::Stopwatch<Rep_t> timer;
-	};
+				callback(result);
+
+				isRunning = false;
+			}
+
+			Rep_t Now() const
+			{
+				return kStopwatch::TimePointTo<Rep_t, Clock_t>(Clock_t::Now());
+			}
+
+		private:
+			ProfilerResult<Rep_t> result;
+			bool isRunning;
+			Func_t callback;
+		};
+
+		template<typename TimeUnits = kStopwatch::units::Millis,
+			class Representation = size_t,
+			class Clock = kStopwatch::HighAccuracyClock<TimeUnits>,
+			typename ProfilerFunc = std::function<void(const ProfilerResult<Representation>&)>>
+			using Profiler = BasicScopeProfiler<char, TimeUnits, Representation, Clock, ProfilerFunc>;
+	}
+
+#ifdef KLIB_SHORT_NAMESPACE
+	using namespace kProfiler;
+#endif
 }
+	

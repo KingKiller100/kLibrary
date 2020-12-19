@@ -14,7 +14,14 @@ namespace kTest::utility
 		void Test() override;
 		
 	private:
-		bool OneSecondTest();
+		bool GeneralTimeTest();
+		bool PauseTest();
+		bool NanosecondsTest();
+		bool MicrosecondsTest();
+		bool MillisecondsTest();
+		bool SecondsTest();
+		bool MinutesTest();
+		bool HoursTest();
 	};
 }
 #endif

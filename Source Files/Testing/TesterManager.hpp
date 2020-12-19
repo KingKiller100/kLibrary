@@ -1,10 +1,11 @@
 #pragma once
 
 #include "../HelperMacros.hpp"
-#include <memory>
 #include <deque>
-#include <vector>
+#include <memory>
+#include <mutex>
 #include <string>
+#include <vector>
 
 #ifdef TESTING_ENABLED
 namespace kTest
@@ -34,13 +35,14 @@ namespace kTest
 		static TesterManager& Get();
 
 	private:
-		USE_RESULT std::string WriteResults(const bool result, const double resTime) const;
+		USE_RESULT std::string WriteResults(const bool result, const double resTime);
 		
 	private:
 		std::string path;
 		std::deque<std::shared_ptr<TesterBase>> tests;
 		std::vector<double> timesRecorded;
 		bool success;
+		std::mutex outputLock;
 	};
 }
 

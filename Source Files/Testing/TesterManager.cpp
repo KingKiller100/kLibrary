@@ -34,7 +34,6 @@ namespace kTest
 
 	namespace
 	{
-		std::mutex g_TestManagerOutputMutex;
 	}
 
 	TesterManager::TesterManager(Token&)
@@ -109,7 +108,7 @@ namespace kTest
 	{
 		const size_t numOfThreads = std::thread::hardware_concurrency();
 
-		const HighAccuracyStopwatch timer("Total Test Run Time");
+		const HighAccuracyStopwatch stopwatch;
 		timesRecorded.reserve(tests.size());
 		std::stack<std::shared_ptr<TesterBase>> finishedTests;
 		
@@ -127,7 +126,7 @@ namespace kTest
 			}
 		}
 
-		const auto finalTime = timer.GetLifeTime<units::Secs>();
+		const auto finalTime = stopwatch.GetLifeTime<units::Secs>();
 		double avgTime(0);
 
 		for (auto t : timesRecorded)
@@ -163,12 +162,12 @@ namespace kTest
 
 	void TesterManager::Run(TesterBase& test)
 	{
-		const HighAccuracyStopwatch timer("Test Run Time");
+		const HighAccuracyStopwatch sw;
 
 		std::cout << "Now running: " << test.GetName() << " | ";
 
 		const auto pass = test.Run();
-		const auto testTime = timer.GetLifeTime<units::Millis>();
+		const auto testTime = sw.GetLifeTime<units::Millis>();
 
 		timesRecorded.push_back(testTime);
 
@@ -190,9 +189,9 @@ namespace kTest
 		kFileSystem::WriteFile(path.c_str(), resultTest.c_str());
 	}
 
-	std::string TesterManager::WriteResults(const bool pass, const double resTime) const
+	std::string TesterManager::WriteResults(const bool pass, const double resTime)
 	{
-		auto lock = std::lock_guard(g_TestManagerOutputMutex);
+		auto lock = std::scoped_lock(outputLock);
 
 		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 

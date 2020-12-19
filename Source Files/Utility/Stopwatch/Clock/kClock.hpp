@@ -1,9 +1,10 @@
 ﻿#pragma once
 
-#include "../../Calendar/Time/kTimeComponentBase.hpp"
-#include "../../../TypeTraits/TemplateTraits.hpp"
 #include "../../Enum/kEnum.hpp"
 #include "../../String/kStringConverter.hpp"
+#include "../../Calendar/Time/kTimeComponentBase.hpp"
+
+#include "../../../TypeTraits/TemplateTraits.hpp"
 
 #include <chrono>
 #include <ratio>
@@ -106,15 +107,15 @@ namespace klib::kStopwatch
 		using Underlying_t = std::chrono::high_resolution_clock;
 		using TimePoint_t = std::chrono::time_point<Underlying_t, Duration_t>;
 
-		USE_RESULT static constexpr decltype(auto) Now() noexcept
+		USE_RESULT static constexpr TimePoint_t Now() noexcept
 		{
 			// get current time
-			const long long _Freq = _Query_perf_frequency();	// doesn't change after system boot
-			const long long _Ctr = _Query_perf_counter();
+			const long long frequency = _Query_perf_frequency();	// doesn't change after system boot
+			const long long counter = _Query_perf_counter();
 			static_assert(Period_t::num == 1, "This assumes period::num == 1.");
-			const long long _Whole = (_Ctr / _Freq) * Period_t::den;
-			const long long _Part = (_Ctr % _Freq) * Period_t::den / _Freq;
-			return (TimePoint_t(Duration_t(_Whole + _Part)));
+			const long long whole = (counter / frequency) * Period_t::den;
+			const long long part = (counter % frequency) * Period_t::den / frequency;
+			return (TimePoint_t(Duration_t(whole + part)));
 		}
 	};
 
@@ -139,28 +140,36 @@ namespace klib::kStopwatch
 	template<class Units = units::Micros, typename = std::enable_if_t<
 		type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
 		>>
-		struct SystemClock : private std::chrono::system_clock
+		struct SystemClock
 	{   // Based on std::chrono::steady_clock
 		using Units_t = Units;
 		using Rep_t = typename Units_t::Rep_t;
 		using Period_t = std::ratio_multiply<std::ratio<_XTIME_NSECS_PER_TICK, 1>, typename Units_t::Period_t>;
 		using Duration_t = std::chrono::duration<Rep_t, Period_t>;
-		using Underlying_t = system_clock;
+		using Underlying_t = std::chrono::system_clock;
 		using TimePoint_t = std::chrono::time_point<Underlying_t, Duration_t>;
 
-		USE_RESULT static constexpr decltype(auto) Now() noexcept
+		USE_RESULT static constexpr TimePoint_t Now() noexcept
 		{
 			return TimePoint_t(Duration_t(_Xtime_get_ticks()));
 		}
 
-		USE_RESULT static decltype(auto) To_Time_t(const time_point& timePoint) noexcept
+		USE_RESULT static decltype(auto) To_Time_t(const TimePoint_t& timePoint) noexcept
 		{ // convert to __time64_t
-			return to_time_t(timePoint);
+			return Underlying_t::to_time_t(timePoint);
 		}
 
 		USE_RESULT static decltype(auto) From_Time_t(__time64_t time_t) noexcept
 		{ // convert from __time64_t
-			return from_time_t(time_t);
+			return Underlying_t::from_time_t(time_t);
 		}
 	};
+	
+	template<typename Rep, typename Clock>
+	USE_RESULT Rep TimePointTo(const typename Clock::TimePoint_t& duration) noexcept(std::is_arithmetic_v<Rep>)
+	{
+		return static_cast<Rep>(
+			std::chrono::time_point_cast<Clock::Duration_t>(duration).time_since_epoch().count()
+			);
+	}
 }
