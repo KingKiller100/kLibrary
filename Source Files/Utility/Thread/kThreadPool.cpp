@@ -22,7 +22,7 @@ namespace klib::kThread
 	{
 		{
 			// Unblock any threads and tell them to stop
-			std::unique_lock<std::mutex> l(lock);
+			std::unique_lock<std::mutex> l(mutex);
 
 			ShutdownAll();
 			condVar.notify_all();
@@ -99,7 +99,7 @@ namespace klib::kThread
 	void ThreadPool::DoJob(Func_t func)
 	{
 		// Place a job on the queue and unblock a thread
-		std::unique_lock<std::mutex> l(lock);
+		std::unique_lock<std::mutex> l(mutex);
 
 		jobs.emplace(std::move(func));
 		condVar.notify_one();
@@ -124,10 +124,10 @@ namespace klib::kThread
 		while (true)
 		{
 			{
-				std::unique_lock<std::mutex> l(lock);
+				std::unique_lock<std::mutex> lock(mutex);
 
 				while (!sd && jobs.empty())
-					condVar.wait(l);
+					condVar.wait(lock);
 
 				if (jobs.empty())
 				{
