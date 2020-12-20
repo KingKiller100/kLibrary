@@ -12,6 +12,8 @@ namespace klib::type_trait
 		using Underlying_t = std::char_traits<T>;
 		using Integer_t = typename Underlying_t::int_type;
 		
+		static constexpr auto NullTerminator = T();
+
 		// Character Compare Results
 		enum CompareResult : std::int8_t
 		{
@@ -127,8 +129,7 @@ namespace klib::type_trait
 	concept Is_Char_t = Is_CharType_V<T> == true;
 #endif
 	
-
 	template<typename CharType, typename = std::enable_if_t<Is_CharType_V<CharType>>>
-	constexpr auto g_NullTerminator = CharType();
+	constexpr auto g_NullTerminator = CharacterTraits<CharType>::NullTerminator;
 
 }

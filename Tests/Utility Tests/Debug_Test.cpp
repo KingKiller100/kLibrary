@@ -15,6 +15,7 @@ namespace kTest::utility
 		= default;
 
 	using namespace klib::kDebug;
+	using namespace std::chrono_literals;
 	
 	void DebugTester::Test()
 	{
@@ -27,7 +28,7 @@ namespace kTest::utility
 
 	bool DebugTester::IsDebuggerAttachedTest()
 	{
-		IsDebuggerAttached("DebugTest");
+		IsDebuggerAttached("DebugTest", 1000ms);
 		return success;
 	}
 

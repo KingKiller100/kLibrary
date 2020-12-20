@@ -1,10 +1,12 @@
 #pragma once
+#include <chrono>
 
 namespace klib
 {
 	namespace kDebug
 	{
-		void IsDebuggerAttached(const char* filename) noexcept;
+		template<class CharT>
+		void IsDebuggerAttached(const CharT* filename, std::chrono::milliseconds = std::chrono::milliseconds(500)) noexcept;
 		void BreakPoint() noexcept;
 	}
 

@@ -30,7 +30,7 @@ namespace klib::kThread
 
 		// Wait for all threads to stop
 		// std::cerr << "Joining threads" << std::endl;
-		JoinAll();
+		JoinAndPopAll();
 	}
 
 	void ThreadPool::Shutdown(size_t index)
@@ -59,6 +59,17 @@ namespace klib::kThread
 		{
 			thread.join();
 		}
+	}
+
+	void ThreadPool::JoinAndPopAll()
+	{
+		while (!threads.empty())
+		{
+			auto& thr = threads.back();
+			if (thr.joinable())
+				thr.join();
+			threads.pop_back();
+		}		
 	}
 
 	void ThreadPool::Detach(size_t index)
@@ -96,12 +107,12 @@ namespace klib::kThread
 		return ids;
 	}
 
-	void ThreadPool::DoJob(Func_t func)
+	void ThreadPool::DoJob(Job job)
 	{
 		// Place a job on the queue and unblock a thread
 		std::unique_lock<std::mutex> l(mutex);
 
-		jobs.emplace(std::move(func));
+		jobs.emplace(std::move(job));
 		condVar.notify_one();
 	}
 
@@ -119,7 +130,7 @@ namespace klib::kThread
 
 	void ThreadPool::threadEntry(const bool& sd)
 	{
-		Func_t job;
+		Job job;
 
 		while (true)
 		{
@@ -135,7 +146,9 @@ namespace klib::kThread
 					return;
 				}
 
+				
 				job = std::move(jobs.front());
+				prevJob = std::move(job.desc);
 				jobs.pop();
 			}
 

@@ -2,6 +2,7 @@
 
 #include "../HelperMacros.hpp"
 #include <deque>
+#include <fstream>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -35,14 +36,19 @@ namespace kTest
 		static TesterManager& Get();
 
 	private:
-		USE_RESULT std::string WriteResults(const bool result, const double resTime);
+		void WriteToConsole(const bool result, const std::string& NameOpenerStr,
+		                           const std::string& resTimeStr);
+		double GetAverageTime() const;
+		void WriteToFile(const std::string& results);
 		
 	private:
 		std::string path;
 		std::deque<std::shared_ptr<TesterBase>> tests;
 		std::vector<double> timesRecorded;
 		bool success;
-		std::mutex outputLock;
+		std::mutex consoleMutex;
+		std::mutex fileMutex;
+		std::ofstream file;
 	};
 }
 

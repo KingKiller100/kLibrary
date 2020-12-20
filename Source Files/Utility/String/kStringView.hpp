@@ -32,7 +32,7 @@ namespace klib
 			using Const_Ref = const CharType&;
 			using Const_Iter = const Iter;
 
-			using CharTraits = Traits;
+			using Traits_t = Traits;
 
 			enum : unsigned short {
 				EQUAL = 0,
@@ -42,7 +42,7 @@ namespace klib
 			};
 
 			static constexpr auto npos{ static_cast<Size>(-1) };
-			static constexpr auto null_terminater = static_cast<CharType>('\0');
+			static constexpr auto null_terminator = type_trait::g_NullTerminator<Type>;
 
 			static_assert(std::is_same_v<CharType, typename Traits::char_type>,
 				"Type entered into string_view class does not match a char type object (char, wchar_t, char32_t, etc)!");
@@ -185,7 +185,7 @@ namespace klib
 				auto currentChar = string;
 				auto otherChar = other.string;
 
-				while (*otherChar != null_terminater)
+				while (*otherChar != null_terminator)
 				{
 					if (*currentChar != *otherChar)
 						return false;
@@ -217,7 +217,7 @@ namespace klib
 				auto currentChar = string + lengthDiff;
 				auto otherChar = other.string;
 
-				while (*otherChar != null_terminater)
+				while (*otherChar != null_terminator)
 				{
 					if (*currentChar != *otherChar)
 						return false;
@@ -248,7 +248,7 @@ namespace klib
 				auto myString = string;
 				auto otherString = other.string;
 
-				while (*myString != null_terminater && *otherString != null_terminater)
+				while (*myString != null_terminator && *otherString != null_terminator)
 				{
 					if (*myString == *otherString)
 					{
@@ -261,9 +261,9 @@ namespace klib
 					}
 				}
 
-				if (*myString == null_terminater && *otherString == null_terminater)
+				if (*myString == null_terminator && *otherString == null_terminator)
 					return EQUAL;
-				else if (*myString == null_terminater)
+				else if (*myString == null_terminator)
 					return MYSTR_SHORT;
 				else
 					return OTHER_STR_SHORT;
@@ -294,7 +294,7 @@ namespace klib
 				auto currentChar = string + offset;
 				Size count(offset);
 
-				while (*currentChar != null_terminater
+				while (*currentChar != null_terminator
 					&& searchLimit > 0)
 				{
 					if (*currentChar == item)
@@ -329,7 +329,7 @@ namespace klib
 
 				auto currentChar = string + offset;
 				auto count = offset;
-				while (*currentChar != null_terminater)
+				while (*currentChar != null_terminator)
 				{
 					if (*currentChar != item)
 						return count;
@@ -351,7 +351,7 @@ namespace klib
 				auto count = offset;
 				Size idx = 0U;
 
-				while (*currentChar != null_terminater)
+				while (*currentChar != null_terminator)
 				{
 					if (*currentChar != compareStr[idx])
 						return count;
@@ -422,7 +422,7 @@ namespace klib
 						continue;
 					}
 
-					if (str[strIdx] == null_terminater)
+					if (str[strIdx] == null_terminator)
 						return (pos - strLength);
 
 					strIdx = 0;
@@ -464,8 +464,8 @@ namespace klib
 					++thisCurrentChar;
 					++otherCurrentChar;
 
-					if (*thisCurrentChar == null_terminater
-						&& *otherCurrentChar == null_terminater)
+					if (*thisCurrentChar == null_terminator
+						&& *otherCurrentChar == null_terminator)
 						return true;
 				}
 
@@ -506,7 +506,7 @@ namespace klib
 				Size size = 0;
 				auto currentChar = str;
 
-				while (*currentChar != null_terminater)
+				while (*currentChar != null_terminator)
 				{
 					++size;
 					++currentChar;

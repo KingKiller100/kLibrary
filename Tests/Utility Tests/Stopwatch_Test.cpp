@@ -23,13 +23,13 @@ namespace kTest::utility
 	void StopWatchTester::Test()
 	{
 		VERIFY_MULTI_INIT();
-		VERIFY_MULTI(GeneralTimeTest());
-		VERIFY_MULTI(NanosecondsTest());
-		VERIFY_MULTI(MicrosecondsTest());
-		VERIFY_MULTI(MillisecondsTest());
-		VERIFY_MULTI(SecondsTest());
-		VERIFY_MULTI(MinutesTest());
-		VERIFY_MULTI(HoursTest());
+		// VERIFY_MULTI(GeneralTimeTest());
+		// VERIFY_MULTI(NanosecondsTest());
+		// VERIFY_MULTI(MicrosecondsTest());
+		// VERIFY_MULTI(MillisecondsTest());
+		// VERIFY_MULTI(SecondsTest());
+		// VERIFY_MULTI(MinutesTest());
+		// VERIFY_MULTI(HoursTest());
 		VERIFY_MULTI_END();
 	}
 

@@ -22,6 +22,11 @@
 
 namespace klib::kFileSystem
 {
+	namespace secret::helper
+	{
+		inline bool g_Update_CWD = true;
+	}
+
 	template<class CharType, class = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
 	constexpr auto pathSeparator = CharType('\\');
 
@@ -29,7 +34,7 @@ namespace klib::kFileSystem
 	USE_RESULT constexpr auto CorrectFilePathSeparators(const SourceType& src)
 	{
 		using CharType = typename SourceType::value_type;
-		return kString::Replace<CharType>(src, CharType('/'), pathSeparator<CharType>);
+		return kString::Replace(src, CharType('/'), pathSeparator<CharType>);
 	}
 
 	template<class SourceType, class = std::enable_if_t<type_trait::Is_CharType_V<SourceType>>>
@@ -37,11 +42,6 @@ namespace klib::kFileSystem
 	{
 		using CharType = SourceType;
 		return kString::Replace(src, CharType('/'), pathSeparator<CharType>);
-	}
-
-	namespace secret::helper
-	{
-		inline bool update_cwd = true;
 	}
 
 	/**
@@ -79,18 +79,13 @@ namespace klib::kFileSystem
 			const auto failMsg = "Cannot create/open file: " + filePath.string();
 			OutputDebugStringA(failMsg.c_str());
 		}
-		else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
+		else
 		{
 			const auto failMsg = L"Cannot create/open file: " + filePath.wstring();
 			OutputDebugStringW(failMsg.c_str());
 		}
-		else
-		{
-			const auto failMsg = L"Cannot create/open file: " + filePath.generic_wstring();
-			OutputDebugStringW(failMsg.c_str());
-		}
 
-		throw std::runtime_error("Unable to write to file: " + kString::Convert<char>(filePath.string()));
+		throw std::runtime_error("Unable to write to file: " + filePath.string<char>());
 #endif // DEBUG || KLIB_DEBUG
 
 
@@ -179,42 +174,41 @@ namespace klib::kFileSystem
 	/**
 	 * \brief
 	 *		Checks (from folder holding the executable file in current directory) if a file exists
-	 * \param fullFilePath
+	 * \param filepath
 	 *		filename (or full directory to the file)
 	 * \return
 	 *		TRUE if file exist or FALSE if file does not exist
 	 */
 
 	template<class CharType = char>
-	constexpr bool CheckFileExists(const kString::StringReader<CharType>& fullFilePath) noexcept
+	constexpr bool CheckFileExists(const CharType* filepath) noexcept
 	{
-		FILE* file;
-		errno_t result;
+		
+		const auto path = CorrectFilePathSeparators<CharType>(filepath);
 
-		const auto path = CorrectFilePathSeparators(fullFilePath);
+		FileReader<CharType> reader(path);
+		
+		const auto result = reader.is_open() || reader.good();
 
-		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
-		{
-			result = fopen_s(&file, path.data(), "r");
-		}
-		else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
-		{
-			result = _wfopen_s(&file, path.data(), L"r");
-		}
-		else
-		{
-			kString::StringWriter<wchar_t> temp;
-			for (auto& c : fullFilePath)
-				temp += CAST(wchar_t, c);
-			result = CheckFileExists<wchar_t>(temp);
-		}
+		if (reader.is_open())
+			reader.close();
 
-		if (file)
-			fclose(file);
-
-		return result == 0;
+		return result;
 	}
 
+	template<class StringT>
+	constexpr bool CheckFileExists(const StringT& path) noexcept
+	{
+		return CheckFileExists<typename StringT::value_type>(path.data());
+	}
+
+
+	constexpr bool CheckFileExists(const Path& path) noexcept
+	{
+		return CheckFileExists(path.wstring());
+	}
+
+	
 	/**
 	 * \brief
 	 *		Checks (from folder holding the executable file in current directory) if a directory exists
@@ -265,7 +259,7 @@ namespace klib::kFileSystem
 
 		FileLines<Char> fileData;
 
-		if (!CheckFileExists<Char>(fullFilePath))
+		if (!CheckFileExists(fullFilePath))
 			return fileData;
 
 		FileReader<CharType> inFile(fullFilePath.data());
@@ -296,7 +290,7 @@ namespace klib::kFileSystem
 
 		static kString::StringWriter<Char> cwdFullPath;
 
-		if (cwdFullPath.empty() || secret::helper::update_cwd)
+		if (cwdFullPath.empty() || secret::helper::g_Update_CWD)
 		{
 			Char* cwdBuffer = nullptr;
 			std::uint32_t length = 0;
@@ -324,7 +318,7 @@ namespace klib::kFileSystem
 			cwdFullPath += pathSeparator<Char>;
 
 			delete[] cwdBuffer;
-			secret::helper::update_cwd = false;
+			secret::helper::g_Update_CWD = false;
 		}
 
 		return cwdFullPath;
@@ -349,7 +343,7 @@ namespace klib::kFileSystem
 		std::filesystem::current_path(path);
 
 		// Flag to notify current working directory to update
-		secret::helper::update_cwd = true;
+		secret::helper::g_Update_CWD = true;
 
 		return std::filesystem::current_path() == path;
 	}
@@ -430,7 +424,7 @@ namespace klib::kFileSystem
 	USE_RESULT constexpr kString::StringWriter<CharType> GetParentPath(const kString::StringWriter<CharType>& path)
 	{
 		using Char = ONLY_TYPE(CharType);
-		auto parentPath = kString::Replace<ONLY_TYPE(Char)>(path, Char('/'), pathSeparator<Char>);
+		auto parentPath = kString::Replace(path, Char('/'), pathSeparator<Char>);
 		parentPath = parentPath.substr(0, parentPath.find_last_of(pathSeparator<Char>));
 		return parentPath;
 	}

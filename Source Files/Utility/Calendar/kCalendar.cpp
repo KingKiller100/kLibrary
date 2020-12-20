@@ -95,12 +95,12 @@ namespace klib::kCalendar
 		if (separator == Date::DateNumericalSeparator::SLASH)
 		{
 			if (local.find('/') == std::string::npos)
-				local = kString::Replace<char>(local, '-', '/');
+				local = Replace(local, '-', '/');
 		}
 		else
 		{
 			if (local.find('-') == std::string::npos)
-				local = kString::Replace<char>(local, '/', '-');
+				local = Replace(local, '/', '-');
 		}
 
 		return local;
@@ -119,12 +119,12 @@ namespace klib::kCalendar
 		if (separator == Date::DateNumericalSeparator::SLASH)
 		{
 			if (system.find('/') == std::string::npos)
-				system = kString::Replace<char>(system, '-', '/');
+				system = Replace(system, '-', '/');
 		}
 		else
 		{
 			if (system.find('-') == std::string::npos)
-				system = kString::Replace<char>(system, '/', '-');
+				system = Replace(system, '/', '-');
 		}
 
 		return system;

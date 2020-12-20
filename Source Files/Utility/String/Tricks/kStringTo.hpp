@@ -21,7 +21,10 @@ namespace klib::kString
 		static_assert(std::is_integral_v<Integer_t>, __FUNCTION__ " can only be used with integer types "
 			"(char, int, long, unsigned short, etc..");
 
-		const auto CrashFunc = [](const std::string& errMsg) { throw kDebug::StringError(errMsg + '\n'); };
+		const auto CrashFunc = [](const std::string& errMsg)
+		{
+			throw kDebug::StringError(errMsg + '\n');
+		};
 		const auto MaxDigitsFunc = []()
 		{
 			auto maxNum = std::numeric_limits<Integer_t>::max();
@@ -126,7 +129,10 @@ namespace klib::kString
 	{
 		using CharType = typename StringT::value_type;
 
-		const auto CrashFunc = [](const std::string& errMsg) { throw kDebug::StringError(errMsg + "\n"); };
+		const auto CrashFunc = [](const std::string& errMsg)
+		{
+			throw kDebug::StringError(errMsg + "\n");
+		};
 
 		Remove(string, CharType(' '));
 		Remove(string, CharType(','));

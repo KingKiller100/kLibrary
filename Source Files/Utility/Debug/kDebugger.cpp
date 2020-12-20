@@ -10,10 +10,11 @@ namespace klib::kDebug
 #ifdef MSVC_PLATFORM_TOOLSET
 	using namespace compiler::vs;
 #endif
-	
-	void IsDebuggerAttached(const char* filename) noexcept
+
+	template<>
+	void IsDebuggerAttached(const char* filename, std::chrono::milliseconds delayTime) noexcept
 	{
-#if defined(_DEBUG) || defined(KLIB_DEBUG) || defined(KLIB_TEST)
+#if defined(KLIB_DEBUG) || defined(KLIB_TEST)
 		if (IsDebuggerAttachedImpl())
 			return;
 
@@ -23,7 +24,24 @@ namespace klib::kDebug
 			{
 				return;
 			}
-			std::this_thread::sleep_for(std::chrono::seconds(1));
+			std::this_thread::sleep_for(delayTime);
+		}
+#endif
+	}
+	template<>
+	void IsDebuggerAttached(const wchar_t* filename, std::chrono::milliseconds delayTime) noexcept
+	{
+#if defined(KLIB_DEBUG) || defined(KLIB_TEST)
+		if (IsDebuggerAttachedImpl())
+			return;
+
+		while (kFileSystem::CheckFileExists(filename))
+		{
+			if (IsDebuggerAttachedImpl() == KLIB_TRUE)
+			{
+				return;
+			}
+			std::this_thread::sleep_for(delayTime);
 		}
 #endif
 	}

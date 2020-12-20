@@ -17,10 +17,6 @@
 #include <vector>
 
 
-#ifdef max
-#	undef max
-#endif
-
 namespace klib
 {
 	namespace kString
@@ -28,8 +24,10 @@ namespace klib
 		ENUM_CLASS(PreserveToken, std::uint8_t, YES, NO);
 		ENUM_CLASS(PreserveEmpty, std::uint8_t, YES, NO);
 
-		template<class CharT = char>
-		USE_RESULT constexpr StringWriter<CharT> Replace(const StringReader<CharT>& str, const ONLY_TYPE(CharT) oldChar, const ONLY_TYPE(CharT) newChar) noexcept
+		template<class CharT = char, class = std::enable_if_t<
+			type_trait::Is_CharType_V<CharT>
+			>>
+		USE_RESULT constexpr StringWriter<CharT> Replace(const CharT* str, CharT oldChar, CharT newChar) noexcept
 		{
 			using StrW = StringWriter<CharT>;
 
@@ -52,6 +50,14 @@ namespace klib
 			} while (oldCharPos != StrW::npos);
 #endif
 			return text;
+		}
+
+		template<class StringT, typename = std::enable_if_t<
+			type_trait::Is_StringType_V<StringT>
+		>>
+		USE_RESULT constexpr StringWriter<typename StringT::value_type> Replace(const StringT& str, typename StringT::value_type oldChar, typename StringT::value_type newChar) noexcept
+		{
+			return Replace<typename StringT::value_type>(str.data(), oldChar, newChar);
 		}
 
 		template<class CharT = char>

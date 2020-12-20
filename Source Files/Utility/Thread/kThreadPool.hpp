@@ -10,6 +10,17 @@ namespace klib::kThread
 	public:
 		using Func_t = std::function<void()>;
 
+		struct Job
+		{
+			Func_t work;
+			std::string desc;
+
+			void operator()() const
+			{
+				work();
+			}
+		};
+		
 	public:
 		ThreadPool(size_t count);
 
@@ -20,6 +31,8 @@ namespace klib::kThread
 		void ShutdownAll();
 
 		void JoinAll();
+		
+		void JoinAndPopAll();
 
 		void Join(size_t index);
 
@@ -31,7 +44,7 @@ namespace klib::kThread
 
 		std::vector<std::thread::id> GetIDs();
 
-		void DoJob(Func_t func);
+		void DoJob(Job job);
 
 		std::thread& GetThread(size_t index);
 
@@ -41,10 +54,11 @@ namespace klib::kThread
 		void threadEntry(const bool& sd);
 
 	protected:
-		std::mutex lock;
+		std::mutex mutex;
 		std::condition_variable condVar;
 		std::vector<bool> shutdowns;
-		std::queue<Func_t> jobs;
+		std::queue<Job> jobs;
 		std::vector<std::thread> threads;
+		std::string prevJob;
 	};
 }
