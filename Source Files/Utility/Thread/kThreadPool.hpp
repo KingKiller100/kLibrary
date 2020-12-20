@@ -22,10 +22,19 @@ namespace klib::kThread
 		};
 		
 	public:
+		ThreadPool();
 		ThreadPool(size_t count);
 
+		ThreadPool(const ThreadPool& other) noexcept = delete;
+		ThreadPool& operator=(const ThreadPool& other) noexcept = delete;
+
+		ThreadPool(ThreadPool&& other) noexcept = delete;
+		ThreadPool& operator=(ThreadPool&& other) noexcept = delete;
+		
 		~ThreadPool();
 
+		void Create(size_t count);
+		
 		void Shutdown(size_t index);
 		
 		void ShutdownAll();
@@ -40,6 +49,8 @@ namespace klib::kThread
 
 		void DetachAll();
 
+		size_t GetSize() const;
+		
 		std::thread::id GetID(size_t index);
 
 		std::vector<std::thread::id> GetIDs();

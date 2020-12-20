@@ -12,6 +12,7 @@
 #include "../Utility/Misc/kConsoleColour.hpp"
 
 #include "../Utility/Thread/kThreadPool.hpp"
+#include "../Utility/FileSystem/kFileSystem.hpp"
 
 #include <iostream>
 #include <mutex>
@@ -54,6 +55,8 @@ namespace kTest
 	{
 		using namespace klib;
 
+		kFileSystem::SetCurrentWorkingDirectory(kFileSystem::GetExeDirectory());
+		
 		path = std::filesystem::current_path().string() + "\\Test Results\\";
 		const auto isMade = std::filesystem::create_directory(path.c_str());
 
@@ -93,20 +96,21 @@ namespace kTest
 		timesRecorded.reserve(tests.size());
 		std::stack<decltype(tests)::value_type> finishedTests;
 
-		const size_t numOfThreads = std::thread::hardware_concurrency();
-
-		const auto start = std::clock();
-		while (!tests.empty())
+		clock_t start;
 		{
-			const auto count = (std::min)(1ull, tests.size());
-			kThread::ThreadPool threads(count);
+			kThread::ThreadPool threads;
+			const auto size = threads.GetSize();
 
-			for (size_t i = 0; i < numOfThreads && !tests.empty(); ++i)
+			start = std::clock();
+			while (!tests.empty())
 			{
-				const auto& test = tests.front();
-				threads.DoJob({ [this, test] { Run(*test); }, test->GetName() });
-				finishedTests.push(test);
-				tests.pop_front();
+				for (size_t i = 0; i < size && !tests.empty(); ++i)
+				{
+					const auto& test = tests.front();
+					threads.DoJob({ [this, test] { Run(*test); }, test->GetName() });
+					finishedTests.push(test);
+					tests.pop_front();
+				}
 			}
 		}
 		const auto end = std::clock();
@@ -126,6 +130,7 @@ namespace kTest
 		std::cout << "\n" << timeStr << "\n";
 
 		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path << std::endl;
+		std::cin.get();
 	}
 
 	double TesterManager::GetAverageTime() const
@@ -184,12 +189,12 @@ namespace kTest
 				test.GetName(),
 				resTimeStr,
 				test.GetFailureData()); // Fail Case
-		
+
 		WriteToFile(results);
 	}
 
 	void TesterManager::WriteToConsole(const bool pass, const std::string& NameOpenerStr,
-	                                          const std::string& resTimeStr)
+		const std::string& resTimeStr)
 	{
 		auto locker = std::scoped_lock(consoleMutex);
 

@@ -4,18 +4,14 @@
 
 namespace klib::kThread
 {
+	ThreadPool::ThreadPool()
+	{
+		Create(MaxCores());
+	}
+
 	ThreadPool::ThreadPool(size_t count)
 	{
-		// Create the specified number of threads
-		count = kmaths::Clamp(count, 0, std::numeric_limits<std::uint16_t>::max());
-
-		threads.reserve(count);
-		shutdowns.reserve(count);
-		for (auto i = 0; i < count; ++i)
-		{			
-			const auto& sd = shutdowns.emplace_back(false);
-			threads.emplace_back([this, sd] { threadEntry(sd); });
-		}
+		Create(count);
 	}
 
 	ThreadPool::~ThreadPool()
@@ -31,6 +27,21 @@ namespace klib::kThread
 		// Wait for all threads to stop
 		// std::cerr << "Joining threads" << std::endl;
 		JoinAndPopAll();
+	}
+
+	void ThreadPool::Create(size_t count)
+	{
+		// Create the specified number of threads
+		count = kmaths::Clamp(count, 0, std::numeric_limits<std::uint16_t>::max());
+
+		threads.reserve(count);
+		shutdowns.reserve(count);
+		
+		for (auto i = 0; i < count; ++i)
+		{
+			const auto& sd = shutdowns.emplace_back(false);
+			threads.emplace_back([this, sd] { threadEntry(sd); });
+		}
 	}
 
 	void ThreadPool::Shutdown(size_t index)
@@ -85,6 +96,11 @@ namespace klib::kThread
 		{
 			thread.detach();
 		}
+	}
+
+	size_t ThreadPool::GetSize() const
+	{
+		return threads.size();
 	}
 
 	std::thread::id ThreadPool::GetID(size_t index)
