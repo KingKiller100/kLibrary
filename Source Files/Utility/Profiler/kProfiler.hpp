@@ -50,7 +50,7 @@ namespace klib {
 			void Stop()
 			{
 				result.end = Now();
-				result.threadID = kThread::ThreadID<std::uint32_t>();
+				result.threadID = kThread::GetThreadID<std::uint32_t>();
 
 				callback(result);
 

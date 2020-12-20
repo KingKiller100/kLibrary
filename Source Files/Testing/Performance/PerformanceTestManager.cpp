@@ -3,13 +3,10 @@
 #include "PerformanceTestBase.hpp"
 
 #include "../SetUpTests.hpp"
-#include "../../Utility/Stopwatch/kStopwatch.hpp"
 
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-
-
 
 #ifdef TESTING_ENABLED
 namespace kTest::performance
@@ -69,13 +66,15 @@ namespace kTest::performance
 
 	void PerformanceTestManager::RunTest(PerformanceTestBase * test)
 	{
-		const klib::kStopwatch::HighAccuracyStopwatch runTimeTimer;
-
 		std::cout << "\tNow Testing: " << test->GetName() << " ";
 
+		const auto start = std::clock();
 		test->Run();
+		const auto end = std::clock();
 
-		std::cout << "Runtime: " << runTimeTimer.GetLifeTime<klib::kStopwatch::units::Secs>() << "s (seconds)\n";
+		const auto duration = static_cast<double>(end - start) / CLOCKS_PER_SEC;
+		
+		std::cout << "Runtime: " << duration << "s (seconds)\n";
 
 	}
 
@@ -100,7 +99,7 @@ namespace kTest::performance
 
 	void PerformanceTestManager::InitializeTests()
 	{
-		InitializeAlPerformanceTests();
+		InitializeAllPerformanceTests();
 	}
 
 	void PerformanceTestManager::OutputResult(const std::string& name)

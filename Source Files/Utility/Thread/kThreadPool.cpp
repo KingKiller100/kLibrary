@@ -25,7 +25,6 @@ namespace klib::kThread
 		}
 
 		// Wait for all threads to stop
-		// std::cerr << "Joining threads" << std::endl;
 		JoinAndPopAll();
 	}
 
@@ -36,7 +35,7 @@ namespace klib::kThread
 
 		threads.reserve(count);
 		shutdowns.reserve(count);
-		
+
 		for (auto i = 0; i < count; ++i)
 		{
 			const auto& sd = shutdowns.emplace_back(false);
@@ -80,7 +79,7 @@ namespace klib::kThread
 			if (thr.joinable())
 				thr.join();
 			threads.pop_back();
-		}		
+		}
 	}
 
 	void ThreadPool::Detach(size_t index)
@@ -95,6 +94,19 @@ namespace klib::kThread
 		for (auto&& thread : threads)
 		{
 			thread.detach();
+		}
+	}
+
+	void ThreadPool::PopJob()
+	{
+		jobs.pop();
+	}
+
+	void ThreadPool::ClearJobs()
+	{
+		while (!jobs.empty())
+		{
+			jobs.pop();
 		}
 	}
 
@@ -123,7 +135,7 @@ namespace klib::kThread
 		return ids;
 	}
 
-	void ThreadPool::DoJob(Job job)
+	void ThreadPool::QueueJob(Job job)
 	{
 		// Place a job on the queue and unblock a thread
 		std::unique_lock<std::mutex> l(mutex);
@@ -153,8 +165,7 @@ namespace klib::kThread
 			{
 				std::unique_lock<std::mutex> lock(mutex);
 
-				while (!sd && jobs.empty())
-					condVar.wait(lock);
+				condVar.wait(lock, [sd, this] { return sd || !jobs.empty(); });
 
 				if (jobs.empty())
 				{
@@ -162,7 +173,6 @@ namespace klib::kThread
 					return;
 				}
 
-				
 				job = std::move(jobs.front());
 				prevJob = std::move(job.desc);
 				jobs.pop();

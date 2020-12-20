@@ -54,7 +54,7 @@ namespace kTest
 			}
 		}
 
-		void InitializeAlPerformanceTests()
+		void InitializeAllPerformanceTests()
 		{
 			AddUtilityPerformanceTests();
 			AddMathsPerformanceTests();

@@ -49,13 +49,17 @@ namespace klib::kThread
 
 		void DetachAll();
 
+		void PopJob();
+		
+		void ClearJobs();
+		
 		size_t GetSize() const;
 		
 		std::thread::id GetID(size_t index);
 
 		std::vector<std::thread::id> GetIDs();
 
-		void DoJob(Job job);
+		void QueueJob(Job job);
 
 		std::thread& GetThread(size_t index);
 

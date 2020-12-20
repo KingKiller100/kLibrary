@@ -4,7 +4,7 @@ namespace kTest
 {	
 	namespace performance
 	{
-		void InitializeAlPerformanceTests();
+		void InitializeAllPerformanceTests();
 	}
 
 	void InitializeMathsTests();
