@@ -36,6 +36,8 @@ namespace kTest::utility
 	bool StopWatchTester::GeneralTimeTest()
 	{
 		{
+			constexpr auto allowance = 10;
+			
 			Stopwatch<std::time_t, HighAccuracyClock<units::Millis>> sw;
 			std::this_thread::sleep_for(10ms);
 			const auto dt1 = sw.GetDeltaTime();
@@ -44,10 +46,10 @@ namespace kTest::utility
 			std::this_thread::sleep_for(10ms);
 			const auto dt3 = sw.GetDeltaTime();
 			const auto lifeTime = sw.GetAbsoluteLifeTime();
-			VERIFY(kmaths::Approximately(lifeTime, 30, 5));
-			VERIFY(kmaths::Approximately(dt1, 10, 5));
-			VERIFY(kmaths::Approximately(dt2, 10, 5));
-			VERIFY(kmaths::Approximately(dt3, 10, 5));
+			VERIFY(kmaths::Approximately(lifeTime, 30, allowance));
+			VERIFY(kmaths::Approximately(dt1, 10, allowance));
+			VERIFY(kmaths::Approximately(dt2, 10, allowance));
+			VERIFY(kmaths::Approximately(dt3, 10, allowance));
 		}
 
 		{

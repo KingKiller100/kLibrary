@@ -33,7 +33,7 @@ namespace klib
 				USE_RESULT constexpr Rep_t GetAbsoluteLifeTime() const noexcept(std::is_arithmetic_v<Rep_t>)
 			{
 				std::atomic_thread_fence(std::memory_order_relaxed);
-				auto lifeTime = ConvertToUsableValue<Units2>(Clock_t::Now(), start);
+				const auto lifeTime = ConvertToUsableValue<Units2>(Clock_t::Now(), start);
 				std::atomic_thread_fence(std::memory_order_relaxed);
 				return lifeTime;
 			}
