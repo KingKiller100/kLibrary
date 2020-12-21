@@ -6,12 +6,12 @@ namespace klib::kThread
 {
 	ThreadPool::ThreadPool()
 	{
-		Create(MaxCores());
+		AddThread(MaxCores());
 	}
 
 	ThreadPool::ThreadPool(size_t count)
 	{
-		Create(count);
+		AddThread(count);
 	}
 
 	ThreadPool::~ThreadPool()
@@ -28,13 +28,15 @@ namespace klib::kThread
 		JoinAndPopAll();
 	}
 
-	void ThreadPool::Create(size_t count)
+	void ThreadPool::AddThread(size_t count)
 	{
 		// Create the specified number of threads
 		count = kmaths::Clamp(count, 0, std::numeric_limits<std::uint16_t>::max());
 
-		threads.reserve(count);
-		shutdowns.reserve(count);
+		const auto currentSize = GetSize();
+		const auto newSize = currentSize + count;
+		threads.reserve(newSize);
+		shutdowns.reserve(newSize);
 
 		for (auto i = 0; i < count; ++i)
 		{

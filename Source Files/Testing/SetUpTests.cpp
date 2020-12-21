@@ -25,6 +25,7 @@
 #include "../../Tests/Utility Tests/StringConverter_Test.hpp"
 #include "../../Tests/Utility Tests/StringTricks_Test.hpp"
 #include "../../Tests/Utility Tests/ToString_Test.hpp"
+#include "../../Tests/Utility Tests/Profiler_Test.hpp"
 
 // Templates
 #include "../../Tests/Templates Tests/BytesStorage_Test.hpp"
@@ -84,6 +85,7 @@ namespace kTest
 		AddTest<TesterManager>(new utility::LoggingTester());
 		AddTest<TesterManager>(new utility::StringViewTester());
 		AddTest<TesterManager>(new utility::StopWatchTester());
+		AddTest<TesterManager>(new utility::ProfilerTester());
 	}
 
 	void InitializeTemplateTests()

@@ -10,40 +10,40 @@
 namespace klib {
 	namespace kProfiler
 	{
-		template<class Representation>
-		struct ProfilerResult
+		template<class CharType, class Representation>
+		struct BasicProfilerResult
 		{
 			using Rep_t = Representation;
 
-			const std::string name;
+			const std::basic_string<CharType> name;
 			Rep_t start, end;
 			std::uint32_t threadID;
 		};
 
 		template<class CharType,
-			typename TimeUnits = kStopwatch::units::Millis,
 			class Representation = size_t,
+			typename TimeUnits = kStopwatch::units::Millis,
 			class Clock = kStopwatch::HighAccuracyClock<TimeUnits>,
-			typename ProfilerFunc = std::function<void(const ProfilerResult<Representation>&)>>
+			typename ProfilerFunc = std::function<void(const BasicProfilerResult<CharType, Representation>&)>>
 			class BasicScopeProfiler
 		{
-		private:
-			using TimeUnits_t = TimeUnits;
+		public:
+			using Clock_t = Clock;
 			using Func_t = ProfilerFunc;
 			using Rep_t = Representation;
-			using Clock_t = Clock;
+			using TimeUnits_t = TimeUnits;
+			using Result_t = BasicProfilerResult<CharType, Rep_t>;
 
 		public:
 			BasicScopeProfiler(const std::basic_string_view<CharType>& name, Func_t&& cb)
-				: result({ name.data(), Now(), 0, 0 })
-				, isRunning(true)
+				: isRunning(true)
 				, callback(std::forward<Func_t>(cb))
+				, result({ name.data(), Now(), 0, 0 })
 			{}
 
 			~BasicScopeProfiler()
 			{
-				if (isRunning)
-					Stop();
+				Stop();
 			}
 
 		private:
@@ -63,20 +63,23 @@ namespace klib {
 			}
 
 		private:
-			ProfilerResult<Rep_t> result;
 			bool isRunning;
 			Func_t callback;
+			Result_t result;
 		};
 
-		template<typename TimeUnits = kStopwatch::units::Millis,
-			class Representation = size_t,
+		template<class Representation = size_t,
+			typename TimeUnits = kStopwatch::units::Millis,
 			class Clock = kStopwatch::HighAccuracyClock<TimeUnits>,
-			typename ProfilerFunc = std::function<void(const ProfilerResult<Representation>&)>>
-			using Profiler = BasicScopeProfiler<char, TimeUnits, Representation, Clock, ProfilerFunc>;
+			typename ProfilerFunc = std::function<void(const BasicProfilerResult<char, Representation>&)>>
+			using Profiler = BasicScopeProfiler<char, Representation, TimeUnits, Clock, ProfilerFunc>;
+
+		template<class Representation>
+		using ProfilerResult = BasicProfilerResult<char, Representation>;
 	}
 
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kProfiler;
 #endif
 }
-	
+

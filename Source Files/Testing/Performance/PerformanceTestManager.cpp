@@ -30,16 +30,17 @@ namespace kTest::performance
 		{
 			throw std::runtime_error("Test Results path could not be created/found. Please check why!");
 		}
-
+		
+		const auto endIter = std::filesystem::directory_iterator();
+		
 		for (auto iter = std::filesystem::directory_iterator(path);
-			iter != std::filesystem::directory_iterator();
+			iter != endIter;
 			++iter)
 		{
-			const auto dir = *iter;
-			const auto isFile = dir.is_regular_file();
+			const auto isFile = iter->is_regular_file();
 			if (isFile)
 			{
-				fs::remove(dir);
+				fs::remove(*iter);
 			}
 		}
 
@@ -75,7 +76,6 @@ namespace kTest::performance
 		const auto duration = static_cast<double>(end - start) / CLOCKS_PER_SEC;
 		
 		std::cout << "Runtime: " << duration << "s (seconds)\n";
-
 	}
 
 	void PerformanceTestManager::Add(PerformanceTestBase* test)

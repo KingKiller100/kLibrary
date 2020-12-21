@@ -23,11 +23,11 @@ namespace kTest::utility
 	void StopWatchTester::Test()
 	{
 		VERIFY_MULTI_INIT();
-		// VERIFY_MULTI(GeneralTimeTest());
-		// VERIFY_MULTI(NanosecondsTest());
-		// VERIFY_MULTI(MicrosecondsTest());
-		// VERIFY_MULTI(MillisecondsTest());
-		// VERIFY_MULTI(SecondsTest());
+		VERIFY_MULTI(GeneralTimeTest());
+		VERIFY_MULTI(NanosecondsTest());
+		VERIFY_MULTI(MicrosecondsTest());
+		VERIFY_MULTI(MillisecondsTest());
+		VERIFY_MULTI(SecondsTest());
 		// VERIFY_MULTI(MinutesTest());
 		// VERIFY_MULTI(HoursTest());
 		VERIFY_MULTI_END();
@@ -36,18 +36,18 @@ namespace kTest::utility
 	bool StopWatchTester::GeneralTimeTest()
 	{
 		{
-			Stopwatch<std::time_t> sw;
+			Stopwatch<std::time_t, HighAccuracyClock<units::Millis>> sw;
 			std::this_thread::sleep_for(10ms);
-			auto dt = sw.GetDeltaTime();
-			VERIFY(kmaths::Approximately(dt, 10, 1));
+			const auto dt1 = sw.GetDeltaTime();
 			std::this_thread::sleep_for(10ms);
-			dt = sw.GetDeltaTime();
-			VERIFY(kmaths::Approximately(dt, 10, 1));
+			const auto dt2 = sw.GetDeltaTime();
 			std::this_thread::sleep_for(10ms);
-			dt = sw.GetDeltaTime();
-			VERIFY(kmaths::Approximately(dt, 10, 1));
+			const auto dt3 = sw.GetDeltaTime();
 			const auto lifeTime = sw.GetLifeTime();
 			VERIFY(kmaths::Approximately(lifeTime, 30, 1));
+			VERIFY(kmaths::Approximately(dt1, 10, 5));
+			VERIFY(kmaths::Approximately(dt2, 10, 1));
+			VERIFY(kmaths::Approximately(dt3, 10, 1));
 		}
 
 		return success;

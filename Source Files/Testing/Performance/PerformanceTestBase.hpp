@@ -4,6 +4,7 @@
 
 #include "../../Utility/Profiler/kProfiler.hpp"
 
+#include <cstdint>
 #include <map>
 #include <string>
 #include <vector>
@@ -13,14 +14,14 @@ namespace kTest::performance
 {
 	struct AverageTime
 	{
-		int64_t time = 0;
+		std::int64_t time = 0;
 		int count = 0;
 	};
 
 	struct Accolade
 	{
 		std::string name;
-		int64_t time;
+		std::int64_t time;
 	};
 
 	class PerformanceTestBase
@@ -47,16 +48,16 @@ namespace kTest::performance
 
 	protected:
 		std::string name;
-		std::vector<klib::kProfiler::ProfilerResult<int64_t>> profilerResults;
+		std::vector<klib::kProfiler::ProfilerResult<std::int64_t>> profilerResults;
 		std::map<const std::string, std::map<std::string, AverageTime>> results;
 	};
 }
 
-#define REPORT_BACK_FUNC [&](const klib::kProfiler::ProfilerResult<int64_t>& res)\
+#define REPORT_BACK_FUNC [&](const klib::kProfiler::ProfilerResult<std::int64_t>& res)\
 		{\
 			profilerResults.push_back(res);\
 		}\
 
-#define START_TEST(profilee) auto profiler##__LINE__ = klib::kProfiler::Profiler<klib::kStopwatch::units::Millis, int64_t> (profilee, REPORT_BACK_FUNC);
+#define START_TEST(profilee) auto profiler##__LINE__ = klib::kProfiler::Profiler<std::int64_t, klib::kStopwatch::units::Millis> (profilee, REPORT_BACK_FUNC);
 
 #endif

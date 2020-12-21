@@ -33,7 +33,7 @@ namespace klib::kThread
 		
 		~ThreadPool();
 
-		void Create(size_t count);
+		void AddThread(size_t count);
 		
 		void Shutdown(size_t index);
 		

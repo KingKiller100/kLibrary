@@ -45,11 +45,14 @@ namespace klib
 			{
 				std::atomic_thread_fence(std::memory_order_relaxed);
 
-				if (IsRunning())
-					currentTimePoint = Clock_t::Now();
+				const auto now = Clock_t::Now();
 
-				const auto deltaTime = ConvertToUsableValue<Units2>(currentTimePoint, lastTimePoint);
-				lastTimePoint = currentTimePoint;
+				auto deltaTime = ConvertToUsableValue<Units2>(now, lastTimePoint);
+				
+				if (isRunning)
+					lastTimePoint = currentTimePoint;
+				else
+					deltaTime = ConvertToUsableValue<Units2>(currentTimePoint, lastTimePoint);
 
 				std::atomic_thread_fence(std::memory_order_relaxed);
 
