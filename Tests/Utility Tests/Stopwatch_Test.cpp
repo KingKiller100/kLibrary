@@ -44,10 +44,10 @@ namespace kTest::utility
 			std::this_thread::sleep_for(10ms);
 			const auto dt3 = sw.GetDeltaTime();
 			const auto lifeTime = sw.GetLifeTime();
-			VERIFY(kmaths::Approximately(lifeTime, 30, 1));
+			VERIFY(kmaths::Approximately(lifeTime, 30, 5));
 			VERIFY(kmaths::Approximately(dt1, 10, 5));
-			VERIFY(kmaths::Approximately(dt2, 10, 1));
-			VERIFY(kmaths::Approximately(dt3, 10, 1));
+			VERIFY(kmaths::Approximately(dt2, 10, 5));
+			VERIFY(kmaths::Approximately(dt3, 10, 5));
 		}
 
 		return success;

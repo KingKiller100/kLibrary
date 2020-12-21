@@ -50,9 +50,13 @@ namespace klib
 				auto deltaTime = ConvertToUsableValue<Units2>(now, lastTimePoint);
 				
 				if (isRunning)
-					lastTimePoint = currentTimePoint;
+				{
+					lastTimePoint = now;
+				}
 				else
+				{
 					deltaTime = ConvertToUsableValue<Units2>(currentTimePoint, lastTimePoint);
+				}
 
 				std::atomic_thread_fence(std::memory_order_relaxed);
 
@@ -84,6 +88,7 @@ namespace klib
 			void Pause()
 			{
 				isRunning = false;
+				currentTimePoint = Clock_t::Now();
 			}
 
 			void Resume()
