@@ -21,11 +21,22 @@ namespace klib
 
 		public:
 			constexpr Stopwatch() noexcept
-				: startTimePoint(Clock_t::Now())
-				, lastTimePoint(startTimePoint)
-				, currentTimePoint(lastTimePoint)
+				: start(Clock_t::Now())
+				, previous(start)
+				, current(previous)
 				, isRunning(true)
 			{ }
+
+			template<typename Units2 = Units_t, typename = std::enable_if_t<
+				type_trait::Is_Specialization_V<Units2, kCalendar::TimeComponentBase>
+				>>
+				USE_RESULT constexpr Rep_t GetAbsoluteLifeTime() const noexcept(std::is_arithmetic_v<Rep_t>)
+			{
+				std::atomic_thread_fence(std::memory_order_relaxed);
+				auto lifeTime = ConvertToUsableValue<Units2>(Clock_t::Now(), start);
+				std::atomic_thread_fence(std::memory_order_relaxed);
+				return lifeTime;
+			}
 
 			template<typename Units2 = Units_t, typename = std::enable_if_t<
 				type_trait::Is_Specialization_V<Units2, kCalendar::TimeComponentBase>
@@ -33,7 +44,8 @@ namespace klib
 				USE_RESULT constexpr Rep_t GetLifeTime() const noexcept(std::is_arithmetic_v<Rep_t>)
 			{
 				std::atomic_thread_fence(std::memory_order_relaxed);
-				const auto lifeTime = ConvertToUsableValue<Units2>(Clock_t::Now(), startTimePoint);
+				const auto now = isRunning ? Clock_t::Now() : current;
+				auto lifeTime = ConvertToUsableValue<Units2>(now, start);
 				std::atomic_thread_fence(std::memory_order_relaxed);
 				return lifeTime;
 			}
@@ -47,15 +59,15 @@ namespace klib
 
 				const auto now = Clock_t::Now();
 
-				auto deltaTime = ConvertToUsableValue<Units2>(now, lastTimePoint);
+				auto deltaTime = ConvertToUsableValue<Units2>(now, previous);
 				
 				if (isRunning)
 				{
-					lastTimePoint = now;
+					previous = now;
 				}
 				else
 				{
-					deltaTime = ConvertToUsableValue<Units2>(currentTimePoint, lastTimePoint);
+					deltaTime = ConvertToUsableValue<Units2>(current, previous);
 				}
 
 				std::atomic_thread_fence(std::memory_order_relaxed);
@@ -70,7 +82,7 @@ namespace klib
 			{
 				using UnitsDuration_t = typename Units2::Duration_t;
 				return static_cast<Rep_t>(
-					std::chrono::time_point_cast<UnitsDuration_t>(startTimePoint).time_since_epoch().count()
+					std::chrono::time_point_cast<UnitsDuration_t>(start).time_since_epoch().count()
 					);
 			}
 
@@ -88,7 +100,7 @@ namespace klib
 			void Pause()
 			{
 				isRunning = false;
-				currentTimePoint = Clock_t::Now();
+				UpdateCurrentTime();
 			}
 
 			void Resume()
@@ -136,10 +148,15 @@ namespace klib
 				return static_cast<Rep_t>(finalDuration);
 			}
 
+			void UpdateCurrentTime()
+			{
+				current = Clock_t::Now();
+			}
+			
 		private:
-			const TimePoint_t startTimePoint;
-			TimePoint_t lastTimePoint;
-			TimePoint_t currentTimePoint;
+			const TimePoint_t start; // Time point at construction
+			TimePoint_t previous; // Last record time point
+			TimePoint_t current; // Current recorded 
 			bool isRunning;
 		};
 

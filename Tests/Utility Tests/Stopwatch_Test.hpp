@@ -16,7 +16,6 @@ namespace kTest::utility
 	private:
 		bool GeneralTimeTest();
 		bool PauseTest();
-		bool NanosecondsTest();
 		bool MicrosecondsTest();
 		bool MillisecondsTest();
 		bool SecondsTest();

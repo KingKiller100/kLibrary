@@ -107,7 +107,7 @@ namespace kTest
 				for (size_t i = 0; i < size && !tests.empty(); ++i)
 				{
 					const auto& test = tests.front();
-					threads.QueueJob({ [this, test] { Run(*test); }, test->GetName() });
+					threads.QueueJob({ [this, &test] { Run(*test); }, test->GetName() });
 					finishedTests.push(test);
 					tests.pop_front();
 				}

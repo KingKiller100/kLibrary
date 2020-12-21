@@ -112,7 +112,7 @@ namespace klib::kStopwatch
 			// get current time
 			const long long frequency = _Query_perf_frequency();	// doesn't change after system boot
 			const long long counter = _Query_perf_counter();
-			static_assert(Period_t::num == 1, "This assumes period::num == 1.");
+			//static_assert(Period_t::num == 1, "This assumes period::num == 1.");
 			const long long whole = (counter / frequency) * Period_t::den;
 			const long long part = (counter % frequency) * Period_t::den / frequency;
 			return (TimePoint_t(Duration_t(whole + part)));

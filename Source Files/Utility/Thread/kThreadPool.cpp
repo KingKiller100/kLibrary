@@ -41,7 +41,7 @@ namespace klib::kThread
 		for (auto i = 0; i < count; ++i)
 		{
 			const auto& sd = shutdowns.emplace_back(false);
-			threads.emplace_back([this, sd] { threadEntry(sd); });
+			threads.emplace_back([this, &sd] { ThreadLoop(sd); });
 		}
 	}
 
@@ -158,7 +158,7 @@ namespace klib::kThread
 		return std::thread::hardware_concurrency();
 	}
 
-	void ThreadPool::threadEntry(const bool& sd)
+	void ThreadPool::ThreadLoop(const ThreadPool::BooleanWrapper& sd)
 	{
 		Job job;
 
@@ -167,7 +167,7 @@ namespace klib::kThread
 			{
 				std::unique_lock<std::mutex> lock(mutex);
 
-				condVar.wait(lock, [sd, this] { return sd || !jobs.empty(); });
+				condVar.wait(lock, [&sd, this] { return sd || !jobs.empty(); });
 
 				if (jobs.empty())
 				{

@@ -20,6 +20,26 @@ namespace klib::kThread
 				work();
 			}
 		};
+
+		struct BooleanWrapper
+		{
+			bool val;
+
+			constexpr BooleanWrapper() : val(false) {}
+			constexpr BooleanWrapper(bool v) : val(v) {}
+			
+			template<typename Target_t>
+			constexpr operator Target_t() const
+			{
+				return val;
+			}
+
+			constexpr operator bool() const
+			{
+				return val;
+			}
+			
+		};
 		
 	public:
 		ThreadPool();
@@ -66,12 +86,12 @@ namespace klib::kThread
 		static std::uint32_t MaxCores() noexcept;
 
 	protected:
-		void threadEntry(const bool& sd);
+		void ThreadLoop(const BooleanWrapper& sd);
 
 	protected:
 		std::mutex mutex;
 		std::condition_variable condVar;
-		std::vector<bool> shutdowns;
+		std::vector<BooleanWrapper> shutdowns;
 		std::queue<Job> jobs;
 		std::vector<std::thread> threads;
 		std::string prevJob;

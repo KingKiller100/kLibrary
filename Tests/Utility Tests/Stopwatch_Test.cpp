@@ -24,12 +24,12 @@ namespace kTest::utility
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(GeneralTimeTest());
-		VERIFY_MULTI(NanosecondsTest());
+		VERIFY_MULTI(PauseTest());
 		VERIFY_MULTI(MicrosecondsTest());
 		VERIFY_MULTI(MillisecondsTest());
 		VERIFY_MULTI(SecondsTest());
 		// VERIFY_MULTI(MinutesTest());
-		// VERIFY_MULTI(HoursTest());
+		// VERIFY_MULTI(HoursTest()); // Too long to test
 		VERIFY_MULTI_END();
 	}
 
@@ -43,11 +43,26 @@ namespace kTest::utility
 			const auto dt2 = sw.GetDeltaTime();
 			std::this_thread::sleep_for(10ms);
 			const auto dt3 = sw.GetDeltaTime();
-			const auto lifeTime = sw.GetLifeTime();
+			const auto lifeTime = sw.GetAbsoluteLifeTime();
 			VERIFY(kmaths::Approximately(lifeTime, 30, 5));
 			VERIFY(kmaths::Approximately(dt1, 10, 5));
 			VERIFY(kmaths::Approximately(dt2, 10, 5));
 			VERIFY(kmaths::Approximately(dt3, 10, 5));
+		}
+
+		{
+			Stopwatch<std::time_t, HighAccuracyClock<units::Millis>> sw;
+			std::this_thread::sleep_for(10ms);
+			const auto dt1 = sw.GetDeltaTime();
+			std::this_thread::sleep_for(5ms);
+			const auto dt2 = sw.GetDeltaTime();
+			std::this_thread::sleep_for(20ms);
+			const auto dt3 = sw.GetDeltaTime();
+			const auto lifeTime = sw.GetAbsoluteLifeTime();
+			VERIFY(kmaths::Approximately(lifeTime, 35, 5));
+			VERIFY(kmaths::Approximately(dt1, 10, 5));
+			VERIFY(kmaths::Approximately(dt2, 5, 2));
+			VERIFY(kmaths::Approximately(dt3, 20, 5));
 		}
 
 		return success;
@@ -56,79 +71,94 @@ namespace kTest::utility
 	bool StopWatchTester::PauseTest()
 	{
 		Stopwatch<std::time_t, HighAccuracyClock<units::Millis>> sw;
+
 		std::this_thread::sleep_for(25ms);
-		const auto dt = sw.GetDeltaTime();
-		VERIFY(sw.IsRunning());
-		VERIFY(kmaths::Approximately(dt, 25, 1));
+
 		sw.Pause();
+		const auto dt = sw.GetDeltaTime();
+		const auto lt = sw.GetLifeTime();
 		VERIFY(!sw.IsRunning());
+		VERIFY(kmaths::Approximately(dt, 25, 1));
+		VERIFY(kmaths::Approximately(lt, 25, 1));
+
 		auto now = sw.GetDeltaTime();
 		VERIFY(dt == now);
+		VERIFY(lt == now);
+
+		std::this_thread::sleep_for(5ms);
+
+		const auto absLt = sw.GetAbsoluteLifeTime();
+		const auto absNow = (sw.Now() - sw.GetStartTime()) / 1000;
+		VERIFY(absLt != lt);
+		VERIFY(kmaths::Approximately(absLt, absNow, 5));
+
 		sw.Resume();
-		VERIFY(sw.IsRunning());
+
+		std::this_thread::sleep_for(5ms);
+
 		now = sw.GetDeltaTime();
+		VERIFY(sw.IsRunning());
 		VERIFY(dt < now);
-
-		return success;
-	}
-
-	bool StopWatchTester::NanosecondsTest()
-	{
-		Stopwatch<std::time_t, HighAccuracyClock<units::Nanos>> sw;
-		std::this_thread::sleep_for(500ns);
-		const auto now = sw.GetDeltaTime();
-		VERIFY(kmaths::Approximately(now, 500, 1));
 
 		return success;
 	}
 
 	bool StopWatchTester::MicrosecondsTest()
 	{
+		constexpr auto duration = 100'000us;
+		constexpr auto allowance = 1050;
 		Stopwatch<std::time_t, HighAccuracyClock<units::Micros>> sw;
-		std::this_thread::sleep_for(500us);
+		std::this_thread::sleep_for(duration);
 		const auto now = sw.GetDeltaTime();
-		VERIFY(kmaths::Approximately(now, 500, 1));
+		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 
 		return success;
 	}
 
 	bool StopWatchTester::MillisecondsTest()
 	{
-		Stopwatch<std::time_t, HighAccuracyClock<units::Millis>> sw;
-		std::this_thread::sleep_for(500ms);
+		constexpr auto duration = 100ms;
+		constexpr auto allowance = 5;
+		Stopwatch<float, HighAccuracyClock<units::Millis>> sw;
+		std::this_thread::sleep_for(duration);
 		const auto now = sw.GetDeltaTime();
-		VERIFY(kmaths::Approximately(now, 500, 1));
+		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 
 		return success;
 	}
 
 	bool StopWatchTester::SecondsTest()
 	{
-		Stopwatch<double, HighAccuracyClock<units::Secs>> sw;
-		std::this_thread::sleep_for(1s);
+		constexpr auto duration = 1s;
+		constexpr auto allowance = 0;
+		Stopwatch<std::time_t, HighAccuracyClock<units::Secs>> sw;
+		std::this_thread::sleep_for(duration);
 		const auto now = sw.GetDeltaTime();
-		VERIFY(kmaths::Approximately(now, 1, .25));
+		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 
 		return success;
 	}
 
 	bool StopWatchTester::MinutesTest()
 	{
-		Stopwatch<float, HighAccuracyClock<units::Mins>> sw;
-		std::this_thread::sleep_for(1min);
+		constexpr auto duration = 0.25min;
+		constexpr auto allowance = 0;
+		Stopwatch<double, HighAccuracyClock<units::Mins>> sw;
+		std::this_thread::sleep_for(duration);
 		const auto now = sw.GetDeltaTime();
-		VERIFY(kmaths::Approximately(now, 1.0f, 0.5f));
+		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 
 		return success;
 	}
 
 	bool StopWatchTester::HoursTest()
 	{
-		Stopwatch<float, HighAccuracyClock<units::Mins>> sw;
-		
-		std::this_thread::sleep_for(30min);
+		constexpr auto duration = 0.25h;
+		constexpr auto allowance = 0;
+		Stopwatch<double, HighAccuracyClock<units::Hours>> sw;
+		std::this_thread::sleep_for(duration);
 		const auto now = sw.GetDeltaTime();
-		VERIFY(kmaths::Approximately(now, 0.5f, 0.1f));
+		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 
 		return success;
 	}
