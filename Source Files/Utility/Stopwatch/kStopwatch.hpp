@@ -33,7 +33,7 @@ namespace klib
 				USE_RESULT constexpr Rep_t GetAbsoluteLifeTime() const noexcept(std::is_arithmetic_v<Rep_t>)
 			{
 				std::atomic_thread_fence(std::memory_order_relaxed);
-				const auto lifeTime = ConvertToUsableValue<Units2>(Clock_t::Now(), start);
+				const auto lifeTime = ConvertToCorrectUnits<Units2>(Clock_t::Now(), start);
 				std::atomic_thread_fence(std::memory_order_relaxed);
 				return lifeTime;
 			}
@@ -45,7 +45,7 @@ namespace klib
 			{
 				std::atomic_thread_fence(std::memory_order_relaxed);
 				const auto now = isRunning ? Clock_t::Now() : current;
-				auto lifeTime = ConvertToUsableValue<Units2>(now, start);
+				auto lifeTime = ConvertToCorrectUnits<Units2>(now, start);
 				std::atomic_thread_fence(std::memory_order_relaxed);
 				return lifeTime;
 			}
@@ -59,7 +59,7 @@ namespace klib
 
 				const auto now = Clock_t::Now();
 
-				auto deltaTime = ConvertToUsableValue<Units2>(now, previous);
+				auto deltaTime = ConvertToCorrectUnits<Units2>(now, previous);
 				
 				if (isRunning)
 				{
@@ -67,7 +67,7 @@ namespace klib
 				}
 				else
 				{
-					deltaTime = ConvertToUsableValue<Units2>(current, previous);
+					deltaTime = ConvertToCorrectUnits<Units2>(current, previous);
 				}
 
 				std::atomic_thread_fence(std::memory_order_relaxed);
@@ -128,7 +128,7 @@ namespace klib
 			 *		Time in the desired form, represented as your RepresentationType
 			 */
 			template<typename Units2>
-			USE_RESULT constexpr Rep_t ConvertToUsableValue(const TimePoint_t& now
+			USE_RESULT constexpr Rep_t ConvertToCorrectUnits(const TimePoint_t& now
 				, const TimePoint_t& prev) const noexcept(std::is_arithmetic_v<Rep_t>)
 			{
 				using UnitsDuration_t = typename Units2::Duration_t;

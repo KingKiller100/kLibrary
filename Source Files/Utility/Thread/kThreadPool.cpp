@@ -155,7 +155,7 @@ namespace klib::kThread
 		return ids;
 	}
 
-	void ThreadPool::QueueJob(Job job)
+	void ThreadPool::QueueJob(const ThreadPool::Job& job)
 	{
 		// Place a job on the queue and unblock a thread
 		std::unique_lock<std::mutex> l(mutex);

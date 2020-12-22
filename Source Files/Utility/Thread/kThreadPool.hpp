@@ -1,9 +1,9 @@
 #pragma once
+#include "../../TypeTraits/BooleanTraits.hpp"
+
 #include <functional>
 #include <mutex>
 #include <queue>
-
-#include "../../TypeTraits/BooleanTraits.hpp"
 
 namespace klib::kThread
 {
@@ -65,7 +65,7 @@ namespace klib::kThread
 
 		std::vector<std::thread::id> GetIDs() const;
 
-		void QueueJob(Job job);
+		void QueueJob(const Job& job);
 
 		std::thread& GetThread(size_t index);
 		const std::thread& GetThread(size_t index) const;

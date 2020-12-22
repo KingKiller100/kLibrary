@@ -94,10 +94,18 @@ namespace kTest
 
 	void TesterManager::RunAll(const size_t noOfThreads)
 	{
+		const auto testCount = tests.size();
+
+		if (testCount == 0)
+		{
+			std::cout << "TestManager empty\n";
+			return;
+		}
+		
 		std::cout << "Testing: " << (noOfThreads > 0 ? "Multi-Threaded" : "Single Threaded")
 			<< "\n";
 
-		timesRecorded.reserve(tests.size());
+		timesRecorded.reserve(testCount);
 
 		clock_t start;
 
@@ -140,10 +148,10 @@ namespace kTest
 				for (const auto& test : tests)
 				{
 					threads.QueueJob({ [this, &test]
-					{
-						Run(*test);
-					}
-					, test->GetName() });
+						{
+							Run(*test);
+						}
+						, test->GetName() });
 				}
 			};
 		}
