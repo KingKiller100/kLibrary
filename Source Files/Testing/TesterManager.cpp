@@ -92,41 +92,19 @@ namespace kTest
 		tests.insert(std::unique_ptr<TesterBase>(std::move(test)));
 	}
 
-	void TesterManager::RunAll(bool multiThreaded)
+	void TesterManager::RunAll(const size_t noOfThreads)
 	{
-		std::cout << "Testing: " << (multiThreaded ? "Multi-Threaded" : "Single Threaded")
+		std::cout << "Testing: " << (noOfThreads > 0 ? "Multi-Threaded" : "Single Threaded")
 			<< "\n";
 
 		timesRecorded.reserve(tests.size());
 
 		clock_t start;
 
-		if (multiThreaded)
-		{
-			const auto thrCount =
-				kmaths::Min(std::thread::hardware_concurrency(), tests.size());
-			
-			kThread::ThreadPool threads(thrCount);
+		const auto testFunc = GetTestFunc(noOfThreads, start);
 
-			start = std::clock();
-			for (const auto& test : tests)
-			{
-				threads.QueueJob({ [this, &test]
-				{
-					Run(*test);
-				}
-				, test->GetName() });
-			}
-		}
-		else
-		{
-			start = std::clock();
-			for (const auto& test : tests)
-			{
-				Run(*test);
-			}
-		}
-
+		testFunc();
+		
 		const clock_t end = std::clock();
 
 		const auto finalTime = static_cast<double>(end - start) / CLOCKS_PER_SEC;
@@ -147,6 +125,42 @@ namespace kTest
 		std::cin.get();
 	}
 
+	std::function<void()> TesterManager::GetTestFunc(const size_t noOfThreads, std::clock_t& start)
+	{
+		if (noOfThreads != 0)
+		{
+			return 	[&]
+			{
+				const auto thrCount =
+					kmaths::Min(noOfThreads, tests.size());
+
+				kThread::ThreadPool threads(thrCount);
+
+				start = std::clock();
+				for (const auto& test : tests)
+				{
+					threads.QueueJob({ [this, &test]
+					{
+						Run(*test);
+					}
+					, test->GetName() });
+				}
+			};
+		}
+		else
+		{
+			return [&]
+			{
+				start = std::clock();
+				for (const auto& test : tests)
+				{
+					Run(*test);
+				}
+			};
+		}		
+	}
+
+	
 	double TesterManager::GetAverageTime() const
 	{
 		double avgTime(0);

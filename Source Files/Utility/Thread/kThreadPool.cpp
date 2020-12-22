@@ -173,7 +173,9 @@ namespace klib::kThread
 
 	const std::thread& ThreadPool::GetThread(size_t index) const
 	{
-		return GetThread(index);
+		if (index >= threads.size())
+			throw std::out_of_range("Index >= number of threads");
+		return threads[index];
 	}
 
 	void ThreadPool::ThreadLoop(const type_trait::BooleanWrapper& sd)

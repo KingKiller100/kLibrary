@@ -132,7 +132,7 @@ namespace kTest::utility
 
 	bool StopWatchTester::SecondsTest()
 	{
-		constexpr auto duration = 1s;
+		constexpr auto duration = 0.5s;
 		constexpr auto allowance = 0;
 		Stopwatch<std::time_t, HighAccuracyClock<units::Secs>> sw;
 		std::this_thread::sleep_for(duration);

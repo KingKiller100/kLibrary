@@ -3,6 +3,7 @@
 #include "../HelperMacros.hpp"
 
 #include <fstream>
+#include <functional>
 #include <memory>
 #include <mutex>
 #include <set>
@@ -31,7 +32,7 @@ namespace kTest
 		void RunPerformanceTests() const;
 		void Add(TesterBase* test);
 		void Run(TesterBase& test);
-		void RunAll(bool multiThreaded);
+		void RunAll(const size_t noOfThreads);
 		void ClearAllTests();
 
 		static TesterManager& Get();
@@ -41,6 +42,7 @@ namespace kTest
 		                           const std::string& resTimeStr);
 		double GetAverageTime() const;
 		void WriteToFile(const std::string& results);
+		std::function<void()> GetTestFunc(const size_t noOfThreads, clock_t& start);
 		
 	private:
 		std::string path;

@@ -41,7 +41,9 @@ namespace klib::kThread
 		
 		void ShutdownAll();
 
-		bool IsJoinable(size_t index);
+		bool CanJoin(size_t index) const;
+		
+		bool CanJoinAll() const;
 
 		void Join(size_t index);
 
@@ -59,13 +61,14 @@ namespace klib::kThread
 		
 		size_t GetSize() const;
 		
-		std::thread::id GetID(size_t index);
+		std::thread::id GetID(size_t index) const;
 
-		std::vector<std::thread::id> GetIDs();
+		std::vector<std::thread::id> GetIDs() const;
 
 		void QueueJob(Job job);
 
 		std::thread& GetThread(size_t index);
+		const std::thread& GetThread(size_t index) const;
 
 	protected:
 		void ThreadLoop(const type_trait::BooleanWrapper& sd);
