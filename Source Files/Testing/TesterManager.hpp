@@ -1,10 +1,11 @@
 #pragma once
 
 #include "../HelperMacros.hpp"
-#include <deque>
+
 #include <fstream>
 #include <memory>
 #include <mutex>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -30,7 +31,7 @@ namespace kTest
 		void RunPerformanceTests() const;
 		void Add(TesterBase* test);
 		void Run(TesterBase& test);
-		void RunAll();
+		void RunAll(bool multiThreaded);
 		void ClearAllTests();
 
 		static TesterManager& Get();
@@ -43,7 +44,7 @@ namespace kTest
 		
 	private:
 		std::string path;
-		std::deque<std::shared_ptr<TesterBase>> tests;
+		std::set<std::shared_ptr<TesterBase>> tests;
 		std::vector<double> timesRecorded;
 		bool success;
 		std::mutex consoleMutex;

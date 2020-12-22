@@ -10,22 +10,22 @@
 
 namespace klib::kString::stringify
 {
-	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
+	template<class CharType, typename = std::enable_if_t<type_trait::Is_Char_V<CharType>>>
 	constexpr CharType g_BinaryModeToken = CharType('b');
 
-	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
+	template<class CharType, typename = std::enable_if_t<type_trait::Is_Char_V<CharType>>>
 	constexpr CharType g_HexModeToken = CharType('h');
 
-	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
+	template<class CharType, typename = std::enable_if_t<type_trait::Is_Char_V<CharType>>>
 	constexpr CharType g_AsNumber = CharType('d');
 
-	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
+	template<class CharType, typename = std::enable_if_t<type_trait::Is_Char_V<CharType>>>
 	constexpr CharType g_GeneralFloatModeToken = CharType('g');
 
-	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
+	template<class CharType, typename = std::enable_if_t<type_trait::Is_Char_V<CharType>>>
 	constexpr CharType g_FixedFloatModeToken = CharType('f');
 
-	template<class CharType, typename = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
+	template<class CharType, typename = std::enable_if_t<type_trait::Is_Char_V<CharType>>>
 	constexpr CharType g_ScientificFloatModeToken = CharType('e');
 
 	template<typename CharT, typename T>

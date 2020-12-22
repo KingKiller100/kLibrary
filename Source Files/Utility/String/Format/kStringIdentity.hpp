@@ -94,8 +94,8 @@ namespace klib::kString::stringify
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename Char_t, typename T>
 	class Identity<Char_t, T, std::enable_if_t<
-		type_trait::Is_CharType_V<Char_t>
-		&& type_trait::Is_StringType_V<T>
+		type_trait::Is_Char_V<Char_t>
+		&& type_trait::Is_String_V<T>
 		&& std::is_same_v<typename T::value_type, Char_t>
 		>>
 	{
@@ -117,7 +117,7 @@ namespace klib::kString::stringify
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename Char_t, typename T>
 	class Identity<Char_t, T, std::enable_if_t<
-		type_trait::Is_CharType_V<Char_t>
+		type_trait::Is_Char_V<Char_t>
 		&& type_trait::Is_CString_V<T>
 		&& std::is_same_v<Char_t,
 		std::remove_cv_t<std::remove_pointer_t<std::decay_t<T>>>>
@@ -141,8 +141,8 @@ namespace klib::kString::stringify
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename Char_t, typename T>
 	class Identity<Char_t, T, std::enable_if_t<
-		type_trait::Is_CharType_V<Char_t>
-		&& !type_trait::Is_CharType_V<ONLY_TYPE(T)>
+		type_trait::Is_Char_V<Char_t>
+		&& !type_trait::Is_Char_V<ONLY_TYPE(T)>
 		&& std::is_pointer_v<T>
 		>>
 	{
@@ -163,7 +163,7 @@ namespace klib::kString::stringify
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename Char_t, typename T>
 	class Identity<Char_t, T, std::enable_if_t<
-		type_trait::Is_CharType_V<Char_t>
+		type_trait::Is_Char_V<Char_t>
 		&& std::is_arithmetic_v<T>
 		>>
 	{

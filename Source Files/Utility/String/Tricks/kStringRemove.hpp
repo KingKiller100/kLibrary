@@ -12,10 +12,10 @@ namespace klib::kString
 			|| type_trait::Is_Char_t<Stringish>)   // Just a character
 #else
 		, typename = std::enable_if_t<
-		type_trait::Is_StringType_V<StringType>
-		&& type_trait::Is_StringType_V<Stringish>   // STL string
+		type_trait::Is_String_V<StringType>
+		&& type_trait::Is_String_V<Stringish>   // STL string
 		|| type_trait::Is_CString_V<Stringish>  // C style string
-		|| type_trait::Is_CharType_V<Stringish> // Just a character
+		|| type_trait::Is_Char_V<Stringish> // Just a character
 		>>
 #endif
 		constexpr bool Remove(StringType & str, const Stringish & search, size_t offset = 0)

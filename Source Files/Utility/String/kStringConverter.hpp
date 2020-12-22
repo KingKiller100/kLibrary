@@ -9,8 +9,8 @@ namespace klib
 	namespace kString
 	{
 		template<typename DestChar, typename SourceChar, class = std::enable_if_t<
-			type_trait::Is_CharType_V<DestChar>
-			&& type_trait::Is_CharType_V<SourceChar>
+			type_trait::Is_Char_V<DestChar>
+			&& type_trait::Is_Char_V<SourceChar>
 			>>
 			USE_RESULT constexpr DestChar Convert(SourceChar source) noexcept
 		{
@@ -18,8 +18,8 @@ namespace klib
 		}
 
 		template<typename DestChar, typename SourceChar, class = std::enable_if_t<
-			type_trait::Is_CharType_V<DestChar>
-			&& type_trait::Is_CharType_V<SourceChar>
+			type_trait::Is_Char_V<DestChar>
+			&& type_trait::Is_Char_V<SourceChar>
 			>>
 			USE_RESULT constexpr DestChar* Convert(const SourceChar* source) noexcept
 		{
@@ -46,10 +46,10 @@ namespace klib
 		}
 
 		template<class DestChar, class SourceChar, class = std::enable_if_t <
-			type_trait::Is_CharType_V<DestChar>
-			&& type_trait::Is_CharType_V<SourceChar>
-			&& type_trait::Is_StringType_V<std::basic_string<DestChar>>
-			&& type_trait::Is_StringType_V<std::basic_string<SourceChar>>
+			type_trait::Is_Char_V<DestChar>
+			&& type_trait::Is_Char_V<SourceChar>
+			&& type_trait::Is_String_V<std::basic_string<DestChar>>
+			&& type_trait::Is_String_V<std::basic_string<SourceChar>>
 			>>
 			USE_RESULT std::basic_string<DestChar> Convert(const std::basic_string<SourceChar>& source) noexcept
 		{
@@ -57,10 +57,10 @@ namespace klib
 		}
 
 		template<class DestChar, class SourceChar, class = std::enable_if_t <
-			type_trait::Is_CharType_V<DestChar>
-			&& type_trait::Is_CharType_V<SourceChar>
-			&& type_trait::Is_StringType_V<std::basic_string_view<DestChar>>
-			&& type_trait::Is_StringType_V<std::basic_string_view<SourceChar>>
+			type_trait::Is_Char_V<DestChar>
+			&& type_trait::Is_Char_V<SourceChar>
+			&& type_trait::Is_String_V<std::basic_string_view<DestChar>>
+			&& type_trait::Is_String_V<std::basic_string_view<SourceChar>>
 			>>
 			USE_RESULT std::basic_string<DestChar> Convert(const std::basic_string_view<SourceChar>& source) noexcept
 		{
@@ -69,7 +69,8 @@ namespace klib
 	}
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kString;
-#endif
+#endif
+
 }
 
 #define kCHARACTERCONVERTSECRETIMPL(literal_prefix, string) (literal_prefix ## string)

@@ -9,7 +9,7 @@ namespace klib::kString
 #if MSVC_PLATFORM_TOOLSET >= 142
 				> requires type_trait::Is_String_t<StringType>
 #else
-		, typename = std::enable_if_t<type_trait::Is_StringType_V<StringType>> >
+		, typename = std::enable_if_t<type_trait::Is_String_V<StringType>> >
 #endif
 		USE_RESULT constexpr size_t GetSize(const StringType & str)
 	{
@@ -20,7 +20,7 @@ namespace klib::kString
 #if MSVC_PLATFORM_TOOLSET >= 142
 				> requires type_trait::Is_Char_t<Char_t>
 #else
-		, typename = std::enable_if_t<type_trait::Is_CharType_V<Char_t>> >
+		, typename = std::enable_if_t<type_trait::Is_Char_V<Char_t>> >
 #endif
 		USE_RESULT constexpr size_t GetSize(const Char_t * str)
 	{
@@ -31,7 +31,7 @@ namespace klib::kString
 #if MSVC_PLATFORM_TOOLSET >= 142
 				> requires type_trait::Is_Char_t<Char_t>
 #else
-		, typename = std::enable_if_t<type_trait::Is_CharType_V<Char_t>> >
+		, typename = std::enable_if_t<type_trait::Is_Char_V<Char_t>> >
 #endif
 		USE_RESULT constexpr size_t GetSize(Char_t * str)
 	{
@@ -42,7 +42,7 @@ namespace klib::kString
 #if MSVC_PLATFORM_TOOLSET >= 142
 				> requires type_trait::Is_Char_t<Char_t>
 #else
-		, typename = std::enable_if_t<type_trait::Is_CharType_V<Char_t>> >
+		, typename = std::enable_if_t<type_trait::Is_Char_V<Char_t>> >
 #endif
 		USE_RESULT constexpr size_t GetSize(const Char_t(&)[Size])
 	{

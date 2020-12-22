@@ -7,10 +7,10 @@ namespace klib::kString::stringify
 {
 	constexpr auto s_NoSpecifier = static_cast<size_t>(-1);
 
-	template<class Char_t, typename = std::enable_if_t<type_trait::Is_CharType_V<Char_t>>>
+	template<class Char_t, typename = std::enable_if_t<type_trait::Is_Char_V<Char_t>>>
 	constexpr auto s_DefaultPlaceHolder = Char_t('0');
 
-	template<class Char_t, typename = std::enable_if_t<type_trait::Is_CharType_V<Char_t>>>
+	template<class Char_t, typename = std::enable_if_t<type_trait::Is_Char_V<Char_t>>>
 	constexpr Char_t g_ScientificFloatToken = Char_t('e');
 
 	template<class Char_t>

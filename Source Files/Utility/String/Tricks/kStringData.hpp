@@ -9,7 +9,7 @@ namespace klib::kString
 #if MSVC_PLATFORM_TOOLSET >= 142
 				> requires type_trait::Is_String_t<StringT>
 #else
-		, typename = std::enable_if_t<type_trait::Is_StringType_V<StringT>> >
+		, typename = std::enable_if_t<type_trait::Is_String_V<StringT>> >
 #endif
 		USE_RESULT constexpr const typename StringT::value_type * GetData(const StringT & str) noexcept
 	{
@@ -32,7 +32,7 @@ namespace klib::kString
 #if MSVC_PLATFORM_TOOLSET >= 142
 				> requires type_trait::Is_Char_t<CharT>
 #else
-		, typename = std::enable_if_t<type_trait::Is_CharType_V<CharT>> >
+		, typename = std::enable_if_t<type_trait::Is_Char_V<CharT>> >
 #endif
 		USE_RESULT constexpr CharT GetData(CharT c) noexcept
 	{
@@ -43,7 +43,7 @@ namespace klib::kString
 #if MSVC_PLATFORM_TOOLSET >= 142
 				> requires type_trait::Is_Char_t<CharT>
 #else
-		, typename = std::enable_if_t<type_trait::Is_CharType_V<CharT>> >
+		, typename = std::enable_if_t<type_trait::Is_Char_V<CharT>> >
 #endif
 		USE_RESULT constexpr const CharT* GetData(const CharT (&c)[Size]) noexcept
 	{
@@ -54,7 +54,7 @@ namespace klib::kString
 #if MSVC_PLATFORM_TOOLSET >= 142
 				> requires type_trait::Is_Char_t<CharT>
 #else
-		, typename = std::enable_if_t<type_trait::Is_CharType_V<CharT>> >
+		, typename = std::enable_if_t<type_trait::Is_Char_V<CharT>> >
 #endif
 		USE_RESULT constexpr const CharT* GetData(CharT (&c)[Size]) noexcept
 	{

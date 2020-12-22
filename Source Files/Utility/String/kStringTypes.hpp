@@ -35,7 +35,7 @@ namespace klib
 			return StringWriter<typename SmtPtr::element_type>(string.get());
 		}
 
-		template<class StringT, typename = std::enable_if_t<type_trait::Is_StringType_V<StringT>>>
+		template<class StringT, typename = std::enable_if_t<type_trait::Is_String_V<StringT>>>
 		USE_RESULT constexpr StringWriter<typename StringT::value_type> ToWriter(const StringT& string) noexcept
 		{
 			if _CONSTEXPR17(type_trait::Is_Specialization_V<StringT, std::basic_string>)
@@ -50,7 +50,7 @@ namespace klib
 			return StringReader<Char>(string);
 		}
 
-		template<class StringT, typename = std::enable_if_t<type_trait::Is_StringType_V<StringT>>>
+		template<class StringT, typename = std::enable_if_t<type_trait::Is_String_V<StringT>>>
 		USE_RESULT constexpr StringReader<typename StringT::value_type> ToReader(const StringT& string) noexcept
 		{
 			if _CONSTEXPR17(type_trait::Is_Specialization_V<StringT, std::basic_string_view>)

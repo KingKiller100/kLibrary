@@ -25,7 +25,7 @@ namespace klib::kString::stringify
 
 		template<class Char_t, typename T, typename = std::enable_if_t<
 			std::is_floating_point_v<T>
-			|| type_trait::Is_CharType_V<Char_t>>
+			|| type_trait::Is_Char_V<Char_t>>
 			>
 			const Char_t* FixedNotation(T val, size_t decimalPlaces)
 		{
@@ -71,7 +71,7 @@ namespace klib::kString::stringify
 
 		template<class Char_t, typename T, typename = std::enable_if_t<
 			std::is_floating_point_v<T>
-			|| type_trait::Is_CharType_V<Char_t>>
+			|| type_trait::Is_Char_V<Char_t>>
 			>
 			const Char_t* ScientificNotation(T val, size_t sigFigs)
 		{
@@ -179,7 +179,7 @@ namespace klib::kString::stringify
 
 		template<class Char_t, typename T, typename = std::enable_if_t<
 			std::is_floating_point_v<T>
-			|| type_trait::Is_CharType_V<Char_t>>
+			|| type_trait::Is_Char_V<Char_t>>
 			>
 			const Char_t* GeneralNotation(T val, size_t sigFigs)
 		{
@@ -191,7 +191,7 @@ namespace klib::kString::stringify
 		// Big Endian
 		template<class Char_t, typename Floating_t, typename Unsigned_t, typename = std::enable_if_t<
 			std::is_unsigned_v<Unsigned_t>
-			|| type_trait::Is_CharType_V<Char_t>
+			|| type_trait::Is_Char_V<Char_t>
 			>>
 			const Char_t* BinaryNotation(Unsigned_t val)
 		{
@@ -247,7 +247,7 @@ namespace klib::kString::stringify
 
 	template<class Char_t, typename T, typename = std::enable_if_t<
 		std::is_floating_point_v<T>
-		|| type_trait::Is_CharType_V<Char_t>
+		|| type_trait::Is_Char_V<Char_t>
 		>>
 		const Char_t* StringFloatingPoint(T val, size_t figures = s_NoSpecifier
 			, FloatFormat fmt = FloatFormat::GEN)

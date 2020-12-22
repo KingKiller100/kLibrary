@@ -106,7 +106,7 @@ namespace klib
 			}
 
 			template<class Stringish, typename = std::enable_if_t<
-				type_trait::Is_StringType_V<Stringish>
+				type_trait::Is_String_V<Stringish>
 				>>
 			constexpr bool operator==(const Stringish& str) const
 			{

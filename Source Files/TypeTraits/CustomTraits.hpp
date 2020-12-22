@@ -9,7 +9,7 @@ namespace klib::type_trait
 	template<typename T>
 	struct Is_CustomBase : std::bool_constant<
 		!std::is_fundamental_v<T>
-		&& !Is_StringType_V<T>
+		&& !Is_String_V<T>
 		&& !Is_SmartPtr_V<T>
 		&& !std::is_pointer_v<T>
 		&& !std::is_array_v<T>

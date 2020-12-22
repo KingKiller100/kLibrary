@@ -105,7 +105,7 @@ namespace klib::type_trait
 	};
 	
 	template<typename T>
-	struct Is_CharTypeBase : std::bool_constant<Is_It_V<T,
+	struct Is_CharacterBase : std::bool_constant<Is_It_V<T,
 		char, unsigned char, signed char, wchar_t, char16_t, char32_t
 #ifdef __cpp_char8_t
 		, char8_t
@@ -113,23 +113,23 @@ namespace klib::type_trait
 		>>
 	{
 		using Traits = CharacterTraits<T>;
-		using Char_t = T;
+		using Type = T;
 	};
 
 	template<typename T>
-	struct Is_CharType : Is_CharTypeBase<std::remove_cv_t<T>>
+	struct Is_Character : Is_CharacterBase<std::remove_cv_t<T>>
 	{};
 
 	// Determines whether type is a character type
 	template<typename T>
-	constexpr bool Is_CharType_V = Is_CharType<T>::value;
+	constexpr bool Is_Char_V = Is_Character<T>::value;
 
 #if MSVC_PLATFORM_TOOLSET > 141
 	template<typename T>
-	concept Is_Char_t = Is_CharType_V<T> == true;
+	concept Is_Char_t = Is_Char_V<T> == true;
 #endif
 	
-	template<typename CharType, typename = std::enable_if_t<Is_CharType_V<CharType>>>
+	template<typename CharType, typename = std::enable_if_t<Is_Char_V<CharType>>>
 	constexpr auto g_NullTerminator = CharacterTraits<CharType>::NullTerminator;
 
 }

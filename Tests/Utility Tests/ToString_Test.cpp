@@ -68,7 +68,7 @@ namespace kTest::utility
 
 		{
 			const auto input = "quarantine";
-			constexpr auto g = type_trait::Is_CharType_V<char>;
+			constexpr auto g = type_trait::Is_Char_V<char>;
 			constexpr auto h = type_trait::Is_CString_V<decltype(input)>;
 			constexpr auto i = std::is_same_v<char, std::remove_cv_t<std::remove_pointer_t<
 				std::decay_t<decltype(input)>>>>;

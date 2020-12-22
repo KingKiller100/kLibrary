@@ -26,7 +26,7 @@ namespace klib::kStopwatch
 
 		template<typename Units, class CharT = char, typename = std::enable_if_t<
 			type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
-			&& type_trait::Is_CharType_V<CharT>
+			&& type_trait::Is_Char_V<CharT>
 			>>
 			USE_RESULT constexpr std::basic_string_view<CharT> GetUnitsStr(UnitStrLength length = UnitStrLength::SHORT) noexcept
 		{
@@ -87,7 +87,7 @@ namespace klib::kStopwatch
 
 		template<typename Units, class CharT = char, typename = std::enable_if_t<
 			type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
-			&& type_trait::Is_CharType_V<CharT>
+			&& type_trait::Is_Char_V<CharT>
 			>>
 			USE_RESULT constexpr std::basic_string_view<CharT> GetUnitsStr(Units&& value, UnitStrLength length) noexcept
 		{

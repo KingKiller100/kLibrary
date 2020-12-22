@@ -6,7 +6,7 @@ namespace klib::kString::stringify
 {
 	template<class Char_t
 		, typename = std::enable_if_t<
-		type_trait::Is_CharType_V<Char_t>>
+		type_trait::Is_Char_V<Char_t>>
 		>
 		const Char_t* StringBool(bool val)
 	{

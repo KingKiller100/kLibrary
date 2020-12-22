@@ -14,7 +14,7 @@
 namespace klib::kString
 {
 	template<class Integer_t, class Char_t, class = std::enable_if_t<
-		type_trait::Is_CharType_V<Char_t>
+		type_trait::Is_Char_V<Char_t>
 		>>
 		USE_RESULT constexpr Integer_t CStrTo(const Char_t* const str, const Char_t* const end = nullptr)
 	{
@@ -95,7 +95,7 @@ namespace klib::kString
 	}
 
 	template<class Integer_t, class Char_t, class = std::enable_if_t<
-		type_trait::Is_CharType_V<Char_t>
+		type_trait::Is_Char_V<Char_t>
 		>>
 		USE_RESULT constexpr Integer_t CStrTo(const Char_t* const cstr, Integer_t defaultValue, const Char_t* const end = nullptr)
 	{
@@ -106,7 +106,7 @@ namespace klib::kString
 	}
 
 	template<class Integer_t, class Char_t, class = std::enable_if_t<
-		type_trait::Is_CharType_V<Char_t>
+		type_trait::Is_Char_V<Char_t>
 		>>
 		USE_RESULT constexpr Integer_t TryCStrTo(const Char_t* const cstr, Integer_t defaultValue, const Char_t* const end = nullptr)
 	{

@@ -25,7 +25,7 @@ namespace klib
 		ENUM_CLASS(PreserveEmpty, std::uint8_t, YES, NO);
 
 		template<class CharT = char, class = std::enable_if_t<
-			type_trait::Is_CharType_V<CharT>
+			type_trait::Is_Char_V<CharT>
 			>>
 		USE_RESULT constexpr StringWriter<CharT> Replace(const CharT* str, CharT oldChar, CharT newChar) noexcept
 		{
@@ -53,7 +53,7 @@ namespace klib
 		}
 
 		template<class StringT, typename = std::enable_if_t<
-			type_trait::Is_StringType_V<StringT>
+			type_trait::Is_String_V<StringT>
 		>>
 		USE_RESULT constexpr StringWriter<typename StringT::value_type> Replace(const StringT& str, typename StringT::value_type oldChar, typename StringT::value_type newChar) noexcept
 		{

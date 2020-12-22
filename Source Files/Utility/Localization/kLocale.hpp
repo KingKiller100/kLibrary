@@ -20,7 +20,7 @@ namespace klib::kLocale
 	}
 
 	template<class Char_t, typename Facet_t = std::ctype<Char_t>, class = std::enable_if_t<
-		type_trait::Is_CharType_V<Char_t>
+		type_trait::Is_Char_V<Char_t>
 	>>
 	USE_RESULT constexpr bool Query(Char_t c, typename Facet_t::mask mask)
 	{

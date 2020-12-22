@@ -11,7 +11,7 @@ namespace klib::kString
 	{
 		template<typename CStringA, typename Char_t, typename CmpFunc_t, typename DirectionFunc_t, class = std::enable_if_t <
 			type_trait::Is_CString_V<CStringA>
-			&& type_trait::Is_CharType_V<Char_t>
+			&& type_trait::Is_Char_V<Char_t>
 			&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
 			>>
 			USE_RESULT constexpr size_t FindCharImpl(const CStringA& hayStack, Char_t needle, size_t offset, CmpFunc_t&& cmpFunc, DirectionFunc_t&& directionFunc)
@@ -65,7 +65,7 @@ namespace klib::kString
 
 	template<typename CStringA, typename Char_t, class = std::enable_if_t <
 		type_trait::Is_CString_V<CStringA>
-		&& type_trait::Is_CharType_V<Char_t>
+		&& type_trait::Is_Char_V<Char_t>
 		&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
 		>>
 		USE_RESULT constexpr size_t Find_First_Of(const CStringA& str, Char_t search, size_t offset = 0)
@@ -76,7 +76,7 @@ namespace klib::kString
 
 	template<typename CStringA, typename Char_t, class = std::enable_if_t <
 		type_trait::Is_CString_V<CStringA>
-		&& type_trait::Is_CharType_V<Char_t>
+		&& type_trait::Is_Char_V<Char_t>
 		&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
 		>>
 		USE_RESULT constexpr size_t Find(const CStringA& str, Char_t search, size_t offset = 0)
@@ -87,7 +87,7 @@ namespace klib::kString
 
 	template<typename CStringA, typename Char_t, class = std::enable_if_t <
 		type_trait::Is_CString_V<CStringA>
-		&& type_trait::Is_CharType_V<Char_t>
+		&& type_trait::Is_Char_V<Char_t>
 		&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
 		>>
 		USE_RESULT constexpr size_t Find_First_Not_Of(const CStringA& str, Char_t search, size_t offset = 0)
@@ -98,7 +98,7 @@ namespace klib::kString
 
 	template<typename CStringA, typename Char_t, class = std::enable_if_t <
 		type_trait::Is_CString_V<CStringA>
-		&& type_trait::Is_CharType_V<Char_t>
+		&& type_trait::Is_Char_V<Char_t>
 		&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
 		>>
 		USE_RESULT constexpr size_t Find_Last_Of(const CStringA& str, Char_t search, size_t offset = type_trait::g_NoPos<std::basic_string<Char_t>>)
@@ -110,7 +110,7 @@ namespace klib::kString
 
 	template<typename CStringA, typename Char_t, class = std::enable_if_t <
 		type_trait::Is_CString_V<CStringA>
-		&& type_trait::Is_CharType_V<Char_t>
+		&& type_trait::Is_Char_V<Char_t>
 		&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
 		>>
 		USE_RESULT constexpr size_t Find_Last_Not_Of(const CStringA& str, Char_t search, size_t offset = type_trait::g_NoPos<std::basic_string<Char_t>>)
@@ -121,7 +121,7 @@ namespace klib::kString
 	}
 
 #if MSVC_PLATFORM_TOOLSET < 142
-	template<typename StringType, typename = std::enable_if_t<type_trait::Is_StringType_V<StringType>>>
+	template<typename StringType, typename = std::enable_if_t<type_trait::Is_String_V<StringType>>>
 #else
 	template<typename StringType> requires type_trait::Is_String_t<StringType>
 #endif
@@ -135,7 +135,7 @@ namespace klib::kString
 #if MSVC_PLATFORM_TOOLSET >= 142
 				> requires type_trait::Is_String_t<StringType>
 #else
-			, typename = std::enable_if_t<type_trait::Is_StringType_V<StringType>> >
+			, typename = std::enable_if_t<type_trait::Is_String_V<StringType>> >
 #endif
 
 			USE_RESULT constexpr bool Contains(const StringType & str, typename StringType::value_type search
@@ -149,8 +149,8 @@ namespace klib::kString
 				> requires type_trait::Is_String_t<StringA>&& type_trait::Is_String_t<StringB>
 #else
 			, typename = std::enable_if_t<
-			type_trait::Is_StringType_V<StringA>
-			&& type_trait::Is_StringType_V<StringB>
+			type_trait::Is_String_V<StringA>
+			&& type_trait::Is_String_V<StringB>
 			>>
 #endif
 			USE_RESULT constexpr bool Contains(const StringA & str, const StringB & search
@@ -161,9 +161,9 @@ namespace klib::kString
 
 		template<typename StringType, typename Stringish
 			, typename = std::enable_if_t<
-			type_trait::Is_StringType_V<StringType>
-			&& (type_trait::Is_StringType_V<StringType>
-				|| (type_trait::Is_CharType_V<ONLY_TYPE(Stringish)>
+			type_trait::Is_String_V<StringType>
+			&& (type_trait::Is_String_V<StringType>
+				|| (type_trait::Is_Char_V<ONLY_TYPE(Stringish)>
 					&& std::is_same_v<typename StringType::value_type, Stringish>
 					&& std::is_pointer_v<Stringish>)
 				)

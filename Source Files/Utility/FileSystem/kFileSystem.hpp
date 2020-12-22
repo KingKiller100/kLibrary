@@ -27,17 +27,17 @@ namespace klib::kFileSystem
 		inline bool g_Update_CWD = true;
 	}
 
-	template<class CharType, class = std::enable_if_t<type_trait::Is_CharType_V<CharType>>>
+	template<class CharType, class = std::enable_if_t<type_trait::Is_Char_V<CharType>>>
 	constexpr auto pathSeparator = CharType('\\');
 
-	template<class SourceType, class = std::enable_if_t<type_trait::Is_StringType_V<SourceType>>>
+	template<class SourceType, class = std::enable_if_t<type_trait::Is_String_V<SourceType>>>
 	USE_RESULT constexpr auto CorrectFilePathSeparators(const SourceType& src)
 	{
 		using CharType = typename SourceType::value_type;
 		return kString::Replace(src, CharType('/'), pathSeparator<CharType>);
 	}
 
-	template<class SourceType, class = std::enable_if_t<type_trait::Is_CharType_V<SourceType>>>
+	template<class SourceType, class = std::enable_if_t<type_trait::Is_Char_V<SourceType>>>
 	USE_RESULT constexpr auto CorrectFilePathSeparators(const SourceType* src)
 	{
 		using CharType = SourceType;

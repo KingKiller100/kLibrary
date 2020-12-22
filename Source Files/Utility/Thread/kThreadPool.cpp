@@ -6,7 +6,7 @@ namespace klib::kThread
 {
 	ThreadPool::ThreadPool()
 	{
-		AddThread(MaxCores());
+		AddThread(std::thread::hardware_concurrency());
 	}
 
 	ThreadPool::ThreadPool(size_t count)
@@ -56,6 +56,24 @@ namespace klib::kThread
 	{
 		for (auto&& sd : shutdowns)
 			sd = true;
+	}
+
+	bool ThreadPool::CanJoin(size_t index) const
+	{
+		if (index >= threads.size())
+			throw std::out_of_range("Index >= number of threads");
+		return threads[index].joinable();
+	}
+
+	bool ThreadPool::CanJoinAll() const
+	{
+		for (const auto& thr : threads)
+		{
+			if (!thr.joinable())
+				return false;
+		}
+		
+		return true;
 	}
 
 	void ThreadPool::Join(size_t index)
@@ -108,7 +126,7 @@ namespace klib::kThread
 	{
 		while (!jobs.empty())
 		{
-			jobs.pop();
+			PopJob();
 		}
 	}
 
@@ -117,14 +135,14 @@ namespace klib::kThread
 		return threads.size();
 	}
 
-	std::thread::id ThreadPool::GetID(size_t index)
+	std::thread::id ThreadPool::GetID(size_t index) const
 	{
 		if (index >= threads.size())
 			throw std::out_of_range("Index >= number of threads");
 		return threads[index].get_id();
 	}
 
-	std::vector<std::thread::id> ThreadPool::GetIDs()
+	std::vector<std::thread::id> ThreadPool::GetIDs() const
 	{
 		std::vector<std::thread::id> ids;
 		ids.reserve(threads.size());
@@ -153,12 +171,12 @@ namespace klib::kThread
 		return threads[index];
 	}
 
-	std::uint32_t ThreadPool::MaxCores() noexcept
+	const std::thread& ThreadPool::GetThread(size_t index) const
 	{
-		return std::thread::hardware_concurrency();
+		return GetThread(index);
 	}
 
-	void ThreadPool::ThreadLoop(const ThreadPool::BooleanWrapper& sd)
+	void ThreadPool::ThreadLoop(const type_trait::BooleanWrapper& sd)
 	{
 		Job job;
 

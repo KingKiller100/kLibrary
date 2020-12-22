@@ -7,7 +7,7 @@
 namespace klib::kString
 {
 	template<class CharT, class = std::enable_if_t<
-		type_trait::Is_CharType_V<CharT>
+		type_trait::Is_Char_V<CharT>
 		>>
 		USE_RESULT constexpr bool IsWhiteSpace(CharT c)
 	{
@@ -17,12 +17,12 @@ namespace klib::kString
 
 	template<typename Stringish, class = std::enable_if_t<
 		type_trait::Is_CString_V<Stringish>
-		|| type_trait::Is_StringType_V<Stringish>
+		|| type_trait::Is_String_V<Stringish>
 		>>
 		USE_RESULT constexpr bool IsWhiteSpaceOrNull(const Stringish& str)
 	{
 		using namespace type_trait;
-		if _CONSTEXPR17(Is_StringType_V<Stringish>)
+		if _CONSTEXPR17(Is_String_V<Stringish>)
 		{
 			if (str.empty())
 				return true;

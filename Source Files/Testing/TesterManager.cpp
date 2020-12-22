@@ -11,6 +11,7 @@
 // Change console colour
 #include "../Utility/Misc/kConsoleColour.hpp"
 
+#include "../Maths/kMathsFundamentals.hpp"
 #include "../Utility/Thread/kThreadPool.hpp"
 #include "../Utility/FileSystem/kFileSystem.hpp"
 
@@ -56,7 +57,7 @@ namespace kTest
 		using namespace klib;
 
 		kFileSystem::SetCurrentWorkingDirectory(kFileSystem::GetExeDirectory());
-		
+
 		path = std::filesystem::current_path().string() + "\\Test Results\\";
 		const auto isMade = std::filesystem::create_directory(path.c_str());
 
@@ -88,32 +89,45 @@ namespace kTest
 
 	void TesterManager::Add(TesterBase* test)
 	{
-		tests.push_back(std::unique_ptr<TesterBase>(std::move(test)));
+		tests.insert(std::unique_ptr<TesterBase>(std::move(test)));
 	}
 
-	void TesterManager::RunAll()
+	void TesterManager::RunAll(bool multiThreaded)
 	{
+		std::cout << "Testing: " << (multiThreaded ? "Multi-Threaded" : "Single Threaded")
+			<< "\n";
+
 		timesRecorded.reserve(tests.size());
-		std::stack<decltype(tests)::value_type> finishedTests;
 
 		clock_t start;
+
+		if (multiThreaded)
 		{
-			kThread::ThreadPool threads;
-			const auto size = threads.GetSize();
+			const auto thrCount =
+				kmaths::Min(std::thread::hardware_concurrency(), tests.size());
+			
+			kThread::ThreadPool threads(thrCount);
 
 			start = std::clock();
-			while (!tests.empty())
+			for (const auto& test : tests)
 			{
-				for (size_t i = 0; i < size && !tests.empty(); ++i)
+				threads.QueueJob({ [this, &test]
 				{
-					const auto& test = tests.front();
-					threads.QueueJob({ [this, &test] { Run(*test); }, test->GetName() });
-					finishedTests.push(test);
-					tests.pop_front();
+					Run(*test);
 				}
+				, test->GetName() });
 			}
 		}
-		const auto end = std::clock();
+		else
+		{
+			start = std::clock();
+			for (const auto& test : tests)
+			{
+				Run(*test);
+			}
+		}
+
+		const clock_t end = std::clock();
 
 		const auto finalTime = static_cast<double>(end - start) / CLOCKS_PER_SEC;
 		const auto secs = CAST(unsigned, finalTime);

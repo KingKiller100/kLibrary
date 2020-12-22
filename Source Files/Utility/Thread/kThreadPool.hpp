@@ -3,6 +3,8 @@
 #include <mutex>
 #include <queue>
 
+#include "../../TypeTraits/BooleanTraits.hpp"
+
 namespace klib::kThread
 {
 	class ThreadPool
@@ -19,26 +21,6 @@ namespace klib::kThread
 			{
 				work();
 			}
-		};
-
-		struct BooleanWrapper
-		{
-			bool val;
-
-			constexpr BooleanWrapper() : val(false) {}
-			constexpr BooleanWrapper(bool v) : val(v) {}
-			
-			template<typename Target_t>
-			constexpr operator Target_t() const
-			{
-				return val;
-			}
-
-			constexpr operator bool() const
-			{
-				return val;
-			}
-			
 		};
 		
 	public:
@@ -59,11 +41,13 @@ namespace klib::kThread
 		
 		void ShutdownAll();
 
+		bool IsJoinable(size_t index);
+
+		void Join(size_t index);
+
 		void JoinAll();
 		
 		void JoinAndPopAll();
-
-		void Join(size_t index);
 
 		void Detach(size_t index);
 
@@ -83,15 +67,13 @@ namespace klib::kThread
 
 		std::thread& GetThread(size_t index);
 
-		static std::uint32_t MaxCores() noexcept;
-
 	protected:
-		void ThreadLoop(const BooleanWrapper& sd);
-
+		void ThreadLoop(const type_trait::BooleanWrapper& sd);
+		
 	protected:
 		std::mutex mutex;
 		std::condition_variable condVar;
-		std::vector<BooleanWrapper> shutdowns;
+		std::vector<type_trait::BooleanWrapper> shutdowns;
 		std::queue<Job> jobs;
 		std::vector<std::thread> threads;
 		std::string prevJob;

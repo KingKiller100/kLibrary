@@ -14,7 +14,7 @@ namespace klib::kString::stringify
 	};
 
 	template<class Char_t, typename Uint_t, typename = std::enable_if_t<
-		std::is_unsigned_v<Uint_t> || type_trait::Is_CharType_V<Char_t>>
+		std::is_unsigned_v<Uint_t> || type_trait::Is_Char_V<Char_t>>
 		>
 		USE_RESULT constexpr Char_t* UintToStr(Char_t* outHead, Uint_t uVal, const unsigned base = 10)
 	{
@@ -27,7 +27,7 @@ namespace klib::kString::stringify
 	}
 
 	template<class Char_t, typename Signed_t, typename = std::enable_if_t<
-		std::is_integral_v<Signed_t> || type_trait::Is_CharType_V<Char_t>>
+		std::is_integral_v<Signed_t> || type_trait::Is_Char_V<Char_t>>
 		>
 		USE_RESULT constexpr const Char_t* StringSignedIntegral(Signed_t val, size_t minDigits = s_NoSpecifier
 			, Char_t placeHolder = s_DefaultPlaceHolder<Char_t>, const unsigned base = 10)
@@ -66,7 +66,7 @@ namespace klib::kString::stringify
 	}
 
 	template<class Char_t, typename Unsigned_t, typename = std::enable_if_t<
-		std::is_integral_v<Unsigned_t> || type_trait::Is_CharType_V<Char_t>>
+		std::is_integral_v<Unsigned_t> || type_trait::Is_Char_V<Char_t>>
 		>
 		USE_RESULT constexpr const Char_t* StringUnsignedIntegral(Unsigned_t val, size_t minDigits = s_NoSpecifier
 			, Char_t placeHolder = s_DefaultPlaceHolder<Char_t>, const unsigned base = 10)
