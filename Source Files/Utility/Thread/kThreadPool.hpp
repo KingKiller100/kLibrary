@@ -24,7 +24,6 @@ namespace klib::kThread
 		};
 		
 	public:
-		ThreadPool();
 		ThreadPool(size_t count);
 
 		ThreadPool(const ThreadPool& other) noexcept = delete;

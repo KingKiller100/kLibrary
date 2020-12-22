@@ -4,11 +4,6 @@
 
 namespace klib::kThread
 {
-	ThreadPool::ThreadPool()
-	{
-		AddThread(std::thread::hardware_concurrency());
-	}
-
 	ThreadPool::ThreadPool(size_t count)
 	{
 		AddThread(count);

@@ -3,37 +3,38 @@
 
 #include "kAddTest.hpp"
 #include "TesterManager.hpp"
+
 #include "Performance/PerformanceTestManager.hpp"
 
 // Maths Tests
-#include "../../Tests/Maths Tests/Random_Test.hpp"
-#include "../../Tests/Maths Tests/Matrix_Test.hpp"
-#include "../../Tests/Maths Tests/Vectors_Test.hpp"
-#include "../../Tests/Maths Tests/Fraction_Test.hpp"
 #include "../../Tests/Maths Tests/Algorithm_Test.hpp"
+#include "../../Tests/Maths Tests/Fraction_Test.hpp"
+#include "../../Tests/Maths Tests/Matrix_Test.hpp"
 #include "../../Tests/Maths Tests/Quaternion_Test.hpp"
+#include "../../Tests/Maths Tests/Random_Test.hpp"
+#include "../../Tests/Maths Tests/Vectors_Test.hpp"
 
 // Utility
-#include "../../Tests/Utility Tests/Enum_Test.hpp"
-#include "../../Tests/Utility Tests/SourceInfo_Test.hpp"
-#include "../../Tests/Utility Tests/Stopwatch_Test.hpp"
-#include "../../Tests/Utility Tests/Logging_Test.hpp"
 #include "../../Tests/Utility Tests/Calendar_Test.hpp"
 #include "../../Tests/Utility Tests/Debug_Test.hpp"
+#include "../../Tests/Utility Tests/Enum_Test.hpp"
 #include "../../Tests/Utility Tests/FileSystem_Test.hpp"
-#include "../../Tests/Utility Tests/StringView_Test.hpp"
+#include "../../Tests/Utility Tests/Logging_Test.hpp"
+#include "../../Tests/Utility Tests/Profiler_Test.hpp"
+#include "../../Tests/Utility Tests/SourceInfo_Test.hpp"
+#include "../../Tests/Utility Tests/Stopwatch_Test.hpp"
 #include "../../Tests/Utility Tests/StringConverter_Test.hpp"
 #include "../../Tests/Utility Tests/StringTricks_Test.hpp"
+#include "../../Tests/Utility Tests/StringView_Test.hpp"
 #include "../../Tests/Utility Tests/ToString_Test.hpp"
-#include "../../Tests/Utility Tests/Profiler_Test.hpp"
 
 // Templates
 #include "../../Tests/Templates Tests/BytesStorage_Test.hpp"
 
 // Performance Tests
+#include "../../Tests/Performance Tests/Maths/Algorithms_SpeedTest.hpp"
 #include "../../Tests/Performance Tests/Maths/Vector_SpeedTest.hpp"
 #include "../../Tests/Performance Tests/Utility/ToString_SpeedTest.hpp"
-#include "../../Tests/Performance Tests/Maths/Algorithms_SpeedTest.hpp"
 
 namespace kTest
 {

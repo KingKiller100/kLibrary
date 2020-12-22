@@ -62,6 +62,7 @@ namespace kTest::utility
 			std::this_thread::sleep_for(20ms);
 			const auto dt3 = sw.GetDeltaTime();
 			const auto lifeTime = sw.GetAbsoluteLifeTime();
+
 			VERIFY(kmaths::Approximately(lifeTime, 35, 5));
 			VERIFY(kmaths::Approximately(dt1, 10, 5));
 			VERIFY(kmaths::Approximately(dt2, 5, 2));
