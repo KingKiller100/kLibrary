@@ -166,10 +166,41 @@ namespace klib::kStopwatch
 	};
 	
 	template<typename Rep, typename Clock>
-	USE_RESULT Rep TimePointTo(const typename Clock::TimePoint_t& duration) noexcept(std::is_arithmetic_v<Rep>)
+	USE_RESULT Rep TimePointTo(const typename Clock::TimePoint_t& timePoint) noexcept(std::is_arithmetic_v<Rep>)
 	{
 		return static_cast<Rep>(
-			std::chrono::time_point_cast<Clock::Duration_t>(duration).time_since_epoch().count()
+			std::chrono::time_point_cast<Clock::Duration_t>(timePoint).time_since_epoch().count()
 			);
+	}
+
+	/**
+	 * \brief
+	 *		Converts time point recorded to a type of time duration
+	 *		i.e. converts time point to seconds
+	 * \tparam Rep
+	 *		Representation type
+	 * \param duration
+	 *		Time point
+	 * \return
+	 *		Time in the desired duration form, represented as your Representation
+	 */
+	template<typename Rep, typename Clock>
+	USE_RESULT constexpr Rep DurationTo(const typename Clock::Duration_t& duration) noexcept(std::is_arithmetic_v<Rep>)
+	{
+		using Duration_t = typename Clock::Duration_t;
+
+		static constexpr long double sixtieth = (static_cast<long double>(1) / 60);
+		static constexpr long double thousandth = (static_cast<long double>(1) / 1000);
+
+		const auto diff = std::chrono::duration_cast<Duration_t>(duration);
+
+		long double finalDuration;
+
+		if _CONSTEXPR_IF(type_trait::Is_It_V<typename Clock::Units_t, units::Hours, units::Mins>)
+			finalDuration = sixtieth * diff.count();
+		else
+			finalDuration = thousandth * diff.count();
+
+		return static_cast<Rep>(finalDuration);
 	}
 }

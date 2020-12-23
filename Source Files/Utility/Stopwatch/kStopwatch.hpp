@@ -11,13 +11,13 @@ namespace klib
 {
 	namespace kStopwatch
 	{
-		template<typename RepresentationType, class ClockType = HighAccuracyClock<units::Micros>>
+		template<typename Representation, class Clock = HighAccuracyClock<units::Micros>>
 		class Stopwatch
 		{
-			using Clock_t = ClockType;
-			using Units_t = typename Clock_t::Units_t;
-			using Rep_t = RepresentationType;
-			using TimePoint_t = typename ClockType::TimePoint_t;
+			using Clock_t = Clock;
+			using Rep_t = Representation;
+			using Units_t = typename Clock::Units_t;
+			using TimePoint_t = typename Clock::TimePoint_t;
 
 		public:
 			constexpr Stopwatch() noexcept
@@ -33,7 +33,7 @@ namespace klib
 				USE_RESULT constexpr Rep_t GetAbsoluteLifeTime() const noexcept(std::is_arithmetic_v<Rep_t>)
 			{
 				std::atomic_thread_fence(std::memory_order_relaxed);
-				const auto lifeTime = ConvertToCorrectUnits<Units2>(Clock_t::Now(), start);
+				const auto lifeTime = DurationTo<Rep_t, Clock_t>(Clock_t::Now() - start);
 				std::atomic_thread_fence(std::memory_order_relaxed);
 				return lifeTime;
 			}
@@ -45,7 +45,7 @@ namespace klib
 			{
 				std::atomic_thread_fence(std::memory_order_relaxed);
 				const auto now = isRunning ? Clock_t::Now() : current;
-				auto lifeTime = ConvertToCorrectUnits<Units2>(now, start);
+				const auto lifeTime = DurationTo<Rep_t, Clock_t>(now - start);
 				std::atomic_thread_fence(std::memory_order_relaxed);
 				return lifeTime;
 			}
@@ -59,7 +59,7 @@ namespace klib
 
 				const auto now = Clock_t::Now();
 
-				auto deltaTime = ConvertToCorrectUnits<Units2>(now, previous);
+				auto deltaTime = DurationTo<Rep_t, Clock_t>(now - previous);
 				
 				if (isRunning)
 				{
@@ -67,7 +67,7 @@ namespace klib
 				}
 				else
 				{
-					deltaTime = ConvertToCorrectUnits<Units2>(current, previous);
+					deltaTime = DurationTo<Rep_t, Clock_t>(current - previous);
 				}
 
 				std::atomic_thread_fence(std::memory_order_relaxed);
@@ -80,10 +80,7 @@ namespace klib
 				>>
 				USE_RESULT constexpr Rep_t GetStartTime() noexcept(std::is_arithmetic_v<Rep_t>)
 			{
-				using UnitsDuration_t = typename Units2::Duration_t;
-				return static_cast<Rep_t>(
-					std::chrono::time_point_cast<UnitsDuration_t>(start).time_since_epoch().count()
-					);
+				return TimePointTo<Rep_t, Clock_t>(start);
 			}
 
 			template<typename Units2 = Units_t, typename = std::enable_if_t<
@@ -91,10 +88,7 @@ namespace klib
 				>>
 				USE_RESULT constexpr Rep_t Now() const noexcept(std::is_arithmetic_v<Rep_t>)
 			{
-				using UnitsDuration_t = typename Units2::Duration_t;
-				return static_cast<Rep_t>(
-					std::chrono::time_point_cast<UnitsDuration_t>(Clock_t::Now()).time_since_epoch().count()
-					);
+				return TimePointTo<Rep_t, Clock_t>(Clock_t::Now());
 			}
 
 			void Pause()
@@ -112,42 +106,8 @@ namespace klib
 			{
 				return isRunning;
 			}
-
+				
 		protected:
-			/**
-			 * \brief
-			 *		Converts stopwatch delta time recording to a type of time
-			 *		i.e. converts stopwatch time to seconds
-			 * \tparam Units2
-			 *		Desired time units (if left blank, the initialized time unit type is used
-			 * \param now
-			 *		Time point now
-			 * \param prev
-			 *		Time point before
-			 * \return
-			 *		Time in the desired form, represented as your RepresentationType
-			 */
-			template<typename Units2>
-			USE_RESULT constexpr Rep_t ConvertToCorrectUnits(const TimePoint_t& now
-				, const TimePoint_t& prev) const noexcept(std::is_arithmetic_v<Rep_t>)
-			{
-				using UnitsDuration_t = typename Units2::Duration_t;
-
-				static constexpr double sixtieth = (CAST(long double, 1) / 60);
-				static constexpr double thousandth = (CAST(long double, 1) / 1000);
-
-				const auto diff = std::chrono::duration_cast<UnitsDuration_t>(now - prev);
-
-				long double finalDuration;
-
-				if _CONSTEXPR_IF(type_trait::Is_It_V<Units2, units::Hours, units::Mins>)
-					finalDuration = sixtieth * diff.count();
-				else
-					finalDuration = thousandth * diff.count();
-
-				return static_cast<Rep_t>(finalDuration);
-			}
-
 			void UpdateCurrentTime()
 			{
 				current = Clock_t::Now();
