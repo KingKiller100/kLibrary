@@ -109,9 +109,7 @@ namespace kTest
 
 		clock_t start;
 
-		const auto testFunc = GetTestFunc(noOfThreads, start);
-
-		testFunc();
+		PerformTests(noOfThreads, start);
 		
 		const clock_t end = std::clock();
 
@@ -133,14 +131,13 @@ namespace kTest
 		std::cin.get();
 	}
 
-	std::function<void()> TesterManager::GetTestFunc(const size_t noOfThreads, std::clock_t& start)
+	void TesterManager::PerformTests(const size_t noOfThreads, std::clock_t& start)
 	{
 		if (noOfThreads != 0)
 		{
-			return 	[&]
-			{
+			[&] {
 				const auto thrCount =
-					kmaths::Min(noOfThreads, tests.size());
+					(std::min)(noOfThreads, tests.size());
 
 				kThread::ThreadPool threads(thrCount);
 
@@ -153,18 +150,17 @@ namespace kTest
 						}
 						, test->GetName() });
 				}
-			};
+			}();
 		}
 		else
 		{
-			return [&]
-			{
+			[&] {
 				start = std::clock();
 				for (const auto& test : tests)
 				{
 					Run(*test);
 				}
-			};
+			}();
 		}		
 	}
 
@@ -229,14 +225,14 @@ namespace kTest
 		WriteToFile(results);
 	}
 
-	void TesterManager::WriteToConsole(const bool pass, const std::string& NameOpenerStr,
+	void TesterManager::WriteToConsole(const bool pass, const std::string& nameOpenerStr,
 		const std::string& resTimeStr)
 	{
 		auto locker = std::scoped_lock(consoleMutex);
 
 		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-		std::cout << NameOpenerStr;
+		std::cout << nameOpenerStr;
 
 		SetConsoleTextAttribute(hConsole, pass
 			? kMisc::ConsoleColour::LIGHT_GREEN

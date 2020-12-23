@@ -43,7 +43,7 @@ namespace klib::kThread
 	void ThreadPool::Shutdown(size_t index)
 	{
 		if (index >= threads.size())
-			throw std::out_of_range("Index >= number of threads");
+			throw std::out_of_range("Thread index >= number of threads");
 		shutdowns[index] = true;
 	}
 
@@ -56,7 +56,7 @@ namespace klib::kThread
 	bool ThreadPool::CanJoin(size_t index) const
 	{
 		if (index >= threads.size())
-			throw std::out_of_range("Index >= number of threads");
+			throw std::out_of_range("Thread index >= number of threads");
 		return threads[index].joinable();
 	}
 
@@ -74,7 +74,7 @@ namespace klib::kThread
 	void ThreadPool::Join(size_t index)
 	{
 		if (index >= threads.size())
-			throw std::out_of_range("Index >= number of threads");
+			throw std::out_of_range("Thread index >= number of threads");
 		threads[index].join();
 	}
 
@@ -100,7 +100,7 @@ namespace klib::kThread
 	void ThreadPool::Detach(size_t index)
 	{
 		if (index >= threads.size())
-			throw std::out_of_range("Index >= number of threads");
+			throw std::out_of_range("Thread index >= number of threads");
 		threads[index].join();
 	}
 
@@ -133,7 +133,7 @@ namespace klib::kThread
 	std::thread::id ThreadPool::GetID(size_t index) const
 	{
 		if (index >= threads.size())
-			throw std::out_of_range("Index >= number of threads");
+			throw std::out_of_range("Thread index >= number of threads");
 		return threads[index].get_id();
 	}
 
@@ -162,14 +162,14 @@ namespace klib::kThread
 	std::thread& ThreadPool::GetThread(size_t index)
 	{
 		if (index >= threads.size())
-			throw std::out_of_range("Index >= number of threads");
+			throw std::out_of_range("Thread index >= number of threads");
 		return threads[index];
 	}
 
 	const std::thread& ThreadPool::GetThread(size_t index) const
 	{
 		if (index >= threads.size())
-			throw std::out_of_range("Index >= number of threads");
+			throw std::out_of_range("Thread index >= number of threads");
 		return threads[index];
 	}
 
