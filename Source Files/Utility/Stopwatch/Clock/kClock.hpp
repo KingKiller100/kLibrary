@@ -184,10 +184,10 @@ namespace klib::kStopwatch
 	 * \return
 	 *		Time in the desired duration form, represented as your Representation
 	 */
-	template<typename Rep, typename Clock>
-	USE_RESULT constexpr Rep DurationTo(const typename Clock::Duration_t& duration) noexcept(std::is_arithmetic_v<Rep>)
+	template<typename Rep, typename Units, typename Duration>
+	USE_RESULT constexpr Rep DurationTo(const Duration& duration) noexcept(std::is_arithmetic_v<Rep>)
 	{
-		using Duration_t = typename Clock::Duration_t;
+		using Duration_t = typename Units::Duration_t;
 
 		static constexpr long double sixtieth = (static_cast<long double>(1) / 60);
 		static constexpr long double thousandth = (static_cast<long double>(1) / 1000);
@@ -196,7 +196,7 @@ namespace klib::kStopwatch
 
 		long double finalDuration;
 
-		if _CONSTEXPR_IF(type_trait::Is_It_V<typename Clock::Units_t, units::Hours, units::Mins>)
+		if _CONSTEXPR_IF(type_trait::Is_It_V<Units, units::Hours, units::Mins>)
 			finalDuration = sixtieth * diff.count();
 		else
 			finalDuration = thousandth * diff.count();

@@ -71,7 +71,7 @@ namespace klib {
 		private:
 			Rep_t Now() const
 			{
-				return kStopwatch::TimePointTo<Rep_t, Clock_t>(Clock_t::Now());
+				return kStopwatch::DurationTo<Rep_t, Clock_t::Units_t>(Clock_t::Now().time_since_epoch());
 			}
 
 		private:

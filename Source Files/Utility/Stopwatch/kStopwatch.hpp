@@ -33,7 +33,7 @@ namespace klib
 				USE_RESULT constexpr Rep_t GetAbsoluteLifeTime() const noexcept(std::is_arithmetic_v<Rep_t>)
 			{
 				std::atomic_thread_fence(std::memory_order_relaxed);
-				const auto lifeTime = DurationTo<Rep_t, Clock_t>(Clock_t::Now() - start);
+				const auto lifeTime = DurationTo<Rep_t, Units2>(Clock_t::Now() - start);
 				std::atomic_thread_fence(std::memory_order_relaxed);
 				return lifeTime;
 			}
@@ -45,7 +45,7 @@ namespace klib
 			{
 				std::atomic_thread_fence(std::memory_order_relaxed);
 				const auto now = isRunning ? Clock_t::Now() : current;
-				const auto lifeTime = DurationTo<Rep_t, Clock_t>(now - start);
+				const auto lifeTime = DurationTo<Rep_t, Units2>(now - start);
 				std::atomic_thread_fence(std::memory_order_relaxed);
 				return lifeTime;
 			}
@@ -59,7 +59,7 @@ namespace klib
 
 				const auto now = Clock_t::Now();
 
-				auto deltaTime = DurationTo<Rep_t, Clock_t>(now - previous);
+				auto deltaTime = DurationTo<Rep_t, Units2>(now - previous);
 				
 				if (isRunning)
 				{
@@ -67,7 +67,7 @@ namespace klib
 				}
 				else
 				{
-					deltaTime = DurationTo<Rep_t, Clock_t>(current - previous);
+					deltaTime = DurationTo<Rep_t, Units2>(current - previous);
 				}
 
 				std::atomic_thread_fence(std::memory_order_relaxed);
@@ -80,7 +80,7 @@ namespace klib
 				>>
 				USE_RESULT constexpr Rep_t GetStartTime() noexcept(std::is_arithmetic_v<Rep_t>)
 			{
-				return TimePointTo<Rep_t, Clock_t>(start);
+				return DurationTo<Rep_t, Units2>(start.time_since_epoch());
 			}
 
 			template<typename Units2 = Units_t, typename = std::enable_if_t<
@@ -88,7 +88,7 @@ namespace klib
 				>>
 				USE_RESULT constexpr Rep_t Now() const noexcept(std::is_arithmetic_v<Rep_t>)
 			{
-				return TimePointTo<Rep_t, Clock_t>(Clock_t::Now());
+				return DurationTo<Rep_t, Units2>(Clock_t::Now().time_since_epoch());
 			}
 
 			void Pause()
