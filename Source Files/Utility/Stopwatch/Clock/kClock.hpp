@@ -181,18 +181,14 @@ namespace klib::kStopwatch
 	{
 		using Duration_t = typename Units::Duration_t;
 
-		static constexpr long double sixtieth = (static_cast<long double>(1) / 60);
-		static constexpr long double thousandth = (static_cast<long double>(1) / 1000);
+		static constexpr auto sixtieth = (static_cast<double>(1) / 60);
+		static constexpr auto thousandth = (static_cast<double>(1) / 1000);
 
 		const auto diff = std::chrono::duration_cast<Duration_t>(duration);
 
-		long double finalDuration;
-
 		if _CONSTEXPR_IF(type_trait::Is_It_V<Units, units::Hours, units::Mins>)
-			finalDuration = sixtieth * diff.count();
+			return static_cast<Rep>(sixtieth * diff.count());
 		else
-			finalDuration = thousandth * diff.count();
-
-		return static_cast<Rep>(finalDuration);
+			return static_cast<Rep>(thousandth * diff.count());
 	}
 }

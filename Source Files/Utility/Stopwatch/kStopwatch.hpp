@@ -43,11 +43,9 @@ namespace klib
 				>>
 				USE_RESULT constexpr Rep_t GetElapsedTime() noexcept(std::is_arithmetic_v<Rep_t>)
 			{
-				const auto now = Clock_t::Now();
 				if (isRunning)
 				{
-					elapsedTime.GetDuration() = now - previous;
-					previous = now;
+					RecordElapsedTime();
 				}
 				return DurationTo<Rep_t, Units2>(elapsedTime.GetDuration());
 			}
@@ -68,25 +66,26 @@ namespace klib
 				return DurationTo<Rep_t, Units2>(Clock_t::Now().time_since_epoch());
 			}
 
-			void Stop()
+			void Stop() noexcept
 			{
 				isRunning = false;
+				RecordElapsedTime();
 			}
 
-			void Restart()
+			void Restart() noexcept
 			{
 				isRunning = true;
 				previous = Clock_t::Now();
 			}
 
-			bool IsRunning() const
+			bool IsRunning() const noexcept
 			{
 				return isRunning;
 			}
 
 			USE_RESULT constexpr TimeSpan GetTimeSpan() noexcept
 			{
-				return CreateTimeSpan(start.time_since_epoch());
+				return CreateTimeSpan(Clock_t::Now() - start);
 			}
 
 			USE_RESULT constexpr TimeSpan GetElapsedTimeSpan() noexcept
@@ -95,26 +94,12 @@ namespace klib
 			}
 
 		protected:
-			USE_RESULT constexpr TimeSpan CreateTimeSpan(const typename Units_t::Duration_t& duration) noexcept
+			void RecordElapsedTime() noexcept
 			{
-				using namespace std::chrono;
-
-				constexpr auto mil_2_hour = 3'600'000;
-				constexpr auto mil_2_min = 60'000;
-				constexpr auto mil_2_sec = 1000;
-
-				auto asMillis = DurationTo<size_t, units::Millis>(duration);
-				const hours hours(asMillis / mil_2_hour);
-				asMillis %= mil_2_hour;
-				const minutes mins(asMillis / mil_2_min);
-				asMillis %= mil_2_min;
-				const seconds secs(asMillis / mil_2_sec);
-				asMillis %= mil_2_sec;
-				const milliseconds millis(asMillis);
-
-				return TimeSpan(hours, mins, secs, millis);
+				const auto now = Clock_t::Now();
+				elapsedTime.GetDuration() = now - previous;
+				previous = now;
 			}
-
 			
 		private:
 			const TimePoint_t start; // Time point at construction

@@ -37,7 +37,7 @@ namespace kTest::utility
 	{
 		{
 			constexpr auto allowance = 50;
-			
+
 			Stopwatch<std::time_t, HighAccuracyClock<units::Millis>> sw;
 			sw.Restart();
 			std::this_thread::sleep_for(750ms);
@@ -47,28 +47,29 @@ namespace kTest::utility
 			std::this_thread::sleep_for(750ms);
 			const auto dt3 = sw.GetElapsedTime();
 			const auto lifeTime = sw.GetLifeTime();
-			const auto timespan = sw.GetTimeSpan();
 
-			VERIFY(kmaths::Approximately(lifeTime, 225, allowance));
+			VERIFY(kmaths::Approximately(lifeTime, 2250, allowance));
 			VERIFY(kmaths::Approximately(dt1, 750, allowance));
 			VERIFY(kmaths::Approximately(dt2, 750, allowance));
 			VERIFY(kmaths::Approximately(dt3, 750, allowance));
 		}
 
 		{
+			constexpr auto allowance = 25;
+
 			Stopwatch<std::time_t, HighAccuracyClock<units::Millis>> sw;
-			std::this_thread::sleep_for(10ms);
+			std::this_thread::sleep_for(100ms);
 			const auto dt1 = sw.GetElapsedTime();
-			std::this_thread::sleep_for(5ms);
+			std::this_thread::sleep_for(50ms);
 			const auto dt2 = sw.GetElapsedTime();
-			std::this_thread::sleep_for(20ms);
+			std::this_thread::sleep_for(200ms);
 			const auto dt3 = sw.GetElapsedTime();
 			const auto lifeTime = sw.GetLifeTime();
 
-			VERIFY(kmaths::Approximately(lifeTime, 35, 5));
-			VERIFY(kmaths::Approximately(dt1, 10, 5));
-			VERIFY(kmaths::Approximately(dt2, 5, 2));
-			VERIFY(kmaths::Approximately(dt3, 20, 5));
+			VERIFY(kmaths::Approximately(lifeTime, 350, allowance));
+			VERIFY(kmaths::Approximately(dt1, 100, allowance));
+			VERIFY(kmaths::Approximately(dt2, 50, allowance));
+			VERIFY(kmaths::Approximately(dt3, 200, allowance));
 		}
 
 		return success;
@@ -78,28 +79,32 @@ namespace kTest::utility
 	{
 		Stopwatch<std::time_t, HighAccuracyClock<units::Millis>> sw;
 
-		std::this_thread::sleep_for(25ms);
+		std::this_thread::sleep_for(100ms);
 
 		sw.Stop();
 		const auto dt = sw.GetElapsedTime();
 		const auto lt = sw.GetLifeTime();
 		VERIFY(!sw.IsRunning());
-		VERIFY(kmaths::Approximately(dt, 25, 1));
-		VERIFY(kmaths::Approximately(lt, 25, 1));
+		VERIFY(kmaths::Approximately(dt, 100, 1));
+		VERIFY(kmaths::Approximately(lt, 100, 1));
 
-		auto now = sw.GetElapsedTime();
-		VERIFY(dt == now);
-		VERIFY(lt == now);
+		auto elapsed = sw.GetElapsedTime();
+		VERIFY(dt == elapsed);
+		VERIFY(lt == elapsed);
 
-		std::this_thread::sleep_for(5ms);
+		std::this_thread::sleep_for(75ms);
 
+		elapsed = sw.GetElapsedTime();
+		VERIFY(dt == elapsed);
+		VERIFY(lt == elapsed);
+		
 		sw.Restart();
 
-		std::this_thread::sleep_for(5ms);
+		std::this_thread::sleep_for(200ms);
 
-		now = sw.GetElapsedTime();
+		elapsed = sw.GetElapsedTime();
 		VERIFY(sw.IsRunning());
-		VERIFY(dt < now);
+		VERIFY(dt < elapsed);
 
 		return success;
 	}
