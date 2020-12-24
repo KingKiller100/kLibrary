@@ -106,11 +106,12 @@ namespace klib::kStopwatch
 		using Duration_t = typename Units_t::Duration_t;
 		using Underlying_t = std::chrono::high_resolution_clock;
 		using TimePoint_t = std::chrono::time_point<Underlying_t, Duration_t>;
+		static constexpr bool IsSteady = true;
 
 		USE_RESULT static constexpr TimePoint_t Now() noexcept
 		{
 			// get current time
-			const long long frequency = _Query_perf_frequency();	// doesn't change after system boot
+			static const long long frequency = _Query_perf_frequency();	// doesn't change after system boot
 			const long long counter = _Query_perf_counter();
 			//static_assert(Period_t::num == 1, "This assumes period::num == 1.");
 			const long long whole = (counter / frequency) * Period_t::den;
@@ -130,6 +131,7 @@ namespace klib::kStopwatch
 		using Duration_t = typename Units_t::Duration_t;
 		using Underlying_t = std::chrono::steady_clock;
 		using TimePoint_t = std::chrono::time_point<Underlying_t, Duration_t>;
+		static constexpr bool IsSteady = HighAccuracyClock<Units_t>::IsSteady;
 
 		USE_RESULT static constexpr decltype(auto) Now() noexcept
 		{
@@ -148,6 +150,7 @@ namespace klib::kStopwatch
 		using Duration_t = std::chrono::duration<Rep_t, Period_t>;
 		using Underlying_t = std::chrono::system_clock;
 		using TimePoint_t = std::chrono::time_point<Underlying_t, Duration_t>;
+		static constexpr bool IsSteady = false;
 
 		USE_RESULT static constexpr TimePoint_t Now() noexcept
 		{
@@ -166,7 +169,7 @@ namespace klib::kStopwatch
 	};
 	
 	template<typename Rep, typename Clock>
-	USE_RESULT Rep TimePointTo(const typename Clock::TimePoint_t& timePoint) noexcept(std::is_arithmetic_v<Rep>)
+	USE_RESULT constexpr Rep TimePointTo(const typename Clock::TimePoint_t& timePoint) noexcept(std::is_arithmetic_v<Rep>)
 	{
 		return static_cast<Rep>(
 			std::chrono::time_point_cast<Clock::Duration_t>(timePoint).time_since_epoch().count()

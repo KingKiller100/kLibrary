@@ -36,21 +36,22 @@ namespace kTest::utility
 	bool StopWatchTester::GeneralTimeTest()
 	{
 		{
-			constexpr auto allowance = 10;
+			constexpr auto allowance = 50;
 			
 			Stopwatch<std::time_t, HighAccuracyClock<units::Millis>> sw;
-			std::this_thread::sleep_for(10ms);
+			sw.Restart();
+			std::this_thread::sleep_for(750ms);
 			const auto dt1 = sw.GetDeltaTime();
-			std::this_thread::sleep_for(10ms);
+			std::this_thread::sleep_for(750ms);
 			const auto dt2 = sw.GetDeltaTime();
-			std::this_thread::sleep_for(10ms);
+			std::this_thread::sleep_for(750ms);
 			const auto dt3 = sw.GetDeltaTime();
-			const auto lifeTime = sw.GetAbsLifeTime();
+			const auto lifeTime = sw.GetLifeTime();
 
-			VERIFY(kmaths::Approximately(lifeTime, 30, allowance));
-			VERIFY(kmaths::Approximately(dt1, 10, allowance));
-			VERIFY(kmaths::Approximately(dt2, 10, allowance));
-			VERIFY(kmaths::Approximately(dt3, 10, allowance));
+			VERIFY(kmaths::Approximately(lifeTime, 750, allowance));
+			VERIFY(kmaths::Approximately(dt1, 750, allowance));
+			VERIFY(kmaths::Approximately(dt2, 750, allowance));
+			VERIFY(kmaths::Approximately(dt3, 750, allowance));
 		}
 
 		{
@@ -61,7 +62,7 @@ namespace kTest::utility
 			const auto dt2 = sw.GetDeltaTime();
 			std::this_thread::sleep_for(20ms);
 			const auto dt3 = sw.GetDeltaTime();
-			const auto lifeTime = sw.GetAbsLifeTime();
+			const auto lifeTime = sw.GetLifeTime();
 
 			VERIFY(kmaths::Approximately(lifeTime, 35, 5));
 			VERIFY(kmaths::Approximately(dt1, 10, 5));
@@ -78,7 +79,7 @@ namespace kTest::utility
 
 		std::this_thread::sleep_for(25ms);
 
-		sw.Pause();
+		sw.Stop();
 		const auto dt = sw.GetDeltaTime();
 		const auto lt = sw.GetLifeTime();
 		VERIFY(!sw.IsRunning());
@@ -91,12 +92,7 @@ namespace kTest::utility
 
 		std::this_thread::sleep_for(5ms);
 
-		const auto absLt = sw.GetAbsLifeTime();
-		const auto absNow = (sw.Now() - sw.GetStartTime()) / 1000;
-		VERIFY(absLt != lt);
-		VERIFY(kmaths::Approximately(absLt, absNow, 5));
-
-		sw.Resume();
+		sw.Restart();
 
 		std::this_thread::sleep_for(5ms);
 

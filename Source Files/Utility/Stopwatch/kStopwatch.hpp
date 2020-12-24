@@ -23,26 +23,16 @@ namespace klib
 			constexpr Stopwatch() noexcept
 				: start(Clock_t::Now())
 				, previous(start)
-				, current(previous)
+				, elapsedTime(Rep_t(0))
 				, isRunning(true)
 			{ }
 
 			template<typename Units2 = Units_t, typename = std::enable_if_t<
 				type_trait::Is_Specialization_V<Units2, kCalendar::TimeComponentBase>
 				>>
-				USE_RESULT constexpr Rep_t GetAbsLifeTime() const noexcept(std::is_arithmetic_v<Rep_t>)
-			{
-				const auto lifeTime = DurationTo<Rep_t, Units2>(Clock_t::Now() - start);
-				return lifeTime;
-			}
-
-			template<typename Units2 = Units_t, typename = std::enable_if_t<
-				type_trait::Is_Specialization_V<Units2, kCalendar::TimeComponentBase>
-				>>
 				USE_RESULT constexpr Rep_t GetLifeTime() const noexcept(std::is_arithmetic_v<Rep_t>)
 			{
-				const auto now = isRunning ? Clock_t::Now() : current;
-				const auto lifeTime = DurationTo<Rep_t, Units2>(now - start);
+				const auto lifeTime = DurationTo<Rep_t, Units2>(Clock_t::Now() - start);
 				return lifeTime;
 			}
 
@@ -52,23 +42,18 @@ namespace klib
 				USE_RESULT constexpr Rep_t GetDeltaTime() noexcept(std::is_arithmetic_v<Rep_t>)
 			{
 				const auto now = Clock_t::Now();
-
 				if (isRunning)
 				{
-					const auto deltaTime = DurationTo<Rep_t, Units2>(now - previous);
+					elapsedTime = DurationTo<Rep_t, Units2>(now - previous);
 					previous = now;
-					return deltaTime;
 				}
-				else
-				{
-					return DurationTo<Rep_t, Units2>(current - previous);
-				}
+				return elapsedTime;
 			}
 
 			template<typename Units2 = Units_t, typename = std::enable_if_t<
 				type_trait::Is_Specialization_V<Units2, kCalendar::TimeComponentBase>
 				>>
-				USE_RESULT constexpr Rep_t GetStartTime() noexcept(std::is_arithmetic_v<Rep_t>)
+				USE_RESULT constexpr Rep_t GetStartTime() const noexcept(std::is_arithmetic_v<Rep_t>)
 			{
 				return DurationTo<Rep_t, Units2>(start.time_since_epoch());
 			}
@@ -81,15 +66,15 @@ namespace klib
 				return DurationTo<Rep_t, Units2>(Clock_t::Now().time_since_epoch());
 			}
 
-			void Pause()
+			void Stop()
 			{
 				isRunning = false;
-				UpdateCurrentTime();
 			}
 
-			void Resume()
+			void Restart()
 			{
 				isRunning = true;
+				previous = Clock_t::Now();
 			}
 
 			bool IsRunning() const
@@ -97,16 +82,10 @@ namespace klib
 				return isRunning;
 			}
 
-		protected:
-			void UpdateCurrentTime()
-			{
-				current = Clock_t::Now();
-			}
-
 		private:
 			const TimePoint_t start; // Time point at construction
 			TimePoint_t previous; // Last record time point
-			TimePoint_t current; // Current recorded 
+			Rep_t elapsedTime; // Elapsed time
 			bool isRunning;
 		};
 
@@ -130,14 +109,6 @@ namespace klib
 			constexpr AtomicStopwatch() noexcept
 				: sw()
 			{ }
-
-			template<typename Units2 = Units_t, typename = std::enable_if_t<
-				type_trait::Is_Specialization_V<Units2, kCalendar::TimeComponentBase>
-				>>
-				USE_RESULT constexpr Rep_t GetAbsLifeTime() const noexcept(std::is_arithmetic_v<Rep_t>)
-			{
-				return sw.template GetAbsLifeTime<Units2>();
-			}
 
 			template<typename Units2 = Units_t, typename = std::enable_if_t<
 				type_trait::Is_Specialization_V<Units2, kCalendar::TimeComponentBase>
@@ -174,17 +145,17 @@ namespace klib
 				return sw.template Now<Units2>();
 			}
 
-			void Pause()
+			void Stop()
 			{
 				std::atomic_thread_fence(std::memory_order_relaxed);
-				sw.Pause();
+				sw.Stop();
 				std::atomic_thread_fence(std::memory_order_relaxed);
 			}
 
-			void Resume()
+			void Restart()
 			{
 				std::atomic_thread_fence(std::memory_order_relaxed);
-				sw.Resume();
+				sw.Restart();
 				std::atomic_thread_fence(std::memory_order_relaxed);
 			}
 
