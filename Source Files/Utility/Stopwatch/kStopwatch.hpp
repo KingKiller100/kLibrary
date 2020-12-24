@@ -7,6 +7,7 @@
 #include "../../TypeTraits/TemplateTraits.hpp"
 
 #include <atomic>
+#include <mutex>
 
 
 namespace klib
@@ -90,7 +91,7 @@ namespace klib
 
 			USE_RESULT constexpr TimeSpan GetElapsedTimeSpan() noexcept
 			{
-				return CreateTimeSpan(elapsedTime.GetDuration());
+				return CreateTimeSpan(elapsedTime);
 			}
 
 		protected:
@@ -116,7 +117,7 @@ namespace klib
 
 
 		template<typename Representation, class Clock = HighAccuracyClock<units::Micros>>
-		class AtomicStopwatch
+		class ThreadStopwatch
 		{
 		public:
 			using Clock_t = Clock;
@@ -125,7 +126,7 @@ namespace klib
 			using TimePoint_t = typename Clock::TimePoint_t;
 
 		public:
-			constexpr AtomicStopwatch() noexcept
+			constexpr ThreadStopwatch() noexcept
 				: sw()
 			{ }
 
@@ -142,10 +143,8 @@ namespace klib
 				>>
 				USE_RESULT constexpr Rep_t GetDeltaTime() noexcept(std::is_arithmetic_v<Rep_t>)
 			{
-				std::atomic_thread_fence(std::memory_order_relaxed);
-				const auto deltaTime = sw.template GetElapsedTime<Units2>();
-				std::atomic_thread_fence(std::memory_order_relaxed);
-				return deltaTime;
+				const auto scopeLock = std::scoped_lock(mutex);
+				return sw.template GetElapsedTime<Units2>();
 			}
 
 			template<typename Units2 = Units_t, typename = std::enable_if_t<
@@ -166,16 +165,14 @@ namespace klib
 
 			void Stop()
 			{
-				std::atomic_thread_fence(std::memory_order_relaxed);
+				const auto scopeLock = std::scoped_lock(mutex);
 				sw.Stop();
-				std::atomic_thread_fence(std::memory_order_relaxed);
 			}
 
 			void Restart()
 			{
-				std::atomic_thread_fence(std::memory_order_relaxed);
+				const auto scopeLock = std::scoped_lock(mutex);
 				sw.Restart();
-				std::atomic_thread_fence(std::memory_order_relaxed);
 			}
 
 			bool IsRunning() const
@@ -183,15 +180,26 @@ namespace klib
 				return sw.IsRunning();
 			}
 
+			USE_RESULT constexpr TimeSpan GetTimeSpan() noexcept
+			{
+				return sw.GetTimeSpan();
+			}
+
+			USE_RESULT constexpr TimeSpan GetElapsedTimeSpan() noexcept
+			{
+				return sw.GetElapsedTimeSpan();
+			}
+
 		private:
 			Stopwatch<Representation, Clock> sw;
+			std::mutex mutex;
 		};
 
-		using AtomicHighAccStopwatch = AtomicStopwatch<double>;
-		using AtomicSysStopwatch = AtomicStopwatch<double, SystemClock<units::Micros>>;
-		using AtomicMonoStopwatch = AtomicStopwatch<double, SteadyClock<units::Micros>>;
+		using ThreadHighAccStopwatch = ThreadStopwatch<double>;
+		using ThreadSysStopwatch = ThreadStopwatch<double, SystemClock<units::Micros>>;
+		using ThreadMonoStopwatch = ThreadStopwatch<double, SteadyClock<units::Micros>>;
 
-		using AtomicAccStopwatch = AtomicStopwatch<float>;
+		using ThreadAccStopwatch = ThreadStopwatch<float>;
 	}
 
 #ifdef KLIB_SHORT_NAMESPACE

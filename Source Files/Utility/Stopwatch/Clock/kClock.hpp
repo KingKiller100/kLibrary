@@ -6,6 +6,7 @@
 
 #include "../../../TypeTraits/TemplateTraits.hpp"
 
+#include <atomic>
 #include <chrono>
 #include <ratio>
 
@@ -108,15 +109,18 @@ namespace klib::kStopwatch
 		using TimePoint_t = std::chrono::time_point<Underlying_t, Duration_t>;
 		static constexpr bool IsSteady = true;
 
+		// Get current time
 		USE_RESULT static constexpr TimePoint_t Now() noexcept
 		{
-			// get current time
+			std::atomic_thread_fence(std::memory_order_relaxed);
 			static const long long frequency = _Query_perf_frequency();	// doesn't change after system boot
 			const long long counter = _Query_perf_counter();
 			//static_assert(Period_t::num == 1, "This assumes period::num == 1.");
 			const long long whole = (counter / frequency) * Period_t::den;
 			const long long part = (counter % frequency) * Period_t::den / frequency;
-			return (TimePoint_t(Duration_t(whole + part)));
+			const auto tp = TimePoint_t(Duration_t(whole + part));
+			std::atomic_thread_fence(std::memory_order_relaxed);
+			return tp;
 		}
 	};
 
@@ -154,7 +158,10 @@ namespace klib::kStopwatch
 
 		USE_RESULT static constexpr TimePoint_t Now() noexcept
 		{
-			return TimePoint_t(Duration_t(_Xtime_get_ticks()));
+			std::atomic_thread_fence(std::memory_order_relaxed);
+			const auto tp = TimePoint_t(Duration_t(_Xtime_get_ticks()));
+			std::atomic_thread_fence(std::memory_order_relaxed);
+			return tp;
 		}
 
 		USE_RESULT static decltype(auto) To_Time_t(const TimePoint_t& timePoint) noexcept
@@ -167,7 +174,7 @@ namespace klib::kStopwatch
 			return Underlying_t::from_time_t(time_t);
 		}
 	};
-	
+
 	template<typename Rep, typename Clock>
 	USE_RESULT constexpr Rep TimePointTo(const typename Clock::TimePoint_t& timePoint) noexcept(std::is_arithmetic_v<Rep>)
 	{
