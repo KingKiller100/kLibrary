@@ -78,6 +78,8 @@ namespace kTest::utility
 
 	bool StopWatchTester::PauseTest()
 	{
+		constexpr auto allowance = 50;
+		
 		Stopwatch<std::time_t, HighAccuracyClock<units::Millis>> sw;
 
 		std::this_thread::sleep_for(100ms);
@@ -86,8 +88,8 @@ namespace kTest::utility
 		const auto dt = sw.GetElapsedTime();
 		const auto lt = sw.GetLifeTime();
 		VERIFY(!sw.IsRunning());
-		VERIFY(kmaths::Approximately(dt, 100, 1));
-		VERIFY(kmaths::Approximately(lt, 100, 1));
+		VERIFY(kmaths::Approximately(dt, 100, allowance));
+		VERIFY(kmaths::Approximately(lt, 100, allowance));
 
 		auto elapsed = sw.GetElapsedTime();
 		VERIFY(dt == elapsed);
