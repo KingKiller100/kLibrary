@@ -14,6 +14,7 @@ namespace kTest::utility
 		void Test() override;
 
 	private:
+		bool MillisecondsTest();
 		bool SecondsTest();
 	};
 }

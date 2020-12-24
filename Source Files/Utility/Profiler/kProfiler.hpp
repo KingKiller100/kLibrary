@@ -16,13 +16,19 @@ namespace klib {
 			using Rep_t = Representation;
 
 			const std::basic_string<CharType> name;
-			std::uint32_t threadID;
+			size_t threadID;
 			Rep_t end, start;
 
-			BasicProfilerResult(const std::basic_string<CharType>& name, Rep_t startTime, std::uint32_t thrId = 0)
+			BasicProfilerResult(const std::basic_string<CharType>& name, Rep_t startTime, size_t thrId = kThread::GetThreadID<size_t>())
 				: name(name)
 				, threadID(thrId)
 				, start(startTime)
+			{}
+
+			BasicProfilerResult(const std::basic_string<CharType>& name, size_t thrId = kThread::GetThreadID<size_t>())
+				: name(name)
+				, threadID(thrId)
+				, start(kStopwatch::HighAccuracyClock<>::Now())
 			{}
 		};
 
@@ -41,22 +47,24 @@ namespace klib {
 			using Result_t = BasicProfilerResult<CharType, Rep_t>;
 
 		public:
-			BasicScopeProfiler(const std::basic_string<CharType>& name, Func_t&& cb)
+			BasicScopeProfiler(const std::basic_string<CharType>& name, Func_t&& cb
+				, size_t thrId = kThread::GetThreadID<size_t>())
 				: isRunning(true)
 				, callback(std::forward<Func_t>(cb))
-				, result(name, Now(), kThread::GetThreadID<std::uint32_t>())
+				, result(name, Now(), thrId)
 			{}
 
-			BasicScopeProfiler(const std::basic_string_view<CharType>& name, Func_t&& cb)
+			BasicScopeProfiler(const std::basic_string_view<CharType>& name, Func_t&& cb
+				, size_t thrId = kThread::GetThreadID<size_t>())
 				: isRunning(true)
 				, callback(std::forward<Func_t>(cb))
-				, result(name.data(), Now(), kThread::GetThreadID<std::uint32_t>())
+				, result(name.data(), Now(), thrId)
 			{}
 
-			BasicScopeProfiler(const CharType* name, Func_t&& cb)
+			BasicScopeProfiler(const CharType* name, Func_t&& cb, size_t thrId = kThread::GetThreadID<size_t>())
 				: isRunning(true)
 				, callback(std::forward<Func_t>(cb))
-				, result(name, Now(), kThread::GetThreadID<std::uint32_t>())
+				, result(name, Now(), thrId)
 			{}
 
 			~BasicScopeProfiler()
