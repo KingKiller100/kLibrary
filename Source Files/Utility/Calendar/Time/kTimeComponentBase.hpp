@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <chrono>
+
 #include "../../../HelperMacros.hpp"
 
 namespace klib::kCalendar
@@ -28,13 +30,19 @@ namespace klib::kCalendar
 		
 		USE_RESULT constexpr Rep_t GetValue() const
 		{
-			return value.count();
+			return static_cast<Rep_t>(value.count());
 		}
 
 		template<typename TargetType>
 		constexpr operator TargetType() const
 		{
 			return static_cast<TargetType>(GetValue());
+		}
+
+		template <class Rep, class Period>
+		constexpr operator std::chrono::duration<Rep, Period>() const
+		{
+			return std::chrono::duration_cast<std::chrono::duration<Rep, Period>>(GetDuration());
 		}
 
 	protected:

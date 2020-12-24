@@ -41,12 +41,13 @@ namespace kTest::utility
 			Stopwatch<std::time_t, HighAccuracyClock<units::Millis>> sw;
 			sw.Restart();
 			std::this_thread::sleep_for(750ms);
-			const auto dt1 = sw.GetDeltaTime();
+			const auto dt1 = sw.GetElapsedTime();
 			std::this_thread::sleep_for(750ms);
-			const auto dt2 = sw.GetDeltaTime();
+			const auto dt2 = sw.GetElapsedTime();
 			std::this_thread::sleep_for(750ms);
-			const auto dt3 = sw.GetDeltaTime();
+			const auto dt3 = sw.GetElapsedTime();
 			const auto lifeTime = sw.GetLifeTime();
+			const auto timespan = sw.GetTimeSpan();
 
 			VERIFY(kmaths::Approximately(lifeTime, 225, allowance));
 			VERIFY(kmaths::Approximately(dt1, 750, allowance));
@@ -57,11 +58,11 @@ namespace kTest::utility
 		{
 			Stopwatch<std::time_t, HighAccuracyClock<units::Millis>> sw;
 			std::this_thread::sleep_for(10ms);
-			const auto dt1 = sw.GetDeltaTime();
+			const auto dt1 = sw.GetElapsedTime();
 			std::this_thread::sleep_for(5ms);
-			const auto dt2 = sw.GetDeltaTime();
+			const auto dt2 = sw.GetElapsedTime();
 			std::this_thread::sleep_for(20ms);
-			const auto dt3 = sw.GetDeltaTime();
+			const auto dt3 = sw.GetElapsedTime();
 			const auto lifeTime = sw.GetLifeTime();
 
 			VERIFY(kmaths::Approximately(lifeTime, 35, 5));
@@ -80,13 +81,13 @@ namespace kTest::utility
 		std::this_thread::sleep_for(25ms);
 
 		sw.Stop();
-		const auto dt = sw.GetDeltaTime();
+		const auto dt = sw.GetElapsedTime();
 		const auto lt = sw.GetLifeTime();
 		VERIFY(!sw.IsRunning());
 		VERIFY(kmaths::Approximately(dt, 25, 1));
 		VERIFY(kmaths::Approximately(lt, 25, 1));
 
-		auto now = sw.GetDeltaTime();
+		auto now = sw.GetElapsedTime();
 		VERIFY(dt == now);
 		VERIFY(lt == now);
 
@@ -96,7 +97,7 @@ namespace kTest::utility
 
 		std::this_thread::sleep_for(5ms);
 
-		now = sw.GetDeltaTime();
+		now = sw.GetElapsedTime();
 		VERIFY(sw.IsRunning());
 		VERIFY(dt < now);
 
@@ -109,7 +110,7 @@ namespace kTest::utility
 		constexpr auto allowance = 1050;
 		Stopwatch<std::time_t, HighAccuracyClock<units::Micros>> sw;
 		std::this_thread::sleep_for(duration);
-		const auto now = sw.GetDeltaTime();
+		const auto now = sw.GetElapsedTime();
 		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 
 		return success;
@@ -121,7 +122,7 @@ namespace kTest::utility
 		constexpr auto allowance = 5;
 		Stopwatch<float, HighAccuracyClock<units::Millis>> sw;
 		std::this_thread::sleep_for(duration);
-		const auto now = sw.GetDeltaTime();
+		const auto now = sw.GetElapsedTime();
 		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 
 		return success;
@@ -133,7 +134,7 @@ namespace kTest::utility
 		constexpr auto allowance = 0;
 		Stopwatch<std::time_t, HighAccuracyClock<units::Secs>> sw;
 		std::this_thread::sleep_for(duration);
-		const auto now = sw.GetDeltaTime();
+		const auto now = sw.GetElapsedTime();
 		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 
 		return success;
@@ -145,7 +146,7 @@ namespace kTest::utility
 		constexpr auto allowance = 0;
 		Stopwatch<double, HighAccuracyClock<units::Mins>> sw;
 		std::this_thread::sleep_for(duration);
-		const auto now = sw.GetDeltaTime();
+		const auto now = sw.GetElapsedTime();
 		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 
 		return success;
@@ -157,7 +158,7 @@ namespace kTest::utility
 		constexpr auto allowance = 0;
 		Stopwatch<double, HighAccuracyClock<units::Hours>> sw;
 		std::this_thread::sleep_for(duration);
-		const auto now = sw.GetDeltaTime();
+		const auto now = sw.GetElapsedTime();
 		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 
 		return success;

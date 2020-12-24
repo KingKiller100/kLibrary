@@ -1,11 +1,13 @@
 #pragma once
 
 #include "Clock/kClock.hpp"
+#include "kTimeSpan.hpp"
 
 #include "../../HelperMacros.hpp"
 #include "../../TypeTraits/TemplateTraits.hpp"
 
 #include <atomic>
+
 
 namespace klib
 {
@@ -23,7 +25,7 @@ namespace klib
 			constexpr Stopwatch() noexcept
 				: start(Clock_t::Now())
 				, previous(start)
-				, elapsedTime(Rep_t(0))
+				, elapsedTime(0)
 				, isRunning(true)
 			{ }
 
@@ -39,15 +41,15 @@ namespace klib
 			template<typename Units2 = Units_t, typename = std::enable_if_t<
 				type_trait::Is_Specialization_V<Units2, kCalendar::TimeComponentBase>
 				>>
-				USE_RESULT constexpr Rep_t GetDeltaTime() noexcept(std::is_arithmetic_v<Rep_t>)
+				USE_RESULT constexpr Rep_t GetElapsedTime() noexcept(std::is_arithmetic_v<Rep_t>)
 			{
 				const auto now = Clock_t::Now();
 				if (isRunning)
 				{
-					elapsedTime = DurationTo<Rep_t, Units2>(now - previous);
+					elapsedTime.GetDuration() = now - previous;
 					previous = now;
 				}
-				return elapsedTime;
+				return DurationTo<Rep_t, Units2>(elapsedTime.GetDuration());
 			}
 
 			template<typename Units2 = Units_t, typename = std::enable_if_t<
@@ -82,10 +84,42 @@ namespace klib
 				return isRunning;
 			}
 
+			USE_RESULT constexpr TimeSpan GetTimeSpan() noexcept
+			{
+				return CreateTimeSpan(start.time_since_epoch());
+			}
+
+			USE_RESULT constexpr TimeSpan GetElapsedTimeSpan() noexcept
+			{
+				return CreateTimeSpan(elapsedTime.GetDuration());
+			}
+
+		protected:
+			USE_RESULT constexpr TimeSpan CreateTimeSpan(const typename Units_t::Duration_t& duration) noexcept
+			{
+				using namespace std::chrono;
+
+				constexpr auto mil_2_hour = 3'600'000;
+				constexpr auto mil_2_min = 60'000;
+				constexpr auto mil_2_sec = 1000;
+
+				auto asMillis = DurationTo<size_t, units::Millis>(duration);
+				const hours hours(asMillis / mil_2_hour);
+				asMillis %= mil_2_hour;
+				const minutes mins(asMillis / mil_2_min);
+				asMillis %= mil_2_min;
+				const seconds secs(asMillis / mil_2_sec);
+				asMillis %= mil_2_sec;
+				const milliseconds millis(asMillis);
+
+				return TimeSpan(hours, mins, secs, millis);
+			}
+
+			
 		private:
 			const TimePoint_t start; // Time point at construction
 			TimePoint_t previous; // Last record time point
-			Rep_t elapsedTime; // Elapsed time
+			Units_t elapsedTime; // Elapsed time
 			bool isRunning;
 		};
 
@@ -124,7 +158,7 @@ namespace klib
 				USE_RESULT constexpr Rep_t GetDeltaTime() noexcept(std::is_arithmetic_v<Rep_t>)
 			{
 				std::atomic_thread_fence(std::memory_order_relaxed);
-				const auto deltaTime = sw.template GetDeltaTime<Units2>();
+				const auto deltaTime = sw.template GetElapsedTime<Units2>();
 				std::atomic_thread_fence(std::memory_order_relaxed);
 				return deltaTime;
 			}
