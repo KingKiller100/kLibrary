@@ -45,32 +45,34 @@ namespace kTest::utility
 			std::this_thread::sleep_for(750ms);
 			const auto dt2 = sw.GetElapsedTime();
 			std::this_thread::sleep_for(750ms);
+			sw.Stop();
 			const auto dt3 = sw.GetElapsedTime();
 			const auto lifeTime = sw.GetLifeTime();
 
-			VERIFY(kmaths::Approximately(lifeTime, 2250, allowance));
-			VERIFY(kmaths::Approximately(dt1, 750, allowance));
-			VERIFY(kmaths::Approximately(dt2, 750, allowance));
-			VERIFY(kmaths::Approximately(dt3, 750, allowance));
+			VERIFY(kmaths::Approximately(lifeTime, 2250 + allowance, allowance));
+			VERIFY(kmaths::Approximately(dt1, 750 + allowance, allowance));
+			VERIFY(kmaths::Approximately(dt2, 750 + allowance, allowance));
+			VERIFY(kmaths::Approximately(dt3, 750 + allowance, allowance));
 		}
 
 		{
-			constexpr auto allowance = 25;
+			constexpr auto allowance = 50;
 
 			Stopwatch<std::time_t, HighAccuracyClock<units::Millis>> sw;
 			sw.Restart();
 			std::this_thread::sleep_for(100ms);
 			const auto dt1 = sw.GetElapsedTime();
-			std::this_thread::sleep_for(50ms);
+			std::this_thread::sleep_for(100ms);
 			const auto dt2 = sw.GetElapsedTime();
 			std::this_thread::sleep_for(200ms);
+			sw.Stop();
 			const auto dt3 = sw.GetElapsedTime();
 			const auto lifeTime = sw.GetLifeTime();
 
-			VERIFY(kmaths::Approximately(lifeTime, 350, allowance));
-			VERIFY(kmaths::Approximately(dt1, 100, allowance));
-			VERIFY(kmaths::Approximately(dt2, 50, allowance));
-			VERIFY(kmaths::Approximately(dt3, 200, allowance));
+			VERIFY(kmaths::Approximately(lifeTime, 400 + allowance, allowance));
+			VERIFY(kmaths::Approximately(dt1, 100 + allowance, allowance));
+			VERIFY(kmaths::Approximately(dt2, 100 + allowance, allowance));
+			VERIFY(kmaths::Approximately(dt3, 200 + allowance, allowance));
 		}
 
 		return success;
@@ -105,8 +107,11 @@ namespace kTest::utility
 
 		std::this_thread::sleep_for(200ms);
 
-		elapsed = sw.GetElapsedTime();
 		VERIFY(sw.IsRunning());
+		
+		sw.Stop();
+		elapsed = sw.GetElapsedTime();
+		VERIFY(!sw.IsRunning());
 		VERIFY(dt < elapsed);
 
 		return success;
@@ -115,12 +120,13 @@ namespace kTest::utility
 	bool StopWatchTester::MicrosecondsTest()
 	{
 		constexpr auto duration = 100'000us;
-		constexpr auto allowance = 1050;
+		constexpr auto allowance = 5000;
 		Stopwatch<std::time_t, HighAccuracyClock<units::Micros>> sw;
 		sw.Restart();
 		std::this_thread::sleep_for(duration);
+		sw.Stop();
 		const auto now = sw.GetElapsedTime();
-		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
+		VERIFY(kmaths::Approximately(now, duration.count() + allowance, allowance));
 
 		return success;
 	}
@@ -129,10 +135,11 @@ namespace kTest::utility
 	{
 		constexpr auto duration = 100ms;
 		constexpr auto allowance = 25;
-		Stopwatch<float, HighAccuracyClock<units::Millis>> sw;
+		Stopwatch<float, HighAccuracyClock<units::Micros>> sw;
 		sw.Restart();
 		std::this_thread::sleep_for(duration);
-		const auto now = sw.GetElapsedTime();
+		sw.Stop();
+		const auto now = sw.GetElapsedTime<units::Millis>();
 		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 
 		return success;
@@ -141,10 +148,11 @@ namespace kTest::utility
 	bool StopWatchTester::SecondsTest()
 	{
 		constexpr auto duration = 0.5s;
-		constexpr auto allowance = 0.005;
-		Stopwatch<double, HighAccuracyClock<units::Secs>> sw;
+		constexpr auto allowance = 0.05f;
+		Stopwatch<float, HighAccuracyClock<units::Secs>> sw;
 		sw.Restart();
 		std::this_thread::sleep_for(duration);
+		sw.Stop();
 		const auto now = sw.GetElapsedTime();
 		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 
@@ -157,6 +165,7 @@ namespace kTest::utility
 		constexpr auto allowance = 0;
 		Stopwatch<double, HighAccuracyClock<units::Mins>> sw;
 		sw.Restart();
+		sw.Stop();
 		std::this_thread::sleep_for(duration);
 		const auto now = sw.GetElapsedTime();
 		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
@@ -171,6 +180,7 @@ namespace kTest::utility
 		Stopwatch<double, HighAccuracyClock<units::Hours>> sw;
 		sw.Restart();
 		std::this_thread::sleep_for(duration);
+		sw.Stop();
 		const auto now = sw.GetElapsedTime();
 		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 

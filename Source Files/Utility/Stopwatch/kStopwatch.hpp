@@ -6,9 +6,7 @@
 #include "../../HelperMacros.hpp"
 #include "../../TypeTraits/TemplateTraits.hpp"
 
-#include <atomic>
 #include <mutex>
-
 
 namespace klib
 {
@@ -84,12 +82,12 @@ namespace klib
 				return isRunning;
 			}
 
-			USE_RESULT constexpr TimeSpan GetTimeSpan() noexcept
+			USE_RESULT constexpr TimeSpan GetTimeSpan() const noexcept
 			{
 				return CreateTimeSpan(Clock_t::Now() - start);
 			}
 
-			USE_RESULT constexpr TimeSpan GetElapsedTimeSpan() noexcept
+			USE_RESULT constexpr TimeSpan GetElapsedTimeSpan() const noexcept
 			{
 				return CreateTimeSpan(elapsedTime);
 			}
@@ -180,12 +178,12 @@ namespace klib
 				return sw.IsRunning();
 			}
 
-			USE_RESULT constexpr TimeSpan GetTimeSpan() noexcept
+			USE_RESULT constexpr TimeSpan GetTimeSpan() const noexcept
 			{
 				return sw.GetTimeSpan();
 			}
 
-			USE_RESULT constexpr TimeSpan GetElapsedTimeSpan() noexcept
+			USE_RESULT constexpr TimeSpan GetElapsedTimeSpan() const noexcept
 			{
 				return sw.GetElapsedTimeSpan();
 			}

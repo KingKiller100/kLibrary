@@ -1,9 +1,9 @@
 ﻿#pragma once
 
-#include <chrono>
-
 #include "../../HelperMacros.hpp"
 #include "Clock/kClock.hpp"
+
+#include <chrono>
 
 namespace klib
 {

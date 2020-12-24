@@ -86,14 +86,20 @@ namespace klib::kStopwatch
 			}
 		}
 
-		template<typename Units, class CharT = char, typename = std::enable_if_t<
-			type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
-			&& type_trait::Is_Char_V<CharT>
-			>>
-			USE_RESULT constexpr std::basic_string_view<CharT> GetUnitsStr(Units&& value, UnitStrLength length) noexcept
-		{
-			return GetUnitsStr<Units, CharT>(length);
-		}
+		// template<typename Units, class CharT = char, typename = std::enable_if_t<
+		// 	type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
+		// 	&& type_trait::Is_Char_V<CharT>
+		// 	>>
+		// 	USE_RESULT constexpr std::basic_string_view<CharT> GetUnitsStr(Units&& value, UnitStrLength length) noexcept
+		// {
+		// 	return GetUnitsStr<Units, CharT>(length);
+		// }
+	}
+
+	inline static auto SystemTickFrequency() noexcept
+	{
+		static const long long frequency = _Query_perf_frequency();	// doesn't change after system boot
+		return frequency;
 	}
 
 	template<class Units = units::Micros, typename = std::enable_if_t<
@@ -113,7 +119,7 @@ namespace klib::kStopwatch
 		USE_RESULT static constexpr TimePoint_t Now() noexcept
 		{
 			std::atomic_thread_fence(std::memory_order_relaxed);
-			static const long long frequency = _Query_perf_frequency();	// doesn't change after system boot
+			const auto frequency = SystemTickFrequency();
 			const long long counter = _Query_perf_counter();
 			//static_assert(Period_t::num == 1, "This assumes period::num == 1.");
 			const long long whole = (counter / frequency) * Period_t::den;
