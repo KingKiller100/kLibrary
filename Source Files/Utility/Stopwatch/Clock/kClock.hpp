@@ -173,17 +173,6 @@ namespace klib::kStopwatch
 			);
 	}
 
-	/**
-	 * \brief
-	 *		Converts time point recorded to a type of time duration
-	 *		i.e. converts time point to seconds
-	 * \tparam Rep
-	 *		Representation type
-	 * \param duration
-	 *		Time point
-	 * \return
-	 *		Time in the desired duration form, represented as your Representation
-	 */
 	template<typename Rep, typename Units, typename Duration>
 	USE_RESULT constexpr Rep DurationTo(const Duration& duration) noexcept(std::is_arithmetic_v<Rep>)
 	{

@@ -45,7 +45,7 @@ namespace kTest::utility
 			const auto dt2 = sw.GetDeltaTime();
 			std::this_thread::sleep_for(10ms);
 			const auto dt3 = sw.GetDeltaTime();
-			const auto lifeTime = sw.GetAbsoluteLifeTime();
+			const auto lifeTime = sw.GetAbsLifeTime();
 
 			VERIFY(kmaths::Approximately(lifeTime, 30, allowance));
 			VERIFY(kmaths::Approximately(dt1, 10, allowance));
@@ -61,7 +61,7 @@ namespace kTest::utility
 			const auto dt2 = sw.GetDeltaTime();
 			std::this_thread::sleep_for(20ms);
 			const auto dt3 = sw.GetDeltaTime();
-			const auto lifeTime = sw.GetAbsoluteLifeTime();
+			const auto lifeTime = sw.GetAbsLifeTime();
 
 			VERIFY(kmaths::Approximately(lifeTime, 35, 5));
 			VERIFY(kmaths::Approximately(dt1, 10, 5));
@@ -91,7 +91,7 @@ namespace kTest::utility
 
 		std::this_thread::sleep_for(5ms);
 
-		const auto absLt = sw.GetAbsoluteLifeTime();
+		const auto absLt = sw.GetAbsLifeTime();
 		const auto absNow = (sw.Now() - sw.GetStartTime()) / 1000;
 		VERIFY(absLt != lt);
 		VERIFY(kmaths::Approximately(absLt, absNow, 5));
