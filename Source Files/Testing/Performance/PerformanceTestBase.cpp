@@ -143,8 +143,8 @@ namespace kTest::performance
 		const auto& fastestName = fastest.name;
 		const auto& slowestName = slowest.name;
 
-		const auto unitsLong = units::GetUnitsStr<units::Millis>(units::UnitStrLength::LONG);
-		const auto unitsShort = units::GetUnitsStr<units::Millis>(units::UnitStrLength::SHORT);
+		const auto unitsLong = units::GetUnitsStr<units::Micros>(units::UnitStrLength::LONG);
+		const auto unitsShort = units::GetUnitsStr<units::Micros>(units::UnitStrLength::SHORT);
 
 		const auto output = klib::kString::Sprintf(R"(%s: 
 	%s is the fastest on average by %.3f%%

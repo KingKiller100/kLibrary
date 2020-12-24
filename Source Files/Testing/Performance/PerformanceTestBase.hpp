@@ -5,6 +5,7 @@
 #include "../../Utility/Profiler/kProfiler.hpp"
 
 #include <cstdint>
+#include <ctime>
 #include <map>
 #include <string>
 #include <vector>
@@ -48,16 +49,16 @@ namespace kTest::performance
 
 	protected:
 		std::string name;
-		std::vector<klib::kProfiler::ProfilerResult<std::int64_t>> profilerResults;
+		std::vector<klib::kProfiler::ProfilerResult<std::time_t>> profilerResults;
 		std::map<const std::string, std::map<std::string, AverageTime>> results;
 	};
 }
 
-#define REPORT_BACK_FUNC [&](const klib::kProfiler::ProfilerResult<std::int64_t>& res)\
+#define REPORT_BACK_FUNC [&](const klib::kProfiler::ProfilerResult<std::time_t>& res)\
 		{\
 			profilerResults.push_back(res);\
 		}\
 
-#define START_TEST(profilee) auto profiler##__LINE__ = klib::kProfiler::Profiler<std::int64_t, klib::kStopwatch::units::Millis> (profilee, REPORT_BACK_FUNC);
+#define START_TEST(profilee) auto profiler##__LINE__ = klib::kProfiler::Profiler<std::time_t, klib::kStopwatch::units::Micros> (profilee, REPORT_BACK_FUNC);
 
 #endif
