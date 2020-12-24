@@ -7,39 +7,22 @@
 #include "../../String/kToString.hpp"
 #include "../../Debug/Exceptions/CalenderExceptions.hpp"
 
-#include "../../../TypeTraits/StringTraits.hpp"
-
 #include <set>
 
 
 namespace klib::kCalendar
 {
-	namespace
-	{
-		using namespace secret::impl;
-
-		iCalendarInfoSource& GetInfoSource(CalendarInfoSourceType type)
-		{
-			static iCalendarInfoSource& calendar_info = GetCalendarInfoSource();
-			calendar_info.Refresh(type);
-			return calendar_info;
-		}
-	}
-
 	// DATE ////////////////////////////////////////////////////////////
 
 	Date::Date(CalendarInfoSourceType sourceType)
-		: Date(GetInfoSource(sourceType))
-	{}
-
-	Date::Date(const iCalendarInfoSource& source)
-		: Date(
-			static_cast<Day::DayOfTheWeek>(source.GetDayOfTheWeekIndex())
-			, source.GetDay()
-			, static_cast<Month::MonthOfTheYear>(source.GetMonth())
-			, source.GetYear()
-		)
-	{}
+	{
+		auto& source = secret::impl::GetCalendarInfoSource();
+		source.Refresh(sourceType);
+		day = Day(source.GetDay(),
+			static_cast<Day::DayOfTheWeek>(source.GetDayOfTheWeekIndex()));
+		month = Month(static_cast<Month::MonthOfTheYear>(source.GetMonth()));
+		year = Year(source.GetYear());
+	}
 
 	Date::Date(const Day::DayOfTheWeek dayOfTheWeek, const std::uint16_t d, const Month::MonthOfTheYear m,
 		const std::uint16_t y)

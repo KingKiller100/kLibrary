@@ -19,7 +19,7 @@ namespace klib
 	{
 		namespace secret::impl
 		{
-			class iCalendarInfoSource;
+			class iCalendarInfo;
 		}
 		
 		class Time : private CalendarComponentToStringImpl
@@ -54,8 +54,6 @@ namespace klib
 			
 		private:
 			void CheckTime() const;
-
-			explicit Time(const secret::impl::iCalendarInfoSource& timeSource);
 			
 		private:
 			Hour hour;

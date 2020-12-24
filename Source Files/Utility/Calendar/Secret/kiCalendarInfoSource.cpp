@@ -5,34 +5,33 @@
 #include "../../Debug/Exceptions/CalenderExceptions.hpp"
 #include "../../../Platform/Platform.hpp"
 
-#include <memory>
-
-
-
 namespace klib::kCalendar::secret::impl
 {
-	iCalendarInfoSource& GetCalendarInfoSource()
+	std::unique_ptr<iCalendarInfoSource> g_kCalendarInfoSource;
+
+	void UsePlatformCalendarInfoSource()
 	{
-		static std::unique_ptr<iCalendarInfoSource> instance;
-
-		if (!instance)
+		switch (kPlatform::GetPlatform())
 		{
-			switch (kPlatform::GetPlatform())
-			{
-			case kPlatform::PlatformType::WINDOWS:
-				instance.reset(new windows::CalendarInfoSourceWindows());
-				break;
-			case kPlatform::PlatformType::APPLE:
-				//break;
-			case kPlatform::PlatformType::LINUX:
-				//break;
-			default:
-				throw kDebug::CalendarError("Unknown platform. Cannot create calendar information source");
-				break;
-			}
+		case kPlatform::PlatformType::WINDOWS:
+			SetCalendarInfoSource(new windows::CalendarInfoSourceWindows());
+		case kPlatform::PlatformType::APPLE:
+			//break;
+		case kPlatform::PlatformType::LINUX:
+			//break;
+		default:
+			throw kDebug::CalendarError("Unknown platform. Cannot create calendar information source");
+			break;
 		}
-
-		return *instance;
 	}
 
+	iCalendarInfoSource& GetCalendarInfoSource()
+	{
+		return *g_kCalendarInfoSource;
+	}
+
+	void SetCalendarInfoSource(iCalendarInfoSource* infoSource)
+	{
+		g_kCalendarInfoSource.reset(infoSource);
+	}
 }

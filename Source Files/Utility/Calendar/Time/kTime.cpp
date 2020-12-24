@@ -7,31 +7,17 @@
 
 namespace klib::kCalendar
 {
-	namespace
-	{
-		using namespace secret::impl;
-
-		iCalendarInfoSource& GetInfoSource(CalendarInfoSourceType type)
-		{
-			static iCalendarInfoSource& calendar_info = GetCalendarInfoSource();
-			calendar_info.Refresh(type);
-			return calendar_info;
-		}
-	}
-
 	// TIME ////////////////////////////////////////////////////////////
 
 	Time::Time(CalendarInfoSourceType sourceType)
-		: Time(GetInfoSource(sourceType))
-	{}
-
-	Time::Time(const iCalendarInfoSource& source)
-		: Time(source.GetHour()
-			, source.GetMinute()
-			, source.GetSecond()
-			, source.GetMillisecond()
-			, Hour::CYCLE_24)
-	{}
+	{
+		auto& source = secret::impl::GetCalendarInfoSource();
+		source.Refresh(sourceType);
+		hour = Hour(source.GetHour());
+		minute = Minute(source.GetMinute());
+		second = Second(source.GetSecond());
+		millisecond = Millisecond(source.GetMillisecond());
+	}
 
 	Time::Time(const std::uint16_t h, const std::uint16_t m, const std::uint16_t s,
 		const std::uint16_t ms, const Hour::CycleType cycle)

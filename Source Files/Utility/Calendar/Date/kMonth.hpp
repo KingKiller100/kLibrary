@@ -27,7 +27,7 @@ namespace klib::kCalendar
 		static constexpr size_t MonthsInYear = 12;
 
 	public:
-		constexpr explicit Month(MonthOfTheYear month)
+		constexpr explicit Month(MonthOfTheYear month = JAN)
 			: moty(month)
 		{}
 
@@ -36,6 +36,11 @@ namespace klib::kCalendar
 		USE_RESULT constexpr MonthOfTheYear GetValue() const
 		{
 			return moty;
+		}
+
+		USE_RESULT constexpr void SetValue(MonthOfTheYear m)
+		{
+			moty = m;
 		}
 
 		USE_RESULT constexpr std::uint16_t GetMonthNumber() const
@@ -71,7 +76,7 @@ namespace klib::kCalendar
 		USE_RESULT std::string ToStringUsingTokenCount(const size_t count) const override;
 
 	private:
-		const MonthOfTheYear moty;
+		MonthOfTheYear moty;
 	};
 
 	constexpr Month operator"" _m(unsigned long long month)

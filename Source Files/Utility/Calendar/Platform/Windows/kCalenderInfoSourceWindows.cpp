@@ -3,7 +3,7 @@
 
 #include "../../../Debug/Exceptions/CalenderExceptions.hpp"
 
-#ifdef _WIN64
+#if defined(_WIN64) || defined(_WIN32)
 
 namespace klib::kCalendar::secret::impl::windows
 {

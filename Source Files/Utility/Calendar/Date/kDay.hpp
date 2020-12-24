@@ -28,16 +28,16 @@ namespace klib::kCalendar
 		static constexpr size_t TotalDaysInMonthsLeap[] =
 		{ 0, 31, 60, 91, 121, 152,
 			182, 213, 244, 274, 305, 335, 366 };
-		
+
 		static constexpr size_t DaysInWeek = 7;
 		static constexpr size_t DaysInYear = 365;
 		static constexpr size_t DaysInLeapYear = 366;
-		
+
 	public:
-		constexpr Day(std::uint16_t day, DayOfTheWeek dotw = MONDAY)
+		constexpr Day(std::uint16_t day = 1, DayOfTheWeek dotw = MONDAY) noexcept
 			: day(day), dayOfTheWeek(dotw)
 		{}
-		
+
 		~Day() noexcept = default;
 
 		USE_RESULT constexpr std::uint16_t GetValue() const noexcept
@@ -45,9 +45,19 @@ namespace klib::kCalendar
 			return day;
 		}
 
+		USE_RESULT constexpr void SetValue(std::uint16_t d)
+		{
+			day = d;
+		}
+
 		USE_RESULT constexpr DayOfTheWeek GetDayOfTheWeek() const noexcept
 		{
 			return dayOfTheWeek;
+		}
+
+		USE_RESULT constexpr void SetValue(DayOfTheWeek dotw)
+		{
+			dayOfTheWeek = dotw;
 		}
 
 		USE_RESULT static constexpr auto DayOfTheWeekToString(DayOfTheWeek day)
@@ -59,9 +69,9 @@ namespace klib::kCalendar
 
 			return kCalendar_DaysOfTheWeek[day];
 		}
-		
+
 		USE_RESULT bool Verify() const;
-		
+
 		USE_RESULT std::string ToString(const std::string_view& format) const;
 
 		template<typename TargetType>
@@ -71,15 +81,15 @@ namespace klib::kCalendar
 		}
 
 		friend class Date;
-		
+
 	private:
 		USE_RESULT std::string GetDayStr() const;
 		USE_RESULT std::string GetDayOfTheWeekStr() const;
 		USE_RESULT std::string ToStringUsingTokenCount(const size_t count) const override;
-		
+
 	private:
-		const std::uint16_t day;
-		const DayOfTheWeek dayOfTheWeek;
+		std::uint16_t day;
+		DayOfTheWeek dayOfTheWeek;
 	};
 
 

@@ -9,15 +9,15 @@
 namespace klib::kCalendar
 {
 	class Second final : public TimeComponentBase<std::chrono::seconds>
-	, private CalendarComponentToStringImplExtended
+		, private CalendarComponentToStringImplExtended
 	{
 	public:
 		static constexpr std::string_view Units = "s";
 		static constexpr auto FormatToken = 's';
-		
+
 	public:
-		constexpr Second(const Rep_t& second)
-			: TimeComponentBase( second )
+		constexpr Second(const Rep_t& second = 0)
+			: TimeComponentBase(second)
 		{}
 
 		USE_RESULT constexpr bool Verify() const
@@ -29,13 +29,13 @@ namespace klib::kCalendar
 		{
 			LimitImpl(60);
 		}
-		
+
 		USE_RESULT std::string ToString(const std::string_view& format = "s") const;
-		
+
 		friend class Time;
 
 	protected:
-		USE_RESULT std::string ToStringUsingTokenCount( const size_t count ) const override;
+		USE_RESULT std::string ToStringUsingTokenCount(const size_t count) const override;
 	};
 
 	constexpr Second operator"" _ss(unsigned long long second)
