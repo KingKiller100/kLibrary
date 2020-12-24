@@ -124,9 +124,9 @@ namespace klib::kStopwatch
 			//static_assert(Period_t::num == 1, "This assumes period::num == 1.");
 			const long long whole = (counter / frequency) * Period_t::den;
 			const long long part = (counter % frequency) * Period_t::den / frequency;
-			const auto tp = TimePoint_t(Duration_t(whole + part));
+			const auto now = TimePoint_t(Duration_t(whole + part));
 			std::atomic_thread_fence(std::memory_order_relaxed);
-			return tp;
+			return now;
 		}
 	};
 
@@ -165,9 +165,9 @@ namespace klib::kStopwatch
 		USE_RESULT static constexpr TimePoint_t Now() noexcept
 		{
 			std::atomic_thread_fence(std::memory_order_relaxed);
-			const auto tp = TimePoint_t(Duration_t(_Xtime_get_ticks()));
+			const auto now = TimePoint_t(Duration_t(_Xtime_get_ticks()));
 			std::atomic_thread_fence(std::memory_order_relaxed);
-			return tp;
+			return now;
 		}
 
 		USE_RESULT static decltype(auto) To_Time_t(const TimePoint_t& timePoint) noexcept
