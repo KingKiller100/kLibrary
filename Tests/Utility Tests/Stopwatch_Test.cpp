@@ -48,7 +48,7 @@ namespace kTest::utility
 			const auto dt3 = sw.GetDeltaTime();
 			const auto lifeTime = sw.GetLifeTime();
 
-			VERIFY(kmaths::Approximately(lifeTime, 750, allowance));
+			VERIFY(kmaths::Approximately(lifeTime, 225, allowance));
 			VERIFY(kmaths::Approximately(dt1, 750, allowance));
 			VERIFY(kmaths::Approximately(dt2, 750, allowance));
 			VERIFY(kmaths::Approximately(dt3, 750, allowance));
