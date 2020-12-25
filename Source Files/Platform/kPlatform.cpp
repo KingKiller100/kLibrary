@@ -1,5 +1,5 @@
 ﻿#include "pch.hpp"
-#include "Platform.hpp"
+#include "kPlatform.hpp"
 
 namespace klib::kPlatform
 {

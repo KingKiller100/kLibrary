@@ -4,20 +4,9 @@
 #include "../String/kToString.hpp"
 #include "../String/kStringTricks.hpp"
 
-#include <unordered_map>
-
 namespace klib::kCalendar
 {
 	using namespace kString;
-
-	static std::unordered_map<CalendarInfoSourceType, Date> dates = {
-		 { CalendarInfoSourceType::LOCAL, Date(CalendarInfoSourceType::LOCAL) },
-		 { CalendarInfoSourceType::SYSTEM, Date(CalendarInfoSourceType::SYSTEM) }
-	};
-	static std::unordered_map<CalendarInfoSourceType, Time> times = {
-		 { CalendarInfoSourceType::LOCAL, Time(CalendarInfoSourceType::LOCAL) },
-		 { CalendarInfoSourceType::SYSTEM, Time(CalendarInfoSourceType::SYSTEM) }
-	};
 
 	std::uint16_t GetComponentOfTime(const Time::TimeComponent timeComponent, const CalendarInfoSourceType  source)
 	{
@@ -66,68 +55,6 @@ namespace klib::kCalendar
 		auto time = CreateTime(hours, minutes, seconds);
 		time.append(ToString(":{0:3}", milliseconds));
 		return time;
-	}
-
-	std::string GetLocalStartTimeStr() noexcept
-	{
-		static const auto& info = times.at(CalendarInfoSourceType::LOCAL);
-		static const auto str = info.ToString(Time::TimeComponent::MILLIS);
-		return str;
-	}
-
-	std::string GetSystemStartTimeStr() noexcept
-	{
-		static const auto& info = times.at(CalendarInfoSourceType::SYSTEM);
-		static const auto str = info.ToString(Time::TimeComponent::MILLIS);
-		return str;
-	}
-
-	std::string GetLocalStartDateStr(const Date::DateNumericalSeparator separator) noexcept
-	{
-		static std::string local;
-		if (local.empty())
-		{
-			static const auto& info = dates.at(CalendarInfoSourceType::LOCAL);
-			local = info.ToString(separator);
-			return local;
-		}
-
-		if (separator == Date::DateNumericalSeparator::SLASH)
-		{
-			if (local.find('/') == std::string::npos)
-				local = Replace(local, '-', '/');
-		}
-		else
-		{
-			if (local.find('-') == std::string::npos)
-				local = Replace(local, '/', '-');
-		}
-
-		return local;
-	}
-
-	std::string GetSystemStartDateStr(const Date::DateNumericalSeparator separator) noexcept
-	{
-		static std::string system;
-		if (system.empty())
-		{
-			static const auto& info = dates.at(CalendarInfoSourceType::SYSTEM);
-			system = info.ToString(separator);
-			return system;
-		}
-
-		if (separator == Date::DateNumericalSeparator::SLASH)
-		{
-			if (system.find('/') == std::string::npos)
-				system = Replace(system, '-', '/');
-		}
-		else
-		{
-			if (system.find('-') == std::string::npos)
-				system = Replace(system, '/', '-');
-		}
-
-		return system;
 	}
 }
 

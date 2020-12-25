@@ -224,6 +224,24 @@ namespace klib
 			 */
 			bool ErasePrevious(size_t count);
 
+			/**
+			 * \brief
+			 *		Checks log level is above the minimum
+			 * \param lvl
+			 *		Log level of upcoming entry
+			 * \return
+			 *		TRUE if equal/above minimum log level
+			 */
+			bool IsLoggable(const LogLevel lvl) const;
+
+			/**
+			 * \brief
+			 *		Check if cache is empty
+			 * \return
+			 *		TRUE if cache not empty OR FALSE if cache is empty
+			 */
+			bool HasCache() const noexcept;
+
 		private:
 			void Initialize( const std::filesystem::path& path );
 
@@ -249,16 +267,6 @@ namespace klib
 			 */
 			void Close();
 
-			/**
-			 * \brief
-			 *		Checks log level is above the minimum
-			 * \param lvl
-			 *		Log level of upcoming entry
-			 * \return
-			 *		TRUE if equal/above minimum log level
-			 */
-			bool IsLoggable(const LogLevel lvl) const;
-			
 		protected:
 			LogEntries entriesQ; // Queue buffer to cache the logged messages
 

@@ -17,8 +17,6 @@ namespace klib::kLogs
 	using namespace kCalendar;
 	using namespace type_trait;
 
-	const LogEntry kLogs_Empty("NO ENTRIES! CACHE IS EMPTY", LogDescriptor("Empty"));
-
 	Logging::Logging(const std::string_view& directory
 		, const std::string_view& filename
 		, const std::string_view& extension
@@ -161,6 +159,7 @@ namespace klib::kLogs
 	void Logging::ResumeFileLogging()
 	{
 		SetCacheMode(false);
+		Flush();
 	}
 
 	void Logging::OutputToFatalFile(const LogMessage& msg)
@@ -251,10 +250,15 @@ namespace klib::kLogs
 		return (lvl >= minimumLoggingLevel);
 	}
 
+	bool Logging::HasCache() const noexcept
+	{
+		return !entriesQ.empty();
+	}
+
 	const LogEntry& Logging::GetLastCachedEntry() const
 	{
 		if (entriesQ.empty() || !cacheMode)
-			return kLogs_Empty;
+			throw std::runtime_error(name + " log cache is empty");
 
 		const auto& lastLog = entriesQ.back();
 		

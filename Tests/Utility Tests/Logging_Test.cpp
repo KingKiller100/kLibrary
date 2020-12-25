@@ -21,7 +21,7 @@ namespace kTest::utility
 		const auto stem = fullFilePathToDelete.stem();
 		const auto ext = fullFilePathToDelete.extension();
 		std::filesystem::remove(fullFilePathToDelete.parent_path());
-		
+
 	}
 
 	bool LoggingTester::LogTest()
@@ -32,7 +32,7 @@ namespace kTest::utility
 		const auto dir = std::filesystem::current_path().string() + "\\Test Results\\Log Test Dir\\";
 		const auto* const extension = ".log";
 		const std::filesystem::path path = dir + filename + extension;
-		
+
 		auto testLogger = std::make_unique<Logging>(path);
 
 		testLogger->ToggleConsoleEnabled();
@@ -43,7 +43,7 @@ namespace kTest::utility
 
 		{
 			testLogger->AddBanner("TEST", "BANNER!",
-			                      "*", "*", 12);
+				"*", "*", 12);
 			const auto& last = testLogger->GetLastCachedEntry();
 			VERIFY(last.HasText("BANNER!"));
 			VERIFY(last.HasDescription("TEST"));
@@ -73,6 +73,8 @@ namespace kTest::utility
 			constexpr char msg[] = "NORMAL!";
 			constexpr auto desc = LogLevel::NORM;
 			testLogger->AddEntry(desc, msg);
+			const auto hasCache = testLogger->HasCache();
+			VERIFY(hasCache);
 			const auto& last = testLogger->GetLastCachedEntry();
 			VERIFY(last.HasText(msg));
 			VERIFY(last.HasDescription(desc));
@@ -134,9 +136,20 @@ namespace kTest::utility
 			constexpr char msg[] = "END!";
 			constexpr auto desc = LogLevel::NORM;
 			testLogger->AddEntry(desc, msg);
-			const auto& last = testLogger->GetLastCachedEntry();
-			VERIFY(!last.HasText(msg));
-			VERIFY(!last.HasDescription(desc));
+			const auto hasCache = testLogger->HasCache();
+			VERIFY(!hasCache);
+			bool prevSuccess = success;
+			try
+			{
+				success = false;
+				const auto& last = testLogger->GetLastCachedEntry();
+				VERIFY(!last.HasText(msg));
+				VERIFY(!last.HasDescription(desc));
+			}
+			catch (...)
+			{
+				success = prevSuccess;
+			}
 		}
 
 		return success;

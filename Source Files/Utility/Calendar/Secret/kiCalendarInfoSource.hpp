@@ -28,9 +28,5 @@ namespace klib::kCalendar
 			USE_RESULT virtual std::uint16_t GetSecond() const = 0;
 			USE_RESULT virtual std::uint16_t GetMillisecond() const = 0;
 		};
-
-		void UsePlatformCalendarInfoSource();
-		iCalendarInfoSource& GetCalendarInfoSource();
-		void SetCalendarInfoSource(iCalendarInfoSource* infoSource);
 	}
 }

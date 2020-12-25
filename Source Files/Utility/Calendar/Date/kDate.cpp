@@ -2,7 +2,7 @@
 
 #include "kDate.hpp"
 
-#include "../Secret/kiCalendarInfoSource.hpp"
+#include "../kUseCalendarSourceInfo.hpp"
 
 #include "../../String/kToString.hpp"
 #include "../../Debug/Exceptions/CalenderExceptions.hpp"
@@ -16,7 +16,7 @@ namespace klib::kCalendar
 
 	Date::Date(CalendarInfoSourceType sourceType)
 	{
-		auto& source = secret::impl::GetCalendarInfoSource();
+		auto& source = GetCalendarInfoSource();
 		source.Refresh(sourceType);
 		day = Day(source.GetDay(),
 			static_cast<Day::DayOfTheWeek>(source.GetDayOfTheWeekIndex()));

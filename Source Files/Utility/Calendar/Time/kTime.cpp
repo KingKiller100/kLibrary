@@ -1,6 +1,6 @@
 ﻿#include "pch.hpp"
 #include "kTime.hpp"
-#include "../Secret/kiCalendarInfoSource.hpp"
+#include "../kUseCalendarSourceInfo.hpp"
 #include "../../String/kToString.hpp"
 #include "../../Debug/Exceptions/CalenderExceptions.hpp"
 
@@ -11,7 +11,7 @@ namespace klib::kCalendar
 
 	Time::Time(CalendarInfoSourceType sourceType)
 	{
-		auto& source = secret::impl::GetCalendarInfoSource();
+		auto& source = GetCalendarInfoSource();
 		source.Refresh(sourceType);
 		hour = Hour(source.GetHour());
 		minute = Minute(source.GetMinute());
