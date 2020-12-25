@@ -164,7 +164,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 1;
-			constexpr auto d_s_t = BytesUnits::BYTE;
+			constexpr auto d_s_t = BytesUnits::KILO;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -243,7 +243,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 1;
-			constexpr auto d_s_t = BytesUnits::BYTE;
+			constexpr auto d_s_t = BytesUnits::KILO;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto typeSize = sizeof(TestType);
@@ -299,7 +299,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 10;
-			constexpr auto d_s_t = BytesUnits::BYTE;
+			constexpr auto d_s_t = BytesUnits::KILO;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto storageTypeValue = static_cast<size_t>(d_s_t);
@@ -322,7 +322,7 @@ namespace kTest::templates
 
 		{
 			constexpr auto volume = 1;
-			constexpr auto d_s_t = BytesUnits::BYTE;
+			constexpr auto d_s_t = BytesUnits::KIBI;
 
 			BytesStorage<TestType, volume, d_s_t> storage;
 			constexpr auto storageTypeValue = static_cast<size_t>(d_s_t);

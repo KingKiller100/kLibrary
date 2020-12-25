@@ -16,13 +16,31 @@ namespace klib
 		static constexpr auto Length = MaxBytes / TypeSize;
 		static constexpr auto SizeInBytes = Length * TypeSize;
 
-		CONST_GETTER_CONSTEXPR(auto, GetTypeSize, TypeSize)
-		CONST_GETTER_CONSTEXPR(auto, GetStorageType, StorageType)
-		CONST_GETTER_CONSTEXPR(auto, GetStorageValue, StorageSize)
-		CONST_GETTER_CONSTEXPR(auto, GetMaxBytes, MaxBytes)
-		CONST_GETTER_CONSTEXPR(auto, GetLength, Length)
-		CONST_GETTER_CONSTEXPR(auto, GetSizeInBytes, SizeInBytes)
+		USE_RESULT constexpr const auto& GetTypeSize() const noexcept
+		{
+			return TypeSize;
+		}
+		USE_RESULT constexpr const auto& GetStorageType() const noexcept
+		{
+			return StorageType;
+		}
+		USE_RESULT constexpr const auto& GetStorageValue() const noexcept
+		{
+			return StorageSize;
+		}
+		USE_RESULT constexpr const auto& GetMaxBytes() const noexcept
+		{
+			return MaxBytes;
+		}
+		USE_RESULT constexpr const auto& GetLength() const noexcept
+		{
+			return Length;
+		}
+		USE_RESULT constexpr const auto& GetSizeInBytes() const noexcept
+		{
+			return SizeInBytes;
+		}
 
-		alignas(sizeof(T)) T storage[Length];
+		T storage[Length];
 	};
 }
