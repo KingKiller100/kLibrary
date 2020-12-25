@@ -18,7 +18,7 @@ namespace klib::kString::stringify
 			if (Contains(specifier, Char_t('a')))
 			{
 				return ToString("File: {0} Line: {1} Function: {2} Time Stamp: {3}"
-					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
+					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.stamp);
 			}
 			else if (Contains(specifier, "fl"))
 			{
@@ -38,7 +38,7 @@ namespace klib::kString::stringify
 			}
 			else if (Contains(specifier, Char_t('t')))
 			{
-				return ToString("{0}", sourceInfo.timeStamp);
+				return ToString("{0}", sourceInfo.stamp);
 			}
 
 			return ToString("File: {0} Line: {1} Function: {2}"
@@ -59,7 +59,7 @@ namespace klib::kString::stringify
 			if (Contains(specifier, Char_t('a')))
 			{
 				return ToString(L"File: {0} Line: {1} Function: {2} Time Stamp: {3}"
-					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
+					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.stamp);
 			}
 			else if (Contains(specifier, L"fl"))
 			{
@@ -79,7 +79,7 @@ namespace klib::kString::stringify
 			}
 			else if (Contains(specifier, Char_t('t')))
 			{
-				return ToString(L"Time Stamp: {0}", sourceInfo.timeStamp);
+				return ToString(L"Time Stamp: {0}", sourceInfo.stamp);
 			}
 
 			return ToString(L"File: {0} Line: {1} Function: {2}", sourceInfo.file, sourceInfo.line, sourceInfo.func);
@@ -99,7 +99,7 @@ namespace klib::kString::stringify
 			if (Contains(specifier, Char_t('a')))
 			{
 				return ToString(u"File: {0} Line: {1} Function: {2} Time Stamp: {3}"
-					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
+					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.stamp);
 			}
 			else if (Contains(specifier, u"fl"))
 			{
@@ -119,7 +119,7 @@ namespace klib::kString::stringify
 			}
 			else if (Contains(specifier, Char_t('t')))
 			{
-				return ToString(u"Time Stamp: {0}", sourceInfo.timeStamp);
+				return ToString(u"Time Stamp: {0}", sourceInfo.stamp);
 			}
 
 			return ToString(u"File: {0} Line: {1} Function: {2}", sourceInfo.file, sourceInfo.line, sourceInfo.func);
@@ -139,7 +139,7 @@ namespace klib::kString::stringify
 			if (Contains(specifier, Char_t('a')))
 			{
 				return ToString(U"File: {0} Line: {1} Function: {2} Time Stamp: {3}"
-					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
+					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.stamp);
 			}
 			else if (Contains(specifier, U"fl"))
 			{
@@ -159,7 +159,7 @@ namespace klib::kString::stringify
 			}
 			else if (Contains(specifier, Char_t('t')))
 			{
-				return ToString(U"Time Stamp: {0}", sourceInfo.timeStamp);
+				return ToString(U"Time Stamp: {0}", sourceInfo.stamp);
 			}
 
 			return ToString(U"File: {0} Line: {1} Function: {2}", sourceInfo.file, sourceInfo.line, sourceInfo.func);
@@ -180,7 +180,7 @@ namespace klib::kString::stringify
 			if (Contains(specifier, Char_t('a')))
 			{
 				return ToString(u8"File: {0} Line: {1} Function: {2} Time Stamp: {3}"
-					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.timeStamp);
+					, sourceInfo.file, sourceInfo.line, sourceInfo.func, sourceInfo.stamp);
 			}
 			else if (Contains(specifier, u8"fl"))
 			{
@@ -200,7 +200,7 @@ namespace klib::kString::stringify
 			}
 			else if (Contains(specifier, Char_t('t')))
 			{
-				return ToString(u8"Time Stamp: {0}", sourceInfo.timeStamp);
+				return ToString(u8"Time Stamp: {0}", sourceInfo.stamp);
 			}
 
 			return ToString(u8"File: {0} Line: {1} Function: {2}", sourceInfo.file, sourceInfo.line, sourceInfo.func);

@@ -91,7 +91,7 @@ namespace kTest::utility
 			VERIFY(source.file == u"Test.txt");
 			VERIFY(source.line == 212);
 			VERIFY(source.func == u"void Test()");
-			VERIFY(source.timeStamp == u"Mon Dec 14 01:03:52 2020");
+			VERIFY(source.stamp == u"Mon Dec 14 01:03:52 2020");
 		}
 		
 		{
