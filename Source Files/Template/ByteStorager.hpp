@@ -3,8 +3,6 @@
 #include "../HelperMacros.hpp"
 #include "../Maths/BytesUnits.hpp"
 
-#include <array>
-
 namespace klib
 {
 	template<typename T, size_t N, kmaths::BytesUnits DigitalStorageType>
@@ -25,6 +23,6 @@ namespace klib
 		CONST_GETTER_CONSTEXPR(auto, GetLength, Length)
 		CONST_GETTER_CONSTEXPR(auto, GetSizeInBytes, SizeInBytes)
 
-		std::array<T, Length> storage;
+		alignas(sizeof(T)) T storage[Length];
 	};
 }
