@@ -15,7 +15,9 @@ namespace kTest::performance
 	{}
 
 	PerformanceTestBase::~PerformanceTestBase()
-		= default;
+	{
+		ClearAll();
+	}
 
 	void PerformanceTestBase::Run() noexcept
 	{
@@ -30,6 +32,7 @@ namespace kTest::performance
 		}
 
 		Output();
+		ClearAll();
 	}
 
 	void PerformanceTestBase::Add(PerformanceTestBase* test)
@@ -60,19 +63,19 @@ namespace kTest::performance
 
 	void PerformanceTestBase::AddSubTest(const std::string& subTestName, const std::string_view& participant) noexcept
 	{
-		const auto& subTest = results[subTestName];
+		const auto& subTest = avgTimeResults[subTestName];
 
 		if (subTest.find(subTestName) != subTest.end())
 			return;
 
-		results[subTestName][participant.data()] = AverageTime{ 0, 0 };
+		avgTimeResults[subTestName][participant.data()] = AverageTime{ 0, 0 };
 	}
 
 	void PerformanceTestBase::Output() noexcept
 	{
 		std::cout << "\nCalculating Results..." << "\n";
 
-		for (auto& data : results)
+		for (auto& data : avgTimeResults)
 		{
 			data.second.erase("");
 
@@ -165,6 +168,27 @@ unitsShort,
 unitsLong);
 
 		PerformanceTestManager::Get().CollectResult(output);
+	}
+
+	void PerformanceTestBase::ClearAll()
+	{
+		ClearAverageTimes();
+		ClearProfilerResults();
+	}
+
+	void PerformanceTestBase::ClearProfilerResults()
+	{
+		profilerResults.clear();
+		profilerResults.shrink_to_fit();
+	}
+
+	void PerformanceTestBase::ClearAverageTimes()
+	{
+		for (auto && avg_time_result : avgTimeResults)
+		{
+			avg_time_result.second.clear();
+		}
+		avgTimeResults.clear();
 	}
 
 	const std::string& PerformanceTestBase::GetName() const

@@ -9,12 +9,14 @@ namespace klib::kCalendar
 {
 	std::unique_ptr<secret::impl::iCalendarInfoSource> g_kCalendarInfoSource;
 
+	using namespace secret::impl;
+	
 	void UsePlatformCalendarInfoSource()
 	{
 		switch (kPlatform::GetPlatform())
 		{
 		case kPlatform::PlatformType::WINDOWS:
-			SetCalendarInfoSource(new secret::impl::windows::CalendarInfoSourceWindows());
+			SetCalendarInfoSource(new windows::CalendarInfoSourceWindows());
 			break;
 		case kPlatform::PlatformType::APPLE:
 			//break;
@@ -26,12 +28,19 @@ namespace klib::kCalendar
 		}
 	}
 
-	secret::impl::iCalendarInfoSource& GetCalendarInfoSource()
+	iCalendarInfoSource& GetCalendarInfoSource()
 	{
+		if (g_kCalendarInfoSource == nullptr)
+		{
+			throw kDebug::CalendarError("Calendar information source is not set." 
+				" Please either set your own using \"SetCalendarInfoSource(iCalendarInfoSource*)\" or just call "
+			" \"UsePlatformCalendarInfoSource(void)\"");
+		}
+		
 		return *g_kCalendarInfoSource;
 	}
 
-	void SetCalendarInfoSource(secret::impl::iCalendarInfoSource* infoSource)
+	void SetCalendarInfoSource(iCalendarInfoSource* infoSource)
 	{
 		g_kCalendarInfoSource.reset(infoSource);
 	}

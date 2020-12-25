@@ -340,7 +340,7 @@ namespace kTest::performance::util
 		{
 			{
 				START_TEST(participants[0]);
-				const auto output = kString::ToString("string: {0} - string_view: {1} - double: {2}"
+				(void)kString::ToString("string: {0} - string_view: {1} - double: {2}"
 					" - float: {3} - ulong: {4} - slong: {5} - uint: {6} - sint: {7} - boolean: {8}"
 					, string
 					, string_view

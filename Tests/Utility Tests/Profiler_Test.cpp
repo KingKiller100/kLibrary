@@ -21,7 +21,7 @@ namespace kTest::utility
 	void ProfilerTester::Test()
 	{
 		VERIFY_MULTI_INIT();
-		VERIFY_MULTI(MillisecondsTest());
+		// VERIFY_MULTI(MillisecondsTest());
 		VERIFY_MULTI(SecondsTest());
 		VERIFY_MULTI_END();
 	}
@@ -62,31 +62,39 @@ namespace kTest::utility
 	bool ProfilerTester::SecondsTest()
 	{
 		{
+			constexpr std::chrono::seconds waitTime(5);
+			
 			using ScopeProfiler = Profiler<long long, units::Secs>;
 			const auto name = "Seconds Test";
-			ScopeProfiler profiler(name, [this, &name](const ScopeProfiler::Result_t& results)
+			ScopeProfiler profiler(name, [this, &name, waitTime](const ScopeProfiler::Result_t& results)
 				{
+			constexpr auto allowance = 0;
 					VERIFY(results.name == name);
 					const auto duration = static_cast<double>(results.end - results.start);
-					VERIFY(kmaths::Approximately(duration, 2, 0));
+					const auto expectedMidPt = waitTime.count() + allowance;
+					VERIFY(kmaths::Approximately(duration, expectedMidPt, allowance));
 					const auto hashThrID = std::hash<std::thread::id>{}(std::this_thread::get_id());
 					VERIFY(hashThrID == results.threadID);
 				});
-			std::this_thread::sleep_for(2s);
+			std::this_thread::sleep_for(waitTime);
 		}
 
 		{
+			constexpr std::chrono::milliseconds waitTime(2500);
+			constexpr auto allowance = 50;
+			
 			using ScopeProfiler = Profiler<long long, units::Millis>;
 			const auto name = "Seconds Test";
-			ScopeProfiler profiler(name, [this, &name](const ScopeProfiler::Result_t& results)
+			ScopeProfiler profiler(name, [this, &name, waitTime](const ScopeProfiler::Result_t& results)
 				{
 					VERIFY(results.name == name);
 					const auto duration = static_cast<double>(results.end - results.start);
-					VERIFY(kmaths::Approximately(duration, 2500, 50));
+					const auto expectedMidPt = waitTime.count() + allowance;
+					VERIFY(kmaths::Approximately(duration, expectedMidPt, allowance));
 					const auto hashThrID = std::hash<std::thread::id>{}(std::this_thread::get_id());
 					VERIFY(hashThrID == results.threadID);
 				});
-			std::this_thread::sleep_for(2.5s);
+			std::this_thread::sleep_for(waitTime);
 		}
 
 		return success;
