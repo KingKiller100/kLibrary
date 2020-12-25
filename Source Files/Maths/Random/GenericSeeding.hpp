@@ -16,6 +16,8 @@ namespace kmaths
 
 		USE_RESULT std::uint64_t U64Seed(GenericSeedingSource sourceType);
 		USE_RESULT std::uint32_t U32Seed(GenericSeedingSource sourceType);
+		USE_RESULT std::int32_t S32Seed(GenericSeedingSource sourceType);
+		USE_RESULT std::int64_t S64Seed(GenericSeedingSource sourceType);
 	}
 	
 #ifdef KLIB_SHORT_NAMESPACE

@@ -38,7 +38,7 @@ namespace kTest::maths
 			constexpr BigInt_t lb = 0;
 			constexpr BigInt_t ub = 100;
 
-			auto rng = Rng32(GenericSeedingSource::BCRYPT);
+			auto rng = RngU32(GenericSeedingSource::BCRYPT);
 
 			const auto a = rng(lb, ub);
 			const auto b = rng(lb, ub);
@@ -52,7 +52,7 @@ namespace kTest::maths
 			constexpr BigInt_t lb = 0;
 			constexpr BigInt_t ub = 100;
 
-			auto rng = Rng64(GenericSeedingSource::BCRYPT);
+			auto rng = RngU64(GenericSeedingSource::BCRYPT);
 
 			const auto a = rng(lb, ub);
 			const auto b = rng(lb, ub);
@@ -72,7 +72,7 @@ namespace kTest::maths
 			constexpr BigInt_t lb = 0;
 			constexpr BigInt_t ub = 100;
 
-			auto rng = Rng32(GenericSeedingSource::TIME);
+			auto rng = RngU32(GenericSeedingSource::TIME);
 
 			const auto a = rng.Generate(lb, ub);
 			//std::this_thread::sleep_for(1s);
@@ -88,7 +88,7 @@ namespace kTest::maths
 			constexpr BigInt_t lb = 0;
 			constexpr BigInt_t ub = 100;
 
-			auto rng = Rng64(GenericSeedingSource::TIME);
+			auto rng = RngU64(GenericSeedingSource::TIME);
 
 			const auto a = rng.Generate(lb, ub);
 			//std::this_thread::sleep_for(1s);
@@ -112,7 +112,7 @@ namespace kTest::maths
 			constexpr float lb = 0.25f;
 			constexpr float ub = 0.5f;
 
-			auto rng = Rng32(GenericSeedingSource::BCRYPT);
+			auto rng = RngU32(GenericSeedingSource::BCRYPT);
 			const auto a = rng(lb, ub);
 			const auto b = rng(lb, ub);
 
@@ -125,7 +125,7 @@ namespace kTest::maths
 			constexpr auto lb = 18.25;
 			constexpr auto ub = 50.75;
 
-			auto rng = Rng64(GenericSeedingSource::BCRYPT);
+			auto rng = RngU64(GenericSeedingSource::BCRYPT);
 			const auto a = rng(lb, ub);
 			const auto b = rng(lb, ub);
 
@@ -146,7 +146,7 @@ namespace kTest::maths
 			constexpr float lb = 0.25f;
 			constexpr float ub = 0.5f;
 
-			auto rng = Rng32(GenericSeedingSource::TIME);
+			auto rng = RngU32(GenericSeedingSource::TIME);
 			const auto a = rng(lb, ub);
 			const auto b = rng(lb, ub);
 
@@ -159,7 +159,7 @@ namespace kTest::maths
 			constexpr auto lb = 18.25;
 			constexpr auto ub = 50.75;
 
-			auto rng = Rng64(GenericSeedingSource::TIME);
+			auto rng = RngU64(GenericSeedingSource::TIME);
 			const auto a = rng(lb, ub);
 			const auto b = rng(lb, ub);
 

@@ -122,5 +122,31 @@ namespace kmaths::kRng
 			break;
 		}
 	}
+
+	std::int32_t S32Seed(GenericSeedingSource sourceType)
+	{
+		switch (sourceType) {
+		case GenericSeedingSource::TIME:
+			return static_cast<std::int32_t>(SeedFromTime());
+		case GenericSeedingSource::BCRYPT:
+			return GetBCryptSeed<std::int32_t>();
+		default:
+			throw klib::kDebug::MathsError("Unknown seeding source type");
+			break;
+		}
+	}
+
+	std::int64_t S64Seed(GenericSeedingSource sourceType)
+	{
+		switch (sourceType) {
+		case GenericSeedingSource::TIME:
+			return static_cast<std::int64_t>(SeedFromTime());
+		case GenericSeedingSource::BCRYPT:
+			return GetBCryptSeed<std::int64_t>();
+		default:
+			throw klib::kDebug::MathsError("Unknown seeding source type");
+			break;
+		}
+	}
 }
 
