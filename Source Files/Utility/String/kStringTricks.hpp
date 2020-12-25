@@ -36,7 +36,7 @@ namespace klib
 #if MSVC_PLATFORM_TOOLSET >= 141
 			std::replace(text.begin(), text.end(), oldChar, newChar);
 #else
-			auto oldCharPos = str.find_first_of(oldChar);
+			auto oldCharPos = Find_First_Of(str, oldChar);
 
 			if (oldCharPos == StrW::npos)
 				return text;
@@ -46,7 +46,7 @@ namespace klib
 
 			do {
 				text[oldCharPos] = newChar;
-				oldCharPos = text.find_first_of(oldChar);
+				oldCharPos = Find_First_Of(text.data(), oldChar);
 			} while (oldCharPos != StrW::npos);
 #endif
 			return text;
