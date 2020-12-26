@@ -22,7 +22,7 @@ namespace klib::kLogs
 		, const std::string_view& extension
 		, const std::string_view& name)
 			: Logging( std::filesystem::path(
-				ToString( directory, klib::kFileSystem::AppendFileExtension(filename, extension)))
+				ToString( "{0}{1}", directory, klib::kFileSystem::AppendFileExtension(filename, extension)))
 				, name )
 	{
 	}
