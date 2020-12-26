@@ -125,7 +125,7 @@ namespace kTest::utility
 
 		testLogger->ResumeFileLogging();
 
-		testLogger->OutputToFatalFile(LogMessage("FATAL!", __FILE__, __LINE__));
+		testLogger->AddFatal(LogMessage("FATAL!", __FILE__, __LINE__));
 
 		testLogger->FinalOutput();
 

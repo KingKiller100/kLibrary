@@ -154,7 +154,7 @@ namespace klib
 			 * \param msg
 			 *		Error information
 			 */
-			void OutputToFatalFile(const LogMessage& msg);
+			void AddFatal(const LogMessage& msg);
 
 			/**
 			 * \brief

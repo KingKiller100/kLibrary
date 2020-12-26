@@ -162,7 +162,7 @@ namespace klib::kLogs
 		Flush();
 	}
 
-	void Logging::OutputToFatalFile(const LogMessage& msg)
+	void Logging::AddFatal(const LogMessage& msg)
 	{
 		AddEntry(LogLevel::FATL, msg);
 		FinalOutput();
