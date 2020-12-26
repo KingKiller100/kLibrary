@@ -41,6 +41,6 @@ namespace klib
 			return SizeInBytes;
 		}
 
-		T storage[Length];
+		std::array<T, Length> storage;
 	};
 }
