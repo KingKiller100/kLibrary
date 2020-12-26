@@ -17,9 +17,7 @@
 #include "../HelperMacros.hpp"
 #include "../Utility/Debug/Exceptions/MathsExceptions.hpp"
 
-#if MSVC_PLATFORM_TOOLSET > 142
 #	include <cmath>
-#endif
 
 #include <cstdint>
 #include <type_traits>
