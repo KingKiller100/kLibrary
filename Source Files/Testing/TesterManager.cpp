@@ -18,7 +18,6 @@
 #include <iostream>
 #include <mutex>
 #include <stack>
-#include <thread>
 #include <Windows.h>
 
 
@@ -50,6 +49,8 @@ namespace kTest
 	{
 		if (!tests.empty())
 			tests.clear();
+
+		testTimes.clear();
 	}
 
 	void TesterManager::Initialize()
@@ -105,7 +106,7 @@ namespace kTest
 		std::cout << "Testing: " << (noOfThreads > 0 ? "Multi-Threaded" : "Single Threaded")
 			<< "\n";
 
-		timesRecorded.reserve(testCount);
+		testTimes.reserve(testCount);
 
 		clock_t start;
 
@@ -169,10 +170,10 @@ namespace kTest
 	{
 		double avgTime(0);
 
-		for (auto t : timesRecorded)
+		for (auto t : testTimes)
 			avgTime += t;
 
-		avgTime /= timesRecorded.size();
+		avgTime /= testTimes.size();
 		return avgTime;
 	}
 
@@ -202,7 +203,7 @@ namespace kTest
 		const auto testTime =
 			static_cast<double>(std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count()) / 1000000;
 
-		timesRecorded.push_back(testTime);
+		testTimes.push_back(testTime);
 
 		const auto resTimeStr = Sprintf("| Runtime: %.3f%s"
 			, testTime
@@ -228,7 +229,7 @@ namespace kTest
 	void TesterManager::WriteToConsole(const bool pass, const std::string& nameOpenerStr,
 		const std::string& resTimeStr)
 	{
-		auto locker = std::scoped_lock(consoleMutex);
+		const auto scopeLocker = std::scoped_lock(consoleMutex);
 
 		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -240,7 +241,6 @@ namespace kTest
 
 		const auto resultStr = Sprintf("%s", (pass ? "Pass" : "Fail"));
 		std::cout << resultStr;
-		SetConsoleTextAttribute(hConsole, kMisc::ConsoleColour::LIGHT_GREY);
 
 		std::cout.precision(3);
 
@@ -249,7 +249,7 @@ namespace kTest
 
 	void TesterManager::WriteToFile(const std::string& results)
 	{
-		auto locker = std::scoped_lock(fileMutex);
+		const auto scopeLocker = std::scoped_lock(fileMutex);
 		file << results;
 	}
 

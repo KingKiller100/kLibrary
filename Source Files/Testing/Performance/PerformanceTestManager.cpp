@@ -88,6 +88,7 @@ namespace kTest::performance
 		for (auto& test : tests)
 		{
 			delete test;
+			// test = nullptr;
 		}
 		tests.clear();
 	}

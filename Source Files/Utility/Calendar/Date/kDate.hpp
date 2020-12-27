@@ -11,11 +11,6 @@ namespace klib
 {
 	namespace kCalendar
 	{
-		namespace secret::impl
-		{
-			class iCalendarInfo;
-		}
-		
 		class Date : private CalendarComponentToStringImpl
 		{
 		public:

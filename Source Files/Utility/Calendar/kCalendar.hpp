@@ -10,6 +10,60 @@ namespace klib
 {
 	namespace kCalendar
 	{
+		template<typename Date, typename Time>
+		class BasicCalendar
+		{
+		public:
+			using Date_t = Date;
+			using Time_t = Time;
+
+		public:
+			constexpr BasicCalendar() noexcept
+				= default;
+
+			constexpr BasicCalendar(const CalendarInfoSourceType sourceType = CalendarInfoSourceType::LOCAL) noexcept
+				: d(sourceType)
+				, t(sourceType)
+			{}
+
+			constexpr BasicCalendar(const Date& newDate, const Time& newTime) noexcept
+				: d(newDate)
+				, t(newTime)
+			{}
+
+			BasicCalendar(const BasicCalendar&) noexcept = default;
+			BasicCalendar(BasicCalendar&&) noexcept = default;
+
+			constexpr BasicCalendar& operator=(const BasicCalendar&) noexcept = default;
+			constexpr BasicCalendar& operator=(BasicCalendar&&) noexcept = default;
+
+			constexpr const Date& GetDate() const noexcept
+			{
+				return d;
+			}
+
+			constexpr Date& GetDate() noexcept
+			{
+				return d;
+			}
+
+			constexpr const Time& GetTime() const noexcept
+			{
+				return t;
+			}
+
+			constexpr Time& GetTime() noexcept
+			{
+				return t;
+			}
+
+		private:
+			Date d;
+			Time t;
+		};
+
+		using GregorianCalendar = BasicCalendar<Date, Time>;
+
 		std::string GetDateInTextFormat(const Date::DateTextLength format, const CalendarInfoSourceType source = CalendarInfoSourceType::LOCAL) noexcept;
 		std::string GetDateInNumericalFormat(const Date::DateNumericalSeparator separator, const CalendarInfoSourceType  source = CalendarInfoSourceType::LOCAL) noexcept;
 

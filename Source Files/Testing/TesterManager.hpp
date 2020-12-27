@@ -66,7 +66,7 @@ namespace kTest
 	private:
 		std::string path;
 		std::set<std::shared_ptr<TesterBase>> tests;
-		std::vector<double> timesRecorded;
+		std::vector<double> testTimes;
 		bool success;
 		std::mutex consoleMutex;
 		std::mutex fileMutex;

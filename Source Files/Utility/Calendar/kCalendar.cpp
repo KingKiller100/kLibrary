@@ -20,7 +20,7 @@ namespace klib::kCalendar
 		return now.ToString(Time::TimeComponent::MILLIS);
 	}
 
-	std::string GetDateInTextFormat(const Date::DateTextLength format, const CalendarInfoSourceType  source) noexcept
+	std::string GetDateInTextFormat(const Date::DateTextLength format, const CalendarInfoSourceType source) noexcept
 	{
 		const auto date = Date(source);
 		return date.ToString(format);
