@@ -60,10 +60,12 @@ namespace klib::kCalendar
 			return kCalendar_MonthsArray[static_cast<size_t>(month) - 1];
 		}
 
-		template<typename TargetType>
-		constexpr operator TargetType() const
+		template<typename Target_t, class = std::enable_if_t<
+			std::is_arithmetic_v<Target_t>
+			>>
+		constexpr operator Target_t() const
 		{
-			return static_cast<TargetType>(GetMonthNumber());
+			return static_cast<Target_t>(GetMonthNumber());
 		}
 
 		USE_RESULT std::string ToString(const std::string_view& format) const;

@@ -1,16 +1,20 @@
 ﻿#pragma once
 
+#include "kTimeComponentBase.hpp"
+
 #include "../Secret/kComponentToStringImpl.hpp"
 
-#include "kTimeComponentBase.hpp"
+#include "../../../Template/kSimpleOperators.hpp"
 
 #include <chrono>
 #include <string>
+
 
 namespace klib::kCalendar
 {
 	class Hour final : public TimeComponentBase<std::chrono::hours>
 		, private CalendarComponentToStringImplExtended
+		, public kTemplate::SimpleOperators<Hour>
 	{
 	public:
 		enum CycleType : std::uint8_t

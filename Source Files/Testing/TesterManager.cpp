@@ -102,7 +102,7 @@ namespace kTest
 			std::cout << "TestManager empty\n";
 			return;
 		}
-		
+
 		std::cout << "Testing: " << (noOfThreads > 0 ? "Multi-Threaded" : "Single Threaded")
 			<< "\n";
 
@@ -111,7 +111,7 @@ namespace kTest
 		clock_t start;
 
 		PerformTests(noOfThreads, start);
-		
+
 		const clock_t end = std::clock();
 
 		const auto finalTime = static_cast<double>(end - start) / CLOCKS_PER_SEC;
@@ -162,10 +162,10 @@ namespace kTest
 					Run(*test);
 				}
 			}();
-		}		
+		}
 	}
 
-	
+
 	double TesterManager::GetAverageTime() const
 	{
 		double avgTime(0);
@@ -239,8 +239,11 @@ namespace kTest
 			? kMisc::ConsoleColour::LIGHT_GREEN
 			: kMisc::ConsoleColour::SCARLET_RED);
 
+
 		const auto resultStr = Sprintf("%s", (pass ? "Pass" : "Fail"));
 		std::cout << resultStr;
+		
+		SetConsoleTextAttribute(hConsole, kMisc::ConsoleColour::LIGHT_GREY);
 
 		std::cout.precision(3);
 

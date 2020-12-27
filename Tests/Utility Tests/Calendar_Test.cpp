@@ -746,11 +746,26 @@ namespace kTest::utility
 			GregorianCalendar calendar(CalendarInfoSourceType::LOCAL);
 
 			const auto& d = calendar.GetDate();
-			const auto& t = calendar.GetTime();
 			const auto daysMatch = d.GetDay() == localTime.wDay;
 			const auto dotwMatch = d.GetDay().GetDayOfTheWeek() == localTime.wDayOfWeek;
 			const auto monthMatch = d.GetMonth() == localTime.wMonth;
 			const auto yearMatch = localTime.wYear == d.GetYear();
+
+			VERIFY(daysMatch);
+			VERIFY(dotwMatch);
+			VERIFY(monthMatch);
+			VERIFY(yearMatch);
+			
+			const auto& t = calendar.GetTime();
+			const auto hourMatch = t.GetHour() == localTime.wHour;
+			const auto minMatch = t.GetMinute() == localTime.wMinute;
+			const auto secMatch = t.GetSecond() == localTime.wSecond;
+			const auto milliMatch = t.GetMillisecond() == localTime.wMilliseconds;
+			
+			VERIFY(hourMatch);
+			VERIFY(minMatch);
+			VERIFY(secMatch);
+			VERIFY(milliMatch);
 		}
 		
 		return success;

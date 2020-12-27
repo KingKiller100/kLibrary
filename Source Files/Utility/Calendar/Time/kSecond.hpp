@@ -3,6 +3,8 @@
 #include "../Secret/kComponentToStringImpl.hpp"
 #include "kTimeComponentBase.hpp"
 
+#include "../../../Template/kSimpleOperators.hpp"
+
 #include <chrono>
 #include <string>
 
@@ -10,6 +12,7 @@ namespace klib::kCalendar
 {
 	class Second final : public TimeComponentBase<std::chrono::seconds>
 		, private CalendarComponentToStringImplExtended
+		, public kTemplate::SimpleOperators<Second>
 	{
 	public:
 		static constexpr std::string_view Units = "s";

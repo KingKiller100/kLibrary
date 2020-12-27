@@ -2,7 +2,9 @@
 
 #include "kTimeComponentBase.hpp"
 #include "../Secret/kComponentToStringImpl.hpp"
+
 #include "../../../HelperMacros.hpp"
+#include "../../../Template/kSimpleOperators.hpp"
 
 #include <chrono>
 #include <string>
@@ -11,6 +13,7 @@ namespace klib::kCalendar
 {
 	class Minute final : public TimeComponentBase<std::chrono::minutes>
 		, private CalendarComponentToStringImplExtended
+		, public kTemplate::SimpleOperators<Minute>
 	{
 	public:
 		static constexpr std::string_view Units = "m";

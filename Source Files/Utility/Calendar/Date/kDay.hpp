@@ -76,10 +76,12 @@ namespace klib::kCalendar
 
 		USE_RESULT std::string ToString(const std::string_view& format) const;
 
-		template<typename TargetType>
-		constexpr operator TargetType() const
+		template<typename Target_t, class = std::enable_if_t<
+			std::is_arithmetic_v<Target_t>
+			>>
+			constexpr operator Target_t() const
 		{
-			return GetValue();
+			return static_cast<Target_t>(GetValue());
 		}
 
 		friend class Date;

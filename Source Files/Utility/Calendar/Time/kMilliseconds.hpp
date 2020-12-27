@@ -3,6 +3,8 @@
 #include "kTimeComponentBase.hpp"
 #include "../Secret/kComponentToStringImpl.hpp"
 
+#include "../../../Template/kSimpleOperators.hpp"
+
 #include <chrono>
 #include <string>
 
@@ -10,6 +12,7 @@ namespace klib::kCalendar
 {
 	class Millisecond final : public TimeComponentBase<std::chrono::milliseconds>
 		, private CalendarComponentToStringImplExtended
+		, public kTemplate::SimpleOperators<Millisecond>
 	{
 	public:
 		static constexpr std::string_view Units = "ms";

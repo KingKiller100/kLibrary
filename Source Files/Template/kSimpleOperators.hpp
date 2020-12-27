@@ -8,54 +8,101 @@ namespace klib::kTemplate
 	template<typename T>
 	struct SimpleOperators
 	{
-		template<typename Other_t, class = std::enable_if_t<
-			!std::is_same_v<T, Other_t>
+		template<typename U, class = std::enable_if_t<
+			!std::is_same_v<T, U>
 		>>
-		USE_RESULT friend constexpr bool operator==(const T& obj, Other_t other) noexcept(std::is_arithmetic_v<Other_t>)
+		USE_RESULT friend constexpr bool operator==(const T& obj, const U& other) noexcept(std::is_arithmetic_v<U>)
 		{
-			return other == static_cast<Other_t>(obj);
+			return other == static_cast<U>(obj);
+		}
+		
+		template<typename U, class = std::enable_if_t<
+			!std::is_same_v<T, U>
+		>>
+		USE_RESULT friend constexpr bool operator==(const U& other, const T& obj) noexcept(std::is_arithmetic_v<U>)
+		{
+			return other == static_cast<U>(obj);
+		}
+
+		template<typename U, class = std::enable_if_t<
+			!std::is_same_v<T, U>
+			>>
+		USE_RESULT friend constexpr bool operator!=(const T& obj, const U& other) noexcept(std::is_arithmetic_v<U>)
+		{
+			return other != static_cast<U>(obj);
+		}
+
+		template<typename U, class = std::enable_if_t<
+			!std::is_same_v<T, U>
+			>>
+			USE_RESULT friend constexpr bool operator!=(const U& other, const T& obj) noexcept(std::is_arithmetic_v<U>)
+		{
+			return other != static_cast<U>(obj);
+		}
+
+		template<typename U, class = std::enable_if_t<
+			!std::is_same_v<T, U>
+			>>
+		USE_RESULT friend constexpr bool operator<(const T& obj, const U& other) noexcept(std::is_arithmetic_v<U>)
+		{
+			return other < static_cast<U>(obj);
+		}
+
+		template<typename U, class = std::enable_if_t<
+			!std::is_same_v<T, U>
+			>>
+			USE_RESULT friend constexpr bool operator<(const U& other, const T& obj) noexcept(std::is_arithmetic_v<U>)
+		{
+			return other < static_cast<U>(obj);
+		}
+
+		template<typename U, class = std::enable_if_t<
+			!std::is_same_v<T, U>
+			>>
+		USE_RESULT friend constexpr bool operator<=(const T& obj, const U& other) noexcept(std::is_arithmetic_v<U>)
+		{
+			return other <= static_cast<U>(obj);
+		}
+
+		template<typename U, class = std::enable_if_t<
+			!std::is_same_v<T, U>
+			>>
+			USE_RESULT friend constexpr bool operator<=(const U& other, const T& obj) noexcept(std::is_arithmetic_v<U>)
+		{
+			return other <= static_cast<U>(obj);
 		}
 		
 
-		template<typename Other_t, class = std::enable_if_t<
-			!std::is_same_v<T, Other_t>
+		template<typename U, class = std::enable_if_t<
+			!std::is_same_v<T, U>
 			>>
-		USE_RESULT friend constexpr bool operator!=(const T& obj, Other_t other) noexcept(std::is_arithmetic_v<Other_t>)
+		USE_RESULT friend constexpr bool operator>(const T& obj, const U& other) noexcept(std::is_arithmetic_v<U>)
 		{
-			return other != static_cast<Other_t>(obj);
+			return other > static_cast<U>(obj);
 		}
 
-		template<typename Other_t, class = std::enable_if_t<
-			!std::is_same_v<T, Other_t>
+		template<typename U, class = std::enable_if_t<
+			!std::is_same_v<T, U>
 			>>
-		USE_RESULT friend constexpr bool operator<(const T& obj, Other_t other) noexcept(std::is_arithmetic_v<Other_t>)
+			USE_RESULT friend constexpr bool operator>(const U& other, const T& obj) noexcept(std::is_arithmetic_v<U>)
 		{
-			return other < static_cast<Other_t>(obj);
+			return other > static_cast<U>(obj);
 		}
 
-		template<typename Other_t, class = std::enable_if_t<
-			!std::is_same_v<T, Other_t>
+		template<typename U, class = std::enable_if_t<
+			!std::is_same_v<T, U>
 			>>
-		USE_RESULT friend constexpr bool operator<=(const T& obj, Other_t other) noexcept(std::is_arithmetic_v<Other_t>)
+		USE_RESULT friend constexpr bool operator>=(const T& obj, const U& other) noexcept(std::is_arithmetic_v<U>)
 		{
-			return other <= static_cast<Other_t>(obj);
-		}
-		
-
-		template<typename Other_t, class = std::enable_if_t<
-			!std::is_same_v<T, Other_t>
-			>>
-		USE_RESULT friend constexpr bool operator>(const T& obj, Other_t other) noexcept(std::is_arithmetic_v<Other_t>)
-		{
-			return other > static_cast<Other_t>(obj);
+			return other >= static_cast<U>(obj);
 		}
 
-		template<typename Other_t, class = std::enable_if_t<
-			!std::is_same_v<T, Other_t>
+		template<typename U, class = std::enable_if_t<
+			!std::is_same_v<T, U>
 			>>
-		USE_RESULT friend constexpr bool operator>=(const T& obj, Other_t other) noexcept(std::is_arithmetic_v<Other_t>)
+			USE_RESULT friend constexpr bool operator>=(const U& other, const T& obj) noexcept(std::is_arithmetic_v<U>)
 		{
-			return other >= static_cast<Other_t>(obj);
+			return other >= static_cast<U>(obj);
 		}
 	};
 }
