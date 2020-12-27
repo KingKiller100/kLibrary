@@ -64,6 +64,7 @@ namespace kTest::utility
 		VERIFY_MULTI(GetTimeComponentTest());
 		VERIFY_MULTI(GetDateInTextFormatTest());
 		VERIFY_MULTI(GetDateInNumericalFormatTest());
+		VERIFY_MULTI(BasicCalenadarTest());
 		VERIFY_MULTI_END();
 	}
 
@@ -734,6 +735,16 @@ namespace kTest::utility
 			VERIFY(result == expected);
 		}
 
+		return success;
+	}
+
+	bool CalendarTester::BasicCalenadarTest()
+	{
+		{
+			GregorianCalendar calendar(CalendarInfoSourceType::LOCAL);
+			
+		}
+		
 		return success;
 	}
 }

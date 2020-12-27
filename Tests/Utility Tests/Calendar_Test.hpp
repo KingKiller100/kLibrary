@@ -32,6 +32,8 @@ namespace kTest::utility
 		bool GetDateInNumericalFormatTest();
 
 		bool CreateTimeTest();
+
+		bool BasicCalenadarTest();
 	};
 }
 #endif
