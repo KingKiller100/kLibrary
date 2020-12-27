@@ -3,7 +3,7 @@
 #include "../HelperMacros.hpp"
 #include "../Maths/BytesUnits.hpp"
 
-namespace klib
+namespace klib::kTemplate
 {
 	template<typename T, size_t N, kmaths::BytesUnits DigitalStorageType>
 	struct BytesStorage

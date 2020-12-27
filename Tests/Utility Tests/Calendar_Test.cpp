@@ -741,8 +741,16 @@ namespace kTest::utility
 	bool CalendarTester::BasicCalenadarTest()
 	{
 		{
+			SYSTEMTIME localTime;
+			::GetLocalTime(&localTime);
 			GregorianCalendar calendar(CalendarInfoSourceType::LOCAL);
-			
+
+			const auto& d = calendar.GetDate();
+			const auto& t = calendar.GetTime();
+			const auto daysMatch = d.GetDay() == localTime.wDay;
+			const auto dotwMatch = d.GetDay().GetDayOfTheWeek() == localTime.wDayOfWeek;
+			const auto monthMatch = d.GetMonth() == localTime.wMonth;
+			const auto yearMatch = localTime.wYear == d.GetYear();
 		}
 		
 		return success;

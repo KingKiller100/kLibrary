@@ -6,10 +6,12 @@
 #include <array>
 #include <string>
 
+#include "../../../Template/kSimpleOperators.hpp"
+
 
 namespace klib::kCalendar
 {
-	class Day : private CalendarComponentToStringImplExtended
+	class Day : private CalendarComponentToStringImplExtended, public kTemplate::SimpleOperators<Day>
 	{
 	public:
 		enum DayOfTheWeek : unsigned char

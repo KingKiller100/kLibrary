@@ -17,7 +17,7 @@ namespace kTest::templates
 	BytesStorageTester::~BytesStorageTester()
 		= default;
 
-	using namespace klib;
+	using namespace klib::kTemplate;
 	using namespace kmaths;
 	
 	void BytesStorageTester::Test()

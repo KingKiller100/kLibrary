@@ -1,13 +1,12 @@
 ﻿#pragma once
 
 #include "kDay.hpp"
-#include "kMonth.hpp"
 
 #include "../Secret/kComponentToStringImpl.hpp"
+#include "../../../Template/kSimpleOperators.hpp"
 #include "../../../HelperMacros.hpp"
 
 #include <cstdint>
-
 
 namespace klib::kCalendar
 {
@@ -18,7 +17,7 @@ namespace klib::kCalendar
 			|| year % 400 == 0); // Unless it's divisible by 400
 	}
 
-	class Year final : private CalendarComponentToStringImplExtended
+	class Year final : private CalendarComponentToStringImplExtended, public kTemplate::SimpleOperators<Year>
 	{
 	public:
 		static constexpr auto FormatToken = 'y';
@@ -74,6 +73,7 @@ namespace klib::kCalendar
 	private:
 		std::uint16_t year;
 	};
+
 
 	constexpr Year operator"" _y(unsigned long long year)
 	{

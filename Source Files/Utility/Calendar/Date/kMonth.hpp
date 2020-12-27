@@ -2,7 +2,7 @@
 
 
 #include "../Secret/kComponentToStringImpl.hpp"
-#include "../../../Maths/kAlgorithms.hpp"
+#include "../../../Template/kSimpleOperators.hpp"
 
 #include <array>
 #include <string>
@@ -12,7 +12,7 @@ namespace klib::kCalendar
 	class Year;
 	class Day;
 
-	class Month final : private CalendarComponentToStringImplExtended
+	class Month final : private CalendarComponentToStringImplExtended, public kTemplate::SimpleOperators<Month>
 	{
 	public:
 		enum MonthOfTheYear : unsigned char
