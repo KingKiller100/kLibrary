@@ -239,7 +239,6 @@ namespace kTest
 			? kMisc::ConsoleColour::LIGHT_GREEN
 			: kMisc::ConsoleColour::SCARLET_RED);
 
-
 		const auto resultStr = Sprintf("%s", (pass ? "Pass" : "Fail"));
 		std::cout << resultStr;
 		

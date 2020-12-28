@@ -5,11 +5,11 @@
 
 namespace klib::kCalendar
 {
-	template<typename DurationT>
+	template<typename Duration>
 	class TimeComponentBase
 	{
 	public:
-		using Duration_t = DurationT;
+		using Duration_t = Duration;
 		using Period_t = typename Duration_t::period;
 		using Rep_t = typename Duration_t::rep;
 		

@@ -743,7 +743,7 @@ namespace kTest::utility
 		{
 			SYSTEMTIME localTime;
 			::GetLocalTime(&localTime);
-			GregorianCalendar calendar(CalendarInfoSourceType::LOCAL);
+			const GregorianCalendar calendar(CalendarInfoSourceType::LOCAL);
 
 			const auto& d = calendar.GetDate();
 			const auto daysMatch = d.GetDay() == localTime.wDay;
