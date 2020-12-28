@@ -768,6 +768,34 @@ namespace kTest::utility
 			VERIFY(milliMatch);
 		}
 		
+		{
+			SYSTEMTIME systemTime;
+			::GetSystemTime(&systemTime);
+			GregorianCalendar calendar(CalendarInfoSourceType::SYSTEM);
+
+			const auto& d = calendar.GetDate();
+			const auto daysMatch = d.GetDay() == systemTime.wDay;
+			const auto dotwMatch = d.GetDay().GetDayOfTheWeek() == systemTime.wDayOfWeek;
+			const auto monthMatch = d.GetMonth() == systemTime.wMonth;
+			const auto yearMatch = systemTime.wYear == d.GetYear();
+
+			VERIFY(daysMatch);
+			VERIFY(dotwMatch);
+			VERIFY(monthMatch);
+			VERIFY(yearMatch);
+			
+			const auto& t = calendar.GetTime();
+			const auto hourMatch = t.GetHour() == systemTime.wHour;
+			const auto minMatch = t.GetMinute() == systemTime.wMinute;
+			const auto secMatch = t.GetSecond() == systemTime.wSecond;
+			const auto milliMatch = t.GetMillisecond() == systemTime.wMilliseconds;
+			
+			VERIFY(hourMatch);
+			VERIFY(minMatch);
+			VERIFY(secMatch);
+			VERIFY(milliMatch);
+		}
+		
 		return success;
 	}
 }
