@@ -5,9 +5,11 @@
 #include "../String/kStringConverter.hpp"
 
 #include <array>
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <string_view>
+#include <stdexcept>
 
 #define MAP(macro, ...) \
     IDENTITY( \
@@ -115,9 +117,19 @@ private:																				\
 	};																					\
 																						\
 public:																					\
-	constexpr enumName(const InternalEnum_t value)										\
+	constexpr enumName(InternalEnum_t value)											\
 		: value(value)																	\
 	{}																					\
+																						\
+	constexpr enumName(underlying val)													\
+		: value(val)																	\
+	{																					\
+		const auto& v = secret_impl_##enumName::values;									\
+		if (std::find(std::begin(v), std::end(v), val) == v.end())						\
+		{																				\
+			throw std::out_of_range("Value given is out of enum's range");				\
+		}																				\
+	}																					\
 																						\
 	constexpr enumName& operator=(const InternalEnum_t value)							\
 	{																					\
@@ -191,7 +203,7 @@ public:																					\
 	}																					\
 																						\
 	template<class Char_t = char>														\
-	USE_RESULT std::basic_string_view<Char_t> ToString() const							\
+	USE_RESULT const Char_t* ToString() const											\
 	{																					\
 		const auto name = ToStringImpl<Char_t>();										\
 		return name;																	\
