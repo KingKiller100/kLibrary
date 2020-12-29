@@ -71,7 +71,7 @@ namespace klib
 		{
 			std::string logLine;
 
-			if (desc.lvl == LogLevel::VBAT)
+			if (desc.lvl == LogLevel::RAW)
 			{
 				logLine = msg.text;
 			}
@@ -101,7 +101,7 @@ namespace klib
 					msg.text);
 			}
 
-			if (desc.lvl >= LogLevel::ERRR)
+			if (desc.lvl >= LogLevel::ERR)
 			{
 				logLine.append(ToString(R"(
                [FILE]: {0}
@@ -122,26 +122,26 @@ namespace klib
 		{
 			switch (lvl.ToEnum())
 			{
-			case LogLevel::DBUG:
+			case LogLevel::DBG:
 				consoleColour = ConsoleColour::AQUA_BLUE;
 				break;
-			case LogLevel::NORM:
+			case LogLevel::NRM:
 				consoleColour = ConsoleColour::LIGHT_GREY;
 				break;
-			case LogLevel::INFO:
+			case LogLevel::INF:
 				consoleColour = ConsoleColour::LIGHT_GREEN;
 				break;
-			case LogLevel::WARN:
+			case LogLevel::WRN:
 				consoleColour = ConsoleColour::YELLOW;
 				break;
-			case LogLevel::VBAT:
-			case LogLevel::BANR:
+			case LogLevel::RAW:
+			case LogLevel::BNR:
 				consoleColour = ConsoleColour::WHITE;
 				break;
-			case LogLevel::ERRR:
+			case LogLevel::ERR:
 				consoleColour = ConsoleColour::SCARLET_RED;
 				break;
-			case LogLevel::FATL:
+			case LogLevel::FTL:
 				consoleColour = ConsoleColour::RED_BG_WHITE_TEXT;
 				break;
 			default:

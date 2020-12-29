@@ -36,7 +36,8 @@ namespace kTest::utility
 		auto testLogger = std::make_unique<Logging>(path);
 
 		testLogger->ToggleConsoleEnabled();
-		//testLogger->AddBanner("Welcome to logging test");
+		testLogger->SetFileFormat("[&N] [&l]: &t");
+		testLogger->AddBanner("Intro", "Welcome to logging test", "*", "*", 20);
 		testLogger->SuspendFileLogging();
 
 		testLogger->SetCacheMode(true);
@@ -49,20 +50,20 @@ namespace kTest::utility
 			VERIFY(last.HasDescription("TEST"));
 		}
 
-		testLogger->SetMinimumLoggingLevel(LogLevel::NORM);
+		testLogger->SetMinimumLoggingLevel(LogLevel::NRM);
 
 		{
-			testLogger->AddEntry(LogLevel::DBUG, "DEBUG!");
+			testLogger->AddEntry(LogLevel::DBG, "DEBUG!");
 			const auto& last = testLogger->GetLastCachedEntry();
 			VERIFY(!last.HasText("DEBUG!"));
-			VERIFY(!last.HasDescription(LogLevel::DBUG));
+			VERIFY(!last.HasDescription(LogLevel::DBG));
 		}
 
-		testLogger->SetMinimumLoggingLevel(LogLevel::DBUG);
+		testLogger->SetMinimumLoggingLevel(LogLevel::DBG);
 
 		{
 			constexpr char msg[] = "DEBUG!";
-			constexpr auto desc = LogLevel::DBUG;
+			constexpr auto desc = LogLevel::DBG;
 			testLogger->AddEntry(desc, msg);
 			const auto& last = testLogger->GetLastCachedEntry();
 			VERIFY(last.HasText(msg));
@@ -71,7 +72,7 @@ namespace kTest::utility
 
 		{
 			constexpr char msg[] = "NORMAL!";
-			constexpr auto desc = LogLevel::NORM;
+			constexpr auto desc = LogLevel::NRM;
 			testLogger->AddEntry(desc, msg);
 			const auto hasCache = testLogger->HasCache();
 			VERIFY(hasCache);
@@ -82,7 +83,7 @@ namespace kTest::utility
 
 		{
 			constexpr char msg[] = "INFORMATIVE!";
-			constexpr auto desc = LogLevel::INFO;
+			constexpr auto desc = LogLevel::INF;
 			testLogger->AddEntry(desc, msg);
 			const auto& last = testLogger->GetLastCachedEntry();
 			VERIFY(last.HasText(msg));
@@ -91,7 +92,7 @@ namespace kTest::utility
 
 		{
 			constexpr char msg[] = "WARNING!";
-			constexpr auto desc = LogLevel::WARN;
+			constexpr auto desc = LogLevel::WRN;
 			testLogger->AddEntry(desc, msg);
 			const auto& last = testLogger->GetLastCachedEntry();
 			VERIFY(last.HasText(msg));
@@ -100,7 +101,7 @@ namespace kTest::utility
 
 		{
 			constexpr char msg[] = "ERROR!";
-			constexpr auto desc = LogLevel::ERRR;
+			constexpr auto desc = LogLevel::ERR;
 			testLogger->AddEntry(desc, msg);
 			const auto& last = testLogger->GetLastCachedEntry();
 			VERIFY(last.HasText(msg));
@@ -116,7 +117,7 @@ namespace kTest::utility
 
 		{
 			constexpr char msg[] = "ERROR AGAIN!";
-			constexpr auto desc = LogLevel::ERRR;
+			constexpr auto desc = LogLevel::ERR;
 			testLogger->AddEntry(desc, msg);
 			const auto& last = testLogger->GetLastCachedEntry();
 			VERIFY(last.HasText(msg));
@@ -134,7 +135,7 @@ namespace kTest::utility
 
 		{
 			constexpr char msg[] = "END!";
-			constexpr auto desc = LogLevel::NORM;
+			constexpr auto desc = LogLevel::NRM;
 			testLogger->AddEntry(desc, msg);
 			const auto hasCache = testLogger->HasCache();
 			VERIFY(!hasCache);

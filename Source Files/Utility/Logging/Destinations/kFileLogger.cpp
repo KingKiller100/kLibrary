@@ -121,7 +121,7 @@ namespace klib
 			const auto& message = entry.GetMsg();
 			const auto& desc = entry.GetDescriptor();
 
-			if (entry.HasDescription(LogDescriptor(LogLevel::VBAT)))
+			if (entry.HasDescription(LogDescriptor(LogLevel::RAW)))
 			{
 				logLine = message.text;
 			}
@@ -147,11 +147,11 @@ namespace klib
 					second,
 					milli,
 					name,
-					desc.lvl,
+					desc.info,
 					message.text);
 			}
 
-			if (desc.lvl >= LogLevel::ERRR)
+			if (desc.lvl >= LogLevel::ERR)
 			{
 				logLine.append(ToString(R"(
                [FILE]: {0}
@@ -177,7 +177,7 @@ namespace klib
 			{
 				static constexpr char msg[] = "File Logging Concluded";
 
-				const std::string padding(72, '*');
+				const std::string padding(81, '*');
 				const std::string spacing(25, ' ');
 				const auto logMsg = spacing + msg + spacing;
 

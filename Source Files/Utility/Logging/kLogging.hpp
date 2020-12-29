@@ -77,8 +77,44 @@ namespace klib
 			 */
 			constexpr void SetCacheMode(const bool enable) noexcept;
 
+			/**
+			 * \brief
+			 *		Set the detail formatting for file logger
+			 * \param format
+			*		Format of the log message for the destination logger
+			*		Declare each detail specifier item with a '&' character
+			*		Using multiple calls of the same specifiers gives different results
+			*		Detail specifiers:
+			*		- d/D = Day
+			*		- m/M = Month
+			*		- y/Y = Year
+			*		- h/H = Hours
+			*		- z/Z = Minutes
+			*		- s/S = Seconds
+			*		- c/C = Milliseconds
+			*		- n/N = Name
+			*		- t/t = Text
+			*/
 			void SetFileFormat(const std::string_view& format);
 			
+			/**
+			 * \brief
+			 *		Set the detail formatting for console logger
+			 * \param format
+			*		Format of the log message for the destination logger
+			*		Declare each detail specifier item with a '&' character
+			*		Using multiple calls of the same specifiers gives different results
+			*		Detail specifiers:
+			*		- d/D = Day
+			*		- m/M = Month
+			*		- y/Y = Year
+			*		- h/H = Hours
+			*		- z/Z = Minutes
+			*		- s/S = Seconds
+			*		- c/C = Milliseconds
+			*		- n/N = Name
+			*		- t/t = Text
+			*/
 			void SetConsoleFormat(const std::string_view& format);
 			
 			/**

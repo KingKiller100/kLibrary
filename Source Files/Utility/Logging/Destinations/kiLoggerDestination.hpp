@@ -129,6 +129,8 @@ namespace klib::kLogs
 	public:
 		void SetFormat(const std::string_view& format) noexcept override
 		{
+			logFormat.clear();
+			
 			const auto realFormat = kString::ToLower(format);
 
 			for (size_t i = 0; i < realFormat.size(); ++i)

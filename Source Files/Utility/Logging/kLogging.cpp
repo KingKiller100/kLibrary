@@ -28,7 +28,7 @@ namespace klib::kLogs
 	}
 
 	Logging::Logging(const std::filesystem::path& path, const std::string_view& name)
-		: minimumLoggingLevel(LogLevel::DBUG),
+		: minimumLoggingLevel(LogLevel::DBG),
 		name(name),
 		isEnabled(false),
 		cacheMode(false),
@@ -151,11 +151,6 @@ namespace klib::kLogs
 
 	void Logging::SuspendFileLogging()
 	{
-		constexpr char pauseLog[] = "************************************************************************";
-		AddVerbatim();
-		AddVerbatim(pauseLog);
-		AddVerbatim();
-
 		Close();
 		SetCacheMode(true);
 	}
@@ -169,13 +164,13 @@ namespace klib::kLogs
 	void Logging::AddFatal(const LogMessage& msg)
 	{
 		Open();
-		AddEntry(LogLevel::FATL, msg);
+		AddEntry(LogLevel::FTL, msg);
 		FinalOutput();
 	}
 
 	void Logging::AddVerbatim(const std::string_view& text)
 	{
-		AddLog(LogEntry(text.data(), LogDescriptor(LogLevel::VBAT)));
+		AddLog(LogEntry(text.data(), LogDescriptor(LogLevel::RAW)));
 	}
 
 	void Logging::AddEntry(const LogLevel& level, const LogMessage& message)

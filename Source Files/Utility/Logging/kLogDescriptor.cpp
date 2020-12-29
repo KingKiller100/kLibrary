@@ -9,7 +9,7 @@ namespace klib::kLogs
 	{}
 
 	LogDescriptor::LogDescriptor(const std::string_view& type)
-		: lvl(LogLevel::BANR)
+		: lvl(LogLevel::BNR)
 		, info(type)
 	{}
 }
