@@ -20,7 +20,9 @@ namespace klib
 		FileLogger::FileLogger(const std::string_view& newName, const std::filesystem::path& path)
 			: name(newName)
 			, path(path)
-		{}
+		{
+			SetFormat("[&dd/&mm/&yyyy] [&hh:&mm:&ss] [&n]: &t");
+		}
 
 		FileLogger::~FileLogger() noexcept
 			= default;
@@ -82,27 +84,6 @@ namespace klib
 			this->path = path;
 		}
 
-		void FileLogger::OutputInitialized(const std::string_view& openingMsg)
-		{
-			if (!IsOpen())
-			{
-				const auto msg = ToString("{0}: file logger not open", name);
-				throw std::runtime_error(msg);
-			}
-
-			const std::string spacing(5, ' ');
-			const std::string padding(73, '*');
-			constexpr auto nl = "\n";
-
-			std::string opener = padding + nl;
-			opener += spacing + "File logger activated: ";
-			opener += spacing + GetDateInTextFormat(Date::DateTextLength::SHORT) + spacing + GetTimeText() + nl;
-			opener += openingMsg;
-			opener += nl + padding + nl;
-
-			Flush(opener);
-		}
-
 		bool FileLogger::Open()
 		{
 			std::scoped_lock<decltype(lock)> scoped_lock(lock);
@@ -131,6 +112,43 @@ namespace klib
 			Flush(logLine);
 		}
 
+		void FileLogger::SetFormat(const std::string_view& format) noexcept
+		{
+			const auto realFormat = ToLower(format);
+
+			for (auto i = 0; i < realFormat.size(); ++i)
+			{
+				const auto& letter = realFormat[i];
+				if (letter != DetailSpecifier)
+					logFormat.push_back(letter);
+				else
+				{
+					logFormat.push_back('{');
+
+					char fi = '\0';
+					switch (letter)
+					{
+					case 'd': fi = FormatIndex::dayIndex;
+					case 'm': fi = FormatIndex::dayIndex;
+					}
+					
+					logFormat.push_back(fi);
+
+					const auto firstIndex = i + 1;
+					const auto lastIndex = realFormat.find_first_not_of(fi, firstIndex);
+					const auto count = lastIndex - firstIndex;
+
+					if (count > 0)
+					{
+						logFormat.push_back(format::g_SpecifierSymbol<char>);
+						logFormat.append(stringify::StringIntegral<char>(count));
+					}
+					
+					logFormat.push_back('}');
+				}
+			}
+		}
+
 		std::string FileLogger::CreateLogText(const LogEntry& entry) const
 		{
 			std::string logLine;
@@ -147,7 +165,7 @@ namespace klib
 				const auto timeStr = message.time.ToString();
 				const auto dateStr = message.date.ToString(Date::SLASH);
 
-				logLine = ToString("[{0}] [{1}] [{2}] [{3}]:  {4}",
+				logLine = ToString("[{0}] [{1}] [{2}] [{3}]: {4}",
 					dateStr,
 					timeStr,
 					name,

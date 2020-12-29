@@ -20,8 +20,9 @@ namespace klib
 			USE_RESULT std::string_view GetName() const override;
 			void SetName(const std::string_view& newName) override;
 			
-			void OutputInitialized(const std::string_view& openingMsg) override;
 			void AddEntry(const LogEntry& entry) override;
+			
+			void SetFormat(const std::string_view& format) noexcept override;
 			
 			bool Open() override;
 			
@@ -41,6 +42,7 @@ namespace klib
 		private:
 			bool active;
 			std::string name;
+			std::string logFormat;
 			kMisc::ConsoleColour consoleColour;
 		};
 	}

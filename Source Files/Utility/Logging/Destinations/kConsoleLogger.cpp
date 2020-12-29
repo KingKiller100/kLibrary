@@ -25,7 +25,9 @@ namespace klib
 			: active(false)
 			, name(newName)
 			, consoleColour(ConsoleColour::WHITE)
-		{}
+		{
+			SetFormat("[&dd/&mm/&yyyy] [&hh:&mm:&ss] [&n]: &t");
+		}
 
 		ConsoleLogger::~ConsoleLogger() noexcept
 			= default;
@@ -51,28 +53,6 @@ namespace klib
 			name = newName;
 		}
 
-		void ConsoleLogger::OutputInitialized(const std::string_view& openingMsg)
-		{
-			if (!IsOpen())
-				return;
-
-			constexpr char newLine[] = "\n";
-			const std::string msg(openingMsg);
-			const std::string padding(73, '*');
-			const std::string prefixSpaces(19, ' ');
-			const auto date = GetDateInTextFormat(Date::DateTextLength::SHORT);
-			const auto time = GetTimeText();
-
-			std::string format = newLine + padding + newLine;
-			format += prefixSpaces + "{0} - ";
-			format += openingMsg;
-			format += newLine + prefixSpaces + date + "    " + time;
-			format += newLine + padding + newLine;
-			const auto opener = ToString(format, name);
-
-			Flush(opener);
-		}
-
 		void ConsoleLogger::AddEntry(const LogEntry& entry)
 		{
 			if (!IsOpen())
@@ -84,6 +64,37 @@ namespace klib
 
 			UpdateConsoleColour(desc.lvl);
 			Flush(logLine);
+		}
+
+		void ConsoleLogger::SetFormat(const std::string_view& format) noexcept
+		{
+			const auto realFormat = ToLower(format);
+
+			for (auto i = 0; i < realFormat.size(); ++i)
+			{
+				const auto& letter = realFormat[i];
+				if (letter != DetailSpecifier)
+					logFormat.push_back(letter);
+				else
+				{
+					logFormat.push_back('{');
+
+					FormatIndex fi = static_cast<FormatIndex>(realFormat[i + 1]);
+					logFormat.push_back(fi);
+
+					const auto firstIndex = i + 1;
+					const auto lastIndex = realFormat.find_first_not_of(fi, firstIndex);
+					const auto count = lastIndex - firstIndex;
+
+					if (count > 0)
+					{
+						logFormat.push_back(format::g_SpecifierSymbol<char>);
+						logFormat.append(stringify::StringIntegral<char>(count));
+					}
+
+					logFormat.push_back('}');
+				}
+			}
 		}
 
 		std::string ConsoleLogger::CreateLogText(const LogMessage& msg, const LogDescriptor& desc) const
@@ -99,7 +110,7 @@ namespace klib
 				const auto timeStr = msg.time.ToString();
 				const auto dateStr = msg.date.ToString(Date::SLASH);
 
-				logLine = ToString("[{0}] [{1}] [{2}] [{3}]:  {4}",
+				logLine = ToString("[{0}] [{1}] [{2}] [{3}]: {4}",
 					dateStr,
 					timeStr,
 					name,

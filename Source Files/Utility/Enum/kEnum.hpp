@@ -102,14 +102,14 @@ x enumName																				\
 {																						\
 	using underlying_t = underlying;													\
 public:																					\
-	enum InternalEnum_t : underlying_t { __VA_ARGS__ };									\
+	enum InternalEnum_t : underlying { __VA_ARGS__ };									\
 																						\
 private:																				\
 	struct secret_impl_##enumName														\
 	{																					\
 		static constexpr auto size = IDENTITY(COUNT(__VA_ARGS__));						\
 																						\
-		static constexpr std::array<underlying_t, size> values =						\
+		static constexpr std::array<underlying, size> values =							\
 		{ IDENTITY(IGNORE_ASSIGN(__VA_ARGS__)) };										\
 																						\
 		static constexpr std::array<std::string_view, size> raw_names =					\
@@ -147,7 +147,7 @@ public:																					\
 		return static_cast<InternalEnum_t>(value);										\
 	}																					\
 																						\
-	USE_RESULT constexpr underlying_t ToUnderlying() const								\
+	USE_RESULT constexpr underlying ToUnderlying() const								\
 	{																					\
 		return value;																	\
 	}																					\
@@ -308,7 +308,7 @@ public:																					\
 	}																					\
 																						\
 private:																				\
-	underlying_t value;																	\
+	underlying value;																	\
 };																						\
 
 #define ENUM_CLASS(enumName, underlying, ...) ENUM_X(class, enumName, underlying, __VA_ARGS__)

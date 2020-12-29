@@ -23,13 +23,13 @@ namespace klib
 		
 		class Logging
 		{
-			ENUM_CLASS(DestionationType , std::uint8_t
+			ENUM_CLASS(LogDestination, std::uint8_t
 				, FILE
 				, CONSOLE);
 			
 		public:
 			using LogEntries = std::deque<LogEntry>;
-			using LogDestinationsMap = std::unordered_map<DestionationType::InternalEnum_t
+			using LogDestinationsMap = std::unordered_map<LogDestination::InternalEnum_t
 			, std::unique_ptr<iLoggerDestination>>;
 
 		public:
@@ -40,16 +40,6 @@ namespace klib
 			Logging(const std::filesystem::path& path, const std::string_view& name = "Logger");
 			
 			~Logging();
-
-			/**
-			 * \brief
-			 *		Initializes logging system
-			 * \param[in] openingMsg
-			 *		Opening message
-			 * \note
-			 *		No logging calls will function properly until this is called.
-			 */
-			void OutputInitialized(const std::string_view& openingMsg);
 
 			/**
 			 * \brief
@@ -87,6 +77,10 @@ namespace klib
 			 */
 			constexpr void SetCacheMode(const bool enable) noexcept;
 
+			void SetFileFormat(const std::string_view& format);
+			
+			void SetConsoleFormat(const std::string_view& format);
+			
 			/**
 			 * \brief
 			 *		Change the directory the log file outputs to
@@ -266,6 +260,8 @@ namespace klib
 			 *		Outputs logs to file then closes it
 			 */
 			void Close();
+
+			void SetFormat(const std::string_view& format, LogDestination destType);
 
 		protected:
 			LogEntries entriesQ; // Queue buffer to cache the logged messages

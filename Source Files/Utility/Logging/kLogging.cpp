@@ -21,13 +21,13 @@ namespace klib::kLogs
 		, const std::string_view& filename
 		, const std::string_view& extension
 		, const std::string_view& name)
-			: Logging( std::filesystem::path(
-				ToString( "{0}{1}", directory, klib::kFileSystem::AppendFileExtension(filename, extension)))
-				, name )
+		: Logging(std::filesystem::path(
+			ToString("{0}{1}", directory, klib::kFileSystem::AppendFileExtension(filename, extension)))
+			, name)
 	{
 	}
 
-	Logging::Logging( const std::filesystem::path& path, const std::string_view& name )
+	Logging::Logging(const std::filesystem::path& path, const std::string_view& name)
 		: minimumLoggingLevel(LogLevel::DBUG),
 		name(name),
 		isEnabled(false),
@@ -43,11 +43,11 @@ namespace klib::kLogs
 			FinalOutput();
 	}
 
-	void Logging::Initialize( const std::filesystem::path& path )
+	void Logging::Initialize(const std::filesystem::path& path)
 	{
-		destinations[DestionationType::FILE].reset(new FileLogger(name, path));
-		destinations[DestionationType::CONSOLE].reset(new ConsoleLogger(name));
-		
+		destinations[LogDestination::FILE].reset(new FileLogger(name, path));
+		destinations[LogDestination::CONSOLE].reset(new ConsoleLogger(name));
+
 		ToggleLoggingEnabled();
 		Open();
 	}
@@ -58,22 +58,10 @@ namespace klib::kLogs
 		{
 			if (!dest.second->Open())
 			{
-				const auto destPrettyValue = DestionationType::PrettyValue(dest.first);
+				const auto destPrettyValue = LogDestination::PrettyValue(dest.first);
 				const auto errMsg = ToString("{0} - Unable to open log destination: {1}", name, destPrettyValue);
 				throw std::runtime_error(errMsg);
 			}
-		}
-	}
-
-	void Logging::OutputInitialized(const std::string_view& openingMsg)
-	{
-		
-		if (!isEnabled) { return; }
-		
-		for (auto& dest : destinations)
-		{
-			if (dest.second->IsOpen())
-				dest.second->OutputInitialized(openingMsg);
 		}
 	}
 
@@ -98,7 +86,7 @@ namespace klib::kLogs
 
 	void Logging::ToggleConsoleEnabled() noexcept
 	{
-		auto& consoleLogger = destinations.at(DestionationType::CONSOLE);
+		auto& consoleLogger = destinations.at(LogDestination::CONSOLE);
 		if (consoleLogger->IsOpen())
 		{
 			consoleLogger->Close(false);
@@ -109,18 +97,34 @@ namespace klib::kLogs
 		}
 	}
 
+	void Logging::SetFileFormat(const std::string_view& format)
+	{
+		SetFormat(format, LogDestination::FILE);
+	}
+
+	void Logging::SetConsoleFormat(const std::string_view& format)
+	{
+		SetFormat(format, LogDestination::CONSOLE);
+	}
+
+	void Logging::SetFormat(const std::string_view& format, LogDestination destType)
+	{
+		const auto& dest = destinations.at(destType);
+		dest->SetFormat(format);
+	}
+
 	constexpr void Logging::SetCacheMode(const bool enable) noexcept
 	{
 		if (cacheMode == enable)
 			return;
-		
+
 		cacheMode = enable;
 
 		if (!enable)
 			Flush();
 	}
 
-	void Logging::ChangeOutputPath(const std::string_view & dir, const std::string_view & filename)
+	void Logging::ChangeOutputPath(const std::string_view& dir, const std::string_view& filename)
 	{
 		ChangeOutputDirectory(dir);
 		ChangeFilename(filename);
@@ -128,19 +132,19 @@ namespace klib::kLogs
 
 	void Logging::ChangeOutputDirectory(const std::string_view& directory)
 	{
-		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(DestionationType::FILE));
+		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(LogDestination::FILE));
 		fLogger.SetDirectory(directory);
 	}
 
 	void Logging::ChangeFilename(const std::string_view& filename)
 	{
-		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(DestionationType::FILE));
+		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(LogDestination::FILE));
 		fLogger.SetFileName(filename);
 	}
-	
+
 	std::string Logging::GetOutputPath() const
 	{
-		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(DestionationType::FILE));
+		auto& fLogger = type_trait::ToImpl<FileLogger>(destinations.at(LogDestination::FILE));
 		const auto path = std::string(fLogger.GetPath());
 		return path;
 	}
@@ -151,7 +155,7 @@ namespace klib::kLogs
 		AddVerbatim();
 		AddVerbatim(pauseLog);
 		AddVerbatim();
-		
+
 		Close();
 		SetCacheMode(true);
 	}
@@ -179,26 +183,26 @@ namespace klib::kLogs
 			return;
 
 		AddLog(LogEntry(
-				message, 
-				LogDescriptor(level)
+			message,
+			LogDescriptor(level)
 		));
 	}
 
-	void Logging::AddBanner(const std::string_view& descriptor, const LogMessage& message, const std::string_view& frontPadding, const std::
-	                        string_view& backPadding, const std::uint16_t paddingCount)
+	void Logging::AddBanner(const std::string_view& descriptor, const LogMessage& message, const std::string_view& frontPadding
+		, const std::string_view& backPadding, const std::uint16_t paddingCount)
 	{
 		if (!isEnabled)
 			return;
 
-		constexpr auto format = "{0} {1} {2}";
-		
+		constexpr auto format = "{0}{1}{2}";
+
 		std::string front, back;
 		for (auto i = 0; i < paddingCount; ++i)
 		{
 			front.append(frontPadding);
 			back.append(backPadding);
 		}
-		
+
 		const auto text = ToString(format
 			, front
 			, message.text
@@ -206,7 +210,7 @@ namespace klib::kLogs
 		);
 
 		const LogMessage banner(text, message);
-		
+
 		AddLog(LogEntry(banner, LogDescriptor(descriptor)));
 	}
 
@@ -216,7 +220,7 @@ namespace klib::kLogs
 		if (!cacheMode)
 			Flush();
 	}
-	
+
 	void Logging::FinalOutput()
 	{
 		Close();
@@ -261,7 +265,7 @@ namespace klib::kLogs
 			throw std::runtime_error(name + " log cache is empty");
 
 		const auto& lastLog = entriesQ.back();
-		
+
 		return lastLog;
 	}
 
@@ -280,7 +284,7 @@ namespace klib::kLogs
 	{
 		if (entriesQ.empty())
 			return false;
-		
+
 		while (count-- != 0)
 		{
 			entriesQ.pop_back();

@@ -30,8 +30,9 @@ namespace klib
 			USE_RESULT std::string_view GetPath() const;
 			void SetPath(const std::filesystem::path& path);
 			
-			void OutputInitialized(const std::string_view& openingMsg) override;
 			void AddEntry(const LogEntry& entry) override;
+		
+			void SetFormat(const std::string_view& format) noexcept override;
 
 			bool Open() override;
 
@@ -42,9 +43,10 @@ namespace klib
 		private:
 			void Flush(const std::string_view& msg);
 			std::string CreateLogText(const LogEntry& entry) const;
-			
+
 		private:
 			std::string name;
+			std::string logFormat;
 
 			std::filesystem::path path;
 			std::fstream fileStream;

@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include "../../../HelperMacros.hpp"
+#include "../../Enum/kEnum.hpp"
+
 #include <string>
 
 namespace klib::kLogs
@@ -10,6 +12,24 @@ namespace klib::kLogs
 
 	class iLoggerDestination
 	{
+	public:
+		inline static constexpr auto DetailSpecifier = '&';
+
+		ENUM_CLASS(FormatIndex, char,
+			dayIndex = '0',
+			monthIndex = '1',
+			yearIndex = '2',
+
+			hourIndex = '3',
+			minuteIndex = '4',
+			secondIndex = '5',
+			millisecondIndex = '6',
+
+			nameIndex = '7',
+
+			messageIndex = '8'
+			);
+
 	public:
 		virtual ~iLoggerDestination() = default;
 
@@ -31,11 +51,25 @@ namespace klib::kLogs
 
 		/**
 		 * \brief
-		 *		Output message when logging system is initialized
-		 * \param openingMsg
-		 *		Opening message 
+		 *		Sets the format of all log message
+		 *		[Example] "[&dd/&mm/&yyyy] [&hh:&zz:&ss] [&n]: &t"
+		 *		means "[01/01/1970] [01:12:59] [Logger]: Pass Test!
+		 * \param format
+		 *		Format of the log message for the destination logger
+		 *		Declare each detail specifier item with a '&' character
+		 *		Using multiple calls of the same specifiers gives different results
+		 *		Detail specifiers:
+		 *		- d/D = Day
+		 *		- m/M = Month
+		 *		- y/Y = Year
+		 *		- h/H = Hours
+		 *		- z/Z = Minutes
+		 *		- s/S = Seconds
+		 *		- c/C = Milliseconds
+		 *		- n/N = Name
+		 *		- t/t = Text
 		 */
-		virtual void OutputInitialized(const std::string_view& openingMsg) = 0;
+		virtual void SetFormat(const std::string_view& format) noexcept = 0;
 
 		/**
 		 * \brief
@@ -45,12 +79,12 @@ namespace klib::kLogs
 		 */
 		virtual void AddEntry(const LogEntry& entry) = 0;
 
-		 /**
-		  * \brief
-		  *		Returns if destination is open
-		  * \return
-		  *		TRUE if open, FALSE if not unopened
-		  */
+		/**
+		 * \brief
+		 *		Returns if destination is open
+		 * \return
+		 *		TRUE if open, FALSE if not unopened
+		 */
 		virtual bool IsOpen() = 0;
 
 		/**

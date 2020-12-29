@@ -36,7 +36,7 @@ namespace kTest::utility
 		auto testLogger = std::make_unique<Logging>(path);
 
 		testLogger->ToggleConsoleEnabled();
-		testLogger->OutputInitialized("Welcome to logging test");
+		//testLogger->AddBanner("Welcome to logging test");
 		testLogger->SuspendFileLogging();
 
 		testLogger->SetCacheMode(true);
