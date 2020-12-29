@@ -26,7 +26,7 @@ namespace klib
 			, name(newName)
 			, consoleColour(ConsoleColour::WHITE)
 		{
-			SetFormat("[&dd/&mm/&yyyy] [&hh:&mm:&ss] [&n]: &t");
+			SetFormat("[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&n] [&l]: &t");
 		}
 
 		ConsoleLogger::~ConsoleLogger() noexcept
@@ -70,7 +70,7 @@ namespace klib
 		{
 			const auto realFormat = ToLower(format);
 
-			for (auto i = 0; i < realFormat.size(); ++i)
+			for (size_t i = 0; i < realFormat.size(); ++i)
 			{
 				const auto& letter = realFormat[i];
 				if (letter != DetailSpecifier)
@@ -79,20 +79,29 @@ namespace klib
 				{
 					logFormat.push_back('{');
 
-					FormatIndex fi = static_cast<FormatIndex>(realFormat[i + 1]);
+					const auto identifier = realFormat[i + 1];
+
+					const auto fi = Specifiers.at(identifier);
+
 					logFormat.push_back(fi);
 
 					const auto firstIndex = i + 1;
-					const auto lastIndex = realFormat.find_first_not_of(fi, firstIndex);
+
+					auto lastIndex = realFormat.find_first_not_of(identifier, firstIndex);
+					if (lastIndex == std::string::npos)
+						lastIndex = firstIndex + 1;
+
 					const auto count = lastIndex - firstIndex;
 
-					if (count > 0)
+					if (count > 1)
 					{
 						logFormat.push_back(format::g_SpecifierSymbol<char>);
 						logFormat.append(stringify::StringIntegral<char>(count));
 					}
 
 					logFormat.push_back('}');
+
+					i += count;
 				}
 			}
 		}
@@ -107,12 +116,25 @@ namespace klib
 			}
 			else
 			{
-				const auto timeStr = msg.time.ToString();
-				const auto dateStr = msg.date.ToString(Date::SLASH);
+				const auto& t = msg.time;
+				const auto& hour = t.GetHour();
+				const auto& minute = t.GetMinute();
+				const auto& second = t.GetSecond();
+				const auto& milli = t.GetMillisecond();
+				
+				const auto& d = msg.date;
+				const auto& day = d.GetDay();
+				const auto& month = d.GetMonth();
+				const auto& year = d.GetYear();
 
-				logLine = ToString("[{0}] [{1}] [{2}] [{3}]: {4}",
-					dateStr,
-					timeStr,
+				logLine = ToString(logFormat,
+					// hour,
+					// minute,
+					// second,
+					// milli,
+					// day,
+					// month,
+					// year,
 					name,
 					desc.lvl.ToUnderlying(),
 					msg.text);

@@ -60,12 +60,7 @@ namespace klib::kString::secret::impl
 			const auto data = outFmt.data();
 
 			size_t openerPos = FindOpenerPosition(outFmt, argIndex, offset);
-			if (openerPos == npos)
-				return;
-
 			size_t closerPos = Find_First_Of(data, format::g_CloserSymbol<Char_t>, openerPos);
-			if (closerPos == npos)
-				return;
 
 			const auto initialOpenerPos = openerPos;
 			size_t repSize;

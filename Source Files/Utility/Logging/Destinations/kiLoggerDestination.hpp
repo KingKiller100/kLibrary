@@ -1,9 +1,9 @@
 ﻿#pragma once
 
 #include "../../../HelperMacros.hpp"
-#include "../../Enum/kEnum.hpp"
 
 #include <string>
+#include <unordered_map>
 
 namespace klib::kLogs
 {
@@ -15,21 +15,39 @@ namespace klib::kLogs
 	public:
 		inline static constexpr auto DetailSpecifier = '&';
 
-		ENUM_CLASS(FormatIndex, char,
-			dayIndex = '0',
-			monthIndex = '1',
-			yearIndex = '2',
+	protected:
+		struct FormatSpecifier
+		{
+			char specifier;
+			char index;
+		};
 
-			hourIndex = '3',
-			minuteIndex = '4',
-			secondIndex = '5',
-			millisecondIndex = '6',
+		inline static constexpr FormatSpecifier DaySpecifier = { 'd', '0' };
+		inline static constexpr FormatSpecifier MonthSpecifier = { 'm', '1' };
+		inline static constexpr FormatSpecifier YearSpecifier = { 'y', '2' };
+		
+		inline static constexpr FormatSpecifier HourSpecifier = { 'h', '3' };
+		inline static constexpr FormatSpecifier MinuteSpecifier = { 'z', '4' };
+		inline static constexpr FormatSpecifier SecondSpecifier = { 's', '5' };
+		inline static constexpr FormatSpecifier MillisecondSpecifier = { 'c', '6' };
+		
+		inline static constexpr FormatSpecifier NameSpecifier = { 'n', '7' };
+		inline static constexpr FormatSpecifier LogLevelSpecifier = { 'l', '8' };
+		inline static constexpr FormatSpecifier TextSpecifier = { 't', '9' };
 
-			nameIndex = '7',
-
-			messageIndex = '8'
-			);
-
+		inline static std::unordered_map<char, char> Specifiers = {
+			{'d', '0'},
+			{'m', '1'},
+			{'y', '2'},
+			{'h', '3'},
+			{'z', '4'},
+			{'s', '5'},
+			{'c', '6'},
+			{'n', '7'},
+			{'l', '8'},
+			{'t', '9'},
+		};
+		
 	public:
 		virtual ~iLoggerDestination() = default;
 
