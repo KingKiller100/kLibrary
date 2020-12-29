@@ -26,7 +26,7 @@ namespace klib::kCalendar
 	{
 		if (count < 4)
 		{
-			const auto numberFormat = "{0:" + kString::ToString<char>(count) + "}";
+			const auto numberFormat = "{0:" + kString::ToString<char>(kString::NoFormatTag{}, count) + "}";
 			return kString::ToString(numberFormat, GetValue());
 		}
 

@@ -53,11 +53,13 @@ namespace klib {
 			return text;
 		}
 
+		struct NoFormatTag { NoFormatTag() = default; };
+
 		template<class CharT, typename T, typename ...Ts>
-		USE_RESULT constexpr std::basic_string<CharT> ToString(const T& arg, const  Ts& ...argPack)
+		USE_RESULT constexpr std::basic_string<CharT> ToString(NoFormatTag&&, const T& arg, const  Ts& ...argPack)
 		{
 			using DataTypes = std::variant<std::monostate, T, Ts...>;
-			constexpr auto argCount = std::variant_size_v<DataTypes> - 1;
+			constexpr auto argCount = std::variant_size_v<DataTypes> -1;
 			constexpr size_t reserveSize = secret::impl::InitialFormatStringSize<argCount>();
 
 			std::basic_string<CharT> output;

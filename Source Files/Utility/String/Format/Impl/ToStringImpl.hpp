@@ -63,7 +63,7 @@ namespace klib::kString::secret::impl
 			size_t closerPos = Find_First_Of(data, format::g_CloserSymbol<Char_t>, openerPos);
 
 			const auto initialOpenerPos = openerPos;
-			size_t repSize;
+			size_t repSize = 0;
 
 			while (openerPos != npos && closerPos != npos)
 			{

@@ -25,7 +25,7 @@ namespace klib::kCalendar
 
 	std::string Hour::ToStringUsingTokenCount(const size_t count) const
 	{
-		const auto numberFormat = "{0:" + kString::ToString<char>(count) + "}";
+		const auto numberFormat = "{0:" + kString::ToString("{0}", count) + "}";
 
 		const std::string hourStr = (count < 3)
 			? kString::ToString(numberFormat, GetValue())

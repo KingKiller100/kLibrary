@@ -9,7 +9,7 @@ namespace klib
 {
 	namespace kLogs
 	{
-		class FileLogger final : public iLoggerDestination
+		class FileLogger final : public LogDestWithFormatSpecifier
 		{
 		public:
 			FileLogger(const std::string_view& newName, const std::filesystem::path& path);
@@ -31,8 +31,6 @@ namespace klib
 			void SetPath(const std::filesystem::path& path);
 			
 			void AddEntry(const LogEntry& entry) override;
-		
-			void SetFormat(const std::string_view& format) noexcept override;
 
 			bool Open() override;
 

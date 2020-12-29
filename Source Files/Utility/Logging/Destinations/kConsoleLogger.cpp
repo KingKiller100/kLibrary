@@ -5,6 +5,7 @@
 #include "../kLogEntry.hpp"
 
 #include "../../Calendar/kCalendar.hpp"
+#include "../../Calendar/kCalendarToString.hpp"
 #include "../../String/kToString.hpp"
 
 #include <mutex>
@@ -26,7 +27,7 @@ namespace klib
 			, name(newName)
 			, consoleColour(ConsoleColour::WHITE)
 		{
-			SetFormat("[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&n] [&l]: &t");
+			LogDestWithFormatSpecifier::SetFormat("[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&n] [&l]: &t");
 		}
 
 		ConsoleLogger::~ConsoleLogger() noexcept
@@ -66,46 +67,6 @@ namespace klib
 			Flush(logLine);
 		}
 
-		void ConsoleLogger::SetFormat(const std::string_view& format) noexcept
-		{
-			const auto realFormat = ToLower(format);
-
-			for (size_t i = 0; i < realFormat.size(); ++i)
-			{
-				const auto& letter = realFormat[i];
-				if (letter != DetailSpecifier)
-					logFormat.push_back(letter);
-				else
-				{
-					logFormat.push_back('{');
-
-					const auto identifier = realFormat[i + 1];
-
-					const auto fi = Specifiers.at(identifier);
-
-					logFormat.push_back(fi);
-
-					const auto firstIndex = i + 1;
-
-					auto lastIndex = realFormat.find_first_not_of(identifier, firstIndex);
-					if (lastIndex == std::string::npos)
-						lastIndex = firstIndex + 1;
-
-					const auto count = lastIndex - firstIndex;
-
-					if (count > 1)
-					{
-						logFormat.push_back(format::g_SpecifierSymbol<char>);
-						logFormat.append(stringify::StringIntegral<char>(count));
-					}
-
-					logFormat.push_back('}');
-
-					i += count;
-				}
-			}
-		}
-
 		std::string ConsoleLogger::CreateLogText(const LogMessage& msg, const LogDescriptor& desc) const
 		{
 			std::string logLine;
@@ -127,14 +88,14 @@ namespace klib
 				const auto& month = d.GetMonth();
 				const auto& year = d.GetYear();
 
-				logLine = ToString(logFormat,
-					// hour,
-					// minute,
-					// second,
-					// milli,
-					// day,
-					// month,
-					// year,
+				logLine = ToString(LogDestWithFormatSpecifier::logFormat,
+					day,
+					month,
+					year,
+					hour,
+					minute,
+					second,
+					milli,
 					name,
 					desc.lvl.ToUnderlying(),
 					msg.text);

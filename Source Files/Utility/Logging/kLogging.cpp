@@ -58,7 +58,7 @@ namespace klib::kLogs
 		{
 			if (!dest.second->Open())
 			{
-				const auto destPrettyValue = LogDestination::PrettyValue(dest.first);
+				const auto destPrettyValue = LogDestination(dest.first).ToString();
 				const auto errMsg = ToString("{0} - Unable to open log destination: {1}", name, destPrettyValue);
 				throw std::runtime_error(errMsg);
 			}
@@ -168,6 +168,7 @@ namespace klib::kLogs
 
 	void Logging::AddFatal(const LogMessage& msg)
 	{
+		Open();
 		AddEntry(LogLevel::FATL, msg);
 		FinalOutput();
 	}
@@ -194,8 +195,6 @@ namespace klib::kLogs
 		if (!isEnabled)
 			return;
 
-		constexpr auto format = "{0}{1}{2}";
-
 		std::string front, back;
 		for (auto i = 0; i < paddingCount; ++i)
 		{
@@ -203,7 +202,7 @@ namespace klib::kLogs
 			back.append(backPadding);
 		}
 
-		const auto text = ToString(format
+		const auto text = ToString<char>(NoFormatTag{} 
 			, front
 			, message.text
 			, back
@@ -231,9 +230,9 @@ namespace klib::kLogs
 	{
 		while (!entriesQ.empty())
 		{
+			const auto& entry = entriesQ.front();
 			for (auto& dest : destinations)
 			{
-				const auto& entry = entriesQ.front();
 				dest.second->AddEntry(entry);
 			}
 			entriesQ.pop_front();

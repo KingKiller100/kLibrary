@@ -2,8 +2,12 @@
 
 #include "../../../HelperMacros.hpp"
 
+#include "../../String/Format/FormatSymbols.hpp"
+#include "../../String/Format/Stringify/kStringifyInteger.hpp"
+
 #include <string>
 #include <unordered_map>
+
 
 namespace klib::kLogs
 {
@@ -118,6 +122,53 @@ namespace klib::kLogs
 		 *			whether we should output the close message when closing
 		 */
 		virtual void Close(const bool outputClosingMsg) = 0;
+	};
+
+	class LogDestWithFormatSpecifier : public iLoggerDestination
+	{
+	public:
+		void SetFormat(const std::string_view& format) noexcept override
+		{
+			const auto realFormat = kString::ToLower(format);
+
+			for (size_t i = 0; i < realFormat.size(); ++i)
+			{
+				const auto& letter = realFormat[i];
+				if (letter != DetailSpecifier)
+					logFormat.push_back(letter);
+				else
+				{
+					logFormat.push_back('{');
+
+					const auto identifier = realFormat[i + 1];
+
+					const auto fi = Specifiers.at(identifier);
+
+					logFormat.push_back(fi);
+
+					const auto firstIndex = i + 1;
+
+					auto lastIndex = realFormat.find_first_not_of(identifier, firstIndex);
+					if (lastIndex == std::string::npos)
+						lastIndex = firstIndex + 1;
+
+					const auto count = lastIndex - firstIndex;
+
+					if (count > 1)
+					{
+						logFormat.push_back(kString::format::g_SpecifierSymbol<char>);
+						logFormat.append(kString::stringify::StringIntegral<char>(count));
+					}
+
+					logFormat.push_back('}');
+
+					i += count;
+				}
+			}
+		}
+
+	protected:
+		std::string logFormat;
 	};
 }
 

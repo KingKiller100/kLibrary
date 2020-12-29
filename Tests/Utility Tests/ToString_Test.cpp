@@ -53,7 +53,7 @@ namespace kTest::utility
 	}
 
 	using namespace klib;
-	using namespace klib::kString;
+	using namespace kString;
 
 	bool FormatToStringTester::IdentityTest()
 	{
@@ -331,7 +331,7 @@ namespace kTest::utility
 
 			const std::string str = "Bitches ain't shit but hoes and tricks";
 		} example;
-		const auto result = ToString<char>(example);
+		const auto result = ToString<char>(NoFormatTag{}, example);
 		constexpr auto expected = "Bitches ain't shit but hoes and tricks";
 		VERIFY(result == expected);
 
@@ -342,7 +342,7 @@ namespace kTest::utility
 	{
 		ObjectWithoutToString owts;
 
-		const auto result = ToString<char>(owts);
+		const auto result = ToString<char>(NoFormatTag{}, owts);
 		constexpr auto expected = "String made using identity overloading";
 		VERIFY(expected == result);
 
@@ -388,7 +388,7 @@ namespace kTest::utility
 	{
 		{
 #ifdef __cpp_char8_t
-			const auto test = klib::kString::ToString<char8_t>(980u, 123);
+			const auto test = klib::kString::ToString<char8_t>(NoFormatTag{}, 980u, 123);
 			VERIFY(test == u8"980123");
 #else
 			const auto test = klib::kString::ToString<char16_t>(980u);
@@ -397,7 +397,7 @@ namespace kTest::utility
 		}
 
 		{
-			const auto result = ToString<char>(1, 2, 3, 4, "five", 6, 7, 8, 9, "ten", 11, 12, 13, 14, "fifteen");
+			const auto result = ToString<char>(NoFormatTag{}, 1, 2, 3, 4, "five", 6, 7, 8, 9, "ten", 11, 12, 13, 14, "fifteen");
 			const char expected[] = "1234five6789ten11121314fifteen";
 			VERIFY(result == expected);
 		}

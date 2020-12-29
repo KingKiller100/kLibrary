@@ -11,7 +11,7 @@ namespace klib
 		class LogLevel;
 		struct LogMessage;
 				
-		class ConsoleLogger final : public iLoggerDestination
+		class ConsoleLogger final : public LogDestWithFormatSpecifier
 		{
 		public:
 			ConsoleLogger(const std::string& newName);
@@ -21,8 +21,6 @@ namespace klib
 			void SetName(const std::string_view& newName) override;
 			
 			void AddEntry(const LogEntry& entry) override;
-			
-			void SetFormat(const std::string_view& format) noexcept override;
 			
 			bool Open() override;
 			
