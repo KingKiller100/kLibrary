@@ -4,9 +4,11 @@
 
 namespace klib::kLocale
 {
-	std::locale g_Locale;
-	std::string g_CurrentLocale("C");
-	
+	namespace
+	{
+		std::locale g_Locale;
+		std::string g_CurrentLocale("C");
+	}
 	std::locale& GetLocale()
 	{
 		return g_Locale;
@@ -17,12 +19,12 @@ namespace klib::kLocale
 		return g_CurrentLocale;
 	}
 
-	void SetLocale( const std::string_view& localeName, std::locale::category cat )
+	void SetLocale(const std::string_view& localeName, std::locale::category cat)
 	{
-		if ( g_CurrentLocale != localeName )
+		if (g_CurrentLocale != localeName)
 		{
 			g_CurrentLocale = localeName;
-			g_Locale = std::locale( g_CurrentLocale.data(), cat );
+			g_Locale = std::locale(g_CurrentLocale.data(), cat);
 		}
 	}
 }
