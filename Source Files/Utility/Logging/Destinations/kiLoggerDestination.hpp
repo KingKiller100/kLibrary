@@ -23,33 +23,40 @@ namespace klib::kLogs
 		struct FormatSpecifier
 		{
 			char specifier;
-			char index;
+			std::string index;
 		};
 
-		inline static constexpr FormatSpecifier DaySpecifier = { 'd', '0' };
-		inline static constexpr FormatSpecifier MonthSpecifier = { 'm', '1' };
-		inline static constexpr FormatSpecifier YearSpecifier = { 'y', '2' };
-		
-		inline static constexpr FormatSpecifier HourSpecifier = { 'h', '3' };
-		inline static constexpr FormatSpecifier MinuteSpecifier = { 'z', '4' };
-		inline static constexpr FormatSpecifier SecondSpecifier = { 's', '5' };
-		inline static constexpr FormatSpecifier MillisecondSpecifier = { 'c', '6' };
-		
-		inline static constexpr FormatSpecifier NameSpecifier = { 'n', '7' };
-		inline static constexpr FormatSpecifier LogLevelSpecifier = { 'l', '8' };
-		inline static constexpr FormatSpecifier TextSpecifier = { 't', '9' };
+		// inline static constexpr FormatSpecifier DaySpecifier = { 'd', '0' };
+		// inline static constexpr FormatSpecifier MonthSpecifier = { 'm', '1' };
+		// inline static constexpr FormatSpecifier YearSpecifier = { 'y', '2' };
+		//
+		// inline static constexpr FormatSpecifier HourSpecifier = { 'h', '3' };
+		// inline static constexpr FormatSpecifier MinuteSpecifier = { 'z', '4' };
+		// inline static constexpr FormatSpecifier SecondSpecifier = { 's', '5' };
+		// inline static constexpr FormatSpecifier MillisecondSpecifier = { 'c', '6' };
+		//
+		// inline static constexpr FormatSpecifier NameSpecifier = { 'n', '7' };
+		// inline static constexpr FormatSpecifier LogLevelSpecifier = { 'l', '8' };
+		// inline static constexpr FormatSpecifier TextSpecifier = { 't', '9' };
+		//
+		// inline static constexpr FormatSpecifier SourceFileSpecifier = { 't', '9' };
+		// inline static constexpr FormatSpecifier SourceLineSpecifier = { 't', '9' };
+		// inline static constexpr FormatSpecifier SourceFuncSpecifier = { 't', '9' };
 
-		inline static std::unordered_map<char, char> Specifiers = {
-			{'d', '0'},
-			{'m', '1'},
-			{'y', '2'},
-			{'h', '3'},
-			{'z', '4'},
-			{'s', '5'},
-			{'c', '6'},
-			{'n', '7'},
-			{'l', '8'},
-			{'t', '9'},
+		inline static std::unordered_map<char, std::string> Specifiers = {
+			{'d', "0"},
+			{'m', "1"},
+			{'y', "2"},
+			{'h', "3"},
+			{'z', "4"},
+			{'s', "5"},
+			{'c', "6"},
+			{'n', "7"},
+			{'l', "8"},
+			{'t', "9"},
+			{'q', "10"},
+			{'w', "11"},
+			{'e', "12"},
 		};
 		
 	public:
@@ -81,7 +88,10 @@ namespace klib::kLogs
 		 *		- s/S = Seconds
 		 *		- c/C = Milliseconds
 		 *		- n/N = Name
-		 *		- t/t = Text
+		 *		- t/T = Text
+		 *		- q/Q = source file
+		 *		- w/W = source line
+		 *		- e/E = source function
 		 */
 		virtual void SetFormat(const std::string_view& format) noexcept = 0;
 
@@ -136,9 +146,9 @@ namespace klib::kLogs
 
 					const auto identifier = realFormat[i + 1];
 
-					const auto fi = Specifiers.at(identifier);
+					const auto& fi = Specifiers.at(identifier);
 
-					logFormat.push_back(fi);
+					logFormat.append(fi);
 
 					const auto firstIndex = i + 1;
 

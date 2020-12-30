@@ -161,6 +161,7 @@ namespace klib::kLogs
 	{
 		Open();
 		AddEntry(LogLevel::FTL, msg);
+		FinalOutput();
 	}
 
 	void Logging::AddRaw(const std::string_view& text)

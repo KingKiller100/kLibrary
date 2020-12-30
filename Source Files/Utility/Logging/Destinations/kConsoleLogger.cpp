@@ -77,7 +77,7 @@ namespace klib
 				const auto& minute = t.GetMinute();
 				const auto& second = t.GetSecond();
 				const auto& milli = t.GetMillisecond();
-				
+
 				const auto& d = msg.date;
 				const auto& day = d.GetDay();
 				const auto& month = d.GetMonth();
@@ -91,7 +91,7 @@ namespace klib
 					minute,
 					second,
 					milli,
-					name,
+					*name,
 					desc.lvl.ToUnderlying(),
 					msg.text);
 			}
@@ -100,12 +100,17 @@ namespace klib
 			{
 				logLine.append(ToString(R"(
                [FILE]: {0}
-               [LINE]: {1}
-               [FUNC]: {2})",
+               [LINE]: {1})",
 					msg.sourceInfo.file
-					, msg.sourceInfo.line
-					, msg.sourceInfo.func)
+					, msg.sourceInfo.line)
 				);
+
+				if (!msg.sourceInfo.func.empty())
+				{
+					logLine.append(ToString(R"(
+               [FUNC]: {0})",
+						msg.sourceInfo.func));
+				}
 			}
 
 			logLine.push_back('\n');

@@ -141,7 +141,7 @@ namespace klib
 					minute,
 					second,
 					milli,
-					name,
+					*name,
 					desc.info,
 					message.text);
 			}
@@ -150,12 +150,17 @@ namespace klib
 			{
 				logLine.append(ToString(R"(
                [FILE]: {0}
-               [LINE]: {1}
-               [FUNC]: {2})",
+               [LINE]: {1})",
 					message.sourceInfo.file
-					, message.sourceInfo.line
-					, message.sourceInfo.func)
+					, message.sourceInfo.line)
 				);
+
+				if (!message.sourceInfo.func.empty())
+				{
+					logLine.append(ToString(R"(
+               [FUNC]: {0})",
+						message.sourceInfo.func));
+				}
 			}
 
 			logLine.push_back('\n');
