@@ -192,7 +192,7 @@ namespace klib
 			 * \param text
 			 *		Text to log
 			 */
-			void AddVerbatim(const std::string_view& text = "");
+			void AddRaw(const std::string_view& text = "");
 			
 			/**
 			 * \brief
@@ -297,7 +297,17 @@ namespace klib
 			 */
 			void Close();
 
-			void SetFormat(const std::string_view& format, LogDestination destType);
+			/**
+			 * \brief
+			 *		Sets the format of all log message
+			 *		[Example] "[&dd/&mm/&yyyy] [&hh:&zz:&ss] [&n]: &t"
+			 *		means "[01/01/1970] [01:12:59] [Logger]: Pass Test!
+			 * \param format
+			 *		Format of the log message for the destination logger
+			 * \param logDest
+			 *		Log destination
+			 */
+			void SetFormat(const std::string_view& format, LogDestination logDest);
 
 		protected:
 			LogEntries entriesQ; // Queue buffer to cache the logged messages

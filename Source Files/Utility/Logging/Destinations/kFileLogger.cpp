@@ -18,7 +18,7 @@ namespace klib
 
 	namespace kLogs
 	{
-		FileLogger::FileLogger(const std::string_view& newName, const std::filesystem::path& path)
+		FileLogger::FileLogger(std::string* newName, const std::filesystem::path& path)
 			: name(newName)
 			, path(path)
 		{
@@ -29,12 +29,7 @@ namespace klib
 		FileLogger::~FileLogger() noexcept
 			= default;
 
-		std::string_view FileLogger::GetName() const
-		{
-			return name;
-		}
-
-		void FileLogger::SetName(const std::string_view& newName)
+		void FileLogger::SetName(std::string* newName)
 		{
 			name = newName;
 		}

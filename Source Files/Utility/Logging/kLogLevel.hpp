@@ -2,7 +2,6 @@
 
 #include "../Enum/kEnum.hpp"
 
-#include <string_view>
 #include <cstdint>
 
 namespace klib

@@ -22,7 +22,7 @@ namespace klib
 	{
 		std::mutex g_kConsoleLoggerMutex;
 
-		ConsoleLogger::ConsoleLogger(const std::string& newName)
+		ConsoleLogger::ConsoleLogger(std::string* newName)
 			: active(false)
 			, name(newName)
 			, consoleColour(ConsoleColour::WHITE)
@@ -44,12 +44,7 @@ namespace klib
 			return active;
 		}
 
-		std::string_view ConsoleLogger::GetName() const
-		{
-			return name;
-		}
-
-		void ConsoleLogger::SetName(const std::string_view& newName)
+		void ConsoleLogger::SetName(std::string* newName)
 		{
 			name = newName;
 		}

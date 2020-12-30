@@ -45,8 +45,8 @@ namespace klib::kLogs
 
 	void Logging::Initialize(const std::filesystem::path& path)
 	{
-		destinations[LogDestination::FILE].reset(new FileLogger(name, path));
-		destinations[LogDestination::CONSOLE].reset(new ConsoleLogger(name));
+		destinations[LogDestination::FILE].reset(new FileLogger(&name, path));
+		destinations[LogDestination::CONSOLE].reset(new ConsoleLogger(&name));
 
 		ToggleLoggingEnabled();
 		Open();
@@ -73,10 +73,6 @@ namespace klib::kLogs
 	void Logging::SetName(const std::string_view& newName)
 	{
 		name = newName;
-		for (const auto& dest : destinations)
-		{
-			dest.second->SetName(newName);
-		}
 	}
 
 	void Logging::SetMinimumLoggingLevel(const LogLevel newMin) noexcept
@@ -107,9 +103,9 @@ namespace klib::kLogs
 		SetFormat(format, LogDestination::CONSOLE);
 	}
 
-	void Logging::SetFormat(const std::string_view& format, LogDestination destType)
+	void Logging::SetFormat(const std::string_view& format, LogDestination logDest)
 	{
-		const auto& dest = destinations.at(destType);
+		const auto& dest = destinations.at(logDest);
 		dest->SetFormat(format);
 	}
 
@@ -165,10 +161,9 @@ namespace klib::kLogs
 	{
 		Open();
 		AddEntry(LogLevel::FTL, msg);
-		FinalOutput();
 	}
 
-	void Logging::AddVerbatim(const std::string_view& text)
+	void Logging::AddRaw(const std::string_view& text)
 	{
 		AddLog(LogEntry(text.data(), LogDescriptor(LogLevel::RAW)));
 	}

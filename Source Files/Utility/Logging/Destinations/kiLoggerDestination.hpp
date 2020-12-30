@@ -57,19 +57,11 @@ namespace klib::kLogs
 
 		/**
 		 * \brief
-		 *		Returns the name of the logger
-		 * \return
-		 *		Returns name as a string_view
-		 */
-		USE_RESULT virtual std::string_view GetName() const = 0;
-
-		/**
-		 * \brief
 		 *		Change name of the logger
 		 * \param[in] newName
 		 *		STL string representing a name
 		 */
-		virtual void SetName(const std::string_view& newName) = 0;
+		virtual void SetName(std::string* newName) = 0;
 
 		/**
 		 * \brief

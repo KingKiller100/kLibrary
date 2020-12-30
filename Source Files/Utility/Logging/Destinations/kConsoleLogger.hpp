@@ -14,11 +14,10 @@ namespace klib
 		class ConsoleLogger final : public LogDestWithFormatSpecifier
 		{
 		public:
-			ConsoleLogger(const std::string& newName);
+			ConsoleLogger(std::string* newName);
 			~ConsoleLogger() noexcept;
 			
-			USE_RESULT std::string_view GetName() const override;
-			void SetName(const std::string_view& newName) override;
+			void SetName(std::string* newName) override;
 			
 			void AddEntry(const LogEntry& entry) override;
 			
@@ -39,7 +38,7 @@ namespace klib
 
 		private:
 			bool active;
-			std::string name;
+			std::string* name;
 			std::string logFormat;
 			kMisc::ConsoleColour consoleColour;
 		};

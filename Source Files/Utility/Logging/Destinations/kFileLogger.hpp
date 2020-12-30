@@ -12,11 +12,10 @@ namespace klib
 		class FileLogger final : public LogDestWithFormatSpecifier
 		{
 		public:
-			FileLogger(const std::string_view& newName, const std::filesystem::path& path);
+			FileLogger(std::string* newName, const std::filesystem::path& path);
 			~FileLogger() noexcept;
 
-			USE_RESULT std::string_view GetName() const override;
-			void SetName(const std::string_view& newName) override;
+			void SetName(std::string* newName) override;
 
 			USE_RESULT std::string_view GetFileName() const;
 			void SetFileName(const std::string_view& newFilename);
@@ -43,7 +42,7 @@ namespace klib
 			std::string CreateLogText(const LogEntry& entry) const;
 
 		private:
-			std::string name;
+			std::string* name;
 			std::string logFormat;
 
 			std::filesystem::path path;
