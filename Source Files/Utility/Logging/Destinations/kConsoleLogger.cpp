@@ -27,7 +27,36 @@ namespace klib
 			, name(newName)
 			, consoleColour(ConsoleColour::WHITE)
 		{
-			LogDestWithFormatSpecifier::SetFormat("[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&n] [&l]: &t");
+			LogDestWithFormatSpecifier::SetFormat(
+				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
+				, LogLevel::BNR);
+
+			LogDestWithFormatSpecifier::SetFormat(
+				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
+				, LogLevel::DBG);
+
+			LogDestWithFormatSpecifier::SetFormat(
+				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
+				, LogLevel::NRM);
+
+			LogDestWithFormatSpecifier::SetFormat(
+				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
+				, LogLevel::INF);
+
+			LogDestWithFormatSpecifier::SetFormat(
+				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
+				, LogLevel::WRN);
+
+			LogDestWithFormatSpecifier::SetFormat(
+				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
+				"\n[File]: &q [&l]"
+				, LogLevel::ERR);
+
+			LogDestWithFormatSpecifier::SetFormat(
+				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
+				"\n[File]: &q"
+				"\n[Line]: &l"
+				, LogLevel::FTL);
 		}
 
 		ConsoleLogger::~ConsoleLogger() noexcept
@@ -83,7 +112,9 @@ namespace klib
 				const auto& month = d.GetMonth();
 				const auto& year = d.GetYear();
 
-				logLine = ToString(LogDestWithFormatSpecifier::logFormat,
+				const auto format = formatMap.at(desc.lvl);
+
+				logLine = ToString(format,
 					day,
 					month,
 					year,
@@ -92,25 +123,13 @@ namespace klib
 					second,
 					milli,
 					*name,
+					desc.info,
 					desc.lvl.ToUnderlying(),
-					msg.text);
-			}
-
-			if (desc.lvl >= LogLevel::ERR)
-			{
-				logLine.append(ToString(R"(
-               [FILE]: {0}
-               [LINE]: {1})",
-					msg.sourceInfo.file
-					, msg.sourceInfo.line)
+					msg.text,
+					msg.sourceInfo.file,
+					msg.sourceInfo.line,
+					msg.sourceInfo.func
 				);
-
-				if (!msg.sourceInfo.func.empty())
-				{
-					logLine.append(ToString(R"(
-               [FUNC]: {0})",
-						msg.sourceInfo.func));
-				}
 			}
 
 			logLine.push_back('\n');
@@ -160,12 +179,13 @@ namespace klib
 					= ToString(R"(
                {0}: Console Logger Concluded
 )"
-, name
+, *name
 );
 
 				Flush(padding);
 				Flush(msg);
 				Flush(padding);
+				Flush("\n");
 			}
 
 			active = false;

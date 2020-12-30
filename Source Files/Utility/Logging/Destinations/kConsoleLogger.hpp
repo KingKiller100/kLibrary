@@ -39,7 +39,6 @@ namespace klib
 		private:
 			bool active;
 			std::string* name;
-			std::string logFormat;
 			kMisc::ConsoleColour consoleColour;
 		};
 	}

@@ -36,7 +36,7 @@ namespace kTest::utility
 		auto testLogger = std::make_unique<Logging>(path);
 
 		testLogger->ToggleConsoleEnabled();
-		testLogger->SetFileFormat("[&N] [&l]: &t");
+		testLogger->SetFileFormat("[&N] [&p]: &t", LogLevel::BNR);
 		testLogger->AddBanner("Intro", "Welcome to logging test", "*", "*", 20);
 		testLogger->SuspendFileLogging();
 
@@ -128,7 +128,7 @@ namespace kTest::utility
 
 		testLogger->AddFatal(LogMessage("FATAL!", __FILE__, __LINE__));
 
-		testLogger->FinalOutput();
+		testLogger->FinalOutput(false);
 
 		fullFilePathToDelete = dir + filename + extension;
 		VERIFY(std::filesystem::exists(fullFilePathToDelete.c_str()) == true);

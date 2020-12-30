@@ -40,7 +40,7 @@ namespace klib::kLogs
 	Logging::~Logging()
 	{
 		if (!entriesQ.empty())
-			FinalOutput();
+			FinalOutput(false);
 	}
 
 	void Logging::Initialize(const std::filesystem::path& path)
@@ -93,20 +93,20 @@ namespace klib::kLogs
 		}
 	}
 
-	void Logging::SetFileFormat(const std::string_view& format)
+	void Logging::SetFileFormat(const std::string_view& format, LogLevel lvl)
 	{
-		SetFormat(format, LogDestination::FILE);
+		SetFormat(format, lvl, LogDestination::FILE);
 	}
 
-	void Logging::SetConsoleFormat(const std::string_view& format)
+	void Logging::SetConsoleFormat(const std::string_view& format, LogLevel lvl)
 	{
-		SetFormat(format, LogDestination::CONSOLE);
+		SetFormat(format, lvl, LogDestination::CONSOLE);
 	}
 
-	void Logging::SetFormat(const std::string_view& format, LogDestination logDest)
+	void Logging::SetFormat(const std::string_view& format, LogLevel lvl, LogDestination logDest)
 	{
 		const auto& dest = destinations.at(logDest);
-		dest->SetFormat(format);
+		dest->SetFormat(format, lvl);
 	}
 
 	constexpr void Logging::SetCacheMode(const bool enable) noexcept
@@ -147,7 +147,7 @@ namespace klib::kLogs
 
 	void Logging::SuspendFileLogging()
 	{
-		Close();
+		Close(false);
 		SetCacheMode(true);
 	}
 
@@ -161,7 +161,7 @@ namespace klib::kLogs
 	{
 		Open();
 		AddEntry(LogLevel::FTL, msg);
-		FinalOutput();
+		FinalOutput(false);
 	}
 
 	void Logging::AddRaw(const std::string_view& text)
@@ -211,9 +211,9 @@ namespace klib::kLogs
 			Flush();
 	}
 
-	void Logging::FinalOutput()
+	void Logging::FinalOutput(bool outputDefaultClosingMsg)
 	{
-		Close();
+		Close(outputDefaultClosingMsg);
 		isEnabled = false;
 	}
 
@@ -230,12 +230,12 @@ namespace klib::kLogs
 		}
 	}
 
-	void Logging::Close()
+	void Logging::Close(bool outputDefaultClosingMsg)
 	{
 		Flush();
 		for (auto& dest : destinations)
 		{
-			dest.second->Close(true);
+			dest.second->Close(outputDefaultClosingMsg);
 		}
 	}
 

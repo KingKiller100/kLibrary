@@ -5,6 +5,8 @@
 #include "../../String/Format/FormatSymbols.hpp"
 #include "../../String/Format/Stringify/kStringifyInteger.hpp"
 
+#include "../kLogLevel.hpp"
+
 #include <string>
 #include <unordered_map>
 
@@ -36,27 +38,28 @@ namespace klib::kLogs
 		// inline static constexpr FormatSpecifier MillisecondSpecifier = { 'c', '6' };
 		//
 		// inline static constexpr FormatSpecifier NameSpecifier = { 'n', '7' };
-		// inline static constexpr FormatSpecifier LogLevelSpecifier = { 'l', '8' };
+		// inline static constexpr FormatSpecifier LogLevelSpecifier = { 'p', '8' };
 		// inline static constexpr FormatSpecifier TextSpecifier = { 't', '9' };
 		//
-		// inline static constexpr FormatSpecifier SourceFileSpecifier = { 't', '9' };
-		// inline static constexpr FormatSpecifier SourceLineSpecifier = { 't', '9' };
-		// inline static constexpr FormatSpecifier SourceFuncSpecifier = { 't', '9' };
+		// inline static constexpr FormatSpecifier SourceFileSpecifier = { 'q', '10' };
+		// inline static constexpr FormatSpecifier SourceLineSpecifier = { 'l', '11' };
+		// inline static constexpr FormatSpecifier SourceFuncSpecifier = { 'e', '12' };
 
-		inline static std::unordered_map<char, std::string> Specifiers = {
-			{'d', "0"},
-			{'m', "1"},
-			{'y', "2"},
-			{'h', "3"},
-			{'z', "4"},
-			{'s', "5"},
-			{'c', "6"},
-			{'n', "7"},
-			{'l', "8"},
-			{'t', "9"},
-			{'q', "10"},
-			{'w', "11"},
-			{'e', "12"},
+		inline static std::unordered_map<char, std::string> LogFormatSpecifiersMap = {
+			{'d', "0"},  // day
+			{'m', "1"},  // month
+			{'y', "2"},  // year
+			{'h', "3"},  // hour
+			{'z', "4"},  // minute
+			{'s', "5"},  // second
+			{'c', "6"},  // millisecond
+			{'n', "7"},  // name
+			{'p', "8"},  // Log descriptor [full]
+			{'w', "9"},  // Log descriptor [short]
+			{'t', "10"}, // Log message
+			{'q', "11"}, // Source file
+			{'l', "12"}, // Source line
+			{'e', "13"}, // Source function
 		};
 		
 	public:
@@ -88,12 +91,14 @@ namespace klib::kLogs
 		 *		- s/S = Seconds
 		 *		- c/C = Milliseconds
 		 *		- n/N = Name
-		 *		- t/T = Text
+		 *		- p/P = Log descriptor [full]
+		 *		- w/W = Log descriptor [short]
+		 *		- t/T = Log message
 		 *		- q/Q = source file
-		 *		- w/W = source line
+		 *		- l/L = source line
 		 *		- e/E = source function
 		 */
-		virtual void SetFormat(const std::string_view& format) noexcept = 0;
+		virtual void SetFormat(const std::string_view& format, LogLevel lvl) noexcept = 0;
 
 		/**
 		 * \brief
@@ -129,8 +134,39 @@ namespace klib::kLogs
 	class LogDestWithFormatSpecifier : public iLoggerDestination
 	{
 	public:
-		void SetFormat(const std::string_view& format) noexcept override
+
+		/**
+		 * \brief
+		 *		Sets the format of all log message
+		 *		[Example] "[&dd/&mm/&yyyy] [&hh:&zz:&ss] [&n]: &t"
+		 *		means "[01/01/1970] [01:12:59] [Logger]: Pass Test!
+		 * \param format
+		 *		Format of the log message for the destination logger
+		 *		Declare each detail specifier item with a '&' character
+		 *		Using multiple calls of the same specifiers gives different results
+		 *		Detail specifiers:
+		 *		- d/D = Day
+		 *		- m/M = Month
+		 *		- y/Y = Year
+		 *		- h/H = Hours
+		 *		- z/Z = Minutes
+		 *		- s/S = Seconds
+		 *		- c/C = Milliseconds
+		 *		- n/N = Name
+		 *		- p/P = Log descriptor [full]
+		 *		- w/W = Log descriptor [short]
+		 *		- t/T = Log message
+		 *		- q/Q = source file
+		 *		- l/L = source line
+		 *		- e/E = source function
+		 */
+		void SetFormat(const std::string_view& format, LogLevel lvl) noexcept override
 		{
+			if (LogLevel::RAW == lvl)
+				return;
+			
+			auto& logFormat = formatMap[lvl];
+			
 			logFormat.clear();
 			
 			const auto realFormat = kString::ToLower(format);
@@ -139,14 +175,14 @@ namespace klib::kLogs
 			{
 				const auto& letter = realFormat[i];
 				if (letter != DetailSpecifier)
-					logFormat.push_back(letter);
+					logFormat.push_back(format[i]);
 				else
 				{
 					logFormat.push_back('{');
 
 					const auto identifier = realFormat[i + 1];
 
-					const auto& fi = Specifiers.at(identifier);
+					const auto& fi = LogFormatSpecifiersMap.at(identifier);
 
 					logFormat.append(fi);
 
@@ -172,7 +208,7 @@ namespace klib::kLogs
 		}
 
 	protected:
-		std::string logFormat;
+		std::unordered_map<LogLevel::InternalEnum_t, std::string> formatMap;
 	};
 }
 

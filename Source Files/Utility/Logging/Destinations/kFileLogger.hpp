@@ -43,7 +43,6 @@ namespace klib
 
 		private:
 			std::string* name;
-			std::string logFormat;
 
 			std::filesystem::path path;
 			std::fstream fileStream;

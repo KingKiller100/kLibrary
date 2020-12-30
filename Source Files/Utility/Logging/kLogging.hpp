@@ -95,7 +95,7 @@ namespace klib
 			*		- n/N = Name
 			*		- t/t = Text
 			*/
-			void SetFileFormat(const std::string_view& format);
+			void SetFileFormat(const std::string_view& format, LogLevel lvl);
 			
 			/**
 			 * \brief
@@ -115,7 +115,7 @@ namespace klib
 			*		- n/N = Name
 			*		- t/t = Text
 			*/
-			void SetConsoleFormat(const std::string_view& format);
+			void SetConsoleFormat(const std::string_view& format, LogLevel lvl);
 			
 			/**
 			 * \brief
@@ -170,7 +170,7 @@ namespace klib
 			 * \brief
 			 *		Outputs cached kLogs to file
 			 */
-			void FinalOutput();
+			void FinalOutput(bool outputDefaultClosingMsg);
 
 			/**
 			 * \brief
@@ -295,7 +295,7 @@ namespace klib
 			 * \brief
 			 *		Outputs logs to file then closes it
 			 */
-			void Close();
+			void Close(bool outputDefaultClosingMsg);
 
 			/**
 			 * \brief
@@ -304,10 +304,12 @@ namespace klib
 			 *		means "[01/01/1970] [01:12:59] [Logger]: Pass Test!
 			 * \param format
 			 *		Format of the log message for the destination logger
+			 * \param lvl
+			 *		LogLevel to change the format for
 			 * \param logDest
 			 *		Log destination
 			 */
-			void SetFormat(const std::string_view& format, LogDestination logDest);
+			void SetFormat(const std::string_view& format, LogLevel lvl, LogDestination logDest);
 
 		protected:
 			LogEntries entriesQ; // Queue buffer to cache the logged messages
