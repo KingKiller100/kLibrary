@@ -22,33 +22,33 @@ namespace klib
 			: name(newName)
 			, path(path)
 		{
-			// LogDestWithFormatSpecifier::SetFormat("&t", LogLevel::RAW);
+			LogDestWithFormatSpecifier::SetFormat("&t", LogLevel::RAW);
 
 			LogDestWithFormatSpecifier::SetFormat(
 				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
 				, LogLevel::BNR);
-			
+
 			LogDestWithFormatSpecifier::SetFormat(
 				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
 				, LogLevel::DBG);
-			
+
 			LogDestWithFormatSpecifier::SetFormat(
 				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
 				, LogLevel::NRM);
-			
+
 			LogDestWithFormatSpecifier::SetFormat(
 				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
 				, LogLevel::INF);
-			
+
 			LogDestWithFormatSpecifier::SetFormat(
 				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
 				, LogLevel::WRN);
-			
+
 			LogDestWithFormatSpecifier::SetFormat(
 				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
 				"\n                  [File]: &q [&l]"
 				, LogLevel::ERR);
-			
+
 			LogDestWithFormatSpecifier::SetFormat(
 				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
 				"\n                  [File]: &q"
@@ -93,11 +93,11 @@ namespace klib
 
 		void FileLogger::SetDirectory(const std::string_view& newDir)
 		{
-			Close(true);
-			const auto filename = kFileSystem::AppendFileExtension(GetFileName(), GetExtension());
+			Close(false);
+			const auto filename = AppendFileExtension(GetFileName(), GetExtension());
 			const auto pathSep = kFileSystem::pathSeparator<char>;
 			path.clear();
-			path.assign(ToString(newDir, pathSep, filename));
+			path.assign(ToString<char>(NoFormatTag{}, newDir, pathSep, filename));
 			Open();
 		}
 
@@ -146,42 +146,38 @@ namespace klib
 			const auto& msg = entry.GetMsg();
 			const auto& desc = entry.GetDescriptor();
 
-			if (entry.HasDescription(LogDescriptor(LogLevel::RAW)))
-			{
-				logLine = msg.text;
-			}
-			else
-			{
-				const auto& t = msg.time;
-				const auto& hour = t.GetHour();
-				const auto& minute = t.GetMinute();
-				const auto& second = t.GetSecond();
-				const auto& milli = t.GetMillisecond();
+			const auto& t = msg.time;
+			const auto& hour = t.GetHour();
+			const auto& minute = t.GetMinute();
+			const auto& second = t.GetSecond();
+			const auto& milli = t.GetMillisecond();
 
-				const auto& d = msg.date;
-				const auto& day = d.GetDay();
-				const auto& month = d.GetMonth();
-				const auto& year = d.GetYear();
+			const auto& d = msg.date;
+			const auto& day = d.GetDay();
+			const auto& month = d.GetMonth();
+			const auto& year = d.GetYear();
 
-				const auto format = formatMap.at(desc.lvl);
+			const auto& sourceInfo = msg.sourceInfo;
 
-				logLine = ToString(format,
-					day,
-					month,
-					year,
-					hour,
-					minute,
-					second,
-					milli,
-					*name,
-					desc.info,
-					desc.lvl.ToUnderlying(),
-					msg.text,
-					msg.sourceInfo.file,
-					msg.sourceInfo.line,
-					msg.sourceInfo.func
-				);
-			}
+			const auto format = formatMap.at(desc.lvl);
+
+			logLine = ToString(format,
+				day,
+				month,
+				year,
+				hour,
+				minute,
+				second,
+				milli,
+				*name,
+				desc.info,
+				desc.lvl.ToUnderlying(),
+				msg.text,
+				sourceInfo.file,
+				sourceInfo.line,
+				sourceInfo.func
+			);
+
 
 			logLine.push_back('\n');
 

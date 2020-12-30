@@ -27,6 +27,8 @@ namespace klib
 			, name(newName)
 			, consoleColour(ConsoleColour::WHITE)
 		{
+			LogDestWithFormatSpecifier::SetFormat("&t", LogLevel::RAW);
+
 			LogDestWithFormatSpecifier::SetFormat(
 				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
 				, LogLevel::BNR);
@@ -95,42 +97,37 @@ namespace klib
 		{
 			std::string logLine;
 
-			if (desc.lvl == LogLevel::RAW)
-			{
-				logLine = msg.text;
-			}
-			else
-			{
-				const auto& t = msg.time;
-				const auto& hour = t.GetHour();
-				const auto& minute = t.GetMinute();
-				const auto& second = t.GetSecond();
-				const auto& milli = t.GetMillisecond();
+			const auto& t = msg.time;
+			const auto& hour = t.GetHour();
+			const auto& minute = t.GetMinute();
+			const auto& second = t.GetSecond();
+			const auto& milli = t.GetMillisecond();
 
-				const auto& d = msg.date;
-				const auto& day = d.GetDay();
-				const auto& month = d.GetMonth();
-				const auto& year = d.GetYear();
+			const auto& d = msg.date;
+			const auto& day = d.GetDay();
+			const auto& month = d.GetMonth();
+			const auto& year = d.GetYear();
 
-				const auto format = formatMap.at(desc.lvl);
+			const auto& sourceInfo = msg.sourceInfo;
+			
+			const auto format = formatMap.at(desc.lvl);
 
-				logLine = ToString(format,
-					day,
-					month,
-					year,
-					hour,
-					minute,
-					second,
-					milli,
-					*name,
-					desc.info,
-					desc.lvl.ToUnderlying(),
-					msg.text,
-					msg.sourceInfo.file,
-					msg.sourceInfo.line,
-					msg.sourceInfo.func
-				);
-			}
+			logLine = ToString(format,
+				day,
+				month,
+				year,
+				hour,
+				minute,
+				second,
+				milli,
+				*name,
+				desc.info,
+				desc.lvl.ToUnderlying(),
+				msg.text,
+				sourceInfo.file,
+				sourceInfo.line,
+				sourceInfo.func
+			);
 
 			logLine.push_back('\n');
 
