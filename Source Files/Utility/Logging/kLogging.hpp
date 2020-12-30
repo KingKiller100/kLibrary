@@ -96,7 +96,7 @@ namespace klib
 			 *		- p/P = Log descriptor [text]
 			 *		- w/W = Log descriptor [numeric value]
 			 *		- t/T = Log message
-			 *		- q/Q = source file
+			 *		- f/F = source file
 			 *		- l/L = source line
 			 *		- e/E = source function
 			 * \param lvl
@@ -123,7 +123,7 @@ namespace klib
 			 *		- p/P = Log descriptor [text]
 			 *		- w/W = Log descriptor [numeric value]
 			 *		- t/T = Log message
-			 *		- q/Q = source file
+			 *		- f/F = source file
 			 *		- l/L = source line
 			 *		- e/E = source function
 			 * \param lvl

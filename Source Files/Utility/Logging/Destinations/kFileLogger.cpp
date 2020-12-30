@@ -46,12 +46,12 @@ namespace klib
 
 			LogDestWithFormatSpecifier::SetFormat(
 				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
-				"\n                  [File]: &q [&l]"
+				"\n                  [File]: &f [&l]"
 				, LogLevel::ERR);
 
 			LogDestWithFormatSpecifier::SetFormat(
 				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
-				"\n                  [File]: &q"
+				"\n                  [File]: &f"
 				"\n                  [Line]: &l"
 				, LogLevel::FTL);
 		}

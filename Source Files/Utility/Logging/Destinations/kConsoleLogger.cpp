@@ -51,12 +51,12 @@ namespace klib
 
 			LogDestWithFormatSpecifier::SetFormat(
 				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
-				"\n[File]: &q [&l]"
+				"\n[File]: &f [&l]"
 				, LogLevel::ERR);
 
 			LogDestWithFormatSpecifier::SetFormat(
 				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
-				"\n[File]: &q"
+				"\n[File]: &f"
 				"\n[Line]: &l"
 				, LogLevel::FTL);
 		}

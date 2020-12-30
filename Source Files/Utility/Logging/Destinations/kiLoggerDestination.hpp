@@ -75,10 +75,10 @@ namespace klib::kLogs
 			{'s', "5"},  // second
 			{'c', "6"},  // millisecond
 			{'n', "7"},  // name
-			{'p', "8"},  // Log descriptor [full]
-			{'w', "9"},  // Log descriptor [short]
+			{'p', "8"},  // Log descriptor [text]
+			{'w', "9"},  // Log descriptor [numeric]
 			{'t', "10"}, // Log message
-			{'q', "11"}, // Source file
+			{'f', "11"}, // Source file
 			{'l', "12"}, // Source line
 			{'e', "13"}, // Source function
 		};
@@ -105,7 +105,7 @@ namespace klib::kLogs
 		 *		- p/P = Log descriptor [text]
 		 *		- w/W = Log descriptor [numeric value]
 		 *		- t/T = Log message
-		 *		- q/Q = source file
+		 *		- f/F = source file
 		 *		- l/L = source line
 		 *		- e/E = source function
 		 * \param lvl
