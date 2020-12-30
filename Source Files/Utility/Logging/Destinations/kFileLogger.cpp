@@ -141,8 +141,6 @@ namespace klib
 
 		std::string FileLogger::CreateLogText(const LogEntry& entry) const
 		{
-			std::string logLine;
-
 			const auto& msg = entry.GetMsg();
 			const auto& desc = entry.GetDescriptor();
 
@@ -161,7 +159,7 @@ namespace klib
 
 			const auto format = formatMap.at(desc.lvl);
 
-			logLine = ToString(format,
+			std::string logLine = ToString(format,
 				day,
 				month,
 				year,

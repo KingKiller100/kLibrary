@@ -105,8 +105,8 @@ namespace klib::kLogs
 
 	void Logging::SetFormat(const std::string_view& format, LogLevel lvl, LogDestination logDest)
 	{
-		const auto& dest = destinations.at(logDest);
-		dest->SetFormat(format, lvl);
+		auto& dest = ToImpl<LogDestWithFormatSpecifier, iLoggerDestination>(destinations.at(logDest));
+		dest.SetFormat(format, lvl);
 	}
 
 	constexpr void Logging::SetCacheMode(const bool enable) noexcept

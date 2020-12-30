@@ -95,8 +95,6 @@ namespace klib
 
 		std::string ConsoleLogger::CreateLogText(const LogMessage& msg, const LogDescriptor& desc) const
 		{
-			std::string logLine;
-
 			const auto& t = msg.time;
 			const auto& hour = t.GetHour();
 			const auto& minute = t.GetMinute();
@@ -112,21 +110,21 @@ namespace klib
 			
 			const auto format = formatMap.at(desc.lvl);
 
-			logLine = ToString(format,
-				day,
-				month,
-				year,
-				hour,
-				minute,
-				second,
-				milli,
-				*name,
-				desc.info,
-				desc.lvl.ToUnderlying(),
-				msg.text,
-				sourceInfo.file,
-				sourceInfo.line,
-				sourceInfo.func
+			std::string logLine = ToString(format,
+			                               day,
+			                               month,
+			                               year,
+			                               hour,
+			                               minute,
+			                               second,
+			                               milli,
+			                               *name,
+			                               desc.info,
+			                               desc.lvl.ToUnderlying(),
+			                               msg.text,
+			                               sourceInfo.file,
+			                               sourceInfo.line,
+			                               sourceInfo.func
 			);
 
 			logLine.push_back('\n');

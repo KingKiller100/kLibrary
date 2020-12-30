@@ -19,50 +19,6 @@ namespace klib::kLogs
 	class iLoggerDestination
 	{
 	public:
-		inline static constexpr auto DetailSpecifier = '&';
-
-	protected:
-		struct FormatSpecifier
-		{
-			char specifier;
-			std::string index;
-		};
-
-		// inline static constexpr FormatSpecifier DaySpecifier = { 'd', '0' };
-		// inline static constexpr FormatSpecifier MonthSpecifier = { 'm', '1' };
-		// inline static constexpr FormatSpecifier YearSpecifier = { 'y', '2' };
-		//
-		// inline static constexpr FormatSpecifier HourSpecifier = { 'h', '3' };
-		// inline static constexpr FormatSpecifier MinuteSpecifier = { 'z', '4' };
-		// inline static constexpr FormatSpecifier SecondSpecifier = { 's', '5' };
-		// inline static constexpr FormatSpecifier MillisecondSpecifier = { 'c', '6' };
-		//
-		// inline static constexpr FormatSpecifier NameSpecifier = { 'n', '7' };
-		// inline static constexpr FormatSpecifier LogLevelSpecifier = { 'p', '8' };
-		// inline static constexpr FormatSpecifier TextSpecifier = { 't', '9' };
-		//
-		// inline static constexpr FormatSpecifier SourceFileSpecifier = { 'q', '10' };
-		// inline static constexpr FormatSpecifier SourceLineSpecifier = { 'l', '11' };
-		// inline static constexpr FormatSpecifier SourceFuncSpecifier = { 'e', '12' };
-
-		inline static std::unordered_map<char, std::string> LogFormatSpecifiersMap = {
-			{'d', "0"},  // day
-			{'m', "1"},  // month
-			{'y', "2"},  // year
-			{'h', "3"},  // hour
-			{'z', "4"},  // minute
-			{'s', "5"},  // second
-			{'c', "6"},  // millisecond
-			{'n', "7"},  // name
-			{'p', "8"},  // Log descriptor [full]
-			{'w', "9"},  // Log descriptor [short]
-			{'t', "10"}, // Log message
-			{'q', "11"}, // Source file
-			{'l', "12"}, // Source line
-			{'e', "13"}, // Source function
-		};
-		
-	public:
 		virtual ~iLoggerDestination() = default;
 
 		/**
@@ -72,33 +28,6 @@ namespace klib::kLogs
 		 *		STL string representing a name
 		 */
 		virtual void SetName(std::string* newName) = 0;
-
-		/**
-		 * \brief
-		 *		Sets the format of all log message
-		 *		[Example] "[&dd/&mm/&yyyy] [&hh:&zz:&ss] [&n]: &t"
-		 *		means "[01/01/1970] [01:12:59] [Logger]: Pass Test!
-		 * \param format
-		 *		Format of the log message for the destination logger
-		 *		Declare each detail specifier item with a '&' character
-		 *		Using multiple calls of the same specifiers gives different results
-		 *		Detail specifiers:
-		 *		- d/D = Day
-		 *		- m/M = Month
-		 *		- y/Y = Year
-		 *		- h/H = Hours
-		 *		- z/Z = Minutes
-		 *		- s/S = Seconds
-		 *		- c/C = Milliseconds
-		 *		- n/N = Name
-		 *		- p/P = Log descriptor [full]
-		 *		- w/W = Log descriptor [short]
-		 *		- t/T = Log message
-		 *		- q/Q = source file
-		 *		- l/L = source line
-		 *		- e/E = source function
-		 */
-		virtual void SetFormat(const std::string_view& format, LogLevel lvl) noexcept = 0;
 
 		/**
 		 * \brief
@@ -134,7 +63,27 @@ namespace klib::kLogs
 	class LogDestWithFormatSpecifier : public iLoggerDestination
 	{
 	public:
-
+		inline static constexpr auto DetailSpecifier = '&';
+		
+	protected:
+		inline static std::unordered_map<char, std::string> LogFormatSpecifiersMap = {
+			{'d', "0"},  // day
+			{'m', "1"},  // month
+			{'y', "2"},  // year
+			{'h', "3"},  // hour
+			{'z', "4"},  // minute
+			{'s', "5"},  // second
+			{'c', "6"},  // millisecond
+			{'n', "7"},  // name
+			{'p', "8"},  // Log descriptor [full]
+			{'w', "9"},  // Log descriptor [short]
+			{'t', "10"}, // Log message
+			{'q', "11"}, // Source file
+			{'l', "12"}, // Source line
+			{'e', "13"}, // Source function
+		};
+		
+	public:
 		/**
 		 * \brief
 		 *		Sets the format of all log message
@@ -153,14 +102,16 @@ namespace klib::kLogs
 		 *		- s/S = Seconds
 		 *		- c/C = Milliseconds
 		 *		- n/N = Name
-		 *		- p/P = Log descriptor [full]
-		 *		- w/W = Log descriptor [short]
+		 *		- p/P = Log descriptor [text]
+		 *		- w/W = Log descriptor [numeric value]
 		 *		- t/T = Log message
 		 *		- q/Q = source file
 		 *		- l/L = source line
 		 *		- e/E = source function
+		 * \param lvl
+		 *		Log level to change the format for
 		 */
-		void SetFormat(const std::string_view& format, LogLevel lvl) noexcept override
+		virtual void SetFormat(const std::string_view& format, const LogLevel lvl) noexcept
 		{
 			if (LogLevel::RAW == lvl)
 				return;
