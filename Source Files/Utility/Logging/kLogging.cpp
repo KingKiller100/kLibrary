@@ -159,7 +159,7 @@ namespace klib::kLogs
 
 	void Logging::AddFatal(const LogMessage& msg)
 	{
-		Open();
+		destinations.at(LogDestination::FILE)->Open();
 		AddEntry(LogLevel::FTL, msg);
 		FinalOutput(false);
 	}
