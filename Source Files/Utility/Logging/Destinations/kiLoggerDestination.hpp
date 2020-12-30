@@ -112,10 +112,7 @@ namespace klib::kLogs
 		 *		Log level to change the format for
 		 */
 		virtual void SetFormat(const std::string_view& format, const LogLevel lvl) noexcept
-		{
-			if (LogLevel::RAW == lvl)
-				return;
-			
+		{			
 			auto& logFormat = formatMap[lvl];
 			
 			logFormat.clear();

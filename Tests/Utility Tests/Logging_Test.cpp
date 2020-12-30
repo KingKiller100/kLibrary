@@ -139,7 +139,7 @@ namespace kTest::utility
 			testLogger->AddEntry(desc, msg);
 			const auto hasCache = testLogger->HasCache();
 			VERIFY(!hasCache);
-			bool prevSuccess = success;
+			const bool prevSuccess = success;
 			try
 			{
 				success = false;
