@@ -87,8 +87,8 @@ namespace klib::kLogs
 		/**
 		 * \brief
 		 *		Sets the format of all log message
-		 *		[Example] "[&dd/&mm/&yyyy] [&hh:&zz:&ss] [&n]: &t"
-		 *		means "[01/01/1970] [01:12:59] [Logger]: Pass Test!
+		 *		[Example] "[&dd/&mm/&yyyy] [&hh:&zz:&ss] [&n]: &t" can result in 
+		 *		an output like this "[01/01/1970] [01:12:59] [Logger]: Pass Test!"
 		 * \param format
 		 *		Format of the log message for the destination logger
 		 *		Declare each detail specifier item with a '&' character
