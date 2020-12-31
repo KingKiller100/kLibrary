@@ -53,14 +53,14 @@ namespace kmaths
 		~Vector() noexcept
 			= default;
 
-		GETTER_CONSTEXPR(Type, X, x)
-		CONST_GETTER_CONSTEXPR(Type, X, x)
+		USE_RESULT constexpr Type& X() noexcept { return x; }
+		USE_RESULT constexpr const Type& X() const noexcept { return x; }
 
-		GETTER_CONSTEXPR(Type, Y, y)
-		CONST_GETTER_CONSTEXPR(Type, Y, y)
+		USE_RESULT constexpr Type& Y() noexcept { return y; }
+		USE_RESULT constexpr const Type& Y() const noexcept { return y; }
 
-		GETTER_CONSTEXPR(Type, Z, z)
-		CONST_GETTER_CONSTEXPR(Type, Z, z)
+		USE_RESULT constexpr Type& Z() noexcept { return z; }
+		USE_RESULT constexpr const Type& Z() const noexcept { return z; }
 
 		USE_RESULT constexpr Type MagnitudeSQ() const noexcept
 		{
