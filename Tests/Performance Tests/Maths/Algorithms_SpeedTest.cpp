@@ -192,7 +192,7 @@ namespace kTest::performance::maths
 	}
 	void AlgorithmsSpeedTest::FloatingPointRemainderTest()
 	{
-		const std::vector<std::string_view> participants = { "kmaths::FloatingPointRemainder", "std::fmod" };
+		const std::vector<std::string_view> participants = { "kmaths::FloatRemainder", "std::fmod" };
 		SetUpParticipants(participants);
 
 		constexpr float set[] = { 0.2443f, 1.234543f, 2.7687f, 3.2342324f, 4.324543f, 5.5f, 6.354f, 7.234244554f, 8.4365f, 9.45434f };
@@ -205,7 +205,7 @@ namespace kTest::performance::maths
 
 			{
 				START_TEST(participants[0]);
-				const auto value = kmaths::FloatingPointRemainder(CAST(float, i), base);
+				const auto value = kmaths::FloatRemainder(CAST(float, i), base);
 			}
 
 			{

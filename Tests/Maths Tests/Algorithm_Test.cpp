@@ -1722,7 +1722,7 @@ namespace kTest::maths
 		{
 			constexpr auto num = 11.1;
 			constexpr auto base = 10.1;
-			const auto result = FloatingPointRemainder(num, base);
+			const auto result = FloatRemainder(num, base);
 			const auto expected = std::fmod(num, base);
 			VERIFY(result == expected);
 		}
@@ -1730,7 +1730,7 @@ namespace kTest::maths
 		{
 			constexpr auto num = 2.5f;
 			constexpr auto base = 7.9f;
-			const auto result = FloatingPointRemainder(num, base);
+			const auto result = FloatRemainder(num, base);
 			const auto expected = std::fmod(num, base);
 			VERIFY(result == expected);
 		}
@@ -1738,7 +1738,7 @@ namespace kTest::maths
 		{
 			constexpr auto num = 101.1l;
 			constexpr auto base = 10.0l;
-			const auto result = FloatingPointRemainder(num, base);
+			const auto result = FloatRemainder(num, base);
 			const auto expected = std::fmodl(num, base);
 			VERIFY(result == expected);
 		}
@@ -1746,7 +1746,7 @@ namespace kTest::maths
 		{
 			constexpr auto num = -10.4l;
 			constexpr auto base = 10.0l;
-			const auto result = FloatingPointRemainder(num, base);
+			const auto result = FloatRemainder(num, base);
 			const auto expected = std::fmod(num, base);
 			VERIFY(result == expected);
 		}
@@ -1754,7 +1754,7 @@ namespace kTest::maths
 		{
 			constexpr auto num = 10.4l;
 			constexpr auto base = 10.0l;
-			const auto result = FloatingPointRemainder(num, base);
+			const auto result = FloatRemainder(num, base);
 			const auto expected = std::fmod(num, base);
 			VERIFY(result == expected);
 		}

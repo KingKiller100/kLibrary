@@ -6,7 +6,7 @@
 namespace kmaths
 {
 	template <typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	USE_RESULT constexpr T FloatingPointRemainder(T num, T base) noexcept
+	USE_RESULT constexpr T FloatRemainder(T num, T base) noexcept
 	{
 #if MSVC_PLATFORM_TOOLSET > 142
 		return std::fmod(num, base);
@@ -34,8 +34,8 @@ namespace kmaths
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 		{
 			const auto mod = (num < 0)
-				? FloatingPointRemainder(num, base) + base
-				: FloatingPointRemainder(num, base);
+				? FloatRemainder(num, base) + base
+				: FloatRemainder(num, base);
 			return mod;
 		}
 		else
