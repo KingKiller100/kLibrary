@@ -11,12 +11,12 @@ project "kLibrary"
 	objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
 
     pchheader "pch.hpp"
-    pchsource "Source Files/pch.cpp"
+    pchsource "Source/pch.cpp"
 
     files
     {
-        "Source Files/**.hpp",
-        "Source Files/**.cpp",
+        "Source/**.hpp",
+        "Source/**.cpp",
         "Tests/**.hpp",
         "Tests/**.cpp",
         "cpp.hint"
@@ -34,7 +34,7 @@ project "kLibrary"
 
     -- postbuildcommands
     -- {
-    --     ("xcopy /s /y \"$(ProjectDir)Source Files\" \"$(ProjectDir)Include Files\""),
+    --     ("xcopy /s /y \"$(ProjectDir)Source\" \"$(ProjectDir)Include Files\""),
     --     ("del /s /q /f \"$(ProjectDir)Include Files\\*.cpp\""),
     --     ("del \"$(ProjectDir)Include Files\\pch.hpp\" /s /f /q"),
     -- }
@@ -54,7 +54,7 @@ project "kLibrary"
         defines "KLIB_DEBUG"
         removefiles
         {
-            "Source Files/**/*Test*",
+            "Source/**/*Test*",
             "Tests/**/*Test*"
         }
         symbols "On"
@@ -69,7 +69,7 @@ project "kLibrary"
         defines "KLIB_RELEASE"
         removefiles
         {
-            "Source Files/**/*Test*",
+            "Source/**/*Test*",
             "Tests/**/*Test*",
         }
         optimize "Full"
@@ -79,7 +79,7 @@ project "kLibrary"
         defines "KLIB_PROFILE"
         removefiles
         {
-            "Source Files/**/*Test*",
+            "Source/**/*Test*",
             "Tests/**/*Test*",
         }
         optimize "Speed"
