@@ -10,20 +10,31 @@ namespace klib::kCalendar
 	std::unique_ptr<secret::impl::iCalendarInfoSource> g_kCalendarInfoSource;
 
 	using namespace secret::impl;
+	using namespace kPlatform;
 	
 	void UsePlatformCalendarInfoSource()
 	{
-		switch (kPlatform::GetPlatform())
+		auto os = GetPlatform();
+
+		os = os.MaskCmp(PlatformOS::WINDOWS
+			, PlatformOS::WINDOWS
+			, os);
+		
+		os = os.MaskCmp(PlatformOS::APPLE
+			, PlatformOS::APPLE
+			, os);
+		
+		switch (os)
 		{
-		case kPlatform::PlatformType::WINDOWS:
+		case PlatformOS::WINDOWS:
 			SetCalendarInfoSource(new windows::CalendarInfoSourceWindows());
 			break;
-		case kPlatform::PlatformType::APPLE:
+		case PlatformOS::APPLE:
 			//break;
-		case kPlatform::PlatformType::LINUX:
+		case PlatformOS::LINUX:
 			//break;
 		default:
-			throw kDebug::CalendarError("Unknown platform. Cannot create calendar information source");
+			throw kDebug::CalendarError("Unknown platform. Cannot create platform calendar information source");
 			break;
 		}
 	}
@@ -33,8 +44,8 @@ namespace klib::kCalendar
 		if (g_kCalendarInfoSource == nullptr)
 		{
 			throw kDebug::CalendarError("Calendar information source is not set." 
-				" Please either set your own using \"SetCalendarInfoSource(iCalendarInfoSource*)\" or just call "
-			" \"UsePlatformCalendarInfoSource(void)\"");
+				" Please either set your own using \"SetCalendarInfoSource(iCalendarInfoSource*)\""
+				" or just call \"UsePlatformCalendarInfoSource(void)\"");
 		}
 		
 		return *g_kCalendarInfoSource;

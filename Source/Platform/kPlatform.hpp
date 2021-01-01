@@ -6,12 +6,18 @@
 
 namespace klib::kPlatform
 {
-	ENUM_CLASS(PlatformType, std::uint8_t,
-		UNKNOWN,
-		WINDOWS,
-		APPLE,
-		LINUX
+	ENUM_CLASS(PlatformOS, std::uint8_t,
+		UNKNOWN = 0,
+		WINDOWS_32 = BIT_SHIFT(0),
+		WINDOWS_64 = BIT_SHIFT(1),
+		WINDOWS = WINDOWS_32 | WINDOWS_64,
+		IOS_SIM = BIT_SHIFT(2),
+		IOS = BIT_SHIFT(3),
+		MAC = BIT_SHIFT(4),
+		APPLE = IOS_SIM | IOS | MAC,
+		ANDROID = BIT_SHIFT(5),
+		LINUX = ANDROID + 1
 		);
 
-	USE_RESULT PlatformType GetPlatform() noexcept;
+	USE_RESULT PlatformOS GetPlatform() noexcept;
 }
