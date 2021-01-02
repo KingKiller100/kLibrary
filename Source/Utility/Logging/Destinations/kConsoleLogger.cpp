@@ -199,7 +199,7 @@ namespace klib
 
 		void ConsoleLogger::OutputToDebugString(const std::string_view& msg)
 		{
-#if defined(KLIB_DEBUG) || defined(_DEBUG)
+#if defined(KLOG_OPT_DBG_STR)
 			OutputDebugStringA(msg.data());
 #endif
 		}

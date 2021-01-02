@@ -44,6 +44,7 @@
 #define kSOURCEINFOIMPL_CONCATENATE2(x,y) x##y 
 #define kFILELINE size_t(kSOURCEINFOIMPL_CONCATENATE(__LINE__, U))
 
-#if defined(KLIB_TEST)
-#	define TESTING_ENABLED 1
-#endif // KLIB_TEST
+#ifndef TESTING_ENABLED
+#	define TESTING_ENABLED KLIB_TRUE
+#endif
+

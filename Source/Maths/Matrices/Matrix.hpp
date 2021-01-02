@@ -417,7 +417,7 @@ namespace kmaths
 					{
 #ifdef KLIB_DEBUG
 						const Type left = elems[row][index];
-						const Type right = CAST(Type, other[index][col]);
+						const Type right = static_cast<Type>(other[index][col]);
 						const Type res = left * right;
 						m[row][col] += res;
 #else

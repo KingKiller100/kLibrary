@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../HelperMacros.hpp"
+#include "../TypeTraits/TemplateTraits.hpp"
 
 #define _USE_MATH_DEFINES
 #include <corecrt_math_defines.h>
@@ -69,7 +70,7 @@ namespace kmaths
 		template<class T>
 		USE_RESULT constexpr T One(T&&) noexcept
 		{
-			return One<ONLY_TYPE(T)>();
+			return One<klib::type_trait::Make_Simple<T>>();
 		}
 
 		template<class T>

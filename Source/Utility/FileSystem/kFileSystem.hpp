@@ -73,7 +73,9 @@ namespace klib::kFileSystem
 			return true;
 		}
 
-#if defined(_DEBUG) || defined(KLIB_DEBUG)
+#if defined(KFILEFYSTEM_NO_EXCEPTIONS)
+		return false;
+#else
 		if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 		{
 			const auto failMsg = "Cannot create/open file: " + filePath.string();
@@ -86,10 +88,8 @@ namespace klib::kFileSystem
 		}
 
 		throw std::runtime_error("Unable to write to file: " + filePath.string<char>());
-#endif // DEBUG || KLIB_DEBUG
+#endif 
 
-
-		return false;
 	}
 
 	/**
