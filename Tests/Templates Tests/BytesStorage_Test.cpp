@@ -1,10 +1,10 @@
 ﻿#include "pch.hpp"
 #include "BytesStorage_Test.hpp"
 
-#include "../../Source Files/Template/ByteStorager.hpp"
+#include "../../Source/Template/ByteStorager.hpp"
 
-#include "../../Source Files/Maths/Vectors/Vector2.hpp"
-#include "../../Source Files/Maths/Vectors/Vector3.hpp"
+#include "../../Source/Maths/Vectors/Vector2.hpp"
+#include "../../Source/Maths/Vectors/Vector3.hpp"
 
 
 #ifdef TESTING_ENABLED

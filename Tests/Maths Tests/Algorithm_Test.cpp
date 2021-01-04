@@ -1,9 +1,9 @@
 #include "pch.hpp"
 #include "Algorithm_Test.hpp"
 
-#include "../../Source Files/Maths/kAlgorithms.hpp"
-#include "../../Source Files/Maths/Vectors/PredefinedVectors.hpp"
-#include "../../Source Files/Maths/Matrices/PredefinedMatrices.hpp"
+#include "../../Source/Maths/kAlgorithms.hpp"
+#include "../../Source/Maths/Vectors/PredefinedVectors.hpp"
+#include "../../Source/Maths/Matrices/PredefinedMatrices.hpp"
 
 #include <algorithm>
 #include <numeric>

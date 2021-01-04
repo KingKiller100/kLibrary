@@ -1,10 +1,10 @@
 #include "pch.hpp"
 #include "Vectors_Test.hpp"
 
-#include "../../Source Files/Maths/Vectors/VectorMathsHelper.hpp"
-#include "../../Source Files/Maths/Vectors/Vector2.hpp"
-#include "../../Source Files/Maths/Vectors/Vector3.hpp"
-#include "../../Source Files/Maths/Vectors/Vector4.hpp"
+#include "../../Source/Maths/Vectors/VectorMathsHelper.hpp"
+#include "../../Source/Maths/Vectors/Vector2.hpp"
+#include "../../Source/Maths/Vectors/Vector3.hpp"
+#include "../../Source/Maths/Vectors/Vector4.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::maths

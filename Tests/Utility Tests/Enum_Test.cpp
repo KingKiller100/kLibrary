@@ -1,7 +1,7 @@
 ﻿#include "pch.hpp"
 #include "Enum_Test.hpp"
 
-#include "../../Source Files/Utility/Enum/kEnum.hpp"
+#include "../../Source/Utility/Enum/kEnum.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility

@@ -1,12 +1,12 @@
 ﻿#include "pch.hpp"
 #include "SourceInfo_Test.hpp"
 
-#include "../../Source Files/Utility/String/kToString.hpp"
-#include "../../Source Files/Utility/String/kStringConverter.hpp"
-#include "../../Source Files/Utility/Debug/Source/kSourceInfo.hpp"
-#include "../../Source Files/Utility/Debug/Source/kMutableSourceInfo.hpp"
-#include "../../Source Files/Utility/Debug/Source/kSourceInfoToString.hpp"
-#include "../../Source Files/Utility/Debug/Source/kMutableSourceInfoToString.hpp"
+#include "../../Source/Utility/String/kToString.hpp"
+#include "../../Source/Utility/String/kStringConverter.hpp"
+#include "../../Source/Utility/Debug/Source/kSourceInfo.hpp"
+#include "../../Source/Utility/Debug/Source/kMutableSourceInfo.hpp"
+#include "../../Source/Utility/Debug/Source/kSourceInfoToString.hpp"
+#include "../../Source/Utility/Debug/Source/kMutableSourceInfoToString.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility

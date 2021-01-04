@@ -1,9 +1,9 @@
 #include "pch.hpp"
 #include "Calendar_Test.hpp"
 
-#include "../../Source Files/Utility/Calendar/kCalendar.hpp"
-#include "../../Source Files/Utility/Calendar/kCalenderHelpers.hpp"
-#include "../../Source Files/Utility/String/kToString.hpp"
+#include "../../Source/Utility/Calendar/kCalendar.hpp"
+#include "../../Source/Utility/Calendar/kCalenderHelpers.hpp"
+#include "../../Source/Utility/String/kToString.hpp"
 
 
 #include <Windows.h>

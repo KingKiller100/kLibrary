@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "Logging_Test.hpp"
 
-#include "../../Source Files/Utility/Logging/kLogging.hpp"
+#include "../../Source/Utility/Logging/kLogging.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility

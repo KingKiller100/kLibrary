@@ -1,8 +1,8 @@
 ﻿#include "pch.hpp"
 #include "Profiler_Test.hpp"
 
-#include "../../Source Files/Utility/Profiler/kProfiler.hpp"
-#include "../../Source Files/Maths/kMathsApproximately.hpp"
+#include "../../Source/Utility/Profiler/kProfiler.hpp"
+#include "../../Source/Maths/kMathsApproximately.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility

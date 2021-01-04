@@ -1,9 +1,9 @@
 #include "pch.hpp"
 #include "../Utility Tests/Stopwatch_Test.hpp"
 
-#include "../../Source Files/Maths/kMathsApproximately.hpp"
-#include "../../Source Files/Utility/Stopwatch/kStopwatch.hpp"
-#include "../../Source Files/Utility/String/kToString.hpp"
+#include "../../Source/Maths/kMathsApproximately.hpp"
+#include "../../Source/Utility/Stopwatch/kStopwatch.hpp"
+#include "../../Source/Utility/String/kToString.hpp"
 
 #include <thread>
 

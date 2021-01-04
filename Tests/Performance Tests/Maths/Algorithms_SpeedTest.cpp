@@ -1,7 +1,7 @@
 ﻿#include "pch.hpp"
 #include "Algorithms_SpeedTest.hpp"
 
-#include "../../../Source Files/Maths/kAlgorithms.hpp"
+#include "../../../Source/Maths/kAlgorithms.hpp"
 
 #include <cmath>
 

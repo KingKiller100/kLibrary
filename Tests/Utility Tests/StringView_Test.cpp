@@ -2,7 +2,7 @@
 
 #include "StringView_Test.hpp"
 
-#include "../../Source Files/Utility/String/kStringView.hpp"
+#include "../../Source/Utility/String/kStringView.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility

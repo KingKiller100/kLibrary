@@ -1,7 +1,7 @@
 ﻿#include "pch.hpp"
 #include "StringConverter_Test.hpp"
 
-#include "../../Source Files/Utility/String/kStringConverter.hpp"
+#include "../../Source/Utility/String/kStringConverter.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility

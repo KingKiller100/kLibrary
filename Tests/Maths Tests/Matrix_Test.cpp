@@ -1,9 +1,9 @@
 #include "pch.hpp"
 #include "Matrix_Test.hpp"
 
-#include "../../Source Files/Maths/Vectors/Vector.hpp"
-#include "../../Source Files/Maths/Matrices/MatrixMathsHelper.hpp"
-#include "../../Source Files/Maths/Matrices/PredefinedMatrices.hpp"
+#include "../../Source/Maths/Vectors/Vector.hpp"
+#include "../../Source/Maths/Matrices/MatrixMathsHelper.hpp"
+#include "../../Source/Maths/Matrices/PredefinedMatrices.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::maths

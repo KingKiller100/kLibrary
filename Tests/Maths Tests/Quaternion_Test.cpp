@@ -1,8 +1,8 @@
 ﻿#include "pch.hpp"
 #include "Quaternion_Test.hpp"
 
-#include "../../Source Files/Maths/Matrices/Matrix3x4.hpp"
-#include "../../Source Files/Maths/Quaternions/Quaternions.hpp"
+#include "../../Source/Maths/Matrices/Matrix3x4.hpp"
+#include "../../Source/Maths/Quaternions/Quaternions.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::maths

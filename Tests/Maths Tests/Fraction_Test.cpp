@@ -1,8 +1,8 @@
 ﻿#include "pch.hpp"
 #include "Fraction_Test.hpp"
 
-#include "../../Source Files/Maths/kMathsConstants.hpp"
-#include "../../Source Files/Maths/Fraction.hpp"
+#include "../../Source/Maths/kMathsConstants.hpp"
+#include "../../Source/Maths/Fraction.hpp"
 
 
 #ifdef TESTING_ENABLED

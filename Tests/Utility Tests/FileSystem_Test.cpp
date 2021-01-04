@@ -2,9 +2,9 @@
 #include "FileSystem_Test.hpp"
 
 #ifdef TESTING_ENABLED
-#include "../../Source Files/Utility/FileSystem/kFileSystem.hpp"
-#include "../../Source Files/Utility/FileSystem/kFileSystemToString.hpp"
-#include "../../Source Files/Utility/String/kToString.hpp"
+#include "../../Source/Utility/FileSystem/kFileSystem.hpp"
+#include "../../Source/Utility/FileSystem/kFileSystemToString.hpp"
+#include "../../Source/Utility/String/kToString.hpp"
 
 namespace kTest::utility
 {

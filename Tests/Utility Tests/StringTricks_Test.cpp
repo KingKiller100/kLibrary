@@ -1,7 +1,7 @@
 ﻿#include "pch.hpp"
 #include "StringTricks_Test.hpp"
 
-#include "../../Source Files/Utility/String/kStringTricks.hpp"
+#include "../../Source/Utility/String/kStringTricks.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility

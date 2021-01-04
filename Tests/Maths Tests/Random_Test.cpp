@@ -3,8 +3,8 @@
 
 #ifdef TESTING_ENABLED
 
-#include "../../Source Files//Maths/Length_Type.hpp"
-#include "../../Source Files//Maths/Random.hpp"
+#include "../../Source//Maths/Length_Type.hpp"
+#include "../../Source//Maths/Random.hpp"
 
 #include <thread>
 
