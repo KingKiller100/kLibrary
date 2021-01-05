@@ -20,17 +20,45 @@ namespace kTest::performance::maths
 			ptr[3] = _w;
 		}
 
-		GETTER_CONSTEXPR(T, X, ((T*)&vec)[0])
-		CONST_GETTER_CONSTEXPR(T, X, ((T*)&vec)[0])
+		constexpr T& X()
+		{
+			return ((T*)std::addressof(vec))[0];
+		}
 
-		GETTER_CONSTEXPR(T, Y, ((T*)&vec)[1])
-		CONST_GETTER_CONSTEXPR(T, Y, ((T*)&vec)[1])
+		constexpr const T& X() const
+		{
+			return ((T*)std::addressof(vec))[0];
+		}
 
-		GETTER_CONSTEXPR(T, Z, ((T*)&vec)[2])
-		CONST_GETTER_CONSTEXPR(T, Z, ((T*)&vec)[2])
+		constexpr T& Y()
+		{
+			return ((T*)std::addressof(vec))[1];
+		}
 
-		GETTER_CONSTEXPR(T, W, ((T*)&vec)[3])
-		CONST_GETTER_CONSTEXPR(T, W, ((T*)&vec)[3])
+		constexpr const T& Y() const
+		{
+			return ((T*)std::addressof(vec))[1];
+		}
+
+		constexpr T& Z()
+		{
+			return ((T*)std::addressof(vec))[2];
+		}
+
+		constexpr const T& Z() const
+		{
+			return ((T*)std::addressof(vec))[2];
+		}
+
+		constexpr T& W()
+		{
+			return ((T*)std::addressof(vec))[3];
+		}
+
+		constexpr const T& W() const
+		{
+			return ((T*)std::addressof(vec))[3];
+		}
 
 	public:
 		kmaths::BigInt_t vec[
