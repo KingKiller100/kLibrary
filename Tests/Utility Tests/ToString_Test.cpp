@@ -391,7 +391,7 @@ namespace kTest::utility
 			const auto test = klib::kString::ToString<char8_t>(NoFormatTag{}, 980u, 123);
 			VERIFY(test == u8"980123");
 #else
-			const auto test = klib::kString::ToString<char16_t>(980u);
+			const auto test = klib::kString::ToString<char16_t>(NoFormatTag{}, 980u);
 			VERIFY(test == u"980");
 #endif
 		}

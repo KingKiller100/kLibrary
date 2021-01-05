@@ -45,7 +45,7 @@ namespace kTest
 
 		void Initialize();
 		void InitializeMaths() const;
-		void InitializeUtility() const;
+		void InitializeUtility(bool includeTimeTests = true) const;
 		void InitializeTemplates() const;
 		void Shutdown();
 		void RunPerformanceTests() const;
@@ -61,7 +61,7 @@ namespace kTest
 			const std::string& resTimeStr);
 		double GetAverageTime() const;
 		void WriteToFile(const std::string& results);
-		void PerformTests(const size_t noOfThreads, clock_t& start);
+		void PerformTests(const size_t noOfThreads, clock_t& outStart);
 
 	private:
 		std::string path;

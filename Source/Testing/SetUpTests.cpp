@@ -73,7 +73,7 @@ namespace kTest
 		AddTest<TesterManager>(new maths::RandomTester());
 	}
 
-	void InitializeUtilityTests()
+	void InitializeUtilityTests(bool includeTimeTests)
 	{
 		AddTest<TesterManager>(new utility::StringConverterTester());
 		AddTest<TesterManager>(new utility::EnumTester());
@@ -85,8 +85,12 @@ namespace kTest
 		AddTest<TesterManager>(new utility::DebugTester());
 		AddTest<TesterManager>(new utility::LoggingTester());
 		AddTest<TesterManager>(new utility::StringViewTester());
-		AddTest<TesterManager>(new utility::StopWatchTester());
-		AddTest<TesterManager>(new utility::ProfilerTester());
+		
+		if (includeTimeTests)
+		{
+			AddTest<TesterManager>(new utility::StopWatchTester());
+			AddTest<TesterManager>(new utility::ProfilerTester());
+		}
 	}
 
 	void InitializeTemplateTests()
@@ -98,7 +102,7 @@ namespace kTest
 	void InitializeAllTests()
 	{
 		InitializeMathsTests();
-		InitializeUtilityTests();
+		InitializeUtilityTests(true);
 		InitializeTemplateTests();
 	}
 }

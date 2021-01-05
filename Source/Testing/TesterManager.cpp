@@ -30,6 +30,7 @@ namespace kTest
 	TesterManager::TesterManager(Token&)
 		: success(true)
 	{
+		std::cout.precision(3);
 	}
 
 	TesterManager::~TesterManager()
@@ -78,9 +79,9 @@ namespace kTest
 		InitializeMathsTests();
 	}
 
-	void TesterManager::InitializeUtility() const
+	void TesterManager::InitializeUtility(bool includeTimeTests) const
 	{
-		InitializeUtilityTests();
+		InitializeUtilityTests(includeTimeTests);
 	}
 
 	void TesterManager::InitializeTemplates() const
@@ -132,7 +133,7 @@ namespace kTest
 		std::cin.get();
 	}
 
-	void TesterManager::PerformTests(const size_t noOfThreads, std::clock_t& start)
+	void TesterManager::PerformTests(const size_t noOfThreads, std::clock_t& outStart)
 	{
 		if (noOfThreads != 0)
 		{
@@ -142,7 +143,7 @@ namespace kTest
 
 				kThread::ThreadPool threads(thrCount);
 
-				start = std::clock();
+				outStart = std::clock();
 				for (const auto& test : tests)
 				{
 					threads.QueueJob({ [this, &test]
@@ -156,7 +157,7 @@ namespace kTest
 		else
 		{
 			[&] {
-				start = std::clock();
+				outStart = std::clock();
 				for (const auto& test : tests)
 				{
 					Run(*test);
@@ -239,12 +240,9 @@ namespace kTest
 			? kMisc::ConsoleColour::LIGHT_GREEN
 			: kMisc::ConsoleColour::SCARLET_RED);
 
-		const auto resultStr = Sprintf("%s", (pass ? "Pass" : "Fail"));
-		std::cout << resultStr;
+		std::cout << (pass ? "Pass" : "Fail");
 		
 		SetConsoleTextAttribute(hConsole, kMisc::ConsoleColour::LIGHT_GREY);
-
-		std::cout.precision(3);
 
 		std::cout << " " << resTimeStr << "\n";
 	}
@@ -253,6 +251,7 @@ namespace kTest
 	{
 		const auto scopeLocker = std::scoped_lock(fileMutex);
 		file << results;
+		std::flush(file);
 	}
 
 	TesterManager& TesterManager::Get()

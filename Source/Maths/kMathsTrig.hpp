@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "kMathsConstants.hpp"
-#include "../HelperMacros.hpp"
-
 #include "kMathsEpsilon.hpp"
+
+#include "../HelperMacros.hpp"
 
 namespace kmaths
 {
@@ -22,6 +22,11 @@ namespace kmaths
 
 	namespace secret::impl
 	{
+		constexpr size_t epsilon_magnitude = 2;
+
+		template<typename T>
+		using ClosestFloat_t = std::conditional_t<std::is_floating_point_v<T>, T, float>;
+
 		// https://stackoverflow.com/questions/34703147/sine-function-without-any-library/34703167
 		template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 		USE_RESULT constexpr T SineImpl(T x, const size_t n) noexcept
@@ -32,13 +37,13 @@ namespace kmaths
 
 			x = Modulus<T>(x, tau);
 
-			const auto square = CAST(constants::Accuracy_t, -x * x);
+			const auto negSquare = CAST(constants::Accuracy_t, -x * x);
 
 			auto t = CAST(constants::Accuracy_t, x);
 			auto sine = t;
-			for (size_t a = 1; a < n; ++a)
+			for (size_t i = 1; i < n; ++i)
 			{
-				const constants::Accuracy_t xn = square / ((two * a + one) * (two * a));
+				const constants::Accuracy_t xn = negSquare / ((two * i + one) * (two * i));
 				t *= xn;
 				sine += t;
 			}
@@ -50,30 +55,22 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Sine(T x, const size_t n = 250) noexcept
 	{
-		using namespace kmaths::secret::impl;
-		constexpr constants::Accuracy_t epsilon_magnitude = 2;
-		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
-			return HandleEpsilon(SineImpl<T>(x, n), epsilon_magnitude);
-		else
-			return CAST(T, HandleEpsilon<float>(SineImpl<float>(CAST(float, x), n), epsilon_magnitude));
+		using namespace secret::impl;
+		
+		const auto xf = static_cast<ClosestFloat_t<T>>(x);
+		const auto sine_x = HandleEpsilon<ClosestFloat_t<T>>(SineImpl<ClosestFloat_t<T>>(xf, n), epsilon_magnitude);
+		return static_cast<T>(sine_x);
 	}
 
 	// Uses Taylor series to iterate through to get the better approximation of sine(x)
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Cosine(T x, const size_t n = 250) noexcept
 	{
-		using namespace kmaths::secret::impl;
-		constexpr constants::Accuracy_t epsilon_magnitude = 2;
-		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
-		{
-			const auto xf = x + constants::PI_OVER_2<T>;
-			return HandleEpsilon(SineImpl<T>(xf, n), epsilon_magnitude);
-		}
-		else
-		{
-			const auto xf = CAST(float, x) + constants::PI_OVER_2<float>;
-			return CAST(T, HandleEpsilon<float>(SineImpl<float>(xf, n), epsilon_magnitude));
-		}
+		using namespace secret::impl;
+
+		const auto xf = static_cast<ClosestFloat_t<T>>(x) + constants::PI_OVER_2<ClosestFloat_t<T>>;
+		const auto cosine_x = HandleEpsilon<ClosestFloat_t<T>>(SineImpl<ClosestFloat_t<T>>(xf, n), epsilon_magnitude);
+		return static_cast<T>(cosine_x);
 	}
 
 	// Uses Taylor series to iterate through to get the better approximation of sine(x)

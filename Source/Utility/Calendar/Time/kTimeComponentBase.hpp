@@ -42,7 +42,8 @@ namespace klib::kCalendar
 		template <class Rep, class Period>
 		constexpr operator std::chrono::duration<Rep, Period>() const
 		{
-			return std::chrono::duration_cast<std::chrono::duration<Rep, Period>>(GetDuration());
+			using namespace std::chrono;
+			return duration_cast<duration<Rep, Period>>(GetDuration());
 		}
 
 	protected:

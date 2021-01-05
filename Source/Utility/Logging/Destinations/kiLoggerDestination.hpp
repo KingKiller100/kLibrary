@@ -60,34 +60,13 @@ namespace klib::kLogs
 		virtual void Close(const bool outputClosingMsg) = 0;
 	};
 
-	class LogDestWithFormatSpecifier : public iLoggerDestination
+	struct LogDestWithFormatSpecifier : public iLoggerDestination
 	{
-	public:
-		inline static constexpr auto DetailSpecifier = '&';
-		
-	protected:
-		inline static std::unordered_map<char, std::string> LogFormatSpecifiersMap = {
-			{'d', "0"},  // day
-			{'m', "1"},  // month
-			{'y', "2"},  // year
-			{'h', "3"},  // hour
-			{'z', "4"},  // minute
-			{'s', "5"},  // second
-			{'c', "6"},  // millisecond
-			{'n', "7"},  // name
-			{'p', "8"},  // Log descriptor [text]
-			{'w', "9"},  // Log descriptor [numeric]
-			{'t', "10"}, // Log message
-			{'f', "11"}, // Source file
-			{'l', "12"}, // Source line
-			{'e', "13"}, // Source function
-		};
-		
 	public:
 		/**
 		 * \brief
 		 *		Sets the format of all log message
-		 *		[Example] "[&dd/&mm/&yyyy] [&hh:&zz:&ss] [&n]: &t" can result in 
+		 *		[Example] "[&dd/&mm/&yyyy] [&hh:&zz:&ss] [&n]: &t" can result in
 		 *		an output like this "[01/01/1970] [01:12:59] [Logger]: Pass Test!"
 		 * \param format
 		 *		Format of the log message for the destination logger
@@ -112,11 +91,11 @@ namespace klib::kLogs
 		 *		Log level to change the format for
 		 */
 		virtual void SetFormat(const std::string_view& format, const LogLevel lvl) noexcept
-		{			
+		{
 			auto& logFormat = formatMap[lvl];
-			
+
 			logFormat.clear();
-			
+
 			const auto realFormat = kString::ToLower(format);
 
 			for (size_t i = 0; i < realFormat.size(); ++i)
@@ -154,9 +133,29 @@ namespace klib::kLogs
 				}
 			}
 		}
+	public:
+		inline static constexpr auto DetailSpecifier = '&';
 
 	protected:
 		std::unordered_map<LogLevel::InternalEnum_t, std::string> formatMap;
+
+	private:
+		const std::unordered_map<char, std::string> LogFormatSpecifiersMap = {
+			{'d', "0"},  // day
+			{'m', "1"},  // month
+			{'y', "2"},  // year
+			{'h', "3"},  // hour
+			{'z', "4"},  // minute
+			{'s', "5"},  // second
+			{'c', "6"},  // millisecond
+			{'n', "7"},  // name
+			{'p', "8"},  // Log descriptor [text]
+			{'w', "9"},  // Log descriptor [numeric]
+			{'t', "10"}, // Log message
+			{'f', "11"}, // Source file
+			{'l', "12"}, // Source line
+			{'e', "13"}, // Source function
+		};
 	};
 }
 

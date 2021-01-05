@@ -36,27 +36,41 @@ namespace kTest::utility
 	bool StopWatchTester::GeneralTimeTest()
 	{
 		{
-			constexpr auto allowance = 250;
+			constexpr auto pauseTime = 750ms;
+			constexpr std::time_t allowance = 250;
 
+			constexpr auto expectedElapsedTime = pauseTime.count() + allowance - 1;
+			constexpr auto expectedLifeTime = (pauseTime * 3).count() + allowance - 1;
+			
 			Stopwatch<std::time_t, HighAccuracyClock<units::Millis>> sw;
 			sw.Restart();
-			std::this_thread::sleep_for(750ms);
+			std::this_thread::sleep_for(pauseTime);
+			sw.Stop();
 			const auto dt1 = sw.GetElapsedTime();
-			std::this_thread::sleep_for(750ms);
+			sw.Restart();
+			std::this_thread::sleep_for(pauseTime);
+			sw.Stop();
 			const auto dt2 = sw.GetElapsedTime();
-			std::this_thread::sleep_for(750ms);
+			sw.Restart();
+			std::this_thread::sleep_for(pauseTime);
 			sw.Stop();
 			const auto dt3 = sw.GetElapsedTime();
 			const auto lifeTime = sw.GetLifeTime();
-
-			VERIFY(kmaths::Approximately(lifeTime, 2250 + allowance, allowance));
-			VERIFY(kmaths::Approximately(dt1, 750 + allowance, allowance));
-			VERIFY(kmaths::Approximately(dt2, 750 + allowance, allowance));
-			VERIFY(kmaths::Approximately(dt3, 750 + allowance, allowance));
+			
+			VERIFY(kmaths::Approximately(lifeTime, expectedLifeTime, allowance));
+			VERIFY(kmaths::Approximately(dt1, expectedElapsedTime, allowance));
+			VERIFY(kmaths::Approximately(dt2, expectedElapsedTime, allowance));
+			VERIFY(kmaths::Approximately(dt3, expectedElapsedTime, allowance));
 		}
 
 		{
-			constexpr auto allowance = 250;
+			constexpr auto pauseTime1 = 100ms;
+			constexpr auto pauseTime2 = 200ms;
+			constexpr std::time_t allowance = 250;
+
+			constexpr auto expectedElapsedTime1 = pauseTime1.count() + allowance - 1;
+			constexpr auto expectedElapsedTime2 = pauseTime2.count() + allowance - 1;
+			constexpr auto expectedLifeTime = (pauseTime1 * 2 + pauseTime2).count() + allowance - 1;
 
 			Stopwatch<std::time_t, HighAccuracyClock<units::Millis>> sw;
 			sw.Restart();
@@ -69,10 +83,10 @@ namespace kTest::utility
 			const auto dt3 = sw.GetElapsedTime();
 			const auto lifeTime = sw.GetLifeTime();
 
-			VERIFY(kmaths::Approximately(lifeTime, 400 + allowance, allowance));
-			VERIFY(kmaths::Approximately(dt1, 100 + allowance, allowance));
-			VERIFY(kmaths::Approximately(dt2, 100 + allowance, allowance));
-			VERIFY(kmaths::Approximately(dt3, 200 + allowance, allowance));
+			VERIFY(kmaths::Approximately(lifeTime, expectedLifeTime, allowance));
+			VERIFY(kmaths::Approximately(dt1, expectedElapsedTime1, allowance));
+			VERIFY(kmaths::Approximately(dt2, expectedElapsedTime1, allowance));
+			VERIFY(kmaths::Approximately(dt3, expectedElapsedTime2, allowance));
 		}
 
 		return success;

@@ -85,7 +85,7 @@ namespace kTest::utility
 			
 			using ScopeProfiler = Profiler<long long, units::Millis>;
 			const auto name = "Seconds Test";
-			ScopeProfiler profiler(name, [this, &name, waitTime](const ScopeProfiler::Result_t& results)
+			ScopeProfiler profiler(name, [this, &name, waitTime, allowance](const ScopeProfiler::Result_t& results)
 				{
 					VERIFY(results.name == name);
 					const auto duration = static_cast<double>(results.end - results.start);
