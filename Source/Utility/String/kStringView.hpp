@@ -15,7 +15,7 @@ namespace klib
 {
 	namespace kString
 	{
-		template<class CharType, class Traits = type_trait::CharacterTraits<CharType>>
+		template<class CharType, class Traits = type_trait::Traits<CharType>>
 		class Template_String_View
 		{
 			template<typename T>

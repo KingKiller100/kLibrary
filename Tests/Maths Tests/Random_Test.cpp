@@ -4,7 +4,7 @@
 #ifdef TESTING_ENABLED
 
 #include "../../Source//Maths/Length_Type.hpp"
-#include "../../Source//Maths/Random.hpp"
+#include "../../Source//Maths/kRandom.hpp"
 
 #include <thread>
 

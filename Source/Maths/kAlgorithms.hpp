@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Fraction.hpp"
+#include "kFraction.hpp"
 #include "kMathsConstants.hpp"
 #include "Length_Type.hpp"
 #include "kMathsFundamentals.hpp"
@@ -365,10 +365,7 @@ namespace kmaths
 	USE_RESULT constexpr T Sqrt(T square)
 	{
 		using namespace kmaths::secret::impl;
-		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
-			return CAST(T, SqrtImpl<float>(CAST(float, square)));
-		else
-			return SqrtImpl<T>(square);
+		return static_cast<T>(SqrtImpl<ClosestFloat_t<T>>(static_cast<ClosestFloat_t<T>>(square)));
 	}
 
 
@@ -511,7 +508,7 @@ namespace kmaths
 	USE_RESULT constexpr T Gamma(T z)
 	{
 		using namespace constants;
-		
+
 		if (IsNegative(z)) return Zero<T>();
 
 		constexpr auto gamma = constants::GAMMA<Accuracy_t>;

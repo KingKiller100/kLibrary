@@ -195,7 +195,7 @@ namespace klib::kString::stringify
 			>>
 			const Char_t* BinaryNotation(Unsigned_t val)
 		{
-			constexpr auto dotIndex = type_trait::FloatTraits<Floating_t>::DotIndex;
+			constexpr auto dotIndex = type_trait::Traits<Floating_t>::DotIndex;
 
 			Char_t buff[g_MaxBits<Unsigned_t> +1]{ type_trait::g_NullTerminator<Char_t> };
 			Char_t* const end = std::end(buff) - 1;
@@ -254,7 +254,7 @@ namespace klib::kString::stringify
 	{
 		using namespace secret::impl;
 		using namespace kmaths::constants;
-		using Traits = type_trait::FloatTraits<T>;
+		using Traits = type_trait::Traits<T>;
 
 		if (IsNaN(val)) return Convert<Char_t>("nan");
 		if (IsInf(val)) return Convert<Char_t>("inf");

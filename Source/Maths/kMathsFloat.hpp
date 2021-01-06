@@ -64,14 +64,14 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr bool IsInfPos(T x)
 	{
-		constexpr auto inf = std::numeric_limits<T>::infinity();
+		constexpr auto inf = constants::Infinity<T>();
 		return x == inf;
 	}
 
 	template<typename T>
 	USE_RESULT constexpr bool IsInfNeg(T x)
 	{
-		constexpr auto infNeg = -std::numeric_limits<T>::infinity();
+		constexpr auto infNeg = -constants::Infinity<T>();
 		return x == infNeg;
 	}
 
@@ -86,7 +86,7 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr bool IsNaN(T x)
 	{
-		const auto parts = klib::type_trait::FloatTraits<T>::Parts(x);
+		const auto parts = klib::type_trait::Traits<T>::Parts(x);
 		if _CONSTEXPR17(std::is_same_v<T, float>)
 			return parts.exponent == 255 && parts.mantissa != 0;
 		else

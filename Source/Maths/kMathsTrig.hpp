@@ -24,9 +24,6 @@ namespace kmaths
 	{
 		constexpr size_t epsilon_magnitude = 2;
 
-		template<typename T>
-		using ClosestFloat_t = std::conditional_t<std::is_floating_point_v<T>, T, float>;
-
 		// https://stackoverflow.com/questions/34703147/sine-function-without-any-library/34703167
 		template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 		USE_RESULT constexpr T SineImpl(T x, const size_t n) noexcept

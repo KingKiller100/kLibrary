@@ -2,6 +2,8 @@
 
 #include "../HelperMacros.hpp"
 
+#include "TraitsBase.hpp"
+
 #include <type_traits>
 #include <limits>
 
@@ -32,33 +34,87 @@ namespace klib::type_trait
 			unsigned long long sign : 1;
 		} parts;
 	};
-
-	template<class T
-	, typename UnsignedT = std::conditional_t<sizeof(T) == 4, std::uint32_t, std::uint64_t>
-	, typename PrecisionT = std::conditional_t<std::is_same_v<T, float>, SingleFloatPrecision, DoubleFloatPrecision>
-	>
-	struct FloatTraits
+	
+	template<>
+	struct Traits<float>
 	{
 	public:
-		static_assert(std::is_floating_point_v<T>, "Type entered is not recognized as a floating point type");
+		using Type = float;
+		using Unsigned_t = std::uint32_t;
+		using Precision_t = SingleFloatPrecision;
+		using Limits_t = std::numeric_limits<Type>;
 
-		using Unsigned_t = UnsignedT;
-		using Precision_t = PrecisionT;
-		using Limits_t = std::numeric_limits<T>;
-
-		static constexpr auto Bytes = sizeof(T);
+		static constexpr auto Bytes = sizeof(Type);
 		static constexpr auto Mantissa = Limits_t::digits;
 		static constexpr auto Exponent = Bytes - Mantissa;
 		static constexpr auto DotIndex = Mantissa - 3;
 
-		USE_RESULT static constexpr Unsigned_t UintBitCast(T val) noexcept
+		USE_RESULT static constexpr Unsigned_t UintBitCast(Type val) noexcept
 		{
 			Precision_t p;
 			p.f = val;
 			return p.u;
 		}
 
-		USE_RESULT static constexpr typename Precision_t::Parts Parts(T val) noexcept
+		USE_RESULT static constexpr typename Precision_t::Parts Parts(Type val) noexcept
+		{
+			Precision_t p;
+			p.f = val;
+			return p.parts;
+		}
+	};
+	
+	template<>
+	struct Traits<double>
+	{
+	public:
+		using Type = double;
+		using Unsigned_t = std::uint64_t;
+		using Precision_t = DoubleFloatPrecision;
+		using Limits_t = std::numeric_limits<Type>;
+
+		static constexpr auto Bytes = sizeof(Type);
+		static constexpr auto Mantissa = Limits_t::digits;
+		static constexpr auto Exponent = Bytes - Mantissa;
+		static constexpr auto DotIndex = Mantissa - 3;
+
+		USE_RESULT static constexpr Unsigned_t UintBitCast(Type val) noexcept
+		{
+			Precision_t p;
+			p.f = val;
+			return p.u;
+		}
+
+		USE_RESULT static constexpr typename Precision_t::Parts Parts(Type val) noexcept
+		{
+			Precision_t p;
+			p.f = val;
+			return p.parts;
+		}
+	};
+	
+	template<>
+	struct Traits<long double>
+	{
+	public:
+		using Type = long double;
+		using Unsigned_t = std::uint64_t;
+		using Precision_t = DoubleFloatPrecision;
+		using Limits_t = std::numeric_limits<Type>;
+
+		static constexpr auto Bytes = sizeof(Type);
+		static constexpr auto Mantissa = Limits_t::digits;
+		static constexpr auto Exponent = Bytes - Mantissa;
+		static constexpr auto DotIndex = Mantissa - 3;
+
+		USE_RESULT static constexpr Unsigned_t UintBitCast(Type val) noexcept
+		{
+			Precision_t p;
+			p.f = val;
+			return p.u;
+		}
+
+		USE_RESULT static constexpr typename Precision_t::Parts Parts(Type val) noexcept
 		{
 			Precision_t p;
 			p.f = val;

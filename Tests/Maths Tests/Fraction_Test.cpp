@@ -2,7 +2,7 @@
 #include "Fraction_Test.hpp"
 
 #include "../../Source/Maths/kMathsConstants.hpp"
-#include "../../Source/Maths/Fraction.hpp"
+#include "../../Source/Maths/kFraction.hpp"
 
 
 #ifdef TESTING_ENABLED

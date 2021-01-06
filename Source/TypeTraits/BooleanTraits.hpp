@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "../HelperMacros.hpp"
 
+#include "TraitsBase.hpp"
+
 namespace klib::type_trait
 {
 	struct BooleanWrapper
@@ -22,16 +24,15 @@ namespace klib::type_trait
 		}
 
 	};
-	
-	struct BooleanTraits
+
+	template<>
+	struct Traits<bool>
 	{
+		using Type = bool;
+		using Limits_t = std::numeric_limits<Type>;
+		static constexpr auto Bytes = sizeof(Type);
 		static constexpr bool True = true;
 		static constexpr bool False = false;
-
-		template<class T>
-		USE_RESULT static constexpr T Convert(bool b) noexcept {
-			return static_cast<T>(b);
-		}
 	};
 
 	template<typename T>

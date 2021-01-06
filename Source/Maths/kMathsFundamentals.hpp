@@ -18,6 +18,16 @@ namespace kmaths
 {
 	namespace secret::impl
 	{
+		template<typename T>
+		using ClosestFloat_t = std::conditional_t<
+			std::is_floating_point_v<T>
+			, T
+			, std::conditional_t<
+				sizeof(size_t) == 4
+				, float
+				, double
+			>>;
+
 		template<typename T> // Unsigned
 		USE_RESULT constexpr uint8_t Sign_Impl(const T x, std::false_type) noexcept
 		{

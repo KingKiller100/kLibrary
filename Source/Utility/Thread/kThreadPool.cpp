@@ -1,6 +1,6 @@
 ﻿#include "pch.hpp"
 #include "kThreadPool.hpp"
-#include "../../Maths/kMaths.hpp"
+#include "../../Maths/kAlgorithms.hpp"
 
 namespace klib::kThread
 {
@@ -13,7 +13,7 @@ namespace klib::kThread
 	{
 		{
 			// Unblock any threads and tell them to stop
-			std::unique_lock<std::mutex> l(mutex);
+			std::scoped_lock<std::mutex> l(mutex);
 
 			ShutdownAll();
 			condVar.notify_all();
@@ -26,7 +26,7 @@ namespace klib::kThread
 	void ThreadPool::AddThread(size_t count)
 	{
 		// Create the specified number of threads
-		count = kmaths::Clamp(count, 0, std::numeric_limits<std::uint16_t>::max());
+		count = kmaths::Clamp(count, 0, std::numeric_limits<std::uint8_t>::max());
 
 		const auto currentSize = GetSize();
 		const auto newSize = currentSize + count;
@@ -49,7 +49,7 @@ namespace klib::kThread
 
 	void ThreadPool::ShutdownAll()
 	{
-		for (auto&& sd : shutdowns)
+		for (auto& sd : shutdowns)
 			sd = true;
 	}
 

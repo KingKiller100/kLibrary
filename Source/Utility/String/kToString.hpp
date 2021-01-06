@@ -4,8 +4,6 @@
 #include "Format/FormatSymbols.hpp"
 #include "Format/Impl/ToStringImpl.hpp"
 
-#include "kStringTricks.hpp"
-
 #include <string>
 #include <variant>
 

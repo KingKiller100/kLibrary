@@ -54,7 +54,7 @@ namespace klib::kString::stringify
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	/// User made Custom types - Must have a function ToString that returns an object with a 
+	/// User made custom types - Must have a function ToString that returns an object with a 
 	/// "data()" function which returns a const CharType pointer
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename Char_t, typename T>

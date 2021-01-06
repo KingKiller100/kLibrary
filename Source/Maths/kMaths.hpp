@@ -13,10 +13,10 @@
 #include "BytesUnits.hpp"
 
 // Fractions
-#include "Fraction.hpp"
+#include "kFraction.hpp"
 
 // Random Number Generator
-#include "Random.hpp"
+#include "kRandom.hpp"
 
 // Matrices
 #include "Matrices/PredefinedMatrices.hpp"

@@ -5,7 +5,7 @@
 
 namespace klib
 {
-	namespace type_trait
+	namespace kTemplate
 	{
 		namespace secret::impl
 		{
@@ -14,7 +14,7 @@ namespace klib
 				Impl_t* ToImplPtr(const std::unique_ptr<Base_t>& base)
 			{
 				if (!base)
-					throw std::runtime_error("Null ptr given to function: " __FUNCSIG__);
+					throw std::runtime_error("Null ptr given to function: " __FUNCTION__);
 
 				Impl_t* derived = dynamic_cast<Impl_t*>(base.get());
 
@@ -22,7 +22,7 @@ namespace klib
 				{
 					const std::string baseName = typeid(Base_t).name();
 					const std::string implName = typeid(Impl_t).name();
-					const std::string msg = "Bad cast of " + baseName + " ptr to " + implName + " in function: " __FUNCSIG__;
+					const std::string msg = "Bad cast of " + baseName + " ptr to " + implName + " in function: " __FUNCTION__;
 					throw std::runtime_error(msg);
 				}
 
@@ -41,7 +41,7 @@ namespace klib
 	}
 
 #ifdef KLIB_SHORT_NAMESPACE
-	using namespace type_trait;
+	using namespace kTemplate;
 #endif
 
 }

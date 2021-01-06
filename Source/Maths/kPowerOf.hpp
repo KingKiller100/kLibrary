@@ -28,21 +28,21 @@ namespace kmaths
 #else
 			if (power == 0)
 				return constants::One<T>();
-			if (power == 1)
-				return base;
-			if (power == 2)
-				return Square(base);
-			if (power == 3)
-				return Cube(base);
+			// if (power == 1)
+			// 	return base;
+			// if (power == 2)
+			// 	return Square(base);
+			// if (power == 3)
+			// 	return Cube(base);
 
 			const T temp = PowerOfImpl(base, power >> 1);
 
-			if (power % 2 == 0)
-				return Square(temp);
-			else if (IsNegative(power))
-				return Square(temp) / base;
+			if (!(power & 1))
+				return temp * temp;
+			else if (power < 0)
+				return (temp * temp) / base; 
 			else
-				return base * Square(temp);
+				return base * (temp * temp);
 #endif // MSVC_PLATFORM_TOOLSET > 142
 		}
 	}

@@ -1,14 +1,21 @@
 #pragma once
 #include "TemplateTraits.hpp"
-#include <string>
-
+#include "TraitsBase.hpp"
 #include "../HelperMacros.hpp"
+#include <string>
 
 namespace klib::type_trait
 {
-	template<typename T>
-	struct CharacterTraits
+	template<class T>
+	struct Traits<T, std::enable_if_t<Is_It_V<T,
+		char, unsigned char, signed char, wchar_t, char16_t, char32_t
+#ifdef __cpp_char8_t
+		, char8_t
+#endif
+		>>>
 	{
+		using Type = T;
+		using Limits_t = std::numeric_limits<Type>;
 		using Underlying_t = std::char_traits<T>;
 		using Integer_t = typename Underlying_t::int_type;
 		
@@ -112,7 +119,7 @@ namespace klib::type_trait
 #endif
 		>>
 	{
-		using Traits = CharacterTraits<T>;
+		using Traits = Traits<T>;
 		using Type = T;
 	};
 
@@ -130,6 +137,6 @@ namespace klib::type_trait
 #endif
 	
 	template<typename CharType, typename = std::enable_if_t<Is_Char_V<CharType>>>
-	constexpr auto g_NullTerminator = CharacterTraits<CharType>::NullTerminator;
+	constexpr auto g_NullTerminator = Traits<CharType>::NullTerminator;
 
 }

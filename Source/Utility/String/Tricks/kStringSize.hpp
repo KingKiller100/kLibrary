@@ -24,7 +24,7 @@ namespace klib::kString
 #endif
 		USE_RESULT constexpr size_t GetSize(const Char_t * str)
 	{
-		return type_trait::CharacterTraits<Char_t>::Length(str);
+		return type_trait::Traits<Char_t>::Length(str);
 	}
 
 	template<typename Char_t
