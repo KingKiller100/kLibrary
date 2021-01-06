@@ -24,7 +24,7 @@ namespace klib
 			void SetExtension(const std::string_view& newExtension);
 
 			USE_RESULT std::string_view GetDirectory() const;
-			void SetDirectory(const std::string_view& newDir);
+			void SetDirectory(const std::filesystem::path& newDir);
 
 			USE_RESULT std::string_view GetPath() const;
 			void SetPath(const std::filesystem::path& path);

@@ -4,6 +4,9 @@
 #include "kLogEntry.hpp"
 #include "kLogMessage.hpp"
 
+#include "Destinations/kFileLogger.hpp"
+#include "Destinations/kConsoleLogger.hpp"
+
 #include <unordered_map>
 #include <deque>
 #include <string>
@@ -20,17 +23,17 @@ namespace klib
 	namespace kLogs
 	{
 		class iLoggerDestination;
-		
+
 		class Logging
 		{
 			ENUM_CLASS(LogDestination, std::uint8_t
 				, FILE
 				, CONSOLE);
-			
+
 		public:
 			using LogEntries = std::deque<LogEntry>;
 			using LogDestinationsMap = std::unordered_map<LogDestination::InternalEnum_t
-			, std::unique_ptr<iLoggerDestination>>;
+				, std::unique_ptr<iLoggerDestination>>;
 
 		public:
 			Logging(const std::string_view& directory, const std::string_view& filename
@@ -38,7 +41,7 @@ namespace klib
 				, const std::string_view& name = "Logger");
 
 			Logging(const std::filesystem::path& path, const std::string_view& name = "Logger");
-			
+
 			~Logging();
 
 			/**
@@ -67,119 +70,42 @@ namespace klib
 
 			/**
 			 * \brief
-			 *		Toggles if sub system outputting is enabled
-			 */
-			void ToggleConsoleEnabled() noexcept;
-
-			/**
-			 * \brief
 			 *		Toggles whether logs output to system to keep a local cache
 			 */
-			constexpr void SetCacheMode(const bool enable) noexcept;
+			void SetCacheMode(const bool enable) noexcept;
 
 			/**
 			 * \brief
-			 *		Set the detail formatting for file logger
-			 * \param format
-			 *		Format of the log message for the destination logger
-			 *		Declare each detail specifier item with a '&' character
-			 *		Using multiple calls of the same specifiers gives different results
-			 *		Detail specifiers:
-			 *		- d/D = Day
-			 *		- m/M = Month
-			 *		- y/Y = Year
-			 *		- h/H = Hours
-			 *		- z/Z = Minutes
-			 *		- s/S = Seconds
-			 *		- c/C = Milliseconds
-			 *		- n/N = Name
-			 *		- p/P = Log descriptor [text]
-			 *		- w/W = Log descriptor [numeric value]
-			 *		- t/T = Log message
-			 *		- f/F = source file
-			 *		- l/L = source line
-			 *		- e/E = source function
-			 * \param lvl
-			 *		Log level to change the format for
-			 */
-			void SetFileFormat(const std::string_view& format, LogLevel lvl);
-			
-			/**
-			 * \brief
-			 *		Set the detail formatting for console logger
-			 * \param format
-			 *		Format of the log message for the destination logger
-			 *		Declare each detail specifier item with a '&' character
-			 *		Using multiple calls of the same specifiers gives different results
-			 *		Detail specifiers:
-			 *		- d/D = Day
-			 *		- m/M = Month
-			 *		- y/Y = Year
-			 *		- h/H = Hours
-			 *		- z/Z = Minutes
-			 *		- s/S = Seconds
-			 *		- c/C = Milliseconds
-			 *		- n/N = Name
-			 *		- p/P = Log descriptor [text]
-			 *		- w/W = Log descriptor [numeric value]
-			 *		- t/T = Log message
-			 *		- f/F = source file
-			 *		- l/L = source line
-			 *		- e/E = source function
-			 * \param lvl
-			 *		Log level to change the format for
-			 */
-			void SetConsoleFormat(const std::string_view& format, LogLevel lvl);
-			
-			/**
-			 * \brief
-			 *		Change the directory the log file outputs to
-			 * \param dir
-			 *		STL string view representing the new directory
-			 * \param filename
-			 *		STL string view representing the new filename
-			 */
-			void ChangeOutputPath(const std::string_view& dir, const std::string_view& filename);
-
-			/**
-			 * \brief
-			 *		Change the directory the log file outputs to
-			 * \param directory
-			 *		STL string view representing the new directory
-			 */
-			void ChangeOutputDirectory(const std::string_view& directory);
-
-			/**
-			 * \brief
-			 *		Change name of log filename
-			 * \param filename
-			 *		STL string view representing filename
-			 */
-			void ChangeFilename(const std::string_view& filename);
-
-			/**
-			 * \brief
-			 *		Gets the full output path of the logger
+			 *		Gets the file logger
 			 * \return
-			 *		Gets the full output path of the logger
+			 *		FileLogger ref
 			 */
-			std::string GetOutputPath() const;
+			FileLogger& GetFile();
 
 			/**
 			 * \brief
-			 *		Appends the current log file with the current logging cached in the buffer
-			 *		and pauses outputing to log file.
-			 * \note
-			 *		Allows user to keep logging but just keeps it in cache and outputs to subsystems
+			 *		Gets the file logger
+			 * \return
+			 *		FileLogger ref
 			 */
-			void SuspendFileLogging();
+			const FileLogger& GetFile() const;
 
 			/**
 			 * \brief
-			 *		Continues logging and flushes cache to file
+			 *		Gets the console logger
+			 * \return
+			 *		ConsoleLogger ref
 			 */
-			void ResumeFileLogging();
+			ConsoleLogger& GetConsole();
 
+			/**
+			 * \brief
+			 *		Gets the console logger
+			 * \return
+			 *		ConsoleLogger ref
+			 */
+			const ConsoleLogger& GetConsole() const;
+			
 			/**
 			 * \brief
 			 *		Outputs cached kLogs to file
@@ -207,7 +133,7 @@ namespace klib
 			 *		Text to log
 			 */
 			void AddRaw(const std::string_view& text = "");
-			
+
 			/**
 			 * \brief
 			 *		Formats log message and level to the appropriate log message and then logs it
@@ -233,7 +159,7 @@ namespace klib
 			 *		Repetition of paddings
 			 */
 			void AddBanner(const std::string_view& descriptor, const LogMessage& message, const std::string_view& frontPadding, const std::
-			               string_view& backPadding, const std::uint16_t paddingCount);
+				string_view& backPadding, const std::uint16_t paddingCount);
 
 			/**
 			 * \brief
@@ -250,14 +176,6 @@ namespace klib
 			*/
 			void ClearCache();
 
-			/**
-			 * \brief
-			 *		Enables constant flushing
-			 * \param enable
-			 *		Boolean representing whether to constantly flush or not
-			 */
-			void EnableConstantFlush(bool enable);
-			
 			/**
 			 * \brief
 			 *		If in cache mode, erases a maximum of count many of the most recent logs
@@ -287,7 +205,7 @@ namespace klib
 			bool HasCache() const noexcept;
 
 		private:
-			void Initialize( const std::filesystem::path& path );
+			void Initialize(const std::filesystem::path& path);
 
 			/**
 			 * \brief
@@ -298,46 +216,38 @@ namespace klib
 			 *		Log description
 			 */
 			void AddLog(const LogEntry& entry);
-			
+
 			/**
 			 * \brief
 			 *		Opens log destinations
 			 */
 			void Open();
-			
+
 			/**
 			 * \brief
 			 *		Outputs logs to file then closes it
 			 */
 			void Close(bool outputDefaultClosingMsg);
 
-			/**
-			 * \brief
-			 *		Sets the format of all log message
-			 *		[Example] "[&dd/&mm/&yyyy] [&hh:&zz:&ss] [&n]: &t"
-			 *		means "[01/01/1970] [01:12:59] [Logger]: Pass Test!
-			 * \param format
-			 *		Format of the log message for the destination logger
-			 * \param lvl
-			 *		LogLevel to change the format for
-			 * \param logDest
-			 *		Log destination
-			 */
-			void SetFormat(const std::string_view& format, LogLevel lvl, LogDestination logDest);
-
 		protected:
-			LogEntries entriesQ; // Queue buffer to cache the logged messages
+			LogEntries entriesCache; // Queue buffer to cache the logged messages
 
 			LogLevel minimumLoggingLevel;
 			LogDestinationsMap destinations;
 			std::string name;
 			bool isEnabled;
-			bool cacheMode;
-			bool constantFlushing;
+
+			const bool g_EnableDebugLogging =
+#ifdef KLOG_OPT_DBG_STR
+				true
+#else
+				false
+#endif
+				;
 		};
 	}
 
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kLogs;
 #endif
-}
+	}

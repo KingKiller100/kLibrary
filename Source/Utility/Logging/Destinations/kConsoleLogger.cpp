@@ -26,6 +26,7 @@ namespace klib
 			: active(false)
 			, name(newName)
 			, consoleColour(ConsoleColour::WHITE)
+			, enableDebugStringOutput(false)
 		{
 			LogDestWithFormatSpecifier::SetFormat("&t", LogLevel::RAW);
 
@@ -51,7 +52,7 @@ namespace klib
 
 			LogDestWithFormatSpecifier::SetFormat(
 				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
-				"\n[File]: &f [&l]"
+				"\n[Source]: &f [&l]"
 				, LogLevel::ERR);
 
 			LogDestWithFormatSpecifier::SetFormat(
@@ -95,6 +96,7 @@ namespace klib
 
 		std::string ConsoleLogger::CreateLogText(const LogMessage& msg, const LogDescriptor& desc) const
 		{
+			// Message details
 			const auto& t = msg.time;
 			const auto& hour = t.GetHour();
 			const auto& minute = t.GetMinute();
@@ -106,25 +108,31 @@ namespace klib
 			const auto& month = d.GetMonth();
 			const auto& year = d.GetYear();
 
+			const auto& text = msg.text;
+
 			const auto& sourceInfo = msg.sourceInfo;
-			
-			const auto format = formatMap.at(desc.lvl);
+
+			// Description details
+			const auto lvl = desc.lvl;
+			const auto info = desc.info;
+
+			const auto format = formatMap.at(lvl);
 
 			std::string logLine = ToString(format,
-			                               day,
-			                               month,
-			                               year,
-			                               hour,
-			                               minute,
-			                               second,
-			                               milli,
-			                               *name,
-			                               desc.info,
-			                               desc.lvl.ToUnderlying(),
-			                               msg.text,
-			                               sourceInfo.file,
-			                               sourceInfo.line,
-			                               sourceInfo.func
+				day,
+				month,
+				year,
+				hour,
+				minute,
+				second,
+				milli,
+				*name,
+				info,
+				lvl.ToUnderlying(),
+				text,
+				sourceInfo.file,
+				sourceInfo.line,
+				sourceInfo.func
 			);
 
 			logLine.push_back('\n');
@@ -159,7 +167,8 @@ namespace klib
 				consoleColour = ConsoleColour::RED_BG_WHITE_TEXT;
 				break;
 			default:
-				throw std::runtime_error("Unknown log level! Cannot map to a known console colour: " + std::string(lvl.ToString()));
+				throw std::runtime_error("Unknown log level! Cannot map to a known console colour: "
+					+ std::string(lvl.ToString()));
 			}
 		}
 
@@ -186,6 +195,11 @@ namespace klib
 			active = false;
 		}
 
+		void ConsoleLogger::SetDebugStringOutput(bool enable)
+		{
+			enableDebugStringOutput = enable;
+		}
+
 		void ConsoleLogger::Flush(const std::string_view& msg)
 		{
 			std::scoped_lock<decltype(g_kConsoleLoggerMutex)> scoped_lock(g_kConsoleLoggerMutex);
@@ -199,9 +213,8 @@ namespace klib
 
 		void ConsoleLogger::OutputToDebugString(const std::string_view& msg)
 		{
-#if defined(KLOG_OPT_DBG_STR)
-			OutputDebugStringA(msg.data());
-#endif
+			if (enableDebugStringOutput)
+				OutputDebugStringA(msg.data());
 		}
 
 		void ConsoleLogger::OutputToConsole(const std::string_view& msg) const

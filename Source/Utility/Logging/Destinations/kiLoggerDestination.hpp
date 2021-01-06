@@ -14,7 +14,6 @@
 namespace klib::kLogs
 {
 	class LogEntry;
-	class LogDescriptor;
 
 	class iLoggerDestination
 	{

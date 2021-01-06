@@ -46,7 +46,7 @@ namespace klib
 
 			LogDestWithFormatSpecifier::SetFormat(
 				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
-				"\n                  [File]: &f [&l]"
+				"\n                  [Source]: &f [&l]"
 				, LogLevel::ERR);
 
 			LogDestWithFormatSpecifier::SetFormat(
@@ -91,13 +91,12 @@ namespace klib
 			return path.parent_path().string();
 		}
 
-		void FileLogger::SetDirectory(const std::string_view& newDir)
+		void FileLogger::SetDirectory(const std::filesystem::path& newDir)
 		{
 			Close(false);
-			const auto filename = AppendFileExtension(GetFileName(), GetExtension());
-			const auto pathSep = kFileSystem::pathSeparator<char>;
+			const auto filename = path.filename().string();
 			path.clear();
-			path.assign(ToString<char>(NoFormatTag{}, newDir, pathSep, filename));
+			path = (newDir / filename);
 			Open();
 		}
 
@@ -141,8 +140,8 @@ namespace klib
 
 		std::string FileLogger::CreateLogText(const LogEntry& entry) const
 		{
+			// Message details
 			const auto& msg = entry.GetMsg();
-			const auto& desc = entry.GetDescriptor();
 
 			const auto& t = msg.time;
 			const auto& hour = t.GetHour();
@@ -155,9 +154,16 @@ namespace klib
 			const auto& month = d.GetMonth();
 			const auto& year = d.GetYear();
 
+			const auto& text = msg.text;
+			
 			const auto& sourceInfo = msg.sourceInfo;
 
-			const auto format = formatMap.at(desc.lvl);
+			// Description details
+			const auto& desc = entry.GetDescriptor();
+			const auto lvl = desc.lvl;
+			const auto info = desc.info;
+			
+			const auto format = formatMap.at(lvl);
 
 			std::string logLine = ToString(format,
 				day,
@@ -168,9 +174,9 @@ namespace klib
 				second,
 				milli,
 				*name,
-				desc.info,
-				desc.lvl.ToUnderlying(),
-				msg.text,
+				info,
+				lvl.ToUnderlying(),
+				text,
 				sourceInfo.file,
 				sourceInfo.line,
 				sourceInfo.func

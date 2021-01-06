@@ -35,11 +35,10 @@ namespace kTest::utility
 
 		auto testLogger = std::make_unique<Logging>(path);
 
-		testLogger->ToggleConsoleEnabled();
-		testLogger->SetFileFormat("[&N] [&p]: &t", LogLevel::BNR);
+		testLogger->GetConsole().Close(false);
+		testLogger->GetFile().SetFormat("[&N] [&p]: &t", LogLevel::BNR);
 		testLogger->AddBanner("Intro", "Welcome to logging test", "*", "*", 20);
-		testLogger->SuspendFileLogging();
-
+		testLogger->GetFile().Close(false);
 		testLogger->SetCacheMode(true);
 
 		{
@@ -124,10 +123,8 @@ namespace kTest::utility
 			VERIFY(last.HasDescription(desc));
 		}
 
-		testLogger->ResumeFileLogging();
-
+		testLogger->GetFile().Open();
 		testLogger->AddFatal(LogMessage("FATAL!", __FILE__, __LINE__));
-
 		testLogger->FinalOutput(false);
 
 		fullFilePathToDelete = dir + filename + extension;
