@@ -10,7 +10,7 @@
 
 namespace klib::kCalendar
 {
-	class Second final : public TimeComponentBase<std::chrono::seconds>
+	class Second final : public TimeComponentBase<std::chrono::duration<std::int16_t>>
 		, private CalendarComponentToStringImplExtended
 		, public kTemplate::SimpleOperators<Second>
 	{

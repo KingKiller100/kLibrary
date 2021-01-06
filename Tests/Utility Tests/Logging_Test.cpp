@@ -1,7 +1,12 @@
 #include "pch.hpp"
 #include "Logging_Test.hpp"
 
+#include "../../Source/Utility/Calendar/kCalendarToString.hpp"
 #include "../../Source/Utility/Logging/kLogging.hpp"
+#include "../../Source/Utility/String/kToString.hpp"
+#include "../../Source/Template/ToImpl.hpp"
+
+#include <sstream>
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility
@@ -10,24 +15,125 @@ namespace kTest::utility
 		: TesterBase("Logging Test")
 	{	}
 
+	using namespace klib::kLogs;
+
 	LoggingTester::~LoggingTester()
 		= default;
 
 	void LoggingTester::Test()
 	{
 		VERIFY(LogTest() == true);
+		VERIFY(DummyLoggerTest() == true);
 
 		std::filesystem::remove_all(fullFilePathToDelete);
 		const auto stem = fullFilePathToDelete.stem();
 		const auto ext = fullFilePathToDelete.extension();
 		std::filesystem::remove(fullFilePathToDelete.parent_path());
-
 	}
+
+	class DummyLogger : public LogDestWithFormatSpecifier
+	{
+	public:
+		DummyLogger()
+			: active(false)
+			, name(nullptr)
+		{
+			LogDestWithFormatSpecifier::SetFormat("&t", LogLevel::RAW);
+		}
+		
+		~DummyLogger() override {}
+		
+		void SetName(std::string* newName) override
+		{
+			name = newName;
+		}
+		
+		void AddEntry(const LogEntry& entry) override
+		{
+			if (!active)
+				return;
+			
+			const auto& msg = entry.GetMsg();
+			const auto& desc = entry.GetDescriptor();
+			
+			// Message details
+			const auto& t = msg.time;
+			const auto& hour = t.GetHour();
+			const auto& minute = t.GetMinute();
+			const auto& second = t.GetSecond();
+			const auto& milli = t.GetMillisecond();
+
+			const auto& d = msg.date;
+			const auto& day = d.GetDay();
+			const auto& month = d.GetMonth();
+			const auto& year = d.GetYear();
+
+			const auto& text = msg.text;
+
+			const auto& sourceInfo = msg.sourceInfo;
+
+			// Description details
+			const auto lvl = desc.lvl;
+			const auto info = desc.info;
+
+			const auto format = formatMap.at(lvl);
+
+			std::string logLine = klib::kString::ToString(format,
+			                                              day,
+			                                              month,
+			                                              year,
+			                                              hour,
+			                                              minute,
+			                                              second,
+			                                              milli,
+			                                              *name,
+			                                              desc.info,
+			                                              desc.lvl.ToUnderlying(),
+			                                              text,
+			                                              sourceInfo.file,
+			                                              sourceInfo.line,
+			                                              sourceInfo.func
+			);
+
+			logLine.push_back('\n');
+
+			Flush(logLine);
+		}
+		
+		bool IsOpen() const override
+		{
+			return active;
+		}
+		
+		bool Open() override
+	{
+			active = true;
+			return active;
+	}
+		void Close(const bool outputClosingMsg) override
+		{
+			active = false;
+		}
+
+		std::string GetLogs() const
+		{
+			return buffer.str();
+		}
+		
+	private:
+		void Flush(const std::string& logLine)
+		{
+			buffer << logLine;
+		}
+		
+	private:
+		bool active;
+		std::string* name;
+		std::stringstream buffer;
+	};
 
 	bool LoggingTester::LogTest()
 	{
-		using namespace klib::kLogs;
-
 		const char* filename = "DiffFileName";
 		const auto dir = std::filesystem::current_path().string() + "\\Test Results\\Log Test Dir\\";
 		const auto* const extension = ".log";
@@ -35,11 +141,9 @@ namespace kTest::utility
 
 		auto testLogger = std::make_unique<Logging>(path);
 
-		testLogger->GetConsole().Close(false);
 		testLogger->GetFile().SetFormat("[&N] [&p]: &t", LogLevel::BNR);
 		testLogger->AddBanner("Intro", "Welcome to logging test", "*", "*", 20);
 		testLogger->GetFile().Close(false);
-		testLogger->SetCacheMode(true);
 
 		{
 			testLogger->AddBanner("TEST", "BANNER!",
@@ -150,6 +254,28 @@ namespace kTest::utility
 			}
 		}
 
+		return success;
+	}
+
+	bool LoggingTester::DummyLoggerTest()
+	{
+		Logging dummy(std::filesystem::current_path() / "Dummy", "Dummy");
+		dummy.AddDestination<DummyLogger>();
+		
+		auto& dest = klib::kTemplate::ToImpl<DummyLogger>(dummy.GetExtraDestination(0));
+		dest.Open();
+		dest.SetFormat("&n: [&p]: &t", LogLevel::NRM);
+		dummy.AddEntry(LogLevel::NRM, "Normal test");
+		dummy.Flush();
+
+		VERIFY(dest.IsOpen());
+		const auto logs = dest.GetLogs();
+		VERIFY(!logs.empty());
+		VERIFY(logs == "Dummy: [NRM]: Normal test\n")
+		dest.Close(false);
+		VERIFY(!dest.IsOpen());
+
+		
 		return success;
 	}
 }

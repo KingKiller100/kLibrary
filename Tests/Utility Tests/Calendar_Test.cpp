@@ -261,30 +261,6 @@ namespace kTest::utility
 			VERIFY(millis.ToString("ccccc") == "075ms");
 		}
 
-		{
-			using namespace std::chrono;
-			using namespace std::chrono_literals;
-			const auto result = TimeConverter<Second>(500'000_ms);
-			constexpr auto expected = duration_cast<seconds>(500'000ms);
-			VERIFY(expected.count() == result.GetValue());
-		}
-
-		{
-			using namespace std::chrono;
-			using namespace std::chrono_literals;
-			const auto result = TimeConverter<Minute>(500'000_ms);
-			constexpr auto expected = duration_cast<minutes>(500'000ms);
-			VERIFY(expected.count() == result.GetValue());
-		}
-
-		{
-			using namespace std::chrono;
-			using namespace std::chrono_literals;
-			const auto result = TimeConverter<Hour>(500'000_ms);
-			constexpr auto expected = duration_cast<hours>(500'000ms);
-			VERIFY(expected.count() == result.GetValue());
-		}
-
 		return success;
 	}
 

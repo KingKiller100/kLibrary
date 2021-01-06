@@ -9,6 +9,9 @@ namespace klib
 {
 	namespace kLogs
 	{
+		class LogDescriptor;
+		struct LogMessage;
+
 		class FileLogger final : public LogDestWithFormatSpecifier
 		{
 		public:
@@ -33,13 +36,13 @@ namespace klib
 
 			bool Open() override;
 
-			bool IsOpen() override;
+			bool IsOpen() const override;
 
 			void Close(const bool outputClosingMsg) override;
 
 		private:
 			void Flush(const std::string_view& msg);
-			std::string CreateLogText(const LogEntry& entry) const;
+			std::string CreateLogText(const LogMessage& msg, const LogDescriptor& desc) const;
 
 		private:
 			std::string* name;
@@ -48,6 +51,5 @@ namespace klib
 			std::fstream fileStream;
 			std::mutex lock;
 		};
-		
 	}
 }

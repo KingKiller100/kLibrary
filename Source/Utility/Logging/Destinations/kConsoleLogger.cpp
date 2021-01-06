@@ -71,7 +71,7 @@ namespace klib
 			return active;
 		}
 
-		bool ConsoleLogger::IsOpen()
+		bool ConsoleLogger::IsOpen() const
 		{
 			return active;
 		}

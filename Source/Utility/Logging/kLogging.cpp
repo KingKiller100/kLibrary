@@ -41,20 +41,21 @@ namespace klib::kLogs
 
 	void Logging::Initialize(const std::filesystem::path& path)
 	{
-		destinations[LogDestination::FILE].reset(new FileLogger(&name, path));
-		destinations[LogDestination::CONSOLE].reset(new ConsoleLogger(&name));
+		destinations.emplace_back(new FileLogger(&name, path));
+		destinations.emplace_back(new ConsoleLogger(&name));
 
 		ToggleLoggingEnabled();
-		Open();
 	}
 
 	void Logging::Open()
 	{
-		for (auto& dest : destinations)
+		const auto size = destinations.size();
+		for (auto i = 0; i < size; ++i)
 		{
-			if (!dest.second->Open())
+			auto& dest = destinations[i];
+			if (!dest->Open())
 			{
-				const auto destPrettyValue = LogDestination(dest.first).ToString();
+				const auto destPrettyValue = LogDestType(i).ToString();
 				const auto errMsg = ToString("{0} - Unable to open log destination: {1}", name, destPrettyValue);
 				throw std::runtime_error(errMsg);
 			}
@@ -78,22 +79,32 @@ namespace klib::kLogs
 
 	FileLogger& Logging::GetFile()
 	{
-		return ToImpl<FileLogger>(destinations.at(LogDestination::FILE));
+		return ToImpl<FileLogger>(destinations.at(LogDestType::FILE));
 	}
 
 	const FileLogger& Logging::GetFile() const
 	{
-		return ToImpl<FileLogger>(destinations.at(LogDestination::FILE));
+		return ToImpl<FileLogger>(destinations.at(LogDestType::FILE));
 	}
 
 	ConsoleLogger& Logging::GetConsole()
 	{
-		return ToImpl<ConsoleLogger>(destinations.at(LogDestination::CONSOLE));
+		return ToImpl<ConsoleLogger>(destinations.at(LogDestType::CONSOLE));
 	}
 
 	const ConsoleLogger& Logging::GetConsole() const
 	{
-		return ToImpl<ConsoleLogger>(destinations.at(LogDestination::CONSOLE));
+		return ToImpl<ConsoleLogger>(destinations.at(LogDestType::CONSOLE));
+	}
+
+	iLoggerDestination& Logging::GetExtraDestination(size_t index)
+	{
+		return *destinations[LogDestType::MAXCOUNT + index];
+	}
+
+	const iLoggerDestination& Logging::GetExtraDestination(size_t index) const
+	{
+		return *destinations[LogDestType::MAXCOUNT + index];
 	}
 
 	void Logging::SetCacheMode(const bool enable) noexcept
@@ -106,7 +117,7 @@ namespace klib::kLogs
 
 	void Logging::AddFatal(const LogMessage& msg)
 	{
-		auto& file = destinations.at(LogDestination::FILE);
+		auto& file = destinations.at(LogDestType::FILE);
 		if (!file->IsOpen())
 			file->Open();
 
@@ -174,7 +185,7 @@ namespace klib::kLogs
 			const auto& entry = entriesCache.front();
 			for (auto& dest : destinations)
 			{
-				dest.second->AddEntry(entry);
+				dest->AddEntry(entry);
 			}
 			entriesCache.pop_front();
 		}
@@ -185,7 +196,7 @@ namespace klib::kLogs
 		Flush();
 		for (auto& dest : destinations)
 		{
-			dest.second->Close(outputDefaultClosingMsg);
+			dest->Close(outputDefaultClosingMsg);
 		}
 	}
 

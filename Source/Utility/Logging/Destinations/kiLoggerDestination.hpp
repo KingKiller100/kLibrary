@@ -42,7 +42,7 @@ namespace klib::kLogs
 		 * \return
 		 *		TRUE if open, FALSE if not unopened
 		 */
-		virtual bool IsOpen() = 0;
+		virtual bool IsOpen() const = 0;
 
 		/**
 		 * \brief

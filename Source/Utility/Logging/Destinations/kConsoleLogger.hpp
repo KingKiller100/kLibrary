@@ -28,7 +28,7 @@ namespace klib
 
 			bool Open() override;
 
-			bool IsOpen() override;
+			bool IsOpen() const override;
 
 			void Close(const bool outputClosingMsg) override;
 

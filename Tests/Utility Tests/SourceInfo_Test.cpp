@@ -86,12 +86,10 @@ namespace kTest::utility
 			constexpr auto  file = u"Test.txt";
 			constexpr std::int32_t line = 212;
 			constexpr auto func = u"void Test()";
-			constexpr auto timeStamp = u"Mon Dec 14 01:03:52 2020";
-			const auto source = BasicSourceInfo<Char_t>(file, line, func, timeStamp);
+			const auto source = BasicSourceInfo<Char_t>(file, line, func);
 			VERIFY(source.file == u"Test.txt");
 			VERIFY(source.line == 212);
 			VERIFY(source.func == u"void Test()");
-			VERIFY(source.stamp == u"Mon Dec 14 01:03:52 2020");
 		}
 		
 		{
@@ -99,8 +97,7 @@ namespace kTest::utility
 			const std::basic_string<Char_t> file = Convert<Char_t>(__FILE__);
 			const std::basic_string<Char_t> func = Convert<Char_t>(__FUNCTION__);
 			const std::int32_t line = 73;
-			constexpr auto timeStamp = "Mon Dec 14 01:03:52 2020";
-			const auto source = BasicSourceInfo<Char_t>(file, line, func, U"");
+			const auto source = BasicSourceInfo<Char_t>(file, line, func);
 			VERIFY(source.file == file);
 			VERIFY(source.line == 73);
 			VERIFY(source.func == func);
@@ -112,8 +109,7 @@ namespace kTest::utility
 			const std::basic_string<Char_t> file = Convert<Char_t>(__FILE__);
 			const std::basic_string<Char_t> func = Convert<Char_t>(__FUNCTION__);
 			const std::int32_t line = 73;
-			constexpr auto timeStamp = "Mon Dec 14 01:03:52 2020";
-			const auto source = BasicSourceInfo<Char_t>(file, line, func, u8"");
+			const auto source = BasicSourceInfo<Char_t>(file, line, func);
 			VERIFY(source.file == file);
 			VERIFY(source.line == 73);
 			VERIFY(source.func == func);
@@ -150,7 +146,7 @@ namespace kTest::utility
 		{
 			const auto source = SOURCE_INFO();
 			const auto result = ToString("{0:l}", source);
-			VERIFY(result == "151");
+			VERIFY(result == "147");
 		}
 		
 		{
@@ -162,7 +158,7 @@ namespace kTest::utility
 		{
 			const auto source = SOURCE_INFO();
 			const auto result = ToString("{0:fl}", source);
-			VERIFY(result == file + " [163]");
+			VERIFY(result == file + " [159]");
 		}
 		
 		{
@@ -180,13 +176,13 @@ namespace kTest::utility
 		{
 			const auto source = SOURCE_INFO();
 			const auto result = ToString("{0:a}", source);
-			VERIFY(result.find("File: " + file + " Line: 181 Function: " + func + " Time Stamp: ") != std::string::npos);
+			VERIFY(result.find("File: " + file + " Line: 177 Function: " + func) != std::string::npos);
 		}
 		
 		{
 			const auto source = SOURCE_INFO();
 			const auto result = ToString("{0}", source);
-			VERIFY(result.find("File: " + file + " Line: 187 Function: " + func) != std::string::npos);
+			VERIFY(result.find("File: " + file + " Line: 183 Function: " + func) != std::string::npos);
 		}
 		
 		return success;
@@ -240,7 +236,7 @@ namespace kTest::utility
 		{
 			const auto source = MUT_SRC_INFO();
 			const auto result = ToString("{0:l}", source);
-			VERIFY(result == "241");
+			VERIFY(result == "237");
 		}
 
 		{
@@ -264,13 +260,13 @@ namespace kTest::utility
 		{
 			const auto source = WSOURCE_INFO();
 			const auto result = ToString(L"{0:a}", source);
-			VERIFY(result.find(L"File: " + file + L" Line: 265 Function: " + func + L" Time Stamp: ") != std::string::npos);
+			VERIFY(result.find(L"File: " + file + L" Line: 261 Function: " + func) != std::string::npos);
 		}
 
 		{
 			const auto source = WSOURCE_INFO();
 			const auto result = ToString(L"{0}", source);
-			VERIFY(result.find(L"File: " + file + L" Line: 271 Function: " + func) != std::string::npos);
+			VERIFY(result.find(L"File: " + file + L" Line: 267 Function: " + func) != std::string::npos);
 		}
 		
 		return success;

@@ -31,18 +31,4 @@ namespace klib::kCalendar
 		const auto months = days / divider;
 		return months;
 	}
-
-	// Time
-	template<typename DestTimeT, typename SourceTimeT, typename = std::enable_if_t<
-		!std::is_arithmetic_v<DestTimeT>
-		>>
-		USE_RESULT constexpr DestTimeT TimeConverter(const TimeComponentBase<SourceTimeT>& source)
-	{
-		using DestUnderlying_t = typename DestTimeT::Duration_t;
-
-		const auto val =
-			std::chrono::duration_cast<DestUnderlying_t>(source.GetDuration());
-		const DestTimeT dest = DestTimeT(val.count());
-		return dest;
-	}
 }

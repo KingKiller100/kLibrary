@@ -10,7 +10,7 @@
 
 namespace klib::kCalendar
 {
-	class Millisecond final : public TimeComponentBase<std::chrono::milliseconds>
+	class Millisecond final : public TimeComponentBase<std::chrono::duration<std::int16_t, std::milli>>
 		, private CalendarComponentToStringImplExtended
 		, public kTemplate::SimpleOperators<Millisecond>
 	{

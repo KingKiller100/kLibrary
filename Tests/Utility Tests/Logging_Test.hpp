@@ -15,6 +15,7 @@ namespace kTest::utility
 	private:
 		void Test() override;
 		bool LogTest();
+		bool DummyLoggerTest();
 
 	private:
 		std::filesystem::path fullFilePathToDelete;

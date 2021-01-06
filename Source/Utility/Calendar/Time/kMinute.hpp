@@ -11,7 +11,7 @@
 
 namespace klib::kCalendar
 {
-	class Minute final : public TimeComponentBase<std::chrono::minutes>
+	class Minute final : public TimeComponentBase<std::chrono::duration<std::int16_t, std::ratio<60>>>
 		, private CalendarComponentToStringImplExtended
 		, public kTemplate::SimpleOperators<Minute>
 	{

@@ -7,10 +7,10 @@
 #include "Destinations/kFileLogger.hpp"
 #include "Destinations/kConsoleLogger.hpp"
 
-#include <unordered_map>
+#include <cstdint>
 #include <deque>
 #include <string>
-#include <cstdint>
+#include <vector>
 
 namespace std {
 	namespace filesystem {
@@ -26,14 +26,16 @@ namespace klib
 
 		class Logging
 		{
-			ENUM_CLASS(LogDestination, std::uint8_t
-				, FILE
-				, CONSOLE);
+		public:
+			ENUM_CLASS(LogDestType, std::uint8_t
+				, FILE = 0
+				, CONSOLE
+				, MAXCOUNT
+			);
 
 		public:
 			using LogEntries = std::deque<LogEntry>;
-			using LogDestinationsMap = std::unordered_map<LogDestination::InternalEnum_t
-				, std::unique_ptr<iLoggerDestination>>;
+			using LogDestList = std::vector<std::unique_ptr<iLoggerDestination>>;
 
 		public:
 			Logging(const std::string_view& directory, const std::string_view& filename
@@ -105,7 +107,39 @@ namespace klib
 			 *		ConsoleLogger ref
 			 */
 			const ConsoleLogger& GetConsole() const;
-			
+
+			/**
+			 * \brief
+			 *		Returns user added log destination
+			 * \param index
+			 *		index of extra logger
+			 * \return
+			 *		iLoggerDestination
+			 */
+			USE_RESULT iLoggerDestination& GetExtraDestination(size_t index);
+
+			/**
+			 * \brief
+			 *		Returns user added log destination
+			 * \param index
+			 *		index of extra logger
+			 * \return
+			 *		iLoggerDestination
+			 */
+			const iLoggerDestination& GetExtraDestination(size_t index) const;
+
+			/**
+			 * \brief
+			 *		Adds a new destination to send log entries
+			 */
+			template<typename T, typename ...Params>
+			void AddDestination(Params... params)
+			{
+				T* dest = new T(std::forward<Params>(params)...);
+				dest->SetName(&name);
+				destinations.emplace_back(dest);
+			}
+
 			/**
 			 * \brief
 			 *		Outputs cached kLogs to file
@@ -233,7 +267,7 @@ namespace klib
 			LogEntries entriesCache; // Queue buffer to cache the logged messages
 
 			LogLevel minimumLoggingLevel;
-			LogDestinationsMap destinations;
+			LogDestList destinations;
 			std::string name;
 			bool isEnabled;
 
@@ -250,4 +284,4 @@ namespace klib
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kLogs;
 #endif
-	}
+}

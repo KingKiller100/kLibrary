@@ -123,7 +123,7 @@ namespace klib
 			return fileStream.good();
 		}
 
-		bool FileLogger::IsOpen()
+		bool FileLogger::IsOpen() const
 		{
 			return fileStream.is_open() && fileStream.good();
 		}
@@ -133,16 +133,14 @@ namespace klib
 			if (!IsOpen())
 				return;
 
-			const auto logLine = CreateLogText(entry);
+			const auto logLine = CreateLogText(entry.GetMsg(), entry.GetDescriptor());
 
 			Flush(logLine);
 		}
 
-		std::string FileLogger::CreateLogText(const LogEntry& entry) const
+		std::string FileLogger::CreateLogText(const LogMessage& msg, const LogDescriptor& desc) const
 		{
 			// Message details
-			const auto& msg = entry.GetMsg();
-
 			const auto& t = msg.time;
 			const auto& hour = t.GetHour();
 			const auto& minute = t.GetMinute();
@@ -159,7 +157,6 @@ namespace klib
 			const auto& sourceInfo = msg.sourceInfo;
 
 			// Description details
-			const auto& desc = entry.GetDescriptor();
 			const auto lvl = desc.lvl;
 			const auto info = desc.info;
 			
