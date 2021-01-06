@@ -26,7 +26,6 @@ namespace klib
 
 		class Logging
 		{
-		public:
 			ENUM_CLASS(LogDestType, std::uint8_t
 				, FILE = 0
 				, CONSOLE
@@ -239,6 +238,12 @@ namespace klib
 			bool HasCache() const noexcept;
 
 		private:
+			/**
+			 * \brief
+			 *		Opens log destinations
+			 */
+			void Open();
+
 			void Initialize(const std::filesystem::path& path);
 
 			/**
@@ -250,12 +255,6 @@ namespace klib
 			 *		Log description
 			 */
 			void AddLog(const LogEntry& entry);
-
-			/**
-			 * \brief
-			 *		Opens log destinations
-			 */
-			void Open();
 
 			/**
 			 * \brief

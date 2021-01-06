@@ -22,8 +22,7 @@ namespace klib::kLogs
 		: Logging(std::filesystem::path(
 			ToString<char>(NoFormatTag{}, directory, klib::kFileSystem::AppendFileExtension(filename, extension)))
 			, name)
-	{
-	}
+	{}
 
 	Logging::Logging(const std::filesystem::path& path, const std::string_view& name)
 		: minimumLoggingLevel(LogLevel::DBG)

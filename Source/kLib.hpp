@@ -13,7 +13,19 @@
 #include "TypeTraits/SmartPointerTraits.hpp"
 #include "TypeTraits/TemplateTraits.hpp"
 #include "TypeTraits/StringTraits.hpp"
-#include "TypeTraits/ToImpl.hpp"
+
+// Platform OS
+#include "Platform/kPlatform.hpp"
+
+// Templates
+#include "Template/ByteStorager.hpp"
+#include "Template/kSimpleOperators.hpp"
+#include "Template/ToImpl.hpp"
+
+// Testing
+#include "Testing/kAddTest.hpp"
+#include "Testing/TesterBase.hpp"
+#include "Testing/TesterManager.hpp"
 
 // Util Includes
 
@@ -27,6 +39,7 @@
 #include "Utility/Calendar/Date/kDate.hpp"
 #include "Utility/Calendar/kCalendar.hpp"
 #include "Utility/Calendar/kUseCalendarSourceInfo.hpp"
+#include "Utility/Calendar/kCalendarToString.hpp"
 
 // Debug
 #include "Utility/Debug/kAssert.hpp"
@@ -72,17 +85,6 @@
 #include "Utility/String/kStringView.hpp"
 #include "Utility/String/kStringLite.hpp"
 #include "Utility/String/kSprintf.hpp"
-
-// Platform OS
-#include "Platform/kPlatform.hpp"
-
-// Templates
-#include "Template/ByteStorager.hpp"
-
-// Testing
-#include "Testing/kAddTest.hpp"
-#include "Testing/TesterBase.hpp"
-#include "Testing/TesterManager.hpp"
 
 // Macros
 #include "HelperMacros.hpp"
