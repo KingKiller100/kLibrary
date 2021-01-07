@@ -19,8 +19,7 @@ namespace klib::kLogs
 		, const std::string_view& filename
 		, const std::string_view& extension
 		, const std::string_view& name)
-		: Logging(std::filesystem::path(
-			ToString<char>(NoFormatTag{}, directory, klib::kFileSystem::AppendFileExtension(filename, extension)))
+		: Logging(std::filesystem::path(directory) / kFileSystem::AppendFileExtension(filename, extension)
 			, name)
 	{}
 
@@ -54,8 +53,7 @@ namespace klib::kLogs
 			auto& dest = destinations[i];
 			if (!dest->Open())
 			{
-				const auto destPrettyValue = LogDestType(i).ToString();
-				const auto errMsg = ToString("{0} - Unable to open log destination: {1}", name, destPrettyValue);
+				const auto errMsg = ToString("{0} - Unable to open a logger destination", name);
 				throw std::runtime_error(errMsg);
 			}
 		}
