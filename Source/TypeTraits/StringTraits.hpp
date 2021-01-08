@@ -59,13 +59,13 @@ namespace klib::type_trait
 
 #if MSVC_PLATFORM_TOOLSET > 141
 	template<typename T>
-	concept Is_String_t = Is_String_V<T> == true;
+	concept Is_String_c = Is_String_V<T> == true;
 	
 	template<typename T>
-	concept Is_CString_t = Is_CString_V<T> == true;
+	concept Is_CString_c = Is_CString_V<T> == true;
 	
 	template<typename T>
-	concept Is_Stringish_t = Is_Stringish_V<T> == true;
+	concept Is_Stringish_c = Is_Stringish_V<T> == true;
 #endif
 	
 	template<class StringT, class = std::enable_if_t<Is_String_V<StringT>>>

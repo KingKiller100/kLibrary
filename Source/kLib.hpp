@@ -9,10 +9,11 @@
 #include "TypeTraits/ConditionalReference.hpp"
 #include "TypeTraits/Constexpr.hpp"
 #include "TypeTraits/CustomTraits.hpp"
+#include "TypeTraits/IntegerTraits.hpp"
 #include "TypeTraits/FloatTraits.hpp"
 #include "TypeTraits/SmartPointerTraits.hpp"
-#include "TypeTraits/TemplateTraits.hpp"
 #include "TypeTraits/StringTraits.hpp"
+#include "TypeTraits/TemplateTraits.hpp"
 
 // Platform OS
 #include "Platform/kPlatform.hpp"
@@ -28,6 +29,9 @@
 #include "Testing/TesterManager.hpp"
 
 // Util Includes
+
+// Bits
+#include "Utility/Bits/kBitTricks.hpp"
 
 // Stopwatch
 #include "Utility/Stopwatch/Clock/kClock.hpp"

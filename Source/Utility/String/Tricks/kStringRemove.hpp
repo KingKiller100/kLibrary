@@ -6,10 +6,10 @@ namespace klib::kString
 {
 	template<typename StringType, typename Stringish
 #if MSVC_PLATFORM_TOOLSET >= 142
-			> requires type_trait::Is_String_t<StringType>
-		&& (type_trait::Is_String_t<Stringish>     // STL string
-			|| type_trait::Is_CString_t<Stringish> // C style string
-			|| type_trait::Is_Char_t<Stringish>)   // Just a character
+			> requires type_trait::Is_String_c<StringType>
+		&& (type_trait::Is_String_c<Stringish>     // STL string
+			|| type_trait::Is_CString_c<Stringish> // C style string
+			|| type_trait::Is_Char_c<Stringish>)   // Just a character
 #else
 		, typename = std::enable_if_t<
 		type_trait::Is_String_V<StringType>

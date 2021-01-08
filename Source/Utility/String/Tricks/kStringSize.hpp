@@ -7,7 +7,7 @@ namespace klib::kString
 {
 	template<typename StringType
 #if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_String_t<StringType>
+				> requires type_trait::Is_String_c<StringType>
 #else
 		, typename = std::enable_if_t<type_trait::Is_String_V<StringType>> >
 #endif
@@ -18,7 +18,7 @@ namespace klib::kString
 
 	template<typename Char_t
 #if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_Char_t<Char_t>
+				> requires type_trait::Is_Char_c<Char_t>
 #else
 		, typename = std::enable_if_t<type_trait::Is_Char_V<Char_t>> >
 #endif
@@ -29,7 +29,7 @@ namespace klib::kString
 
 	template<typename Char_t
 #if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_Char_t<Char_t>
+				> requires type_trait::Is_Char_c<Char_t>
 #else
 		, typename = std::enable_if_t<type_trait::Is_Char_V<Char_t>> >
 #endif
@@ -40,7 +40,7 @@ namespace klib::kString
 
 	template<typename Char_t, size_t Size
 #if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_Char_t<Char_t>
+				> requires type_trait::Is_Char_c<Char_t>
 #else
 		, typename = std::enable_if_t<type_trait::Is_Char_V<Char_t>> >
 #endif

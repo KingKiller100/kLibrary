@@ -6,6 +6,7 @@
 
 #include <type_traits>
 #include <limits>
+#include <cstdint>
 
 namespace klib::type_trait
 {

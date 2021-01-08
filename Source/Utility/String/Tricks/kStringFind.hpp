@@ -123,7 +123,7 @@ namespace klib::kString
 #if MSVC_PLATFORM_TOOLSET < 142
 	template<typename StringType, typename = std::enable_if_t<type_trait::Is_String_V<StringType>>>
 #else
-	template<typename StringType> requires type_trait::Is_String_t<StringType>
+	template<typename StringType> requires type_trait::Is_String_c<StringType>
 #endif
 		USE_RESULT constexpr bool Contains(const StringType& str, const typename StringType::value_type* search
 			, const size_t offset = 0)
@@ -133,7 +133,7 @@ namespace klib::kString
 
 		template<typename StringType
 #if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_String_t<StringType>
+				> requires type_trait::Is_String_c<StringType>
 #else
 			, typename = std::enable_if_t<type_trait::Is_String_V<StringType>> >
 #endif
@@ -146,7 +146,7 @@ namespace klib::kString
 
 		template<typename StringA, typename StringB
 #if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_String_t<StringA>&& type_trait::Is_String_t<StringB>
+				> requires type_trait::Is_String_c<StringA>&& type_trait::Is_String_c<StringB>
 #else
 			, typename = std::enable_if_t<
 			type_trait::Is_String_V<StringA>

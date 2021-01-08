@@ -8,7 +8,7 @@ namespace klib::type_trait
 {
 	template<class T>
 	struct Traits<T, std::enable_if_t<Is_It_V<T,
-		char, unsigned char, signed char, wchar_t, char16_t, char32_t
+		char, wchar_t, char16_t, char32_t
 #ifdef __cpp_char8_t
 		, char8_t
 #endif
@@ -113,10 +113,11 @@ namespace klib::type_trait
 	
 	template<typename T>
 	struct Is_CharacterBase : std::bool_constant<Is_It_V<T,
-		char, unsigned char, signed char, wchar_t, char16_t, char32_t
+		char, unsigned char, signed char, wchar_t
 #ifdef __cpp_char8_t
 		, char8_t
 #endif
+	, char16_t, char32_t
 		>>
 	{
 		using Traits = Traits<T>;
@@ -133,7 +134,7 @@ namespace klib::type_trait
 
 #if MSVC_PLATFORM_TOOLSET > 141
 	template<typename T>
-	concept Is_Char_t = Is_Char_V<T> == true;
+	concept Is_Char_c = Is_Char_V<T> == true;
 #endif
 	
 	template<typename CharType, typename = std::enable_if_t<Is_Char_V<CharType>>>

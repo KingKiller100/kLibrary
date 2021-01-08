@@ -7,7 +7,7 @@ namespace klib::kString
 {
 	template<typename StringT
 #if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_String_t<StringT>
+				> requires type_trait::Is_String_c<StringT>
 #else
 		, typename = std::enable_if_t<type_trait::Is_String_V<StringT>> >
 #endif
@@ -18,7 +18,7 @@ namespace klib::kString
 
 	template<typename CStringT
 #if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_CString_t<CStringT>
+				> requires type_trait::Is_CString_c<CStringT>
 #else
 		, typename = std::enable_if_t<type_trait::Is_CString_V<CStringT>> >
 #endif
@@ -30,7 +30,7 @@ namespace klib::kString
 
 	template<typename CharT
 #if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_Char_t<CharT>
+				> requires type_trait::Is_Char_c<CharT>
 #else
 		, typename = std::enable_if_t<type_trait::Is_Char_V<CharT>> >
 #endif
@@ -41,7 +41,7 @@ namespace klib::kString
 
 	template<typename CharT, size_t Size
 #if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_Char_t<CharT>
+				> requires type_trait::Is_Char_c<CharT>
 #else
 		, typename = std::enable_if_t<type_trait::Is_Char_V<CharT>> >
 #endif
@@ -52,7 +52,7 @@ namespace klib::kString
 
 	template<typename CharT, size_t Size
 #if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_Char_t<CharT>
+				> requires type_trait::Is_Char_c<CharT>
 #else
 		, typename = std::enable_if_t<type_trait::Is_Char_V<CharT>> >
 #endif

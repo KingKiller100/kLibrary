@@ -52,7 +52,7 @@ namespace klib::type_trait
 
 #if MSVC_PLATFORM_TOOLSET > 141
 	template<typename T>
-	concept Is_Bool_t = Is_Bool_V<T> == true;
+	concept Is_Bool_c = Is_Bool_V<T> == true;
 #endif
 	
 }
