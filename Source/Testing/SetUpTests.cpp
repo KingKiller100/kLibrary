@@ -15,6 +15,7 @@
 #include "../../Tests/Maths Tests/Vectors_Test.hpp"
 
 // Utility
+#include "../../Tests/Utility Tests/BitTricks_Test.hpp"
 #include "../../Tests/Utility Tests/Calendar_Test.hpp"
 #include "../../Tests/Utility Tests/Debug_Test.hpp"
 #include "../../Tests/Utility Tests/Enum_Test.hpp"
@@ -75,6 +76,7 @@ namespace kTest
 
 	void InitializeUtilityTests(bool includeTimeTests)
 	{
+		AddTest<TesterManager>(new utility::BitTricksTester());
 		AddTest<TesterManager>(new utility::StringConverterTester());
 		AddTest<TesterManager>(new utility::EnumTester());
 		AddTest<TesterManager>(new utility::StringManipulationTester());

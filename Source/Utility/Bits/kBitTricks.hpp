@@ -3,7 +3,7 @@
 #include "../../HelperMacros.hpp"
 #include "../../TypeTraits/IntegerTraits.hpp"
 
-namespace klib::bits
+namespace klib::kBits
 {
 	template<class Integer, class = std::enable_if_t<type_trait::Is_Integer_V<Integer>>>
 	constexpr void SetBit(Integer& num, size_t index)
@@ -38,11 +38,9 @@ namespace klib::bits
 	}
 	
 	template<class Integer, class = std::enable_if_t<type_trait::Is_Integer_V<Integer>>>
-	USE_RESULT constexpr void SetBit(Integer& num, size_t index, bool value)
+	constexpr void SetBit(Integer& num, size_t index, bool value)
 	{
-		if (value)
-			SetBit<Integer>(num, index);
-		else
-			ClearBit<Integer>(num, index);
+		const auto bit = value ? 0b1ull : 0b0ull;
+		num = static_cast<Integer>(num & ~(1ull << index) | bit << index);
 	}	
 }
