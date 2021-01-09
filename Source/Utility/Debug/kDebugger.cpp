@@ -10,7 +10,7 @@
 namespace klib::kDebug
 {
 #ifdef MSVC_PLATFORM_TOOLSET
-	using namespace compiler::vs;
+	using namespace compiler::visual_studio;
 #endif
 
 	template<class CharT>

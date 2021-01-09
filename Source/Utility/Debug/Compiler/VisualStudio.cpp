@@ -4,7 +4,7 @@
 
 #include <Windows.h>
 
-namespace klib::kDebug::compiler::vs
+namespace klib::kDebug::compiler::visual_studio
 {
 	void BreakPointImpl() noexcept
 	{
