@@ -1,7 +1,7 @@
 ﻿#include "pch.hpp"
 #include "BytesStorage_Test.hpp"
 
-#include "../../Source/Template/ByteStorager.hpp"
+#include "../../Source/Template/kByteStorager.hpp"
 
 #include "../../Source/Maths/Vectors/Vector2.hpp"
 #include "../../Source/Maths/Vectors/Vector3.hpp"

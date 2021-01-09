@@ -4,7 +4,7 @@
 #include "kLogMessage.hpp"
 #include "kLogDescriptor.hpp"
 
-#include "../../Template/ToImpl.hpp"
+#include "../../Template/kToImpl.hpp"
 #include "../String/kToString.hpp"
 #include "../FileSystem/kFileSystem.hpp"
 

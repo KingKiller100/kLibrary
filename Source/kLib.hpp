@@ -19,9 +19,9 @@
 #include "Platform/kPlatform.hpp"
 
 // Templates
-#include "Template/ByteStorager.hpp"
+#include "Template/kByteStorager.hpp"
 #include "Template/kSimpleOperators.hpp"
-#include "Template/ToImpl.hpp"
+#include "Template/kToImpl.hpp"
 
 // Testing
 #include "Testing/kAddTest.hpp"
