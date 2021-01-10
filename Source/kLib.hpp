@@ -22,6 +22,7 @@
 #include "Template/kByteStorager.hpp"
 #include "Template/kSimpleOperators.hpp"
 #include "Template/kToImpl.hpp"
+#include "Template/kTypeName.hpp"
 
 // Testing
 #include "Testing/kAddTest.hpp"
