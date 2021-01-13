@@ -16,7 +16,7 @@ namespace klib
 				if (!base)
 					throw std::runtime_error("Null ptr given to function: " __FUNCTION__);
 
-				Impl_t* derived = dynamic_cast<Impl_t*>(base);
+				Impl_t* derived = reinterpret_cast<Impl_t*>(base);
 
 				if (!derived)
 				{
@@ -56,6 +56,15 @@ namespace klib
 			, Impl_t&> ToImpl(const Base_t& base)
 		{
 			Impl_t* impl = secret::impl::ToImplPtr<Impl_t, typename Base_t::element_type>(base.get());
+			return *impl;
+		}
+
+		template<typename Impl_t, typename Base_t>
+		std::enable_if_t<
+			std::is_base_of_v<Base_t, Impl_t>
+			, Impl_t&> ToImpl(Base_t* base)
+		{
+			Impl_t* impl = secret::impl::ToImplPtr<Impl_t, Base_t>(base);
 			return *impl;
 		}
 	}
