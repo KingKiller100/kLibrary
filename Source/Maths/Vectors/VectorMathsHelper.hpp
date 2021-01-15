@@ -62,4 +62,16 @@ namespace kmaths
 		const T angle = u.DotProduct(v) / (v.Magnitude() * u.Magnitude());
 		return inDegrees ? ToDegrees(acos(angle)) : acos(angle);
 	}
+
+
+	template<typename T, unsigned short N, typename OtherVector_t>
+	USE_RESULT constexpr Vector<T, N> ToVector(const OtherVector_t& other)
+	{
+		static_assert(sizeof(OtherVector_t) == sizeof(Vector<T, N>)
+			, "Vector variables must be solely made up of a number of or "
+			"array of the same type of object");
+		
+		Vector<T, N> vec = (Vector<T, N>*)other;
+		return vec;
+	}
 }

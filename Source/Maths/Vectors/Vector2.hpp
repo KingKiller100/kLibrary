@@ -151,7 +151,7 @@ namespace kmaths
 		// Compilers earlier than C++20 features will not work in constexpr
 		USE_RESULT constexpr Type* GetPointerToData() const
 		{
-			return REINTERPRET(Type*, (void *)this);
+			return REINTERPRET(Type*, (void*)this);
 		}
 
 		USE_RESULT constexpr auto GetTotalBytes() const noexcept
