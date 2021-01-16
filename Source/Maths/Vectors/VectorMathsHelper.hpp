@@ -64,14 +64,16 @@ namespace kmaths
 	}
 
 
-	template<typename T, unsigned short N, typename OtherVector_t>
-	USE_RESULT constexpr Vector<T, N> ToVector(const OtherVector_t& other)
+	template<unsigned short N, typename OtherVector_t>
+	USE_RESULT constexpr auto ToVector(const OtherVector_t& other)
 	{
-		static_assert(sizeof(OtherVector_t) == sizeof(Vector<T, N>)
+		using Value_t = decltype(other.x);
+		
+		static_assert(sizeof(OtherVector_t) == sizeof(Vector<Value_t, N>)
 			, "Vector variables must be solely made up of a number of or "
 			"array of the same type of object");
 		
-		Vector<T, N> vec = (Vector<T, N>*)other;
+		auto vec = *(Vector<Value_t, N>*)std::addressof(other);
 		return vec;
 	}
 }

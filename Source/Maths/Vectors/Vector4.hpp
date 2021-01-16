@@ -46,7 +46,7 @@ namespace kmaths
 			: x(_v), y(_v), z(_v), w(_v)
 		{}
 
-		explicit constexpr Vector(const Type (&values)[4]) noexcept
+		explicit constexpr Vector(const Type(&values)[4]) noexcept
 			: x(values[0]), y(values[1]), z(values[2]), w(values[3])
 		{}
 
@@ -67,7 +67,7 @@ namespace kmaths
 
 		USE_RESULT constexpr Type MagnitudeSQ() const noexcept
 		{
-			const auto mag = (x*x) + (y*y) + (z*z) + (w*w);
+			const auto mag = (x * x) + (y * y) + (z * z) + (w * w);
 			return mag;
 		}
 
@@ -163,7 +163,7 @@ namespace kmaths
 		// Compilers earlier than C++20 features will not work in constexpr
 		USE_RESULT constexpr Type* GetPointerToData() const
 		{
-			return REINTERPRET(Type*, (void *)this);
+			return REINTERPRET(Type*, (void*)this);
 		}
 
 		USE_RESULT constexpr auto GetTotalBytes() const noexcept
@@ -224,7 +224,7 @@ namespace kmaths
 		USE_RESULT constexpr Vector operator-(const Vector<U, C>& other) const noexcept
 		{
 			Type temp[Length]{ Type() };
-			for (auto i = size_t(0); i < Length; ++i)
+			for (size_t i = 0; i < Length; ++i)
 			{
 				temp[i] = (C > i)
 					? CAST(Type, operator[](i) - other[i])
@@ -237,7 +237,7 @@ namespace kmaths
 		USE_RESULT constexpr Vector operator*(const Vector<U, C>& other) const noexcept
 		{
 			Type temp[Length]{ Type() };
-			for (auto i = size_t(0); i < Length; ++i)
+			for (size_t i = 0; i < Length; ++i)
 			{
 				temp[i] = (C > i)
 					? CAST(Type, operator[](i) * other[i])
