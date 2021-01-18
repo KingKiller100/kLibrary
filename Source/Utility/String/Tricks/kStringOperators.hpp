@@ -11,7 +11,11 @@ namespace klib {
 			const std::basic_string<Char_t, _Traits, _Alloc>& writer
 			, const std::basic_string_view<Char_t, _Traits>& reader)
 		{
-			return writer + reader.data();
+			std::basic_string<Char_t, _Traits, _Alloc> str(writer);
+
+			str.append(reader);
+
+			return str;
 		}
 
 		template <class Char_t, class _Traits = std::char_traits<Char_t>, class _Alloc = std::allocator<Char_t>>
@@ -19,7 +23,11 @@ namespace klib {
 			const std::basic_string_view<Char_t, _Traits>& reader
 			, const std::basic_string<Char_t, _Traits, _Alloc>& writer)
 		{
-			return reader.data() + writer;
+			std::basic_string<Char_t, _Traits, _Alloc> str(writer);
+
+			str.append(reader);
+
+			return str;
 		}
 
 		template <class Char_t, class _Traits = std::char_traits<Char_t>, class _Alloc = std::allocator<Char_t>>
@@ -27,7 +35,11 @@ namespace klib {
 			const std::basic_string_view<Char_t, _Traits>& r1
 			, const std::basic_string_view<Char_t, _Traits>& r2)
 		{
-			return r1.data() + std::basic_string<Char_t, _Traits, _Alloc>(r2);
+			std::basic_string<Char_t, _Traits, _Alloc> str(r1);
+
+			str.append(r2);
+
+			return str;
 		}
 	}
 
