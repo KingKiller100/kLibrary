@@ -258,8 +258,6 @@ namespace kmaths
 		}
 
 
-
-
 		// Operators
 
 		USE_RESULT constexpr Quaternion operator+(const Quaternion& other) const noexcept
@@ -280,16 +278,6 @@ namespace kmaths
 
 		USE_RESULT constexpr Vector<T, 3> operator *(const Vector<T, 3>& vec) const noexcept
 		{
-			// Quaternion q;
-			// q.w = 0;
-			// q.v = vec;
-
-			// Could do it this way:
-
-			// const Quaternion& q = (*this);
-			// return (q * p * q.Inverted()).v;
-
-
 			constexpr auto two = CAST(T, 2);
 			const auto crossProduct = v.CrossProduct(vec);
 			return vec + (crossProduct * (two * w)) + v.CrossProduct(crossProduct) * two;
@@ -307,14 +295,6 @@ namespace kmaths
 			Quaternion q;
 			q.w = (w * other.w) + v.DotProduct(other.v);
 			q.v = (v * other.w) + (other.v * w) + v.CrossProduct(other.v);
-			/*q.w = w * other.w - v[0] * other.v[0] -
-				v[1] * other.v[1] - v[2] * other.v[2];
-			q.v[0] = w * other.v[0] + v[0] * other.w +
-				v[1] * other.v[2] - v[2] * other.v[1];
-			q.v[1] = w * other.v[1] + v[1] * other.w +
-				v[2] * other.v[0] - v[0] * other.v[2];
-			q.v[2] = w * other.v[2] + v[2] * other.w +
-				v[0] * other.v[1] - v[1] * other.v[0];*/
 			return q;
 		}
 
@@ -345,7 +325,7 @@ namespace kmaths
 
 	public:
 		T w = constants::One<T>();	// Holds the real component of the quaternion.
-		Vector<T, 3> v{};	// Holds 3 component vector of complex components of the quaternion.
+		Vector3<T> v{};	// Holds 3 component vector of complex components of the quaternion.
 	};
 
 
