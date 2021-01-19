@@ -53,7 +53,8 @@ namespace kmaths
 		*
 		* \param[in] z
 		*		The third complex component of the rigid body's orientation quaternion.
-		*
+		* \param thetaType
+		*		Is theta in radians or degrees
 		* \note
 		*		The given orientation does not need to be normalized,
 		*		and can be zero. This function will not alter the given
@@ -64,11 +65,11 @@ namespace kmaths
 		* \see
 				Normalize
 		*/
-		explicit constexpr Quaternion(T rotation = CAST(T, 0), const T x = CAST(T, 0), const T y = CAST(T, 0), const T z = CAST(T, 0), const Theta angleType = Theta::RADIANS) noexcept
+		explicit constexpr Quaternion(T rotation = CAST(T, 0), const T x = CAST(T, 0), const T y = CAST(T, 0), const T z = CAST(T, 0), const Theta thetaType = Theta::RADIANS) noexcept
 		{
 			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
 			
-			const auto rads = (angleType == Theta::DEGREES) ? ToRadians(rotation) : rotation;
+			const auto rads = (thetaType == Theta::DEGREES) ? ToRadians(rotation) : rotation;
 			const auto halfRads = rads * zeroPointFive;
 
 			w = Cosine(halfRads);
@@ -78,17 +79,17 @@ namespace kmaths
 		}
 
 		// Vector must be normalized
-		explicit constexpr Quaternion(const T rotation, Vector<T, 3> n, const Theta angleType = Theta::RADIANS) noexcept
+		explicit constexpr Quaternion(const T rotation, Vector3<T> vec, const Theta angleType = Theta::RADIANS) noexcept
 		{
 			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
 			const auto rads = (angleType == Theta::DEGREES) ? ToRadians(rotation) : rotation;
 			const auto halfRads = rads * zeroPointFive;
 
-			if (n.MagnitudeSQ() != 1)
-				n = n.Normalize();
+			if (vec.MagnitudeSQ() != 1)
+				vec = vec.Normalize();
 
 			w = Cosine(halfRads);
-			v = n * Sine(halfRads);
+			v = vec * Sine(halfRads);
 		}
 
 

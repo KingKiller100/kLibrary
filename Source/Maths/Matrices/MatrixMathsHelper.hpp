@@ -10,29 +10,29 @@
 namespace kmaths
 {
 	template<typename T, unsigned short Rows, unsigned short Columns>
-	USE_RESULT Matrix<T, Rows, Columns> To_Matrix(const T(&arr)[(Rows * Columns)]) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
+	USE_RESULT Matrix<T, Rows, Columns> ToMatrix(const T(&arr)[(Rows * Columns)]) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
 	{
-		constexpr auto size = Rows * Columns;
-
-		Matrix<T, Rows, Columns> m;
-
-		auto ptr = m.GetPointerToData();
-		for (auto i = 0; i < size; ++i)
-			ptr[i] = arr[i];
+		Matrix<T, Rows, Columns> m(arr);
+		return m;
+	}
+	
+	template<typename T, unsigned short Rows, unsigned short Columns>
+	USE_RESULT Matrix<T, Rows, Columns> ToMatrix(const T(&arr)[Rows][Columns]) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
+	{
+		Matrix<T, Rows, Columns> m(arr);
 		return m;
 	}
 
 	template<typename T, unsigned short Rows, unsigned short Columns>
-	USE_RESULT decltype(auto) To_Array(const Matrix<T, Rows, Columns> mat) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
+	USE_RESULT decltype(auto) ToArray(const Matrix<T, Rows, Columns>& mat) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
 	{
-		T arr[Rows * Columns];
+		T arr[Rows][Columns]{};
 
 		for (Length_t row = 0; row < Rows; ++row)
 			for (Length_t col = 0; col < Columns; ++col)
-				arr[(row * Columns) + col] = mat[row][col];
+				arr[row][col] = mat[row][col];
 		return arr;
 	}
-	
 
 
 	enum class ZAxisDirection : uint8_t
@@ -157,7 +157,7 @@ namespace kmaths
 	USE_RESULT constexpr TransformMatrix<T> Scale(const TransformMatrix<T>& m, const Vector3<T>& v) noexcept
 	{
 		return TransformMatrix<T>{
-				(m[0] * v[0]),
+			(m[0] * v[0]),
 				(m[1] * v[1]),
 				(m[2] * v[2]),
 				m[3]
@@ -180,7 +180,7 @@ namespace kmaths
 
 	/**
 	 * \brief
-	 *		Returns transform matrix made from Translation * Rotation * Scale 
+	 *		Returns transform matrix made from Translation * Rotation * Scale
 	 * \tparam T
 	 *		Type
 	 * \param position
@@ -208,5 +208,5 @@ namespace kmaths
 		const TransformMatrix<T> transform = Translate<T>(position) * Rotate2D<T>(radians) * Scale2D<T>(scale);;
 		return transform;
 	}
-	
+
 }

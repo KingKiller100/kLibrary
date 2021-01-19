@@ -14,7 +14,7 @@
 namespace kmaths
 {
 	template<typename T, unsigned short N>
-	USE_RESULT Vector<T, N> To_Vector(const T* ptr) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
+	USE_RESULT Vector<T, N> ToVector(const T* ptr) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
 	{
 		Vector<T, N> v;
 		for (auto i = 0; i < N; ++i)
@@ -23,7 +23,7 @@ namespace kmaths
 	}
 
 	template<typename T, unsigned short N>
-	USE_RESULT decltype(auto) To_Array(const Vector<T, N>& vec) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
+	USE_RESULT decltype(auto) ToArray(const Vector<T, N>& vec) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
 	{
 		T arr[N]{ };
 		for (size_t i = 0; i < N; ++i)

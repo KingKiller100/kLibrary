@@ -41,7 +41,7 @@ namespace kmaths
 			*this = std::move(other);
 		}
 
-		explicit constexpr Matrix(const Type newIndices[Rows][Columns]) noexcept
+		explicit constexpr Matrix(const Type (&newIndices)[Rows][Columns]) noexcept
 		{
 			for (auto row = 0u; row < Rows; ++row)
 				for (auto col = 0u; col < Columns; ++col)
