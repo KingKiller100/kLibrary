@@ -27,13 +27,13 @@ namespace klib::kCalendar
 	std::string Month::ToStringUsingTokenCount(const size_t count) const
 	{
 		if (count >= 4)
-			return kString::ToString<char>(kString::NoFormatTag{}, GetMonthStr());
+			return kString::ToString<char>(kString::tags::NoFormatTag{}, GetMonthStr());
 		if (count == 3)
-			return  kString::ToString<char>(kString::NoFormatTag{}, GetMonthStr().substr(0, 3));
+			return  kString::ToString<char>(kString::tags::NoFormatTag{}, GetMonthStr().substr(0, 3));
 		if (count == 2)
 			return kString::ToString("{0:2}", GetMonthNumber());
 
-		return  kString::ToString<char>(kString::NoFormatTag{}, GetMonthNumber());
+		return  kString::ToString<char>(kString::tags::NoFormatTag{}, GetMonthNumber());
 	}
 
 	bool Month::Verify(const Day& day, const Year& year) const

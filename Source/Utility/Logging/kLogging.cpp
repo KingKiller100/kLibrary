@@ -151,7 +151,7 @@ namespace klib::kLogs
 			back.append(backPadding);
 		}
 
-		const auto text = ToString<char>(NoFormatTag{}
+		const auto text = ToString<char>(tags::NoFormatTag{}
 			, front
 			, message.text
 			, back

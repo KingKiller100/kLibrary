@@ -25,7 +25,7 @@ namespace klib::kCalendar
 
 	std::string Second::ToStringUsingTokenCount( const size_t count ) const
 	{
-		const auto numberFormat = "{0:" + kString::ToString<char>(kString::NoFormatTag{}, count) + "}";
+		const auto numberFormat = "{0:" + kString::ToString<char>(kString::tags::NoFormatTag{}, count) + "}";
 		const auto secStr = (count < 3)
 			? kString::ToString(numberFormat, GetValue())
 			: (count == 3)

@@ -34,7 +34,7 @@ namespace klib {
 				}
 			}
 		}
-		
+
 		// Outputs a interpolated string with data given for all string types. NOTE: Best performance with char and wchar_t type strings
 		template<class CharT, typename T, typename ...Ts>
 		USE_RESULT constexpr std::basic_string<CharT> ToString(const CharT* format, const T& arg, const Ts& ...argPack)
@@ -51,10 +51,15 @@ namespace klib {
 			return text;
 		}
 
-		struct NoFormatTag { NoFormatTag() = default; };
+		namespace tags
+		{
+			struct NoFormatTag { NoFormatTag() = default; };
+			struct ListTag { ListTag() = default; };
+
+		}
 
 		template<class CharT, typename T, typename ...Ts>
-		USE_RESULT constexpr std::basic_string<CharT> ToString(NoFormatTag&&, const T& arg, const  Ts& ...argPack)
+		USE_RESULT constexpr std::basic_string<CharT> ToString(tags::NoFormatTag&&, const T& arg, const  Ts& ...argPack)
 		{
 			using DataTypes = std::variant<std::monostate, T, Ts...>;
 			constexpr auto argCount = std::variant_size_v<DataTypes> -1;
@@ -72,9 +77,36 @@ namespace klib {
 			secret::impl::ToStringImpl<CharT, T, Ts...>(output, 0, 0, arg, argPack...);
 			return output;
 		}
+
+		template<class CharT, typename T, typename ...Ts>
+		USE_RESULT constexpr std::basic_string<CharT> ToString(tags::ListTag&&, const T& arg, const  Ts& ...argPack)
+		{
+			using DataTypes = std::variant<std::monostate, T, Ts...>;
+			constexpr auto argCount = std::variant_size_v<DataTypes> -1;
+			constexpr size_t reserveSize = secret::impl::InitialFormatStringSize<argCount>();
+
+			std::basic_string<CharT> output;
+			output.reserve(reserveSize);
+			for (size_t i = 0; i < argCount; ++i)
+			{
+				if (i > 0)
+				{
+					output.append(CharT(','));
+					output.append(CharT(' '));
+				}
+
+				output.push_back(format::g_OpenerSymbol<CharT>);
+				output.append(stringify::StringUnsignedIntegral<CharT>(i));
+				output.push_back(format::g_CloserSymbol<CharT>);
+			}
+
+			secret::impl::ToStringImpl<CharT, T, Ts...>(output, 0, 0, arg, argPack...);
+			return output;
+		}
 	}
 
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kString;
+	using namespace kString::tags;
 #endif
 }
