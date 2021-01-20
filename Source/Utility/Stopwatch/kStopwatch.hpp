@@ -89,7 +89,7 @@ namespace klib
 
 			USE_RESULT constexpr TimeSpan GetElapsedTimeSpan() const noexcept
 			{
-				return CreateTimeSpan(elapsedTime);
+				return CreateTimeSpan(elapsedTime.GetDuration());
 			}
 
 		protected:
