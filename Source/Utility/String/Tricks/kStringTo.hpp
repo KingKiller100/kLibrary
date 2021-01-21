@@ -114,8 +114,9 @@ namespace klib::kString
 				remaining = std::numeric_limits<Arithmetic_t>::max_digits10;
 
 			auto decimalStart = str + decimalPos;
+			auto decimalEnd = decimalStart + remaining;
 
-			auto decimals = static_cast<Arithmetic_t>(CStrTo<long long>(decimalStart));
+			auto decimals = static_cast<Arithmetic_t>(CStrTo<long long>(decimalStart, decimalEnd));
 
 			decimals /= std::pow(static_cast<Arithmetic_t>(10), static_cast<Arithmetic_t>(remaining));
 			result += decimals;

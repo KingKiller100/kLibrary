@@ -126,7 +126,7 @@ namespace kTest::utility
 			using Float_t = long double;
 			const std::string str = "57.8625";
 			const auto res = StrTo<Float_t>(str, 4);
-			constexpr Float_t expected = 57.86l;
+			constexpr Float_t expected = 57.8l;
 			VERIFY(expected == res);
 		}
 
