@@ -11,64 +11,34 @@
 #include "../../../TypeTraits/StringTraits.hpp"
 #include "../../Debug/Exceptions/StringExceptions.hpp"
 
-#include <functional>
-
 namespace klib::kString
 {
 	template<class Arithmetic_t, class Char_t, class = std::enable_if_t<
 		type_trait::Is_Char_V<Char_t>
 		&& std::is_arithmetic_v<Arithmetic_t>
 		>>
-		USE_RESULT constexpr Arithmetic_t CStrTo(const Char_t* const str, const Char_t* const end = nullptr)
+		USE_RESULT constexpr Arithmetic_t CStrTo(const Char_t* const str, const Char_t* end = nullptr)
 	{
-		// if (str == nullptr || str[0] == type_trait::g_NullTerminator<Char_t>)
-			// return static_cast<Arithmetic_t>(0);
-
 		Arithmetic_t result = 0;
 
 		const auto isNeg = std::is_signed_v<Arithmetic_t>
 			&& str[0] == Char_t('-');
 
-		const size_t size = end != nullptr
-			? end - str
-			: isNeg
-				? GetSize(str) - 1
-				: GetSize(str);
+		if (end == nullptr)
+			end = str + GetSize(str);
 
-		const auto CrashFunc = [](const std::string& errMsg)
-		{
-			throw kDebug::StringError(errMsg + '\n');
-		};
-
-		// if (size > kmaths::CountIntegerDigits(std::numeric_limits<Arithmetic_t>::max()))
-		// {
-			// const std::string type = typeid(Arithmetic_t).name();
-			// const auto msg = __FUNCTION__ "'s string contains more digits than largest number of type: "
-				// + type;
-			// CrashFunc(msg);
-		// }
+		const size_t size = end - str;
 
 		if constexpr (std::is_integral_v<Arithmetic_t>)
 		{
-			std::function<bool(const Char_t*, size_t, const Char_t*)> endCond;
-			if (end == nullptr)
+			static const auto CrashFunc = [](const std::string& errMsg)
 			{
-				endCond = [](const Char_t* const s, size_t pos, const Char_t* const) -> bool
-				{
-					return s[pos] != type_trait::g_NullTerminator<Char_t>;
-				};
-			}
-			else
-			{
-				endCond = [](const Char_t* const s, size_t pos, const Char_t* const e) -> bool
-				{
-					return s + pos != e;
-				};
-			}
+				throw kDebug::StringError(errMsg + '\n');
+			};
 
 			size_t currentPos = isNeg ? 1 : 0;
 			auto magnitude = static_cast<size_t>(std::pow(10, size - 1));
-			while (endCond(str, currentPos, end))
+			while (str + currentPos != end)
 			{
 				if (!IsDigit(str[currentPos]))
 				{
@@ -93,18 +63,10 @@ namespace klib::kString
 		{
 			auto decimalPos = Find(str, Char_t('.'));
 
-			if (decimalPos == type_trait::g_NoPos<std::basic_string<Char_t>>)
+			if (decimalPos >= size)
 			{
 				result = static_cast<Arithmetic_t>(CStrTo<long long>(str, end));
 				return result;
-			}
-			else if (end != nullptr)
-			{
-				if (decimalPos >= size)
-				{
-					result = static_cast<Arithmetic_t>(CStrTo<long long>(str, end));
-					return result;
-				}
 			}
 
 			auto integerEnd = str + decimalPos;
@@ -113,9 +75,6 @@ namespace klib::kString
 			++decimalPos;
 
 			auto remaining = size - decimalPos;
-
-			if (remaining > std::numeric_limits<Arithmetic_t>::max_digits10)
-				remaining = std::numeric_limits<Arithmetic_t>::max_digits10;
 
 			auto decimalStart = str + decimalPos;
 			auto decimalEnd = decimalStart + remaining;
