@@ -33,9 +33,10 @@
 #include "../../Tests/Templates Tests/BytesStorage_Test.hpp"
 
 // Performance Tests
-#include "../../Tests/Performance Tests/Maths/Algorithms_SpeedTest.hpp"
 #include "../../Tests/Performance Tests/Maths/Vector_SpeedTest.hpp"
+#include "../../Tests/Performance Tests/Maths/Algorithms_SpeedTest.hpp"
 #include "../../Tests/Performance Tests/Utility/ToString_SpeedTest.hpp"
+#include "../../Tests/Performance Tests/Utility/StrTo_SpeedTest.hpp"
 
 namespace kTest
 {
@@ -46,6 +47,7 @@ namespace kTest
 			void AddUtilityPerformanceTests()
 			{
 				// Utility
+				AddTest<PerformanceTestManager>(new util::StrToSpeedTest());
 				AddTest<PerformanceTestManager>(new util::ToStringSpeedTest());
 			}
 

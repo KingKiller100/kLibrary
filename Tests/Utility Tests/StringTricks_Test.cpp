@@ -130,19 +130,19 @@ namespace kTest::utility
 			VERIFY(expected == res);
 		}
 
-		{
-			success = false;
-			try
-			{
-				using Int_t = unsigned short;
-				const std::u16string str = u"300000"; // Too large to represent as an ushort
-				const auto res = StrTo<Int_t>(str);
-			}
-			catch (...)
-			{
-				success = true;
-			}
-		}
+		// {
+		// 	success = false;
+		// 	try
+		// 	{
+		// 		using Int_t = unsigned short;
+		// 		const std::u16string str = u"300000"; // Too large to represent as an ushort
+		// 		const auto res = StrTo<Int_t>(str);
+		// 	}
+		// 	catch (...)
+		// 	{
+		// 		success = true;
+		// 	}
+		// }
 
 		return success;
 	}

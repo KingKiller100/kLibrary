@@ -73,7 +73,7 @@ namespace kTest::performance
 
 	void PerformanceTestBase::Output() noexcept
 	{
-		std::cout << "\nCalculating Results..." << "\n";
+		std::cout << "\n\tCalculating Results..." << "\n";
 
 		for (auto& data : avgTimeResults)
 		{

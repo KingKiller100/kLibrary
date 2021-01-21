@@ -21,32 +21,36 @@ namespace klib::kString
 		>>
 		USE_RESULT constexpr Arithmetic_t CStrTo(const Char_t* const str, const Char_t* const end = nullptr)
 	{
-		if (str == nullptr || str[0] == type_trait::g_NullTerminator<Char_t>)
-			return static_cast<Arithmetic_t>(0);
+		// if (str == nullptr || str[0] == type_trait::g_NullTerminator<Char_t>)
+			// return static_cast<Arithmetic_t>(0);
 
 		Arithmetic_t result = 0;
 
 		const auto isNeg = std::is_signed_v<Arithmetic_t>
 			&& str[0] == Char_t('-');
 
-		size_t size = end != nullptr ? end - str : isNeg ? GetSize(str) - 1 : GetSize(str);
+		const size_t size = end != nullptr
+			? end - str
+			: isNeg
+				? GetSize(str) - 1
+				: GetSize(str);
 
 		const auto CrashFunc = [](const std::string& errMsg)
 		{
 			throw kDebug::StringError(errMsg + '\n');
 		};
 
-		if (size > kmaths::CountIntegerDigits(std::numeric_limits<Arithmetic_t>::max()))
-		{
-			const std::string type = typeid(Arithmetic_t).name();
-			const auto msg = __FUNCTION__ "'s string contains more digits than largest number of type: "
-				+ type;
-			CrashFunc(msg);
-		}
+		// if (size > kmaths::CountIntegerDigits(std::numeric_limits<Arithmetic_t>::max()))
+		// {
+			// const std::string type = typeid(Arithmetic_t).name();
+			// const auto msg = __FUNCTION__ "'s string contains more digits than largest number of type: "
+				// + type;
+			// CrashFunc(msg);
+		// }
 
 		if constexpr (std::is_integral_v<Arithmetic_t>)
 		{
-			std::function<bool(const Char_t* const s, size_t pos, const Char_t* const)> endCond;
+			std::function<bool(const Char_t*, size_t, const Char_t*)> endCond;
 			if (end == nullptr)
 			{
 				endCond = [](const Char_t* const s, size_t pos, const Char_t* const) -> bool
@@ -159,12 +163,12 @@ namespace klib::kString
 	{
 		using CharType = typename StringT::value_type;
 
-		Remove(string, CharType(' '));
-		Remove(string, CharType(','));
-		Remove(string, CharType('\''));
+		// Remove(string, CharType(' '));
+		// Remove(string, CharType(','));
+		// Remove(string, CharType('\''));
 
-		if (string.empty())
-			return static_cast<Arithmetic_t>(0);
+		// if (string.empty())
+			// return static_cast<Arithmetic_t>(0);
 
 		const auto data = string.data();
 

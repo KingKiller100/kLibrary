@@ -40,7 +40,7 @@ namespace klib::kString
 
 	template<typename Char_t, size_t Size
 #if MSVC_PLATFORM_TOOLSET >= 142
-				> requires type_trait::Is_Char_c<Char_t>
+				> requires type_trait::Is_Char_c<Char_t> && (std::is_pointer_v<Char_t> == false)
 #else
 		, typename = std::enable_if_t<type_trait::Is_Char_V<Char_t>> >
 #endif
