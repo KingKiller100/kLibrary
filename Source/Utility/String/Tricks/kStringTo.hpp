@@ -73,11 +73,6 @@ namespace klib::kString
 				magnitude /= base;
 				++currentPos;
 			}
-
-			if (isNeg)
-				result *= -1;
-
-			return result;
 		}
 		else // Assume it is a floating point
 		{
@@ -102,8 +97,12 @@ namespace klib::kString
 
 			decimals /= std::pow(static_cast<Arithmetic_t>(10), static_cast<Arithmetic_t>(remaining));
 			result += decimals;
-			return result;
 		}
+
+		if (isNeg)
+			result *= -1;
+		
+		return result;
 	}
 
 	template<class Arithmetic_t, class Char_t, class = std::enable_if_t<

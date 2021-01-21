@@ -131,26 +131,12 @@ namespace kTest::utility
 		}
 
 		{
-			using Float_t = int;
+			using Int_t = int;
 			const std::string str = "1f";
-			const auto res = StrTo<Float_t>(str, str.size(), 16);
-			constexpr Float_t expected = 0x1f;
+			const auto res = StrTo<Int_t>(str, str.size(), 16);
+			constexpr Int_t expected = 0x1f;
 			VERIFY(expected == res);
 		}
-
-		// {
-		// 	success = false;
-		// 	try
-		// 	{
-		// 		using Int_t = unsigned short;
-		// 		const std::u16string str = u"300000"; // Too large to represent as an ushort
-		// 		const auto res = StrTo<Int_t>(str);
-		// 	}
-		// 	catch (...)
-		// 	{
-		// 		success = true;
-		// 	}
-		// }
 
 		return success;
 	}
