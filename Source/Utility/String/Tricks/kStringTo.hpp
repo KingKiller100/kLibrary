@@ -27,7 +27,7 @@ namespace klib::kString
 		if (end == nullptr)
 			end = str + GetSize(str);
 
-		const size_t size = end - str;
+		const size_t size = isNeg ? end - str - 1 : end - str;
 
 		if constexpr (std::is_integral_v<Arithmetic_t>)
 		{
@@ -77,9 +77,8 @@ namespace klib::kString
 			auto remaining = size - decimalPos;
 
 			auto decimalStart = str + decimalPos;
-			auto decimalEnd = decimalStart + remaining;
 
-			auto decimals = static_cast<Arithmetic_t>(CStrTo<long long>(decimalStart, decimalEnd));
+			auto decimals = static_cast<Arithmetic_t>(CStrTo<long long>(decimalStart, end));
 
 			decimals /= std::pow(static_cast<Arithmetic_t>(10), static_cast<Arithmetic_t>(remaining));
 			result += decimals;
