@@ -130,6 +130,14 @@ namespace kTest::utility
 			VERIFY(expected == res);
 		}
 
+		{
+			using Float_t = int;
+			const std::string str = "1f";
+			const auto res = StrTo<Float_t>(str, str.size(), 16);
+			constexpr Float_t expected = 0x1f;
+			VERIFY(expected == res);
+		}
+
 		// {
 		// 	success = false;
 		// 	try
