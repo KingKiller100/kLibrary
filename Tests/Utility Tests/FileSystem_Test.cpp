@@ -143,7 +143,7 @@ namespace kTest::utility
 
 	bool FileSystemTester::PathToStringTest()
 	{
-		const auto dir = GetCurrentWorkingDirectory();
+		const std::string_view dir = "C:\\Files\\";
 		const auto file = std::string("FileTest");
 		const auto ext = std::string(".txt");
 		

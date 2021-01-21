@@ -23,9 +23,9 @@ namespace klib {
 			const std::basic_string_view<Char_t, _Traits>& reader
 			, const std::basic_string<Char_t, _Traits, _Alloc>& writer)
 		{
-			std::basic_string<Char_t, _Traits, _Alloc> str(writer);
+			std::basic_string<Char_t, _Traits, _Alloc> str(reader);
 
-			str.append(reader);
+			str.append(writer);
 
 			return str;
 		}
