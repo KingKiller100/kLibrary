@@ -6,7 +6,7 @@
 #include "kMathsFundamentals.hpp"
 #include "kBinarySearch.hpp"
 #include "kPowerOf.hpp"
-#include "kCount.hpp"
+#include "kMathsCount.hpp"
 #include "kMathsTrig.hpp"
 #include "kMathsEpsilon.hpp"
 #include "kMathsApproximately.hpp"

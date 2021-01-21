@@ -6,6 +6,7 @@
 #include "kStringRemove.hpp"
 
 #include "../kStringTypes.hpp"
+#include "../../../Maths/kMathsCount.hpp"
 #include "../../../HelperMacros.hpp"
 #include "../../../TypeTraits/StringTraits.hpp"
 #include "../../Debug/Exceptions/StringExceptions.hpp"
@@ -20,50 +21,22 @@ namespace klib::kString
 		>>
 		USE_RESULT constexpr Arithmetic_t CStrTo(const Char_t* const str, const Char_t* const end = nullptr)
 	{
-		const auto CrashFunc = [](const std::string& errMsg)
-		{
-			throw kDebug::StringError(errMsg + '\n');
-		};
-		const auto MaxDigitsFunc = []()
-		{
-			auto maxNum = std::numeric_limits<Arithmetic_t>::max();
-			size_t count = 0;
-			do {
-				++count;
-				maxNum /= 10;
-			} while (maxNum);
-			return count;
-		};
-
-		if (str == nullptr
-			|| str[0] == type_trait::g_NullTerminator<Char_t>)
+		if (str == nullptr || str[0] == type_trait::g_NullTerminator<Char_t>)
 			return static_cast<Arithmetic_t>(0);
 
-		std::function<bool(const Char_t* const s, size_t pos, const Char_t* const)> endCond;
-		if (end == nullptr)
-		{
-			endCond = [](const Char_t* const s, size_t pos, const Char_t* const) -> bool
-			{
-				return s[pos] != type_trait::g_NullTerminator<Char_t>;
-			};
-		}
-		else
-		{
-			endCond = [](const Char_t* const s, size_t pos, const Char_t* const e) -> bool
-			{
-				return s + pos != e;
-			};
-		}
+		Arithmetic_t result = 0;
 
 		const auto isNeg = std::is_signed_v<Arithmetic_t>
 			&& str[0] == Char_t('-');
 
-		Arithmetic_t result = 0;
-		size_t currentPos = isNeg ? 1 : 0;
-		size_t size = isNeg ? GetSize(str) - 1 : GetSize(str);
-		auto magnitude = static_cast<size_t>(std::pow(10, size - 1));
+		size_t size = end != nullptr ? end - str : isNeg ? GetSize(str) - 1 : GetSize(str);
 
-		if (size > MaxDigitsFunc())
+		const auto CrashFunc = [](const std::string& errMsg)
+		{
+			throw kDebug::StringError(errMsg + '\n');
+		};
+
+		if (size > kmaths::CountIntegerDigits(std::numeric_limits<Arithmetic_t>::max()))
 		{
 			const std::string type = typeid(Arithmetic_t).name();
 			const auto msg = __FUNCTION__ "'s string contains more digits than largest number of type: "
@@ -73,6 +46,24 @@ namespace klib::kString
 
 		if constexpr (std::is_integral_v<Arithmetic_t>)
 		{
+			std::function<bool(const Char_t* const s, size_t pos, const Char_t* const)> endCond;
+			if (end == nullptr)
+			{
+				endCond = [](const Char_t* const s, size_t pos, const Char_t* const) -> bool
+				{
+					return s[pos] != type_trait::g_NullTerminator<Char_t>;
+				};
+			}
+			else
+			{
+				endCond = [](const Char_t* const s, size_t pos, const Char_t* const e) -> bool
+				{
+					return s + pos != e;
+				};
+			}
+
+			size_t currentPos = isNeg ? 1 : 0;
+			auto magnitude = static_cast<size_t>(std::pow(10, size - 1));
 			while (endCond(str, currentPos, end))
 			{
 				if (!IsDigit(str[currentPos]))
@@ -98,27 +89,35 @@ namespace klib::kString
 		{
 			auto decimalPos = Find(str, Char_t('.'));
 
-			if (decimalPos == type_trait::g_NullTerminator<Char_t>)
+			if (decimalPos == type_trait::g_NoPos<std::basic_string<Char_t>>)
 			{
 				result = static_cast<Arithmetic_t>(CStrTo<long long>(str, end));
 				return result;
+			}
+			else if (end != nullptr)
+			{
+				if (decimalPos >= size)
+				{
+					result = static_cast<Arithmetic_t>(CStrTo<long long>(str, end));
+					return result;
+				}
 			}
 
 			auto integerEnd = str + decimalPos;
 			result = static_cast<Arithmetic_t>(CStrTo<long long>(str, integerEnd));
 
 			++decimalPos;
-			
-			auto remaining = end == nullptr ? GetSize(str) - decimalPos : (end - str) - decimalPos;
+
+			auto remaining = size - decimalPos;
 
 			if (remaining > std::numeric_limits<Arithmetic_t>::max_digits10)
 				remaining = std::numeric_limits<Arithmetic_t>::max_digits10;
 
 			auto decimalStart = str + decimalPos;
-			
+
 			auto decimals = static_cast<Arithmetic_t>(CStrTo<long long>(decimalStart));
-			
-			decimals /= std::pow(10, remaining);
+
+			decimals /= std::pow(static_cast<Arithmetic_t>(10), static_cast<Arithmetic_t>(remaining));
 			result += decimals;
 			return result;
 		}
@@ -159,20 +158,12 @@ namespace klib::kString
 	{
 		using CharType = typename StringT::value_type;
 
-		const auto CrashFunc = [](const std::string& errMsg)
-		{
-			throw kDebug::StringError(errMsg + "\n");
-		};
-
 		Remove(string, CharType(' '));
 		Remove(string, CharType(','));
 		Remove(string, CharType('\''));
 
 		if (string.empty())
 			return static_cast<Arithmetic_t>(0);
-
-		if (Contains(string, CharType('.')))
-			CrashFunc("string must contain only one integer number");
 
 		const auto data = string.data();
 

@@ -331,7 +331,7 @@ namespace kTest::utility
 
 			const std::string str = "Bitches ain't shit but hoes and tricks";
 		} example;
-		const auto result = ToString<char>(NoFormatTag{}, example);
+		const auto result = ToString<char>(tags::NoFormatTag{}, example);
 		constexpr auto expected = "Bitches ain't shit but hoes and tricks";
 		VERIFY(result == expected);
 
@@ -342,7 +342,7 @@ namespace kTest::utility
 	{
 		ObjectWithoutToString owts;
 
-		const auto result = ToString<char>(NoFormatTag{}, owts);
+		const auto result = ToString<char>(tags::NoFormatTag{}, owts);
 		constexpr auto expected = "String made using identity overloading";
 		VERIFY(expected == result);
 
@@ -388,16 +388,16 @@ namespace kTest::utility
 	{
 		{
 #ifdef __cpp_char8_t
-			const auto test = klib::kString::ToString<char8_t>(NoFormatTag{}, 980u, 123);
+			const auto test = klib::kString::ToString<char8_t>(tags::NoFormatTag{}, 980u, 123);
 			VERIFY(test == u8"980123");
 #else
-			const auto test = klib::kString::ToString<char16_t>(NoFormatTag{}, 980u);
+			const auto test = klib::kString::ToString<char16_t>(tags::NoFormatTag{}, 980u);
 			VERIFY(test == u"980");
 #endif
 		}
 
 		{
-			const auto result = ToString<char>(NoFormatTag{}, 1, 2, 3, 4, "five", 6, 7, 8, 9, "ten", 11, 12, 13, 14, "fifteen");
+			const auto result = ToString<char>(tags::NoFormatTag{}, 1, 2, 3, 4, "five", 6, 7, 8, 9, "ten", 11, 12, 13, 14, "fifteen");
 			const char expected[] = "1234five6789ten11121314fifteen";
 			VERIFY(result == expected);
 		}

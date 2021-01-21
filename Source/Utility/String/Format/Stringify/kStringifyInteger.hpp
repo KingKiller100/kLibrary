@@ -2,7 +2,7 @@
 
 #include "kStringifyHelper.hpp"
 #include "../../kStringTricks.hpp"
-#include "../../../Maths/kCount.hpp"
+#include "../../../Maths/kMathsCount.hpp"
 
 #include <cstddef>
 

@@ -91,6 +91,46 @@ namespace kTest::utility
 		}
 
 		{
+			using Float_t = double;
+			const std::string str = "300";
+			const auto res = StrTo<Float_t>(str);
+			constexpr Float_t expected = 300.0;
+			VERIFY(expected == res);
+		}
+
+		{
+			using Float_t = float;
+			const std::string str = "25.0625";
+			const auto res = StrTo<Float_t>(str, 2);
+			constexpr Float_t expected = 25.f;
+			VERIFY(expected == res);
+		}
+
+		{
+			using Float_t = long double;
+			const std::string str = "115.0625";
+			const auto res = StrTo<Float_t>(str);
+			constexpr Float_t expected = 115.0625l;
+			VERIFY(expected == res);
+		}
+
+		{
+			using Float_t = long double;
+			const std::string str = "5.8625";
+			const auto res = StrTo<Float_t>(str);
+			constexpr Float_t expected = 5.8625l;
+			VERIFY(expected == res);
+		}
+
+		{
+			using Float_t = long double;
+			const std::string str = "57.8625";
+			const auto res = StrTo<Float_t>(str, 4);
+			constexpr Float_t expected = 57.86l;
+			VERIFY(expected == res);
+		}
+
+		{
 			success = false;
 			try
 			{
@@ -102,13 +142,6 @@ namespace kTest::utility
 			{
 				success = true;
 			}
-		}
-
-		{ // Won't compile due to StrTo only taking integral types
-			// const std::u16string str = u"80.5";
-			//const auto res = StrTo<double>(str);
-			// constexpr auto expected = 1000;
-			// VERIFY(expected == res);
 		}
 
 		return success;
