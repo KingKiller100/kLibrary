@@ -18,13 +18,13 @@ namespace klib::kFileSystem
 	template<typename Char_t, typename = std::enable_if_t<
 		type_trait::Is_Char_V<Char_t>
 		>>
-	using FileReader = std::basic_ifstream<ONLY_TYPE(Char_t), std::char_traits<ONLY_TYPE(Char_t)>>;
+	using FileReader = std::basic_ifstream<type_trait::Simplify_t<Char_t>, std::char_traits<type_trait::Simplify_t<Char_t>>>;
 
 	// STL basic_ofstream
 	template<typename Char_t, typename = std::enable_if_t<
 		type_trait::Is_Char_V<Char_t>
 		>>
-	using FileWriter = std::basic_ofstream<ONLY_TYPE(Char_t), std::char_traits<ONLY_TYPE(Char_t)>>;
+	using FileWriter = std::basic_ofstream<type_trait::Simplify_t<Char_t>, std::char_traits<type_trait::Simplify_t<Char_t>>>;
 
 	// STL vector of StringWriters
 	template<typename Char_t, typename = std::enable_if_t<

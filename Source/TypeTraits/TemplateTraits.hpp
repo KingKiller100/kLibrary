@@ -25,5 +25,5 @@ namespace klib::type_trait
 	struct Is_It : std::bool_constant<Is_It_V<T, Ts...>> {};
 
 	template<typename T>
-	using Simplify = std::remove_cv_t<std::remove_pointer_t<std::decay_t<T>>>;
+	using Simplify_t = std::remove_cv_t<std::remove_pointer_t<std::decay_t<T>>>;
 }

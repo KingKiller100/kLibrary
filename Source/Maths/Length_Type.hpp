@@ -36,7 +36,7 @@ namespace kmaths
 	};
 
 	template<typename T>
-	struct Max_Decimal_Precision : _Max_Decimal_Precision<ONLY_TYPE(T)>
+	struct Max_Decimal_Precision : _Max_Decimal_Precision<klib::type_trait::Simplify_t<T>>
 	{};
 
 	template<typename T>

@@ -38,9 +38,9 @@ namespace klib::kString::stringify
 		if (hexMode)
 			return stringify::StringIntegralHex<CharT>(value, padding, CharT('0'));
 		if (binaryMode)
-			return stringify::StringIntegralBinary<CharT, ONLY_TYPE(T)>(value, padding, CharT('0'));
+			return stringify::StringIntegralBinary<CharT, type_trait::Simplify_t<T>>(value, padding, CharT('0'));
 
-		return stringify::StringIntegral<CharT, ONLY_TYPE(T)>(value, padding, CharT('0'));
+		return stringify::StringIntegral<CharT, type_trait::Simplify_t<T>>(value, padding, CharT('0'));
 	}
 
 	template<typename CharT>

@@ -344,9 +344,9 @@ namespace kTest::utility
 			VERIFY(writer == string);
 			VERIFY(reader == string);
 
-			using CharType = ONLY_TYPE(decltype(string));
-			using WriterType = ONLY_TYPE(decltype(writer));
-			using ReaderType = ONLY_TYPE(decltype(reader));
+			using CharType = klib::type_trait::Simplify_t<decltype(string)>;
+			using WriterType = klib::type_trait::Simplify_t<decltype(writer)>;
+			using ReaderType = klib::type_trait::Simplify_t<decltype(reader)>;
 
 			constexpr auto sameWriterType = std::is_same_v<WriterType, std::basic_string<CharType>>;
 			constexpr auto sameReaderType = std::is_same_v<ReaderType, std::basic_string_view<CharType>>;
@@ -365,9 +365,9 @@ namespace kTest::utility
 			VERIFY(writer == string);
 			VERIFY(reader == string);
 
-			using CharType = ONLY_TYPE(decltype(string));
-			using WriterType = ONLY_TYPE(decltype(writer));
-			using ReaderType = ONLY_TYPE(decltype(reader));
+			using CharType = klib::type_trait::Simplify_t<decltype(string)>;
+			using WriterType = klib::type_trait::Simplify_t<decltype(writer)>;
+			using ReaderType = klib::type_trait::Simplify_t<decltype(reader)>;
 
 			constexpr auto sameWriterType = std::is_same_v<WriterType, std::basic_string<CharType>>;
 			constexpr auto sameReaderType = std::is_same_v<ReaderType, std::basic_string_view<CharType>>;
@@ -386,9 +386,9 @@ namespace kTest::utility
 			VERIFY(writer == string);
 			VERIFY(reader == string);
 
-			using CharType = ONLY_TYPE(decltype(string));
-			using WriterType = ONLY_TYPE(decltype(writer));
-			using ReaderType = ONLY_TYPE(decltype(reader));
+			using CharType = klib::type_trait::Simplify_t  <decltype(string)>;
+			using WriterType = klib::type_trait::Simplify_t<decltype(writer)>;
+			using ReaderType = klib::type_trait::Simplify_t<decltype(reader)>;
 
 			constexpr auto sameWriterType = std::is_same_v<WriterType, std::basic_string<CharType>>;
 			constexpr auto sameReaderType = std::is_same_v<ReaderType, std::basic_string_view<CharType>>;
@@ -407,9 +407,9 @@ namespace kTest::utility
 			VERIFY(writer == string);
 			VERIFY(reader == string);
 
-			using CharType = ONLY_TYPE(decltype(string));
-			using WriterType = ONLY_TYPE(decltype(writer));
-			using ReaderType = ONLY_TYPE(decltype(reader));
+			using CharType = klib::type_trait::Simplify_t<decltype(string)>;
+			using WriterType = klib::type_trait::Simplify_t<decltype(writer)>;
+			using ReaderType = klib::type_trait::Simplify_t<decltype(reader)>;
 
 			constexpr auto sameWriterType = std::is_same_v<WriterType, std::basic_string<CharType>>;
 			constexpr auto sameReaderType = std::is_same_v<ReaderType, std::basic_string_view<CharType>>;
@@ -429,9 +429,9 @@ namespace kTest::utility
 			VERIFY(writer == string);
 			VERIFY(reader == string);
 
-			using CharType = ONLY_TYPE(decltype(string));
-			using WriterType = ONLY_TYPE(decltype(writer));
-			using ReaderType = ONLY_TYPE(decltype(reader));
+			using CharType = klib::type_trait::Simplify_t<decltype(string)>;
+			using WriterType = klib::type_trait::Simplify_t<decltype(writer)>;
+			using ReaderType = klib::type_trait::Simplify_t<decltype(reader)>;
 
 			constexpr auto sameWriterType = std::is_same_v<WriterType, std::basic_string<CharType>>;
 			constexpr auto sameReaderType = std::is_same_v<ReaderType, std::basic_string_view<CharType>>;

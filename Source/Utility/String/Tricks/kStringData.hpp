@@ -22,7 +22,7 @@ namespace klib::kString
 #else
 		, typename = std::enable_if_t<type_trait::Is_CString_V<CStringT>> >
 #endif
-		USE_RESULT constexpr const ONLY_TYPE(CStringT) * GetData(CStringT cstr) noexcept
+		USE_RESULT constexpr const type_trait::Simplify_t<CStringT> * GetData(CStringT cstr) noexcept
 	{
 		using Ptr_t = CStringT;
 		return (const Ptr_t)cstr;

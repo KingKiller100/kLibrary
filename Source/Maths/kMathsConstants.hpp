@@ -70,7 +70,7 @@ namespace kmaths
 		template<class T>
 		USE_RESULT constexpr T One(T&&) noexcept
 		{
-			return One<klib::type_trait::Simplify<T>>();
+			return One<klib::type_trait::Simplify_t<T>>();
 		}
 
 		template<class T>
@@ -82,7 +82,7 @@ namespace kmaths
 		template<class T>
 		USE_RESULT constexpr T MinusOne(T&&) noexcept
 		{
-			return MinusOne<ONLY_TYPE(T)>();
+			return MinusOne<klib::type_trait::Simplify_t<T>>();
 		}
 
 		template<class T>
@@ -94,7 +94,7 @@ namespace kmaths
 		template<class T>
 		USE_RESULT constexpr T Two(T&&) noexcept
 		{
-			return Two<ONLY_TYPE(T)>();
+			return Two<klib::type_trait::Simplify_t<T>>();
 		}
 
 		template<class T>
@@ -106,7 +106,7 @@ namespace kmaths
 		template<class T>
 		USE_RESULT constexpr T ZeroPointOne(T&&) noexcept
 		{
-			return ZeroPointOne<ONLY_TYPE(T)>();
+			return ZeroPointOne<klib::type_trait::Simplify_t<T>>();
 		}
 
 		template<class T>
@@ -130,7 +130,7 @@ namespace kmaths
 		template<class T>
 		USE_RESULT constexpr T OnePointFive(T&&) noexcept
 		{
-			return OnePointFive<ONLY_TYPE(T)>();
+			return OnePointFive<klib::type_trait::Simplify_t<T>>();
 		}
 
 		template<class ReturnType, class T>

@@ -332,7 +332,7 @@ namespace kTest::maths
 
 		{
 			constexpr auto x = constants::One<float>();
-			constexpr auto answer = std::is_same_v<ONLY_TYPE(decltype(x)), float>;
+			constexpr auto answer = std::is_same_v<klib::type_trait::Simplify_t<decltype(x)>, float>;
 			VERIFY_COMPILE_TIME(answer);
 		}
 

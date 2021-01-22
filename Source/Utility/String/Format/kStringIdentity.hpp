@@ -142,7 +142,7 @@ namespace klib::kString::stringify
 	template<typename Char_t, typename T>
 	class Identity<Char_t, T, std::enable_if_t<
 		type_trait::Is_Char_V<Char_t>
-		&& !type_trait::Is_Char_V<ONLY_TYPE(T)>
+		&& !type_trait::Is_Char_V<type_trait::Simplify_t<T>>
 		&& std::is_pointer_v<T>
 		>>
 	{
@@ -177,7 +177,7 @@ namespace klib::kString::stringify
 		{
 			if constexpr (std::is_floating_point_v<T>)
 				return  stringify::HandleFloat<Char_t>(value, specifier);
-			else if constexpr (std::is_same_v<ONLY_TYPE(T), bool>)
+			else if constexpr (std::is_same_v<type_trait::Simplify_t<T>, bool>)
 				return stringify::HandleBool<Char_t>(value, specifier);
 			else
 				return stringify::HandleInteger<Char_t>(value, specifier);

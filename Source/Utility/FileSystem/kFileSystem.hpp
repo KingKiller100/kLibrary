@@ -256,7 +256,7 @@ namespace klib {
 		template<class CharType = char>
 		USE_RESULT constexpr auto ReadFile(const kString::StringReader<CharType>& fullFilePath)
 		{
-			using Char = ONLY_TYPE(CharType);
+			using Char = type_trait::Simplify_t<CharType>;
 
 			FileLines<Char> fileData;
 
@@ -287,7 +287,7 @@ namespace klib {
 		template<class CharType = char>
 		USE_RESULT kString::StringReader<CharType> GetCurrentWorkingDirectory()
 		{
-			using Char = ONLY_TYPE(CharType);
+			using Char = type_trait::Simplify_t<CharType>;
 
 			static kString::StringWriter<Char> cwdFullPath;
 
@@ -297,13 +297,13 @@ namespace klib {
 				std::uint32_t length = 0;
 				if _CONSTEXPR_IF(std::is_same_v<Char, char>)
 				{
-					length = ::GetCurrentDirectoryA(0, nullptr);
+					length = GetCurrentDirectoryA(0, nullptr);
 					cwdBuffer = new Char[length]{};
 					::GetCurrentDirectoryA(length, cwdBuffer);
 				}
 				else if _CONSTEXPR_IF(std::is_same_v<Char, wchar_t>)
 				{
-					length = ::GetCurrentDirectoryW(0, nullptr);
+					length = GetCurrentDirectoryW(0, nullptr);
 					cwdBuffer = new Char[length]{};
 					::GetCurrentDirectoryW(length, cwdBuffer);
 				}
@@ -358,7 +358,7 @@ namespace klib {
 		template<class CharType = char>
 		USE_RESULT kString::StringReader<CharType> GetExeDirectory()
 		{
-			using Char = ONLY_TYPE(CharType);
+			using Char = type_trait::Simplify_t<CharType>;
 
 			static kString::StringWriter<Char> exeFullPath;
 
@@ -405,7 +405,7 @@ namespace klib {
 		template<class CharType = char>
 		USE_RESULT constexpr kString::StringWriter<CharType> GetFileNameWithoutExtension(const kString::StringReader<CharType>& path) noexcept
 		{
-			kString::StringWriter<CharType> filename = GetFileName<ONLY_TYPE(CharType)>(path);
+			kString::StringWriter<CharType> filename = GetFileName<type_trait::Simplify_t<CharType>>(path);
 			filename = filename.erase(filename.find_first_of('.'));
 			return filename;
 		}
@@ -413,7 +413,7 @@ namespace klib {
 		template<class CharType = char>
 		USE_RESULT constexpr kString::StringWriter<CharType> GetExtension(const kString::StringReader<CharType>& path)
 		{
-			kString::StringWriter<CharType> extension = GetFileName<ONLY_TYPE(CharType)>(path);
+			kString::StringWriter<CharType> extension = GetFileName<type_trait::Simplify_t<CharType>>(path);
 			const size_t dotPos = extension.find_first_of('.');
 			const auto start = extension.cbegin();
 			const auto end = start + dotPos;
@@ -424,7 +424,7 @@ namespace klib {
 		template<class CharType = char>
 		USE_RESULT constexpr kString::StringWriter<CharType> GetParentPath(const kString::StringWriter<CharType>& path)
 		{
-			using Char = ONLY_TYPE(CharType);
+			using Char = type_trait::Simplify_t<CharType>;
 			auto parentPath = kString::Replace(path, Char('/'), pathSeparator<Char>);
 			parentPath = parentPath.substr(0, parentPath.find_last_of(pathSeparator<Char>));
 			return parentPath;

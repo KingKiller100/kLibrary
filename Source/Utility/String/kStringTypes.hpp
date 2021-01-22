@@ -15,11 +15,11 @@ namespace klib
 
 		// STL basic_string_view
 		template<class Char>
-		using StringReader = std::basic_string_view<ONLY_TYPE(Char)>;
+		using StringReader = std::basic_string_view<type_trait::Simplify_t<Char>>;
 
 		// STL basic_string
 		template<class Char>
-		using StringWriter = std::basic_string<ONLY_TYPE(Char), std::char_traits<ONLY_TYPE(Char)>, std::allocator<ONLY_TYPE(Char)>>;
+		using StringWriter = std::basic_string<type_trait::Simplify_t<Char>, std::char_traits<type_trait::Simplify_t<Char>>, std::allocator<type_trait::Simplify_t<Char>>>;
 
 		// --------------------------------------------------------------------------------------
 

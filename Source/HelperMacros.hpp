@@ -36,15 +36,13 @@
 #define REINTERPRET(type, value) reinterpret_cast<type>(value)
 #define DYNAMIC(type, value) dynamic_cast<type>(value)
 
-#define ONLY_TYPE(type) std::remove_cv_t<std::remove_pointer_t<std::decay_t<type>>>
-
 #define BIT_SHIFT(n) (static_cast<size_t>(1) << n)
 
 #define kSOURCEINFOIMPL_CONCATENATE(x,y) kSOURCEINFOIMPL_CONCATENATE2(x,y) 
 #define kSOURCEINFOIMPL_CONCATENATE2(x,y) x##y 
 #define kFILELINE size_t(kSOURCEINFOIMPL_CONCATENATE(__LINE__, U))
 
-#ifdef TESTING_ENABLED
+#ifndef TESTING_ENABLED
 #	define TESTING_ENABLED KLIB_TRUE
 #endif
 

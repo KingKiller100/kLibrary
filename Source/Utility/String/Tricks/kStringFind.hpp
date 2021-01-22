@@ -12,7 +12,7 @@ namespace klib::kString
 		template<typename CStringA, typename Char_t, typename CmpFunc_t, typename DirectionFunc_t, class = std::enable_if_t <
 			type_trait::Is_CString_V<CStringA>
 			&& type_trait::Is_Char_V<Char_t>
-			&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
+			&& std::is_same_v<klib::type_trait::Simplify_t<CStringA>, Char_t>
 			>>
 			USE_RESULT constexpr size_t FindCharImpl(const CStringA& hayStack, Char_t needle, size_t offset, CmpFunc_t&& cmpFunc, DirectionFunc_t&& directionFunc)
 		{
@@ -37,7 +37,7 @@ namespace klib::kString
 	template<typename CStringA, typename CStringB, class = std::enable_if_t<
 		type_trait::Is_CString_V<CStringA>
 		&& type_trait::Is_CString_V<CStringB>
-		&& std::is_same_v<ONLY_TYPE(CStringA), ONLY_TYPE(CStringB)>
+		&& std::is_same_v<type_trait::Simplify_t<CStringA>, type_trait::Simplify_t<CStringB>>
 		>>
 		USE_RESULT constexpr size_t Find(const CStringA hayStack, const CStringB needle, size_t offset = 0)
 	{
@@ -66,7 +66,7 @@ namespace klib::kString
 	template<typename CStringA, typename Char_t, class = std::enable_if_t <
 		type_trait::Is_CString_V<CStringA>
 		&& type_trait::Is_Char_V<Char_t>
-		&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
+		&& std::is_same_v<type_trait::Simplify_t<CStringA>, Char_t>
 		>>
 		USE_RESULT constexpr size_t Find_First_Of(const CStringA& str, Char_t search, size_t offset = 0)
 	{
@@ -77,7 +77,7 @@ namespace klib::kString
 	template<typename CStringA, typename Char_t, class = std::enable_if_t <
 		type_trait::Is_CString_V<CStringA>
 		&& type_trait::Is_Char_V<Char_t>
-		&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
+		&& std::is_same_v<type_trait::Simplify_t<CStringA>, Char_t>
 		>>
 		USE_RESULT constexpr size_t Find(const CStringA& str, Char_t search, size_t offset = 0)
 	{
@@ -88,7 +88,7 @@ namespace klib::kString
 	template<typename CStringA, typename Char_t, class = std::enable_if_t <
 		type_trait::Is_CString_V<CStringA>
 		&& type_trait::Is_Char_V<Char_t>
-		&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
+		&& std::is_same_v<type_trait::Simplify_t<CStringA>, Char_t>
 		>>
 		USE_RESULT constexpr size_t Find_First_Not_Of(const CStringA& str, Char_t search, size_t offset = 0)
 	{
@@ -99,7 +99,7 @@ namespace klib::kString
 	template<typename CStringA, typename Char_t, class = std::enable_if_t <
 		type_trait::Is_CString_V<CStringA>
 		&& type_trait::Is_Char_V<Char_t>
-		&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
+		&& std::is_same_v<type_trait::Simplify_t<CStringA>, Char_t>
 		>>
 		USE_RESULT constexpr size_t Find_Last_Of(const CStringA& str, Char_t search, size_t offset = type_trait::g_NoPos<std::basic_string<Char_t>>)
 	{
@@ -111,7 +111,7 @@ namespace klib::kString
 	template<typename CStringA, typename Char_t, class = std::enable_if_t <
 		type_trait::Is_CString_V<CStringA>
 		&& type_trait::Is_Char_V<Char_t>
-		&& std::is_same_v<ONLY_TYPE(CStringA), Char_t>
+		&& std::is_same_v<type_trait::Simplify_t<CStringA>, Char_t>
 		>>
 		USE_RESULT constexpr size_t Find_Last_Not_Of(const CStringA& str, Char_t search, size_t offset = type_trait::g_NoPos<std::basic_string<Char_t>>)
 	{
@@ -163,7 +163,7 @@ namespace klib::kString
 			, typename = std::enable_if_t<
 			type_trait::Is_String_V<StringType>
 			&& (type_trait::Is_String_V<StringType>
-				|| (type_trait::Is_Char_V<ONLY_TYPE(Stringish)>
+				|| (type_trait::Is_Char_V<type_trait::Simplify_t<Stringish>>
 					&& std::is_same_v<typename StringType::value_type, Stringish>
 					&& std::is_pointer_v<Stringish>)
 				)

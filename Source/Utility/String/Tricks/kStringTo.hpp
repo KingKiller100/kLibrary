@@ -16,11 +16,10 @@ namespace klib::kString
 {
 	template<class Arithmetic_t, class Char_t, class = std::enable_if_t<
 		type_trait::Is_Char_V<Char_t>
-		&& std::is_arithmetic_v<Arithmetic_t>
 		>>
 		USE_RESULT constexpr Arithmetic_t CStrTo(const Char_t* const str, const Char_t* end = nullptr, size_t base = 10)
 	{
-		Arithmetic_t result = 0;
+		Arithmetic_t result(0);
 
 		const auto isNeg = std::is_signed_v<Arithmetic_t>
 			&& str[0] == Char_t('-');
@@ -30,10 +29,8 @@ namespace klib::kString
 
 		const size_t size = isNeg ? end - str - 1 : end - str;
 
-		if constexpr (std::is_integral_v<Arithmetic_t>)
+		if constexpr (!std::is_floating_point_v<Arithmetic_t>)
 		{
-			using Uint_t = std::make_unsigned_t<Arithmetic_t>;
-
 			static const auto CrashFunc = [](const std::string& errMsg)
 			{
 				throw kDebug::StringError(errMsg + '\n');
@@ -45,12 +42,12 @@ namespace klib::kString
 			while (str + currentPos != end)
 			{
 				const auto character = ToLower(str[currentPos]);
-				size_t asInt = 0;
-				Uint_t val = 0;
+				size_t realVal = 0;
+				Arithmetic_t val(0);
 
 				if (IsDigit(character))
 				{
-					val = static_cast<Uint_t>(character - Char_t('0'));
+					val = static_cast<Arithmetic_t>(character - Char_t('0'));
 				}
 				else if (base <= 10)
 				{
@@ -60,7 +57,7 @@ namespace klib::kString
 				else if (base > 10)
 				{
 					if (kLocale::Query(character, std::ctype_base::lower))
-						val = static_cast<Uint_t>(character - Char_t('a') + 10);
+						val = static_cast<Arithmetic_t>(character - Char_t('a') + 10);
 					else
 					{
 						const auto input = ToWriter(Convert<char>(str));
@@ -68,8 +65,8 @@ namespace klib::kString
 					}
 				}
 
-				asInt = val * magnitude;
-				result += static_cast<Arithmetic_t>(asInt);
+				realVal = static_cast<size_t>(val * magnitude);
+				result += static_cast<Arithmetic_t>(realVal);
 				magnitude /= base;
 				++currentPos;
 			}

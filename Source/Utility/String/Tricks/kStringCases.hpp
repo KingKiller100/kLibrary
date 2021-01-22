@@ -43,7 +43,7 @@ namespace klib::kString
 	template<class Stringish
 		, class = std::enable_if_t<
 		type_trait::Is_String_V<Stringish>
-		|| (type_trait::Is_Char_V<ONLY_TYPE(Stringish)>
+		|| (type_trait::Is_Char_V<type_trait::Simplify_t<Stringish>>
 			&& std::is_pointer_v<Stringish>)
 		>>
 		USE_RESULT constexpr auto ToUpper(const Stringish& input)
@@ -80,7 +80,7 @@ namespace klib::kString
 	template<class Stringish
 		, class = std::enable_if_t<
 		type_trait::Is_String_V<Stringish>
-		|| (type_trait::Is_Char_V<ONLY_TYPE(Stringish)>
+		|| (type_trait::Is_Char_V<type_trait::Simplify_t<Stringish>>
 			&& std::is_pointer_v<Stringish>)
 		>>
 		USE_RESULT constexpr auto ToLower(const Stringish& input)
