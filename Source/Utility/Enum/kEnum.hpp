@@ -182,7 +182,7 @@ public:																					\
 		return failState;																\
 	}																					\
 																						\
-	static constexpr InternalEnum_t FromString(const std::string_view& search)			\
+	static constexpr enumName FromString(const std::string_view& search)				\
 	{																					\
 		return FromStringImpl(search.data(), 0);										\
 	}																					\
