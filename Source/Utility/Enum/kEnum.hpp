@@ -311,5 +311,11 @@ private:																				\
 	underlying value;																	\
 };																						\
 
+#define ENUM_X_FWD_DCL(x, enumName) x enumName
+
+#define ENUM_CLASS_FWD_DCL(enumName) ENUM_X_FWD_DCL(class, enumName)
 #define ENUM_CLASS(enumName, underlying, ...) ENUM_X(class, enumName, underlying, __VA_ARGS__)
+
+#define ENUM_STRUCT_FWD_DCL(enumName) ENUM_X_FWD_DCL(struct, enumName)
 #define ENUM_STRUCT(enumName, underlying, ...) ENUM_X(struct, enumName, underlying, __VA_ARGS__)
+
