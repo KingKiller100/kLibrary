@@ -2,6 +2,8 @@
 
 #include "../HelperMacros.hpp"
 
+#include "../TypeTraits/TemplateTraits.hpp"
+
 #include <cstdint>
 #include <type_traits>
 
