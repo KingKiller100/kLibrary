@@ -100,7 +100,7 @@ namespace kTest::utility
 			return failState;
 		}
 
-		static constexpr InternalEnum_t FromString( const std::string_view& search )
+		static constexpr TestResults FromString( const std::string_view& search )
 		{
 			return FromStringImpl( search.data(), 0 );
 		}

@@ -70,7 +70,7 @@ namespace kmaths
 		template<class T>
 		USE_RESULT constexpr T One(T&&) noexcept
 		{
-			return One<klib::type_trait::Make_Simple<T>>();
+			return One<klib::type_trait::Simplify<T>>();
 		}
 
 		template<class T>
