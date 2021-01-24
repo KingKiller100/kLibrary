@@ -20,11 +20,14 @@ namespace klib
 
 	namespace kLogs
 	{
-		std::mutex g_kConsoleLoggerMutex;
+		namespace
+		{
+			std::mutex g_kConsoleLoggerMutex;
+		}
 
-		ConsoleLogger::ConsoleLogger(std::string* newName)
+		ConsoleLogger::ConsoleLogger(std::string* pName)
 			: active(false)
-			, name(newName)
+			, name(pName)
 			, consoleColour(ConsoleColour::WHITE)
 			, enableDebugStringOutput(false)
 		{

@@ -4,10 +4,6 @@
 
 #include "../../Misc/kConsoleColour.hpp"
 
-#ifdef KLOG_OPT_DBG_STR
-#	define KLOG_OPT_DBG_STR_ENABLED
-#endif
-
 namespace klib
 {
 	namespace kLogs
@@ -19,7 +15,7 @@ namespace klib
 		class ConsoleLogger final : public LogDestWithFormatSpecifier
 		{
 		public:
-			ConsoleLogger(std::string* newName);
+			ConsoleLogger(std::string* pName);
 			~ConsoleLogger() noexcept;
 
 			void SetName(std::string* newName) override;
