@@ -31,7 +31,7 @@ namespace klib
 			LogDestWithFormatSpecifier::SetFormat("&t", LogLevel::RAW);
 
 			LogDestWithFormatSpecifier::SetFormat(
-				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
+				"[&hh:&zz:&ss:&ccc] [&n] [&p]: &t"
 				, LogLevel::BNR);
 
 			LogDestWithFormatSpecifier::SetFormat(
