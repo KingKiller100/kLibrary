@@ -300,7 +300,7 @@ namespace kmaths
 		if (max <= min)
 			throw klib::kDebug::MathsLogicError("Max value cannot be less than or equal to min value");
 
-		return  static_cast<T1>(Min(max, Max(value, min)));
+		return Min(static_cast<T1>(max), Max(value, min));
 	}
 
 	template<typename T>
