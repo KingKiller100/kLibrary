@@ -89,6 +89,46 @@ namespace kmaths
 	}
 
 	template<typename T>
+	USE_RESULT constexpr TransformMatrix<T> Perspective_ZO(const ZAxisDirection zDir, T fov, T aspectRatio, T zNear, T zFar) noexcept
+	{
+		constexpr auto one = constants::One<T>();
+		constexpr auto two = constants::Two<T>();
+
+		const auto halfFov = fov / two;
+		const T tanHalfFov = Tan(halfFov);
+
+		const auto denom23 = (zDir == ZAxisDirection::LEFT_HAND)
+			? (zFar - zNear)
+			: (zNear - zFar);
+		
+		TransformMatrix<T> mat;
+		mat[0][0] = constants::OneOver<T>(aspectRatio * tanHalfFov);
+		mat[1][1] = constants::OneOver<T>(tanHalfFov);
+		mat[2][2] =  zFar / denom23;
+		mat[2][3] = (zDir == ZAxisDirection::LEFT_HAND) ? one : -one;
+		mat[3][2] = -(zFar * zNear) / (zFar - zNear);
+		return mat;
+ 	}
+
+	template<typename T>
+	USE_RESULT constexpr TransformMatrix<T> Perspective_NO(const ZAxisDirection zDir, T fov, T aspectRatio, T zNear, T zFar) noexcept
+	{
+		constexpr auto one = constants::One<T>();
+		constexpr auto two = constants::Two<T>();
+
+		const auto halfFov = fov / two;
+		const T tanHalfFov = Tan(halfFov);
+				
+		TransformMatrix<T> mat;
+		mat[0][0] = constants::OneOver<T>(aspectRatio * tanHalfFov);
+		mat[1][1] = constants::OneOver<T>(tanHalfFov);
+		mat[2][2] =  (zFar + zNear) / (zFar - zNear);
+		mat[2][3] = (zDir == ZAxisDirection::LEFT_HAND) ? one : -one;
+		mat[3][2] = -(two * zFar * zNear) / (zFar - zNear);
+		return mat;
+ 	}
+	
+	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Translate(const TransformMatrix<T>& m, const Vector3<T>& v)
 	{
 		TransformMatrix<T> translate = m;
