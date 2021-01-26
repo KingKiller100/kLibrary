@@ -19,7 +19,7 @@ namespace kmaths
 		const auto int_n_over_b = CAST(BigInt_t, num_over_base);
 
 		if (num_over_base == int_n_over_b)
-			return constants::Zero<T>();
+			return constants::Zero<T>;
 
 		const auto closestMultiplier = int_n_over_b * b;
 		const auto rem = n - closestMultiplier;

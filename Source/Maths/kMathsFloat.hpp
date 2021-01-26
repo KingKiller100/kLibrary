@@ -64,14 +64,14 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr bool IsInfPos(T x)
 	{
-		constexpr auto inf = constants::Infinity<T>();
+		constexpr auto inf = constants::Infinity<T>;
 		return x == inf;
 	}
 
 	template<typename T>
 	USE_RESULT constexpr bool IsInfNeg(T x)
 	{
-		constexpr auto infNeg = -constants::Infinity<T>();
+		constexpr auto infNeg = -constants::Infinity<T>;
 		return x == infNeg;
 	}
 

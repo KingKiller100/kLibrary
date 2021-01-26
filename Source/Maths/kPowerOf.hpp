@@ -27,13 +27,7 @@ namespace kmaths
 			return CAST(T, std::pow<T, T>(base, power));
 #else
 			if (power == 0)
-				return constants::One<T>();
-			// if (power == 1)
-			// 	return base;
-			// if (power == 2)
-			// 	return Square(base);
-			// if (power == 3)
-			// 	return Cube(base);
+				return constants::One<T>;
 
 			const T temp = PowerOfImpl(base, power >> 1);
 

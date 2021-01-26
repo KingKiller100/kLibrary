@@ -35,8 +35,8 @@ namespace kmaths
 		template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>
 		USE_RESULT constexpr T SineImpl(T x, const size_t n) noexcept
 		{
-			constexpr auto one = constants::One<constants::Accuracy_t>();
-			constexpr auto two = constants::Two<T>();
+			constexpr auto one = constants::One<constants::Accuracy_t>;
+			constexpr auto two = constants::Two<T>;
 			constexpr auto tau = constants::Tau<T>;
 
 			x = Modulus<T>(x, tau);

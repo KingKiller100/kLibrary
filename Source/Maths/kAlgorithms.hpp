@@ -40,7 +40,7 @@ namespace kmaths
 			if (IsNegative(square))
 				throw klib::kDebug::NoRealRootError(square, 2);
 
-			if (square == constants::ZeroPointFive<T>())
+			if (square == constants::ZeroPointFive<T>)
 				return constants::Sqrt_1_Over_2<T>;
 
 			if (square == 2)
@@ -66,7 +66,7 @@ namespace kmaths
 				{
 					estimate = square;
 					do {
-						estimate *= constants::ZeroPointFive<Accuracy_t>();
+						estimate *= constants::ZeroPointFive<Accuracy_t>;
 					} while (estimate * estimate > square);
 				}
 				return estimate;
@@ -78,7 +78,7 @@ namespace kmaths
 				return static_cast<T>(start);
 
 			Accuracy_t result = start;
-			Accuracy_t prevValue[2] = { constants::MinusOne<Accuracy_t>(), constants::MinusOne<Accuracy_t>() };
+			Accuracy_t prevValue[2] = { constants::MinusOne<Accuracy_t>, constants::MinusOne<Accuracy_t> };
 
 			const auto checkResultIsUnique = [&result, &prevValue]() {
 				for (auto& prev : prevValue)
@@ -108,9 +108,9 @@ namespace kmaths
 		USE_RESULT constexpr ReturnType RootImpl(T num, size_t root)
 		{
 			using namespace constants;
-			constexpr auto one = constants::One<Accuracy_t>();
+			constexpr auto one = constants::One<Accuracy_t>;
 			constexpr auto minusOne = -one;
-			constexpr auto zeroPointOne = constants::ZeroPointOne<Accuracy_t>();
+			constexpr auto zeroPointOne = constants::ZeroPointOne<Accuracy_t>;
 			constexpr auto minusZeroPointOne = -zeroPointOne;
 
 			const auto oneOverRoot = constants::OneOver<Accuracy_t>(root);
@@ -134,7 +134,7 @@ namespace kmaths
 
 			const auto chooseStartNumber = [&](auto number) -> Accuracy_t
 			{
-				constexpr auto ZeroPointFive = constants::ZeroPointFive<Accuracy_t>();
+				constexpr auto ZeroPointFive = constants::ZeroPointFive<Accuracy_t>;
 
 				auto maxIterations = 0;
 				if _CONSTEXPR_IF(std::is_same_v<T, float>)
@@ -229,16 +229,16 @@ namespace kmaths
 	USE_RESULT constexpr Fraction RealToFraction(T x, const uint8_t dpAccuracy = 10) noexcept
 	{
 		using namespace kmaths::secret::impl;
-		constexpr auto maxIterations = BigInt_t(1e6);
+		constexpr auto maxIterations = static_cast<BigInt_t>(1e6);
 		BigInt_t iter = 0;
 
 		const auto isNegative = x < 0;
 		if (isNegative) x = -x;
 
-		if (Fraction::Numerator_Value_Type(x) == x)
-			return { Fraction::Numerator_Value_Type(x), 1, isNegative, false };
+		if (static_cast<Fraction::Numerator_Value_Type>(x) == x)
+			return { static_cast<Fraction::Numerator_Value_Type>(x), 1, isNegative, false };
 
-		const T error = PowerOfImpl(constants::ZeroPointOne<T>(), Min(dpAccuracy, Max_Decimal_Precision_V<T>));
+		const T error = PowerOfImpl(constants::ZeroPointOne<T>, Min(dpAccuracy, Max_Decimal_Precision_V<T>));
 
 		const T x0 = x;
 		size_t a(0);
@@ -419,8 +419,8 @@ namespace kmaths
 		using namespace kmaths::secret::impl;
 		using constants::Accuracy_t;
 
-		constexpr auto one = constants::One<T>();
-		constexpr auto maxIter = uint16_t(2.048e3);
+		constexpr auto one = constants::One<T>;
+		constexpr auto maxIter = static_cast<uint16_t>(2.048e3);
 
 		if (0.01 < x && x < 100)
 		{
@@ -509,9 +509,9 @@ namespace kmaths
 	{
 		using namespace constants;
 
-		if (IsNegative(z)) return Zero<T>();
+		if (IsNegative(z)) return Zero<T>;
 
-		constexpr auto gamma = constants::Gamma<Accuracy_t>;
+		constexpr auto gamma = constants::EulerGamma<Accuracy_t>;
 
 		if (z < 0.001)
 			return CAST(T, constants::OneOver<Accuracy_t>(z * (1.0l + gamma * z)));
@@ -602,7 +602,7 @@ namespace kmaths
 		if (z > 171.624)
 		{
 			// Correct answer too large to display. Force +infinity.
-			constexpr T inf = constants::Infinity<T>();
+			constexpr T inf = constants::Infinity<T>;
 			return inf;
 		}
 

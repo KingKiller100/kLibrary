@@ -326,18 +326,18 @@ namespace kTest::maths
 	bool AlgorithmsTester::ConstantsTest()
 	{
 		{
-			constexpr auto vec = constants::One<Vector3d>();
+			constexpr auto vec = constants::One<Vector3d>;
 			VERIFY_COMPILE_TIME(vec.X() == 1.0 && vec.Y() == 1.0 && vec.Z() == 1.0);
 		}
 
 		{
-			constexpr auto x = constants::One<float>();
+			constexpr auto x = constants::One<float>;
 			constexpr auto answer = std::is_same_v<klib::type_trait::Simplify_t<decltype(x)>, float>;
 			VERIFY_COMPILE_TIME(answer);
 		}
 
 		{
-			const auto vec = constants::One(Vector2f());
+			const auto vec = constants::One<Vector2f>;
 			VERIFY(vec.X() == 1.0 && vec.Y() == 1.0);
 		}
 

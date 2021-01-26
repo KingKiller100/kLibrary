@@ -11,7 +11,7 @@ namespace kmaths
 		if (value == 0)
 			return 0;
 
-		const auto epsilon = CAST(T, constants::Epsilon<T>() * magnitude);
+		const auto epsilon = CAST(T, constants::Epsilon<T> * magnitude);
 		const auto integer = Floor(value);
 		const auto decimals = GetDecimals(value);
 		return (Abs(decimals) <= epsilon) ? integer : value;

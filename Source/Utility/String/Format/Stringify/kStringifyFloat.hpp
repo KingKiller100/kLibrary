@@ -57,7 +57,7 @@ namespace klib::kString::stringify
 			}
 			else
 			{
-				if (GetDecimals(val) >= constants::ZeroPointFive<T>())
+				if (GetDecimals(val) >= constants::ZeroPointFive<T>)
 					++integers;
 			}
 
@@ -110,7 +110,7 @@ namespace klib::kString::stringify
 				}
 				else // Integer == significant figures
 				{
-					if (breakdown.decimals >= constants::ZeroPointFive<T>())
+					if (breakdown.decimals >= constants::ZeroPointFive<T>)
 					{
 						++breakdown.integers;
 					}

@@ -17,7 +17,7 @@ namespace kmaths
 		// Fundamentals
 		namespace fundamentals
 		{
-			template<typename T = Accuracy_t> constexpr T Gamma = static_cast<T>(0.57721566490153l); // Euler's gamma constant
+			template<typename T = Accuracy_t> constexpr T EulerGamma = static_cast<T>(0.57721566490153l); // Euler's gamma constant
 			template<typename T = Accuracy_t> constexpr T Log_Tau_Over_2 = static_cast<T>(0.91893853320467l);
 			template<typename T = Accuracy_t> constexpr T E = static_cast<T>(2.71828182845905l);
 			template<typename T = Accuracy_t> constexpr T Log_N = static_cast<T>(0.57721566490153l);

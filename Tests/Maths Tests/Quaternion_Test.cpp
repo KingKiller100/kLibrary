@@ -18,8 +18,8 @@ namespace kTest::maths
 
 	template<typename T>
 	constexpr auto InRangeZero = [](const T val) -> bool {
-		constexpr auto one = constants::One<T>();
-		constexpr auto epsilon = constants::Epsilon<T>();
+		constexpr auto one = constants::One<T>;
+		constexpr auto epsilon = constants::Epsilon<T>;
 		constexpr auto ub = one + epsilon;
 		constexpr auto lb = one - epsilon;
 

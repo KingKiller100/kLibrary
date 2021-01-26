@@ -88,7 +88,7 @@ namespace kmaths
 
 		USE_RESULT constexpr Vector Normalize() const noexcept
 		{
-			constexpr auto epsilon = constants::Epsilon<Type>();
+			constexpr auto epsilon = constants::Epsilon<Type>;
 
 			const auto magSQ = MagnitudeSQ();
 
@@ -139,12 +139,12 @@ namespace kmaths
 		// Sets all values of the vector to zero
 		constexpr void Zero() noexcept
 		{
-			x = y = Type();
+			x = y = constants::Zero<Type>;
 		}
 
 		USE_RESULT constexpr bool IsZero() const noexcept
 		{
-			constexpr auto zero = constants::Zero<Type>();
+			constexpr auto zero = constants::Zero<Type>;
 			return (x == zero && y == zero);
 		}
 
