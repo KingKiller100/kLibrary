@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../HelperMacros.hpp"
-#include "../TypeTraits/TemplateTraits.hpp"
 
 #define _USE_MATH_DEFINES
 #include <corecrt_math_defines.h>
@@ -14,136 +13,63 @@ namespace kmaths
 	namespace constants
 	{
 		using Accuracy_t = long double;
-		template<typename T = Accuracy_t> constexpr T GAMMA                = static_cast<T>(0.57721566490153l); // Euler's gamma constant
-		template<typename T = Accuracy_t> constexpr T LOG2PI_OVER_2        = static_cast<T>(0.91893853320467l);
-		template<typename T = Accuracy_t> constexpr T E                    = static_cast<T>(2.71828182845905l);
-		template<typename T = Accuracy_t> constexpr T LOG_N                = static_cast<T>(0.57721566490153l);
-		template<typename T = Accuracy_t> constexpr T LOG2E                = static_cast<T>(1.44269504088896l);
-		template<typename T = Accuracy_t> constexpr T LOG10E               = static_cast<T>(0.43429448190325l);
-		template<typename T = Accuracy_t> constexpr T LN2                  = static_cast<T>(0.69314718055995l);
-		template<typename T = Accuracy_t> constexpr T LN10                 = static_cast<T>(2.30258509299405l);
-		template<typename T = Accuracy_t> constexpr T PI                   = static_cast<T>(M_PI);
-		template<typename T = Accuracy_t> constexpr T PI_OVER_2            = static_cast<T>(PI<Accuracy_t> * static_cast<Accuracy_t>(0.5l)); // 1.57079632679490l;
-		template<typename T = Accuracy_t> constexpr T PI_OVER_4            = static_cast<T>(PI<Accuracy_t> * static_cast<Accuracy_t>(0.25l)); // 0.78539816339745l;
-		template<typename T = Accuracy_t> constexpr T TAU                  = static_cast<T>(PI<Accuracy_t> * static_cast<Accuracy_t>(2.l));
-		template<typename T = Accuracy_t> constexpr T ROOT2                = static_cast<T>(1.41421356237310l);
-		template<typename T = Accuracy_t> constexpr T SQRT_1_OVER_2        = static_cast<T>(0.70710678118655l);
-		template<typename T = Accuracy_t> constexpr T GOLDEN_RATIO         = static_cast<T>(1.61803398874989l);
-		template<typename T = Accuracy_t> constexpr T INVERSE_GOLDEN_RATIO = static_cast<T>(static_cast<Accuracy_t>(1) / GOLDEN_RATIO<Accuracy_t>);
 
-		template<typename T>
-		USE_RESULT constexpr T RadiansToDegrees() noexcept
+		// Fundamentals
+		namespace fundamentals
 		{
-			return (CAST(T, 360.l) / TAU<T>);
+			template<typename T = Accuracy_t> constexpr T Gamma = static_cast<T>(0.57721566490153l); // Euler's gamma constant
+			template<typename T = Accuracy_t> constexpr T Log_Tau_Over_2 = static_cast<T>(0.91893853320467l);
+			template<typename T = Accuracy_t> constexpr T E = static_cast<T>(2.71828182845905l);
+			template<typename T = Accuracy_t> constexpr T Log_N = static_cast<T>(0.57721566490153l);
+			template<typename T = Accuracy_t> constexpr T Log_B2_E = static_cast<T>(1.44269504088896l);
+			template<typename T = Accuracy_t> constexpr T Log_B10_E = static_cast<T>(0.43429448190325l);
+			template<typename T = Accuracy_t> constexpr T Ln2 = static_cast<T>(0.69314718055995l);
+			template<typename T = Accuracy_t> constexpr T Ln10 = static_cast<T>(2.30258509299405l);
+			template<typename T = Accuracy_t> constexpr T Pi = static_cast<T>(M_PI);
+			template<typename T = Accuracy_t> constexpr T Pi_Over_2 = static_cast<T>(Pi<Accuracy_t> *static_cast<Accuracy_t>(0.5l)); // 1.57079632679490l;
+			template<typename T = Accuracy_t> constexpr T Pi_Over_4 = static_cast<T>(Pi<Accuracy_t> *static_cast<Accuracy_t>(0.25l)); // 0.78539816339745l;
+			template<typename T = Accuracy_t> constexpr T Tau = static_cast<T>(Pi<Accuracy_t> *static_cast<Accuracy_t>(2.l));
+			template<typename T = Accuracy_t> constexpr T Root2 = static_cast<T>(1.41421356237310l);
+			template<typename T = Accuracy_t> constexpr T Sqrt_1_Over_2 = static_cast<T>(0.70710678118655l);
+			template<typename T = Accuracy_t> constexpr T GoldenRatio = static_cast<T>(1.61803398874989l);
+			template<typename T = Accuracy_t> constexpr T InverseGoldenRatio = static_cast<T>(static_cast<Accuracy_t>(1) / GoldenRatio<Accuracy_t>);
+
+			template<typename T = Accuracy_t> constexpr T RadsToDegs = static_cast<T>(360.l) / Tau<T>;
+			template<typename T = Accuracy_t> constexpr T DegsToRads = Tau<T> / static_cast<T>(360.l);
 		}
 
-		template<typename T>
-		USE_RESULT constexpr T DegreesToRadians() noexcept
+		// Numbers
+		namespace numbers
 		{
-			return (TAU<T> / CAST(T, 360.l));
+			template<typename T = Accuracy_t> constexpr T Infinity = std::numeric_limits<T>::infinity();
+			template<typename T = Accuracy_t> constexpr T Epsilon = std::numeric_limits<T>::epsilon();
+
+			template<typename T = Accuracy_t> constexpr T MinusOne = T(-1);
+			template<typename T = Accuracy_t> constexpr T Zero = T(0);
+			template<typename T = Accuracy_t> constexpr T ZeroPointOne = T(0.1l);
+			template<typename T = Accuracy_t> constexpr T ZeroPointFive = T(0.5l);
+			template<typename T = Accuracy_t> constexpr T One = T(1);
+			template<typename T = Accuracy_t> constexpr T Two = T(2);
 		}
 
-		template<class T>
-		USE_RESULT constexpr T Infinity() noexcept
+		namespace operators
 		{
-			return std::numeric_limits<T>::infinity();
+			template<class ReturnType, class T>
+			USE_RESULT constexpr ReturnType OneOver(T value) noexcept
+			{
+				return numbers::One<ReturnType> / value;
+			}
+
+			template<class ReturnType, class T, class U>
+			USE_RESULT constexpr ReturnType Divide(T&& x, U&& y) noexcept
+			{
+				return ReturnType(std::forward<T>(x)) / std::forward<U>(y);
+			}
 		}
 
-		template<class T>
-		USE_RESULT constexpr T Epsilon() noexcept
-		{
-			return std::numeric_limits<T>::epsilon();
-		}
-
-		template<class T>
-		USE_RESULT constexpr T Zero() noexcept
-		{
-			return T(0);
-		}
-
-		template<class T>
-		USE_RESULT constexpr T One() noexcept
-		{
-			return T(1);
-		}
-
-		template<class T>
-		USE_RESULT constexpr T One(T&&) noexcept
-		{
-			return One<klib::type_trait::Simplify_t<T>>();
-		}
-
-		template<class T>
-		USE_RESULT constexpr T MinusOne() noexcept
-		{
-			return T(-1);
-		}
-
-		template<class T>
-		USE_RESULT constexpr T MinusOne(T&&) noexcept
-		{
-			return MinusOne<klib::type_trait::Simplify_t<T>>();
-		}
-
-		template<class T>
-		USE_RESULT constexpr T Two() noexcept
-		{
-			return T(2);
-		}
-
-		template<class T>
-		USE_RESULT constexpr T Two(T&&) noexcept
-		{
-			return Two<klib::type_trait::Simplify_t<T>>();
-		}
-
-		template<class T>
-		USE_RESULT constexpr T ZeroPointOne() noexcept
-		{
-			return T(0.1);
-		}
-
-		template<class T>
-		USE_RESULT constexpr T ZeroPointOne(T&&) noexcept
-		{
-			return ZeroPointOne<klib::type_trait::Simplify_t<T>>();
-		}
-
-		template<class T>
-		USE_RESULT constexpr T ZeroPointFive() noexcept
-		{
-			return T(0.5);
-		}
-
-		template<class T>
-		USE_RESULT constexpr T ZeroPointFive(T&&) noexcept
-		{
-			return ZeroPointFive<T>();
-		}
-
-		template<class T>
-		USE_RESULT constexpr T OnePointFive() noexcept
-		{
-			return One<T>() + ZeroPointFive<T>();
-		}
-
-		template<class T>
-		USE_RESULT constexpr T OnePointFive(T&&) noexcept
-		{
-			return OnePointFive<klib::type_trait::Simplify_t<T>>();
-		}
-
-		template<class ReturnType, class T>
-		USE_RESULT constexpr ReturnType OneOver(T value) noexcept
-		{
-			return One<ReturnType>() / value;
-		}
-
-		template<class ReturnType, class T, class U>
-		USE_RESULT constexpr ReturnType Divide(T&& x, U&& y) noexcept
-		{
-			return ReturnType(std::forward<T>(x)) / std::forward<U>(y);
-		}
+		using namespace fundamentals;
+		using namespace numbers;
+		using namespace operators;
 	}
 
 #ifdef KLIB_SHORT_NAMESPACE

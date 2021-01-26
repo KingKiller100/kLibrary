@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "kMathsConstants.hpp"
 #include "kMathsEpsilon.hpp"
+#include "kMathsTheta.hpp"
 
 #include "../HelperMacros.hpp"
 
@@ -9,17 +10,23 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr T ToDegrees(const T radians) noexcept
 	{
-		constexpr auto convertR2D = constants::RadiansToDegrees<T>();
+		constexpr auto convertR2D = constants::RadsToDegs<T>;
 		return CAST(T, radians * convertR2D);
 	}
 
 	template<typename T>
 	USE_RESULT constexpr T ToRadians(const T degrees) noexcept
 	{
-		constexpr auto convertD2R = constants::DegreesToRadians<constants::Accuracy_t>();
+		constexpr auto convertD2R = constants::DegsToRads<constants::Accuracy_t>;
 		return CAST(T, degrees * convertD2R);
 	}
 
+	template<typename T>
+	USE_RESULT constexpr T ConvertAngle(T angle, Theta theta) noexcept
+	{
+		return (theta == Theta::RADIANS) ? ToDegrees(angle) : ToRadians(angle);
+	}
+	
 	namespace secret::impl
 	{
 		constexpr size_t epsilon_magnitude = 2;
@@ -30,7 +37,7 @@ namespace kmaths
 		{
 			constexpr auto one = constants::One<constants::Accuracy_t>();
 			constexpr auto two = constants::Two<T>();
-			constexpr auto tau = constants::TAU<T>;
+			constexpr auto tau = constants::Tau<T>;
 
 			x = Modulus<T>(x, tau);
 
@@ -65,7 +72,7 @@ namespace kmaths
 	{
 		using namespace secret::impl;
 
-		const auto xf = static_cast<ClosestFloat_t<T>>(x) + constants::PI_OVER_2<ClosestFloat_t<T>>;
+		const auto xf = static_cast<ClosestFloat_t<T>>(x) + constants::Pi_Over_2<ClosestFloat_t<T>>;
 		const auto cosine_x = HandleEpsilon<ClosestFloat_t<T>>(SineImpl<ClosestFloat_t<T>>(xf, n), epsilon_magnitude);
 		return static_cast<T>(cosine_x);
 	}

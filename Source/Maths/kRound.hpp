@@ -19,7 +19,7 @@ namespace kmaths
 
 		const auto accuracy = PowerOfImpl<Accuracy_t>(CAST(Accuracy_t, 10), decimalPoints);
 		const auto accuracyInverse = constants::OneOver<Accuracy_t>(accuracy);
-		const auto dpShifts = constants::ZeroPointFive<Accuracy_t>() * accuracyInverse;
+		const auto dpShifts = constants::ZeroPointFive<> * accuracyInverse;
 
 		const auto valuePlusDpsByAcc = (CAST(constants::Accuracy_t, value) + dpShifts) * accuracy;
 		const auto sigFigs = Floor(valuePlusDpsByAcc); // significant figures

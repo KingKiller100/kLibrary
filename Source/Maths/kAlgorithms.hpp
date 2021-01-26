@@ -41,10 +41,10 @@ namespace kmaths
 				throw klib::kDebug::NoRealRootError(square, 2);
 
 			if (square == constants::ZeroPointFive<T>())
-				return constants::SQRT_1_OVER_2<T>;
+				return constants::Sqrt_1_Over_2<T>;
 
 			if (square == 2)
-				return constants::ROOT2<T>;
+				return constants::Root2<T>;
 
 			const auto chooseStartValueFunc = [=]() -> Accuracy_t // Utilizes binary search if given square is between 0 and lookUpMap's size squared
 			{
@@ -452,12 +452,12 @@ namespace kmaths
 	{
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 		{
-			constexpr auto ln10 = constants::LN10<T>;
+			constexpr auto ln10 = constants::Ln10<T>;
 			return Round<T>(NaturalLogarithm<T>(x) / ln10, Max_Decimal_Precision_V<T>);
 		}
 		else
 		{
-			constexpr auto ln10 = constants::LN10<float>;
+			constexpr auto ln10 = constants::Ln10<float>;
 			const auto result = Round<float>(NaturalLogarithm<float>(CAST(float, x)) / ln10, Max_Decimal_Precision_V<T>);
 			return CAST(T, result);
 		}
@@ -468,12 +468,12 @@ namespace kmaths
 	{
 		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
 		{
-			constexpr auto ln2 = constants::LN2<T>;
+			constexpr auto ln2 = constants::Ln2<T>;
 			return Round<T>(NaturalLogarithm<T>(x) / ln2, Max_Decimal_Precision_V<T>);
 		}
 		else
 		{
-			constexpr auto ln2 = constants::LN2<float>;
+			constexpr auto ln2 = constants::Ln2<float>;
 			const auto result = Round<float>(NaturalLogarithm<float>(CAST(float, x)) / ln2, Max_Decimal_Precision_V<T>);
 			return CAST(T, result);
 		}
@@ -511,7 +511,7 @@ namespace kmaths
 
 		if (IsNegative(z)) return Zero<T>();
 
-		constexpr auto gamma = constants::GAMMA<Accuracy_t>;
+		constexpr auto gamma = constants::Gamma<Accuracy_t>;
 
 		if (z < 0.001)
 			return CAST(T, constants::OneOver<Accuracy_t>(z * (1.0l + gamma * z)));
@@ -613,7 +613,7 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr T LogGamma(T z)
 	{
-		constexpr auto halfLogTwoPi = constants::LOG2PI_OVER_2; // 0.91893853320467274178032973640562;
+		constexpr auto halfLogTwoPi = constants::Log_Tau_Over_2; // 0.91893853320467274178032973640562;
 
 		if (z < 12.0)
 		{

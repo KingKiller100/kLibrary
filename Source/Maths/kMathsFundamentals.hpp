@@ -127,7 +127,7 @@ namespace kmaths
 				return x;
 
 			if _CONSTEXPR_IF(std::is_integral_v<T>)
-				return ~x + constants::One<T>();
+				return ~x + constants::One<T>;
 			else
 				return -x;
 		}
@@ -137,8 +137,8 @@ namespace kmaths
 	USE_RESULT constexpr bool IsDecimal(T value) noexcept
 	{
 		using namespace constants;
-		constexpr auto one = One<T>();
-		constexpr auto minusOne = MinusOne<T>();
+		constexpr auto one = One<T>;
+		constexpr auto minusOne = MinusOne<T>;
 
 		if (ApproximatelyZero<T>(value))
 			return false;
@@ -176,7 +176,7 @@ namespace kmaths
 				return value;
 
 			const auto integer = CAST(T, CAST(BigInt_t, value));
-			return integer - constants::One<T>();
+			return integer - constants::One<T>;
 		}
 		else
 		{

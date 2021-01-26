@@ -67,7 +67,7 @@ namespace kmaths
 		*/
 		explicit constexpr Quaternion(T rotation = CAST(T, 0), const T x = CAST(T, 0), const T y = CAST(T, 0), const T z = CAST(T, 0), const Theta thetaType = Theta::RADIANS) noexcept
 		{
-			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
+			constexpr auto zeroPointFive = constants::ZeroPointFive<T>;
 			
 			const auto rads = (thetaType == Theta::DEGREES) ? ToRadians(rotation) : rotation;
 			const auto halfRads = rads * zeroPointFive;
@@ -81,7 +81,7 @@ namespace kmaths
 		// Vector must be normalized
 		explicit constexpr Quaternion(const T rotation, Vector3<T> vec, const Theta angleType = Theta::RADIANS) noexcept
 		{
-			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
+			constexpr auto zeroPointFive = constants::ZeroPointFive<T>;
 			const auto rads = (angleType == Theta::DEGREES) ? ToRadians(rotation) : rotation;
 			const auto halfRads = rads * zeroPointFive;
 
@@ -91,7 +91,6 @@ namespace kmaths
 			w = Cosine(halfRads);
 			v = vec * Sine(halfRads);
 		}
-
 
 		USE_RESULT constexpr T MagnitudeSQ() const noexcept
 		{
@@ -108,9 +107,9 @@ namespace kmaths
 
 			// Check for zero length quaternion, and use the no-rotation
 			// quaternion in that case.
-			if (magSQ <= constants::Epsilon<T>())
+			if (magSQ <= constants::Epsilon<T>)
 			{
-				w = constants::One<T>();
+				w = constants::One<T>;
 				return;
 			}
 
@@ -149,7 +148,7 @@ namespace kmaths
 		*/
 		constexpr void AddScaledVector(const Vector3<T>& vector, const Vector3<T>& scale) noexcept
 		{
-			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
+			constexpr auto zeroPointFive = constants::ZeroPointFive<T>;
 			const auto scaledVector = vector * scale;
 
 			Quaternion q(0,
@@ -177,9 +176,10 @@ namespace kmaths
 		}
 
 		// Converts Euler angles to quaternion angles
+		// Assumes radians
 		USE_RESULT static constexpr Quaternion EulerToQuaternions(const T pitch, const T roll, const T yaw) noexcept
 		{
-			constexpr auto zeroPointFive = constants::ZeroPointFive<T>();
+			constexpr auto zeroPointFive = constants::ZeroPointFive<T>;
 
 			const T cYaw   = Cosine(yaw * zeroPointFive);
 			const T sYaw   = Sine(yaw * zeroPointFive);
@@ -206,7 +206,7 @@ namespace kmaths
 		{
 			const auto rads = (angleType == Theta::DEGREES) ? ToRadians(rotation) : rotation;
 			
-			const auto halfA = rads * constants::ZeroPointFive<T>();
+			const auto halfA = rads * constants::ZeroPointFive<T>;
 			const auto c = Cosine(halfA);
 			const auto s = Sine(halfA);
 
@@ -227,8 +227,8 @@ namespace kmaths
 		 */
 		USE_RESULT constexpr TransformMatrix<T> CalculateTransformMatrix(const Vector3<T>& position) const noexcept
 		{
-			constexpr auto one = constants::One<T>();
-			constexpr auto two = CAST(T, 2);
+			constexpr auto one = constants::One<T>;
+			constexpr auto two = constants::Two<T>;
 
 			const auto x = v[0];
 			const auto y = v[1];
@@ -279,7 +279,7 @@ namespace kmaths
 
 		USE_RESULT constexpr Vector<T, 3> operator *(const Vector<T, 3>& vec) const noexcept
 		{
-			constexpr auto two = CAST(T, 2);
+			constexpr auto two = constants::Two<T>;
 			const auto crossProduct = v.CrossProduct(vec);
 			return vec + (crossProduct * (two * w)) + v.CrossProduct(crossProduct) * two;
 		}
@@ -325,10 +325,9 @@ namespace kmaths
 		}
 
 	public:
-		T w = constants::One<T>();	// Holds the real component of the quaternion.
+		T w = constants::One<T>;	// Holds the real component of the quaternion.
 		Vector3<T> v{};	// Holds 3 component vector of complex components of the quaternion.
 	};
-
 
 	using Quaternionf = Quaternion<float>;
 	using Quaterniond = Quaternion<double>;

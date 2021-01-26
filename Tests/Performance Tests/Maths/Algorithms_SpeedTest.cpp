@@ -217,7 +217,7 @@ namespace kTest::performance::maths
 
 	void AlgorithmsSpeedTest::SineTest()
 	{
-		constexpr auto pi_over_4 = kmaths::constants::PI_OVER_4<kmaths::constants::Accuracy_t>;
+		constexpr auto pi_over_4 = kmaths::constants::Pi_Over_4<kmaths::constants::Accuracy_t>;
 
 		const std::vector<std::string_view> participants = { "kmaths::Sine", "std::sin" };
 		SetUpParticipants(participants);
@@ -239,7 +239,7 @@ namespace kTest::performance::maths
 
 	void AlgorithmsSpeedTest::CosineTest()
 	{
-		constexpr auto pi_over_4 = kmaths::constants::PI_OVER_4<Accuracy_t>;
+		constexpr auto pi_over_4 = kmaths::constants::Pi_Over_4<Accuracy_t>;
 
 		const std::vector<std::string_view> participants = { "kmaths::Cosine", "std::cos" };
 		SetUpParticipants(participants);
@@ -260,7 +260,7 @@ namespace kTest::performance::maths
 
 	void AlgorithmsSpeedTest::TanTest()
 	{
-		constexpr auto pi = kmaths::constants::PI<Accuracy_t>;
+		constexpr auto pi = kmaths::constants::Pi<Accuracy_t>;
 
 		const std::vector<std::string_view> participants = { "kmaths::Tan", "std::tan" };
 		SetUpParticipants(participants);

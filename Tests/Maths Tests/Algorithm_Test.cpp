@@ -96,7 +96,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto x = constants::PI_OVER_4<Accuracy_t>;
+			constexpr auto x = constants::Pi_Over_4<Accuracy_t>;
 			const auto result = Sine(x);
 			const auto expected = std::sin(x);
 
@@ -107,7 +107,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto x = constants::PI_OVER_2<Accuracy_t>;
+			constexpr auto x = constants::Pi_Over_2<Accuracy_t>;
 			const auto result = Sine(x);
 			const auto expected = std::sin(x);
 
@@ -118,7 +118,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto x = 3 * constants::PI_OVER_4<Accuracy_t>;
+			constexpr auto x = 3 * constants::Pi_Over_4<Accuracy_t>;
 			const auto result = Sine(x);
 			const auto expected = std::sin(x);
 
@@ -140,7 +140,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto x = 3 * constants::PI_OVER_2<Accuracy_t>;
+			constexpr auto x = 3 * constants::Pi_Over_2<Accuracy_t>;
 			const auto result = Sine(x);
 			const auto expected = std::sin(x);
 
@@ -151,7 +151,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto x = constants::TAU<Accuracy_t>;
+			constexpr auto x = constants::Tau<Accuracy_t>;
 			const auto result = Sine(x);
 			const auto expected = std::sin(x);
 
@@ -179,7 +179,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto x = constants::PI_OVER_4<Accuracy_t>;
+			constexpr auto x = constants::Pi_Over_4<Accuracy_t>;
 			const auto result = Cosine(x);
 			const auto expected = std::cos(x);
 
@@ -190,7 +190,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto x = constants::PI_OVER_2<Accuracy_t>;
+			constexpr auto x = constants::Pi_Over_2<Accuracy_t>;
 			const auto result = Cosine(x, 5000);
 			const auto expected = std::cos(x);
 
@@ -201,7 +201,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto x = 3 * constants::PI_OVER_2<Accuracy_t>;
+			constexpr auto x = 3 * constants::Pi_Over_2<Accuracy_t>;
 			const auto result = Cosine(x, 500);
 			const auto expected = std::cos(x);
 
@@ -212,7 +212,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto x = constants::PI<Accuracy_t>;
+			constexpr auto x = constants::Pi<Accuracy_t>;
 			const auto result = Cosine(x);
 			const auto expected = std::cos(x);
 
@@ -223,7 +223,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto x = 3 * constants::PI_OVER_4<Accuracy_t>;
+			constexpr auto x = 3 * constants::Pi_Over_4<Accuracy_t>;
 			const auto result = Cosine(x);
 			const auto expected = std::cos(x);
 
@@ -234,7 +234,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto x = constants::TAU<Accuracy_t>;
+			constexpr auto x = constants::Tau<Accuracy_t>;
 			const auto result = Cosine(x, 500);
 			const auto expected = std::cos(x);
 
@@ -261,7 +261,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto x = constants::PI_OVER_4<Accuracy_t>;
+			constexpr auto x = constants::Pi_Over_4<Accuracy_t>;
 			const auto result = Tan(x);
 			const auto expected = std::tan(x);
 
@@ -273,20 +273,20 @@ namespace kTest::maths
 
 		// Tan(pi / 2) == Div/0
 		{
-				constexpr auto x = constants::PI_OVER_2<Accuracy_t>;
+				constexpr auto x = constants::Pi_Over_2<Accuracy_t>;
 				const auto result = Tan(x);
 				VERIFY(std::isinf(result));
 		}
 
 		// Tan(3*pi / 2) == Div/0
 		{
-				constexpr auto x = 3 * constants::PI_OVER_2<Accuracy_t>;
+				constexpr auto x = 3 * constants::Pi_Over_2<Accuracy_t>;
 				const auto result = Tan(x, 500);
 				VERIFY(std::isinf(result));
 		}
 
 		{
-			constexpr auto x = constants::PI<Accuracy_t>;
+			constexpr auto x = constants::Pi<Accuracy_t>;
 			const auto result = Tan(x);
 			const auto expected = std::tan(x);
 
@@ -297,7 +297,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto x = 3 * constants::PI_OVER_4<Accuracy_t>;
+			constexpr auto x = 3 * constants::Pi_Over_4<Accuracy_t>;
 			const auto result = Tan(x);
 			const auto expected = std::tan(x);
 
@@ -308,7 +308,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto x = constants::TAU<Accuracy_t>;
+			constexpr auto x = constants::Tau<Accuracy_t>;
 			const auto result = Tan(x, 500);
 			const auto expected = std::tan(x);
 
@@ -615,7 +615,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr double decimal = constants::PI<Accuracy_t>;
+			constexpr double decimal = constants::Pi<Accuracy_t>;
 			const auto fraction = RealToFraction(decimal);
 			VERIFY(fraction.isNegative == false && fraction.numerator == 312689 && fraction.denominator == 99532);
 
@@ -1197,19 +1197,19 @@ namespace kTest::maths
 
 	bool AlgorithmsTester::ToDegreesTest()
 	{
-		constexpr auto piTo180 = ToDegrees(constants::PI<int>);
+		constexpr auto piTo180 = ToDegrees(constants::Pi<int>);
 		VERIFY_COMPILE_TIME(piTo180 == 180);
 
-		constexpr auto tauTo360 = ToDegrees<float>(constants::TAU<float>);
+		constexpr auto tauTo360 = ToDegrees<float>(constants::Tau<float>);
 		VERIFY_COMPILE_TIME(tauTo360 == 360.f);
 
-		constexpr auto piOver2To90 = ToDegrees<double>(constants::PI_OVER_2<double>);
+		constexpr auto piOver2To90 = ToDegrees<double>(constants::Pi_Over_2<double>);
 		VERIFY_COMPILE_TIME(piOver2To90 == 90.0);
 
-		constexpr auto piOver4To45 = ToDegrees<long double>(constants::PI_OVER_4<long double>);
+		constexpr auto piOver4To45 = ToDegrees<long double>(constants::Pi_Over_4<long double>);
 		VERIFY_COMPILE_TIME(piOver4To45 == 45.0l);
 
-		constexpr auto pitimes3Over2To270 = ToDegrees<constants::Accuracy_t>(constants::PI_OVER_2<Accuracy_t> * 3);
+		constexpr auto pitimes3Over2To270 = ToDegrees<constants::Accuracy_t>(constants::Pi_Over_2<Accuracy_t> * 3);
 		VERIFY_COMPILE_TIME(pitimes3Over2To270 == 270.0l);
 
 		return success;
@@ -1429,7 +1429,7 @@ namespace kTest::maths
 		}
 
 		{
-			constexpr auto square = constants::PI<float>;
+			constexpr auto square = constants::Pi<float>;
 			const auto root = Sqrt(square);
 			const auto expected = std::sqrtf(square); // 1.77245390...
 			VERIFY(root == expected);

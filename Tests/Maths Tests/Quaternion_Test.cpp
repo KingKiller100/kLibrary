@@ -34,7 +34,7 @@ namespace kTest::maths
 			{ 4, 1, 0, 1 }
 		};
 
-		constexpr auto q1 = Quaternionf(constants::PI_OVER_2<float>, 0, 0, 1);
+		constexpr auto q1 = Quaternionf(constants::Pi_Over_2<float>, 0, 0, 1);
 		const auto mag = q1.MagnitudeSQ();
 		VERIFY(InRangeZero<float>(mag));
 
