@@ -104,8 +104,8 @@ namespace kTest
 			return;
 		}
 
-		std::cout << "Testing: " << (noOfThreads > 0 ? "Multi-Threaded" : "Single Threaded")
-			<< "\n";
+		std::cout << "Testing: " << (noOfThreads > 0 ? "Multi-Threaded" : "Single Threaded") <<
+			"[" << noOfThreads << "]" << "\n";
 
 		testTimes.reserve(testCount);
 
