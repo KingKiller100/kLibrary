@@ -2,6 +2,9 @@
 #include "kStringSize.hpp"
 #include "kStringCases.hpp"
 
+#include "../../../Template/kComparisonOperators.hpp"
+#include "../../../Template/kArthimeticOperators.hpp"
+
 #include "../../../HelperMacros.hpp"
 #include "../../../TypeTraits/StringTraits.hpp"
 
@@ -24,7 +27,7 @@ namespace klib::kString
 
 			for (std::make_signed_t<size_t> index(offset); 
 				hayStack[index] != nt && index >= 0; 
-				index = directionFunc(index, 1))
+				directionFunc(index))
 			{
 				if (cmpFunc(hayStack[index], needle))
 					return index;
@@ -70,7 +73,8 @@ namespace klib::kString
 		>>
 		USE_RESULT constexpr size_t Find_First_Of(const CStringA& str, Char_t search, size_t offset = 0)
 	{
-		const size_t pos = secret::impl::FindCharImpl(str, search, offset, std::equal_to<Char_t>(), std::plus<void>{});
+		using namespace kTemplate;
+		const size_t pos = secret::impl::FindCharImpl(str, search, offset, ComparisonOperators::Equality, ArithmeticOperators::Increment);
 		return pos;
 	}
 
@@ -92,7 +96,8 @@ namespace klib::kString
 		>>
 		USE_RESULT constexpr size_t Find_First_Not_Of(const CStringA& str, Char_t search, size_t offset = 0)
 	{
-		const size_t pos = secret::impl::FindCharImpl(str, search, offset, std::not_equal_to<Char_t>{}, std::plus<void>{});
+		using namespace kTemplate;
+		const size_t pos = secret::impl::FindCharImpl(str, search, offset, ComparisonOperators::Inequality, ArithmeticOperators::Increment);
 		return pos;
 	}
 
@@ -103,8 +108,9 @@ namespace klib::kString
 		>>
 		USE_RESULT constexpr size_t Find_Last_Of(const CStringA& str, Char_t search, size_t offset = type_trait::g_NoPos<std::basic_string<Char_t>>)
 	{
+		using namespace kTemplate;
 		offset = std::min(offset, GetSize(str) - 1);
-		const size_t pos = secret::impl::FindCharImpl(str, search, offset, std::equal_to<Char_t>{}, std::minus<void>{});
+		const size_t pos = secret::impl::FindCharImpl(str, search, offset, ComparisonOperators::Equality, ArithmeticOperators::Decrement);
 		return pos;
 	}
 
@@ -115,8 +121,9 @@ namespace klib::kString
 		>>
 		USE_RESULT constexpr size_t Find_Last_Not_Of(const CStringA& str, Char_t search, size_t offset = type_trait::g_NoPos<std::basic_string<Char_t>>)
 	{
+		using namespace kTemplate;
 		offset = std::min(offset, GetSize(str) - 1);
-		const size_t pos = secret::impl::FindCharImpl(str, search, offset, std::not_equal_to<Char_t>{}, std::minus<void>{});
+		const size_t pos = secret::impl::FindCharImpl(str, search, offset, ComparisonOperators::Inequality, ArithmeticOperators::Decrement);
 		return pos;
 	}
 

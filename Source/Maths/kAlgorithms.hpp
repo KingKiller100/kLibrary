@@ -373,7 +373,8 @@ namespace kmaths
 	USE_RESULT constexpr T InvSqrt(T square)
 	{
 		using namespace kmaths::secret::impl;
-		return constants::OneOver<ClosestFloat_t<T>>(Sqrt<T>(square));
+		// Root<>(...) More accurate than the Sqrt<>(...)
+		return constants::OneOver<ClosestFloat_t<T>>(Root<T>(square, 2));
 	}
 
 	template<typename T, class = std::enable_if_t<std::is_floating_point_v<T>>>

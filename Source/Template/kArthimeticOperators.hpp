@@ -2,66 +2,90 @@
 
 #include "../HelperMacros.hpp"
 
-#include <xstddef>
+#include <type_traits>
 
 namespace klib
 {
 	namespace kTemplate
 	{
+		namespace operators
+		{
+			struct AdditionOperator
+			{
+				template<typename T1, typename T2>
+				USE_RESULT constexpr auto operator()(T1&& lhs, T2&& rhs) const noexcept(noexcept(static_cast<T1&&>(lhs) + static_cast<T2&&>(rhs)))
+					-> decltype(static_cast<T1&&>(lhs) + static_cast<T2&&>(rhs))
+				{
+					return std::forward<T1>(lhs) + std::forward<T2>(rhs);
+				}
+			};
+			struct SubtractionOperator
+			{
+				template<typename T1, typename T2>
+				USE_RESULT constexpr auto operator()(T1&& lhs, T2&& rhs) const noexcept(noexcept(static_cast<T1&&>(lhs) - static_cast<T2&&>(rhs)))
+					-> decltype(static_cast<T1&&>(lhs) - static_cast<T2&&>(rhs))
+				{
+					return std::forward<T1>(lhs) - std::forward<T2>(rhs);
+				}
+			};
+			struct MultiplicationOperator
+			{
+				template<typename T1, typename T2>
+				USE_RESULT constexpr auto operator()(T1&& lhs, T2&& rhs) const noexcept(noexcept(static_cast<T1&&>(lhs)* static_cast<T2&&>(rhs)))
+					-> decltype(static_cast<T1&&>(lhs)* static_cast<T2&&>(rhs))
+				{
+					return std::forward<T1>(lhs) * std::forward<T2>(rhs);
+				}
+			};
+			struct DivisionOperator
+			{
+				template<typename T1, typename T2>
+				USE_RESULT constexpr auto operator()(T1&& lhs, T2&& rhs) const noexcept(noexcept(static_cast<T1&&>(lhs) / static_cast<T2&&>(rhs)))
+					-> decltype(static_cast<T1&&>(lhs) / static_cast<T2&&>(rhs))
+				{
+					return std::forward<T1>(lhs) / std::forward<T2>(rhs);
+				}
+			};
+			struct IncrementOperator
+			{
+				template<typename T>
+				constexpr T operator()(T& value) const
+				{
+					return ++value;
+				}
+				
+				template<typename T, typename U>
+				constexpr T operator()(T& value, const U& amount) const
+				{
+					value = value + T(amount);
+					return value;
+				}
+			};
+			struct DecrementOperator
+			{
+				template<typename T>
+				constexpr T operator()(T& value) const
+				{
+					return --value;
+				}
+
+				template<typename T, typename U>
+				constexpr T operator()(T& value, const U& amount) const
+				{
+					value = value - T(amount);
+					return value;
+				}
+			};
+		}
+		
 		struct ArithmeticOperators 
 		{
-		public:
-			template<typename T1, typename T2>
-			USE_RESULT static constexpr auto Add(T1&& lhs, T2&& rhs) noexcept(AdditionOperator(std::forward<T1>(lhs), std::forward<T2>(rhs)))
-			{
-				return AdditionOperator(std::forward<T1>(lhs), std::forward<T2>(rhs));
-			}
-			
-			template<typename T1, typename T2>
-			USE_RESULT static constexpr auto Subtract(T1&& lhs, T2&& rhs) noexcept(SubtractionOperator(std::forward<T1>(lhs), std::forward<T2>(rhs)))
-			{
-				return SubtractionOperator(std::forward<T1>(lhs), std::forward<T2>(rhs));
-			}
-			
-			template<typename T1, typename T2>
-			USE_RESULT static constexpr auto Multiply(T1&& lhs, T2&& rhs) noexcept(MultiplyOperator(std::forward<T1>(lhs), std::forward<T2>(rhs)))
-			{
-				return MultiplyOperator(std::forward<T1>(lhs), std::forward<T2>(rhs));
-			}
-			
-			template<typename T1, typename T2>
-			USE_RESULT static constexpr auto Divide(T1&& lhs, T2&& rhs) noexcept(std::forward<T1>(lhs) / std::forward<T2>(rhs))
-			{
-				return std::forward<T1>(lhs) / std::forward<T2>(rhs);
-			}
-			
-			template<typename T>
-			USE_RESULT static constexpr auto Increment(T&& value)
-			{
-				value = Add(std::forward<T>(value), T(1));
-				return value;
-			}
-			
-			template<typename T>
-			USE_RESULT static constexpr auto Decrement(T&& value)
-			{
-				value = Subtract(std::forward<T>(value), T(1));
-				return value;
-			}
-			
-			template<typename T>
-			USE_RESULT static constexpr auto Inverse(T&& value)
-			{
-				return static_cast<T>(T(1) / value);
-			}
-			
-		private:
-			static constexpr std::plus<void> AdditionOperator{};
-			static constexpr std::minus<void> SubtractionOperator{};
-			static constexpr std::multiplies<void> MultiplyOperator{};
+			static constexpr operators::AdditionOperator Addition{};
+			static constexpr operators::SubtractionOperator Subtraction{};
+			static constexpr operators::MultiplicationOperator Multiply{};
+			static constexpr operators::IncrementOperator Increment{};
+			static constexpr operators::DecrementOperator Decrement{};
 		};
-
-		
 	}
 
 #ifdef KLIB_SHORT_NAMESPACE
