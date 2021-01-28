@@ -27,6 +27,7 @@ namespace kTest::performance::maths
 		void SineTest();
 		void CosineTest();
 		void TanTest();
+		void InvSqrtTest();
 	};
 }
 #endif

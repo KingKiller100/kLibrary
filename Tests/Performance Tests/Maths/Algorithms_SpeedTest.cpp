@@ -29,6 +29,7 @@ namespace kTest::performance::maths
 		SineTest();
 		CosineTest();
 		TanTest();
+		InvSqrtTest();
 	}
 
 	using namespace kmaths;
@@ -275,6 +276,27 @@ namespace kTest::performance::maths
 			{
 				START_TEST(participants[1]);
 				const auto value = std::tan(pi * i);
+			}
+		}
+	}
+
+	void AlgorithmsSpeedTest::InvSqrtTest()
+	{
+		const std::vector<std::string_view> participants = { "kmaths::OneOver(kmaths::Root(...))", "kmaths::OneOver(kmaths::Sqrt(...))" };
+		SetUpParticipants(participants);
+
+		constexpr auto num = 64.f;
+		
+		for (auto i = 0; i < maxIter; ++i)
+		{
+			{
+				START_TEST(participants[0]);
+				(void)kmaths::constants::OneOver<float>(kmaths::Root(num, 2));
+			}
+
+			{
+				START_TEST(participants[1]);
+				(void)kmaths::constants::OneOver<float>(kmaths::Sqrt(num));
 			}
 		}
 	}

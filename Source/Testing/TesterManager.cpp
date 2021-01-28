@@ -131,7 +131,8 @@ namespace kTest
 
 		std::cout << "\n" << timeStr << "\n";
 
-		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path << std::endl;
+		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path;
+		std::cout << "\n\nPress the \"ENTER\" key to continue" << std::endl;
 		std::cin.get();
 	}
 
