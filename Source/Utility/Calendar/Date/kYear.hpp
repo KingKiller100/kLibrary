@@ -17,7 +17,7 @@ namespace klib::kCalendar
 			|| year % 400 == 0); // Unless it's divisible by 400
 	}
 
-	class Year final : private CalendarComponentToStringImplExtended, public kTemplate::SimpleOperators<Year>
+	class Year final : private CalendarComponentToStringImplExtended, public kTemplate::SimpleComparisonOperators<Year>
 	{
 	public:
 		static constexpr auto FormatToken = 'y';

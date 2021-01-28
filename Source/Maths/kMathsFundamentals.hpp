@@ -101,6 +101,18 @@ namespace kmaths
 		return lhs < rhs ? lhs : CAST(T1, rhs);
 	}
 
+	template<typename T1, typename T2, typename Pred>
+	USE_RESULT constexpr T1 Max(const T1& lhs, const T2& rhs, Pred pred) noexcept
+	{
+		return pred(lhs, rhs) ? lhs : CAST(T1, rhs);
+	}
+
+	template<typename T1, typename T2, typename Pred>
+	USE_RESULT constexpr T1 Min(const T1& lhs, const T2& rhs, Pred pred) noexcept
+	{
+		return pred(lhs, rhs) ? lhs : CAST(T1, rhs);
+	}
+
 	template<typename T, size_t Size>
 	USE_RESULT constexpr size_t SizeOfCArray(UNUSED const T(&)[Size]) noexcept
 	{

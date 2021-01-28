@@ -12,7 +12,7 @@ namespace klib::kCalendar
 {
 	class Millisecond final : public TimeComponentBase<std::chrono::duration<std::int16_t, std::milli>>
 		, private CalendarComponentToStringImplExtended
-		, public kTemplate::SimpleOperators<Millisecond>
+		, public kTemplate::SimpleComparisonOperators<Millisecond>
 	{
 	public:
 		static constexpr std::string_view Units = "ms";

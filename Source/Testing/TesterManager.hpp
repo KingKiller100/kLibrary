@@ -50,7 +50,7 @@ namespace kTest
 		void Shutdown();
 		void RunPerformanceTests() const;
 		void Add(TesterBase* test);
-		void RunAll(const size_t noOfThreads = 0);
+		void RunAll(size_t noOfThreads = 1);
 		void ClearAllTests();
 
 		static TesterManager& Get();

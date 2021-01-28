@@ -14,7 +14,7 @@ namespace klib::kCalendar
 {
 	class Hour final : public TimeComponentBase<std::chrono::duration<std::int16_t, std::ratio<3600>>>
 		, private CalendarComponentToStringImplExtended
-		, public kTemplate::SimpleOperators<Hour>
+		, public kTemplate::SimpleComparisonOperators<Hour>
 	{
 	public:
 		enum CycleType : std::uint8_t

@@ -519,6 +519,11 @@ namespace kTest::maths
 		constexpr auto smallestLongLong = Min(big, small);
 		VERIFY_COMPILE_TIME(smallestLongLong == CAST(decltype(big), small));
 
+		constexpr auto biggestPred = Max(big, small, std::greater{});
+		VERIFY_COMPILE_TIME(biggestPred == big);
+		constexpr auto smallestPred = Min(small, big, std::less{});
+		VERIFY_COMPILE_TIME(smallestPred == small);
+
 		return success;
 	}
 

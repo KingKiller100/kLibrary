@@ -5,7 +5,7 @@ namespace klib {
 	namespace kTemplate
 	{
 		template<typename T>
-		struct SimpleOperators
+		struct SimpleComparisonOperators
 		{
 			template<typename U, class = std::enable_if_t<
 				!std::is_same_v<T, U>

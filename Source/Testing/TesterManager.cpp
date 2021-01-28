@@ -94,7 +94,7 @@ namespace kTest
 		tests.insert(std::unique_ptr<TesterBase>(std::move(test)));
 	}
 
-	void TesterManager::RunAll(const size_t noOfThreads)
+	void TesterManager::RunAll(size_t noOfThreads)
 	{
 		const auto testCount = tests.size();
 
@@ -103,8 +103,10 @@ namespace kTest
 			std::cout << "TestManager empty\n";
 			return;
 		}
-
-		std::cout << "Testing: " << (noOfThreads > 0 ? "Multi-Threaded" : "Single Threaded") <<
+		const auto maxThreads = (std::min<size_t>)(ULTRA_THREAD_RIPPER, tests.size());
+		noOfThreads = std::clamp<size_t>(noOfThreads, SINGLE, maxThreads);
+		
+		std::cout << "Testing: " << (noOfThreads > 1 ? "Multi-Threaded" : "Single Threaded") <<
 			"[" << noOfThreads << "]" << "\n";
 
 		testTimes.reserve(testCount);
@@ -138,10 +140,7 @@ namespace kTest
 		if (noOfThreads != 0)
 		{
 			[&] {
-				const auto thrCount =
-					(std::min)(noOfThreads, tests.size());
-
-				kThread::ThreadPool threads(thrCount);
+				kThread::ThreadPool threads(noOfThreads);
 
 				outStart = std::clock();
 				for (const auto& test : tests)

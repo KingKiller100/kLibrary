@@ -12,7 +12,7 @@ namespace klib::kCalendar
 	class Year;
 	class Day;
 
-	class Month final : private CalendarComponentToStringImplExtended, public kTemplate::SimpleOperators<Month>
+	class Month final : private CalendarComponentToStringImplExtended, public kTemplate::SimpleComparisonOperators<Month>
 	{
 	public:
 		enum MonthOfTheYear : unsigned char

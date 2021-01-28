@@ -12,7 +12,7 @@ namespace klib::kCalendar
 {
 	class Second final : public TimeComponentBase<std::chrono::duration<std::int16_t>>
 		, private CalendarComponentToStringImplExtended
-		, public kTemplate::SimpleOperators<Second>
+		, public kTemplate::SimpleComparisonOperators<Second>
 	{
 	public:
 		static constexpr std::string_view Units = "s";

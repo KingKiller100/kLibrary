@@ -11,7 +11,7 @@
 
 namespace klib::kCalendar
 {
-	class Day : private CalendarComponentToStringImplExtended, public kTemplate::SimpleOperators<Day>
+	class Day : private CalendarComponentToStringImplExtended, public kTemplate::SimpleComparisonOperators<Day>
 	{
 	public:
 		enum DayOfTheWeek : unsigned char
