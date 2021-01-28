@@ -43,12 +43,23 @@
 #define MAP19(m, x, ...) m(x) IDENTITY(MAP18(m, __VA_ARGS__))
 #define MAP20(m, x, ...) m(x) IDENTITY(MAP19(m, __VA_ARGS__))
 #define MAP21(m, x, ...) m(x) IDENTITY(MAP20(m, __VA_ARGS__))
+#define MAP22(m, x, ...) m(x) IDENTITY(MAP21(m, __VA_ARGS__))
+#define MAP23(m, x, ...) m(x) IDENTITY(MAP22(m, __VA_ARGS__))
+#define MAP24(m, x, ...) m(x) IDENTITY(MAP23(m, __VA_ARGS__))
+#define MAP25(m, x, ...) m(x) IDENTITY(MAP24(m, __VA_ARGS__))
+#define MAP26(m, x, ...) m(x) IDENTITY(MAP25(m, __VA_ARGS__))
+#define MAP27(m, x, ...) m(x) IDENTITY(MAP26(m, __VA_ARGS__))
+#define MAP28(m, x, ...) m(x) IDENTITY(MAP27(m, __VA_ARGS__))
+#define MAP29(m, x, ...) m(x) IDENTITY(MAP28(m, __VA_ARGS__))
+#define MAP30(m, x, ...) m(x) IDENTITY(MAP29(m, __VA_ARGS__))
+#define MAP31(m, x, ...) m(x) IDENTITY(MAP30(m, __VA_ARGS__))
+#define MAP32(m, x, ...) m(x) IDENTITY(MAP31(m, __VA_ARGS__))
 
-#define EVALUATE_COUNT(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, count, ...) \
+#define EVALUATE_COUNT(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, _31, _32, count, ...) \
     count
 
 #define COUNT(...) \
-    IDENTITY(EVALUATE_COUNT(__VA_ARGS__, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
+    IDENTITY(EVALUATE_COUNT(__VA_ARGS__, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
 
 // Stringizes each argument.
 #define STRINGIZE_SINGLE(e) #e,
