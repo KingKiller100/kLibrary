@@ -7,7 +7,7 @@
 namespace kmaths
 {
 	template<typename T>
-	USE_RESULT constexpr Quaternion<T> IdentityQuaternion(Theta thetaType = Theta::DEGREES) noexcept
+	USE_RESULT constexpr Quaternion<T> IdentityQuaternion(Theta thetaType) noexcept
 	{
 		constexpr auto one = constants::numbers::One<T>;
 		constexpr auto zero = constants::numbers::Zero<T>;

@@ -90,7 +90,7 @@ namespace kmaths
 
 		USE_RESULT constexpr Vector Normalize() const noexcept
 		{
-			constexpr auto epsilon = constants::Epsilon<Type>();
+			constexpr auto epsilon = constants::Epsilon<Type>;
 
 			const auto magSQ = MagnitudeSQ();
 
@@ -147,14 +147,14 @@ namespace kmaths
 
 		USE_RESULT constexpr bool IsZero() const noexcept
 		{
-			constexpr auto zero = constants::Zero<Type>();
+			constexpr auto zero = constants::Zero<Type>;
 			return (x == zero && y == zero && z == zero);
 		}
 
 		// Compilers earlier than C++20 features will not work in constexpr
 		USE_RESULT constexpr Type* GetPointerToData() const
 		{
-			return REINTERPRET(Type*, (void *)this);		
+			return REINTERPRET(Type*, (void *)this);
 		}
 
 		USE_RESULT constexpr auto GetTotalBytes() const noexcept

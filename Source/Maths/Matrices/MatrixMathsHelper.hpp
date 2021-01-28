@@ -15,7 +15,7 @@ namespace kmaths
 		Matrix<T, Rows, Columns> m(arr);
 		return m;
 	}
-	
+
 	template<typename T, unsigned short Rows, unsigned short Columns>
 	USE_RESULT Matrix<T, Rows, Columns> ToMatrix(const T(&arr)[Rows][Columns]) noexcept(std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>)
 	{
@@ -61,12 +61,13 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr TransformMatrix<T> Ortho_ZO(const ZAxisDirection zDir, const T left, const T right, const T bottom, const T top, const T zNear, const T zFar) noexcept
+	USE_RESULT constexpr TransformMatrix<T> Ortho_ZO(const ZAxisDirection zDir, const T left, const T right
+		, const T bottom, const T top, const T zNear, const T zFar) noexcept
 	{
 		auto res = GetTransformIdentity<T>();
 		res[0][0] = CAST(T, 2) / (right - left);
 		res[1][1] = CAST(T, 2) / (top - bottom);
-		res[2][2] = (zDir == ZAxisDirection::LEFT_HAND ? CAST(T, 1) : CAST(T, -1))
+		res[2][2] = (zDir == ZAxisDirection::LEFT_HAND ? constants::One<T> : constants::MinusOne<T>)
 			/ (zFar - zNear);
 		res[3][0] = -(right + left) / (right - left);
 		res[3][1] = -(top + bottom) / (top - bottom);
@@ -75,12 +76,13 @@ namespace kmaths
 	}
 
 	template<typename T>
-	USE_RESULT constexpr TransformMatrix<T> Ortho_NO(const ZAxisDirection zDir, const T left, const T right, const T bottom, const T top, const T zNear, const T zFar) noexcept
+	USE_RESULT constexpr TransformMatrix<T> Ortho_NO(const ZAxisDirection zDir, const T left, const T right
+		, const T bottom, const T top, const T zNear, const T zFar) noexcept
 	{
 		auto res = GetTransformIdentity<T>();
 		res[0][0] = CAST(T, 2) / (right - left);
 		res[1][1] = CAST(T, 2) / (top - bottom);
-		res[2][2] = (zDir == ZAxisDirection::LEFT_HAND ? CAST(T, 2) : CAST(T, -2))
+		res[2][2] = (zDir == ZAxisDirection::LEFT_HAND ? constants::Two<T> : constants::MinusOne<T> * constants::Two<T>)
 			/ (zFar - zNear);
 		res[3][0] = -(right + left) / (right - left);
 		res[3][1] = -(top + bottom) / (top - bottom);
@@ -91,8 +93,8 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Perspective_ZO(const ZAxisDirection zDir, T fov, T aspectRatio, T zNear, T zFar) noexcept
 	{
-		constexpr auto one = constants::One<T>();
-		constexpr auto two = constants::Two<T>();
+		constexpr auto one = constants::One<T>;
+		constexpr auto two = constants::Two<T>;
 
 		const auto halfFov = fov / two;
 		const T tanHalfFov = Tan(halfFov);
@@ -100,34 +102,34 @@ namespace kmaths
 		const auto denom23 = (zDir == ZAxisDirection::LEFT_HAND)
 			? (zFar - zNear)
 			: (zNear - zFar);
-		
+
 		TransformMatrix<T> mat;
 		mat[0][0] = constants::OneOver<T>(aspectRatio * tanHalfFov);
 		mat[1][1] = constants::OneOver<T>(tanHalfFov);
-		mat[2][2] =  zFar / denom23;
+		mat[2][2] = zFar / denom23;
 		mat[2][3] = (zDir == ZAxisDirection::LEFT_HAND) ? one : -one;
 		mat[3][2] = -(zFar * zNear) / (zFar - zNear);
 		return mat;
- 	}
+	}
 
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Perspective_NO(const ZAxisDirection zDir, T fov, T aspectRatio, T zNear, T zFar) noexcept
 	{
-		constexpr auto one = constants::One<T>();
-		constexpr auto two = constants::Two<T>();
+		constexpr auto one = constants::One<T>;
+		constexpr auto two = constants::Two<T>;
 
 		const auto halfFov = fov / two;
 		const T tanHalfFov = Tan(halfFov);
-				
+
 		TransformMatrix<T> mat;
 		mat[0][0] = constants::OneOver<T>(aspectRatio * tanHalfFov);
 		mat[1][1] = constants::OneOver<T>(tanHalfFov);
-		mat[2][2] =  (zFar + zNear) / (zFar - zNear);
+		mat[2][2] = (zFar + zNear) / (zFar - zNear);
 		mat[2][3] = (zDir == ZAxisDirection::LEFT_HAND) ? one : -one;
 		mat[3][2] = -(two * zFar * zNear) / (zFar - zNear);
 		return mat;
- 	}
-	
+	}
+
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Translate(const TransformMatrix<T>& m, const Vector3<T>& v)
 	{
@@ -153,7 +155,7 @@ namespace kmaths
 		const T sinA = Sine(a);
 
 		Vector3<T> axis = axes.Normalize();
-		Vector3<T> temp = axis * (CAST(T, 1) - cosA);
+		Vector3<T> temp = axis * (constants::One<T> -cosA);
 
 		TransformMatrix<T> rotate;
 		rotate[0][0] = cosA + temp[0] * axis[0];
@@ -189,7 +191,7 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Rotate2D(T radians) noexcept
 	{
-		const auto rotate = Rotate(GetTransformIdentity<T>(), radians, { CAST(T, 0), CAST(T, 0), constants::One<T>() });
+		const auto rotate = Rotate(GetTransformIdentity<T>(), radians, { CAST(T, 0), CAST(T, 0), constants::One<T> });
 		return rotate;
 	}
 
@@ -237,7 +239,7 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> TRS(const Vector3<T>& position, const T radians, const Vector3<T>& axes, const Vector3<T>& scale) noexcept
 	{
-		const TransformMatrix<T> transform = Translate<T>(position) * Rotate<T>(radians, axes) * Scale<T>(scale);;
+		const TransformMatrix<T> transform = Translate<T>(position) * Rotate<T>(radians, axes) * Scale<T>(scale);
 		return transform;
 	}
 
@@ -245,7 +247,7 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> TRS2D(const Vector3<T>& position, const T radians, const Vector2<T>& scale) noexcept
 	{
-		const TransformMatrix<T> transform = Translate<T>(position) * Rotate2D<T>(radians) * Scale2D<T>(scale);;
+		const TransformMatrix<T> transform = Translate<T>(position) * Rotate2D<T>(radians) * Scale2D<T>(scale);
 		return transform;
 	}
 

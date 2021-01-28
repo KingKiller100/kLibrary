@@ -7,7 +7,6 @@
 #include <type_traits>
 #include <limits>
 
-
 namespace kmaths
 {
 	namespace constants
@@ -34,8 +33,8 @@ namespace kmaths
 			template<typename T = Accuracy_t> constexpr T GoldenRatio = static_cast<T>(1.61803398874989l);
 			template<typename T = Accuracy_t> constexpr T InverseGoldenRatio = static_cast<T>(static_cast<Accuracy_t>(1) / GoldenRatio<Accuracy_t>);
 
-			template<typename T = Accuracy_t> constexpr T RadsToDegs = static_cast<T>(360.l) / Tau<T>;
-			template<typename T = Accuracy_t> constexpr T DegsToRads = Tau<T> / static_cast<T>(360.l);
+			template<typename T = Accuracy_t> constexpr T RadsToDegs = static_cast<T>(static_cast<Accuracy_t>(360) / Tau<Accuracy_t>);
+			template<typename T = Accuracy_t> constexpr T DegsToRads = static_cast<T>(Tau<Accuracy_t> / static_cast<Accuracy_t>(360.l));
 		}
 
 		// Numbers
