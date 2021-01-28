@@ -163,6 +163,11 @@ public:																					\
 		return value;																	\
 	}																					\
 																						\
+	USE_RESULT static constexpr size_t Count() noexcept									\
+	{																					\
+		return secret_impl_##enumName::size;											\
+	}																					\
+																						\
 	USE_RESULT constexpr bool MaskCmp(InternalEnum_t target) const						\
 	{																					\
 		return MaskCmp(target, true, false);											\
