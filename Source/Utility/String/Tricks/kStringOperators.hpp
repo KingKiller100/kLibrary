@@ -42,25 +42,6 @@ namespace klib {
 			return str;
 		}
 
-		// template <class Char_t, class _Traits = std::char_traits<Char_t>, class _Alloc = std::allocator<Char_t>>
-		// USE_RESULT constexpr std::basic_string<Char_t, _Traits, _Alloc> operator+(
-		// 	const std::basic_string_view<Char_t, _Traits>& reader, const Char_t* cstr)
-		// {
-		// 	std::basic_string<Char_t, _Traits, _Alloc> str(reader);
-		// 	str.append(cstr);
-		// 	return str;
-		// }
-		//
-		// template <class Char_t, class _Traits = std::char_traits<Char_t>, class _Alloc = std::allocator<Char_t>>
-		// USE_RESULT constexpr std::basic_string<Char_t, _Traits, _Alloc> operator+(
-		// 	const Char_t* cstr,
-		// 	const std::basic_string_view<Char_t, _Traits>& reader)
-		// {
-		// 	std::basic_string<Char_t, _Traits, _Alloc> str(cstr);
-		// 	str.append(reader);
-		// 	return str;
-		// }
-
 		template <class Char_t, size_t Size, class _Traits = std::char_traits<Char_t>, class _Alloc = std::allocator<Char_t>>
 		USE_RESULT constexpr std::basic_string<Char_t, _Traits, _Alloc> operator+(
 			const std::basic_string_view<Char_t, _Traits>& reader, const Char_t(&cstr)[Size])
