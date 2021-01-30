@@ -18,6 +18,18 @@ namespace klib
 				{
 					return std::forward<T1>(lhs) + std::forward<T2>(rhs);
 				}
+
+				template<typename StdContainer>
+				USE_RESULT typename StdContainer::value_type operator()(const StdContainer& container
+					, typename StdContainer::value_type initialVal) const
+				{
+					auto result(initialVal);
+					for (auto&& value : container)
+					{
+						result = operator()(result, value);
+					}
+					return result;
+				}
 			};
 			struct SubtractionOperator
 			{
@@ -26,6 +38,18 @@ namespace klib
 					-> decltype(static_cast<T1&&>(lhs) - static_cast<T2&&>(rhs))
 				{
 					return std::forward<T1>(lhs) - std::forward<T2>(rhs);
+				}
+
+				template<typename StdContainer>
+				USE_RESULT typename StdContainer::value_type operator()(const StdContainer& container
+					, typename StdContainer::value_type initialVal) const
+				{
+					auto result(initialVal);
+					for (auto&& value : container)
+					{
+						result = operator()(result, value);
+					}
+					return result;
 				}
 			};
 			struct MultiplicationOperator
@@ -36,6 +60,18 @@ namespace klib
 				{
 					return std::forward<T1>(lhs) * std::forward<T2>(rhs);
 				}
+
+				template<typename StdContainer>
+				USE_RESULT typename StdContainer::value_type operator()(const StdContainer& container
+					, typename StdContainer::value_type initialVal) const
+				{
+					auto result(initialVal);
+					for (auto&& value : container)
+					{
+						result = operator()(result, value);
+					}
+					return result;
+				}
 			};
 			struct DivisionOperator
 			{
@@ -44,6 +80,18 @@ namespace klib
 					-> decltype(static_cast<T1&&>(lhs) / static_cast<T2&&>(rhs))
 				{
 					return std::forward<T1>(lhs) / std::forward<T2>(rhs);
+				}
+
+				template<typename StdContainer>
+				USE_RESULT typename StdContainer::value_type operator()(const StdContainer& container
+					, typename StdContainer::value_type initialVal) const
+				{
+					auto result(initialVal);
+					for (auto&& value : container)
+					{
+						result = operator()(result, value);
+					}
+					return result;
 				}
 			};
 			struct IncrementOperator
