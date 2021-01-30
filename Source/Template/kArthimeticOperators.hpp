@@ -20,7 +20,7 @@ namespace klib
 				}
 
 				template<typename StdContainer>
-				USE_RESULT typename StdContainer::value_type operator()(const StdContainer& container
+				USE_RESULT constexpr typename StdContainer::value_type operator()(const StdContainer& container
 					, typename StdContainer::value_type initialVal) const
 				{
 					auto result(initialVal);
@@ -41,7 +41,7 @@ namespace klib
 				}
 
 				template<typename StdContainer>
-				USE_RESULT typename StdContainer::value_type operator()(const StdContainer& container
+				USE_RESULT constexpr typename StdContainer::value_type operator()(const StdContainer& container
 					, typename StdContainer::value_type initialVal) const
 				{
 					auto result(initialVal);
@@ -62,7 +62,7 @@ namespace klib
 				}
 
 				template<typename StdContainer>
-				USE_RESULT typename StdContainer::value_type operator()(const StdContainer& container
+				USE_RESULT constexpr typename StdContainer::value_type operator()(const StdContainer& container
 					, typename StdContainer::value_type initialVal) const
 				{
 					auto result(initialVal);
@@ -83,7 +83,7 @@ namespace klib
 				}
 
 				template<typename StdContainer>
-				USE_RESULT typename StdContainer::value_type operator()(const StdContainer& container
+				USE_RESULT constexpr typename StdContainer::value_type operator()(const StdContainer& container
 					, typename StdContainer::value_type initialVal) const
 				{
 					auto result(initialVal);
