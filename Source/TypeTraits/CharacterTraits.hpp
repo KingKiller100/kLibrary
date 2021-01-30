@@ -34,12 +34,12 @@ namespace klib::type_trait
 			return Underlying_t::length(str);
 		}
 
-		USE_RESULT static constexpr T* Copy(T* dst, const T* const src, const size_t size) noexcept
+		static constexpr T* Copy(T* dst, const T* const src, const size_t size) noexcept
 		{
 			return Underlying_t::copy(dst, src, size);
 		}
 
-		USE_RESULT static constexpr  T* CopySafe(T* const dst,
+		static constexpr  T* CopySafe(T* const dst,
 			const size_t dstSize, const T* const src,
 			const size_t srcSize) noexcept
 		{
