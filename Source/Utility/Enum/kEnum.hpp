@@ -111,8 +111,8 @@ namespace klib::kEnum::secret::impl
 #define ENUM_X(x, enumName, underlying, ...)											\
 x enumName																				\
 {																						\
-	using underlying_t = underlying;													\
 public:																					\
+	using underlying_t = underlying;													\
 	enum InternalEnum_t : underlying { __VA_ARGS__ };									\
 																						\
 private:																				\
