@@ -367,7 +367,7 @@ namespace kTest::performance::util
 
 	void ToStringSpeedTest::SprintfTest()
 	{
-		const std::vector<std::string_view> participants = { "klib::kString::ToString", "C sprintf", "klib::kString::stringify::kSprintfWrapper" };
+		const std::vector<std::string_view> participants = { "klib::kString::ToString", "C sprintf" }; //"klib::kString::stringify::kSprintfWrapper" };
 		SetUpParticipants(participants);
 
 		const std::string string = "Input1";
@@ -431,28 +431,26 @@ namespace kTest::performance::util
 					, ptr.get()
 				);
 			}
-
-
-
-			{
-				START_TEST(participants[2]);
-
-				(void)kString::Sprintf("string: %s - string_view: %s - double: %.5f"
-					" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s - Pointer: %p"
-					, string.data()
-					, string_view.data()
-					, f64
-					, f32
-					, ulong
-					, slong
-					, uint
-					, sint
-					, boolean ? "true" : "false"
-					, ptr
-				);
-			}
-
 			buffer.release();
+
+			// {
+			// 	START_TEST(participants[2]);
+			//
+			// 	(void)kString::Sprintf("string: %s - string_view: %s - double: %.5f"
+			// 		" - float: %.5f - ulong: %llu - slong: %lld - uint: %u - sint: %d - boolean: %s - Pointer: %p"
+			// 		, string.data()
+			// 		, string_view.data()
+			// 		, f64
+			// 		, f32
+			// 		, ulong
+			// 		, slong
+			// 		, uint
+			// 		, sint
+			// 		, boolean ? "true" : "false"
+			// 		, ptr
+			// 	);
+			// }
+
 		}
 	}
 

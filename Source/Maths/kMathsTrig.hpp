@@ -11,8 +11,9 @@ namespace kmaths
 	USE_RESULT constexpr T ToDegrees(const T radians) noexcept
 	{
 		using namespace constants;
-		constexpr auto convertR2D = RadsToDegs<Accuracy_t>;
-		return CAST(T, radians * convertR2D);
+		constexpr auto convertR2D = RadsToDegs<T>;
+		const T value =  radians * convertR2D;
+		return value;
 	}
 
 	template<typename T>
@@ -20,7 +21,8 @@ namespace kmaths
 	{
 		using namespace constants;
 		constexpr auto convertD2R = DegsToRads<Accuracy_t>;
-		return CAST(T, degrees * convertD2R);
+		const T value = static_cast<T>(degrees * convertD2R);
+		return value;
 	}
 
 	template<typename T>
