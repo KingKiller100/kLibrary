@@ -1,10 +1,10 @@
-#pragma once
+﻿#pragma once
 
 #include "kEnumCore.hpp"
 #include "../String/kStringConverter.hpp"
 
-#define ENUM_X(x, enumName, underlying, ...)											\
-x enumName																				\
+#define SUPER_ENUM_X(x, enumName, baseEnum, underlying, ...)							\
+x enumName : public baseEnum															\
 {																						\
 public:																					\
 	using underlying_t = underlying;													\
@@ -24,14 +24,16 @@ protected:																				\
 																						\
 public:																					\
 	constexpr enumName(InternalEnum_t value)											\
-		: value(value)																	\
+		: baseEnum(baseEnum::InternalEnum_t{}), value(value)							\
 	{}																					\
 																						\
 	constexpr enumName(underlying val)													\
-		: value(val)																	\
+		: baseEnum(baseEnum::InternalEnum_t{}), value(val)								\
 	{																					\
 		const auto& v = secret_impl_##enumName::values;									\
-		if (std::find(std::begin(v), std::end(v), val) == v.end())						\
+		const auto& vb = secret_impl_##baseEnum::values;								\
+		if (std::find(std::begin(v), std::end(v), val) == v.end()						\
+			|| std::find(std::begin(vb), std::end(vb), val) == vb.end())				\
 		{																				\
 			throw std::out_of_range("Value given is out of enum's range");				\
 		}																				\
@@ -222,11 +224,11 @@ private:																				\
 	underlying value;																	\
 };																						\
 
-#define ENUM_X_FWD_DCL(x, enumName) x enumName
+#define SUPER_ENUM_X_FWD_DCL(x, enumName) x enumName
 
-#define ENUM_CLASS_FWD_DCL(enumName) ENUM_X_FWD_DCL(class, enumName)
-#define ENUM_CLASS(enumName, underlying, ...) ENUM_X(class, enumName, underlying, __VA_ARGS__)
+#define SUPER_ENUM_CLASS_FWD_DCL(enumName) SUPER_ENUM_X_FWD_DCL(class, enumName)
+#define SUPER_ENUM_CLASS(enumName, baseEnum, underlying, ...) SUPER_ENUM_X(class, enumName, baseEnum, underlying, __VA_ARGS__)
 
-#define ENUM_STRUCT_FWD_DCL(enumName) ENUM_X_FWD_DCL(struct, enumName)
-#define ENUM_STRUCT(enumName, underlying, ...) ENUM_X(struct, enumName, underlying, __VA_ARGS__)
+#define SUPER_ENUM_STRUCT_FWD_DCL(enumName) SUPER_ENUM_X_FWD_DCL(struct, enumName)
+#define SUPER_ENUM_STRUCT(enumName, baseEnum, underlying, ...) SUPER_ENUM_X(struct, enumName, baseEnum, underlying, __VA_ARGS__)
 

@@ -62,6 +62,7 @@
 
 // Enum
 #include "Utility/Enum/kEnum.hpp"
+#include "Utility/Enum/kEnumSuper.hpp"
 
 // Logging
 #include "Utility/Logging/kLogLevel.hpp"
