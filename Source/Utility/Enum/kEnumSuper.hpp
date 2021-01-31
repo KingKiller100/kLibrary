@@ -3,19 +3,18 @@
 #include "kEnumCore.hpp"
 #include "../String/kStringConverter.hpp"
 
-#define SUPER_ENUM_X(x, enumName, baseEnum, underlying, ...)							\
+#define SUPER_ENUM_X(x, enumName, baseEnum, ...)										\
 x enumName : public baseEnum															\
 {																						\
 public:																					\
-	using underlying_t = underlying;													\
-	enum InternalEnum_t : underlying { __VA_ARGS__ };									\
+	enum InternalEnum_t : underlying_t { __VA_ARGS__ };									\
 																						\
 protected:																				\
 	struct secret_impl_##enumName														\
 	{																					\
 		static constexpr auto size = IDENTITY(COUNT(__VA_ARGS__));						\
 																						\
-		static constexpr std::array<underlying, size> values =							\
+		static constexpr std::array<underlying_t, size> values =						\
 		{ IDENTITY(IGNORE_ASSIGN(__VA_ARGS__)) };										\
 																						\
 		static constexpr std::array<std::string_view, size> raw_names =					\
@@ -27,7 +26,7 @@ public:																					\
 		: baseEnum(baseEnum::InternalEnum_t{}), value(value)							\
 	{}																					\
 																						\
-	constexpr enumName(underlying val)													\
+	constexpr enumName(underlying_t val)												\
 		: baseEnum(baseEnum::InternalEnum_t{}), value(val)								\
 	{																					\
 		const auto& v = secret_impl_##enumName::values;									\
@@ -55,7 +54,7 @@ public:																					\
 		return static_cast<InternalEnum_t>(value);										\
 	}																					\
 																						\
-	USE_RESULT constexpr underlying ToUnderlying() const								\
+	USE_RESULT constexpr underlying_t ToUnderlying() const								\
 	{																					\
 		return value;																	\
 	}																					\
@@ -221,14 +220,14 @@ public:																					\
 	}																					\
 																						\
 private:																				\
-	underlying value;																	\
+	underlying_t value;																	\
 };																						\
 
 #define SUPER_ENUM_X_FWD_DCL(x, enumName) x enumName
 
 #define SUPER_ENUM_CLASS_FWD_DCL(enumName) SUPER_ENUM_X_FWD_DCL(class, enumName)
-#define SUPER_ENUM_CLASS(enumName, baseEnum, underlying, ...) SUPER_ENUM_X(class, enumName, baseEnum, underlying, __VA_ARGS__)
+#define SUPER_ENUM_CLASS(enumName, baseEnum, ...) SUPER_ENUM_X(class, enumName, baseEnum, __VA_ARGS__)
 
 #define SUPER_ENUM_STRUCT_FWD_DCL(enumName) SUPER_ENUM_X_FWD_DCL(struct, enumName)
-#define SUPER_ENUM_STRUCT(enumName, baseEnum, underlying, ...) SUPER_ENUM_X(struct, enumName, baseEnum, underlying, __VA_ARGS__)
+#define SUPER_ENUM_STRUCT(enumName, baseEnum, ...) SUPER_ENUM_X(struct, enumName, baseEnum, __VA_ARGS__)
 
