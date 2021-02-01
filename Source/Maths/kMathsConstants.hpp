@@ -33,8 +33,8 @@ namespace kmaths
 			template<typename T> constexpr T GoldenRatio = static_cast<T>(1.61803398874989l);
 			template<typename T> constexpr T InverseGoldenRatio = static_cast<T>(static_cast<Accuracy_t>(1) / GoldenRatio<Accuracy_t>);
 
-			template<typename T> constexpr T RadsToDegs = static_cast<T>(360.l) / Tau<T>;
-			template<typename T> constexpr T DegsToRads = Tau<T> / static_cast<T>(360.l);
+			template<typename T> constexpr T RadsToDegs = static_cast<T>(360.l) / static_cast<T>(Tau<Accuracy_t>);
+			template<typename T> constexpr T DegsToRads = static_cast<T>(Tau<Accuracy_t>) / static_cast<T>(360.l);
 		}
 
 		// Numbers

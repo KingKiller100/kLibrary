@@ -76,4 +76,23 @@ namespace kmaths
 		auto vec = *(Vector<Value_t, N>*)std::addressof(other);
 		return vec;
 	}
+
+
+	template<typename T, Length_t N>
+	USE_RESULT constexpr Vector<T, N> ToDegrees(Vector<T, N> vec) noexcept(std::is_trivially_copyable_v<T>)
+	{
+		using namespace constants;
+		for (Length_t i = 0; i < N; ++i)
+			vec[i] *= RadsToDegs<T>;
+		return vec;
+	}
+
+	template<typename T, Length_t N>
+	USE_RESULT constexpr Vector<T, N> ToRadians(Vector<T, N> vec) noexcept(std::is_trivially_copyable_v<T>)
+	{
+		using namespace constants;
+		for (Length_t i = 0; i < N; ++i)
+			vec[i] *= static_cast<T>(DegsToRads<Accuracy_t>);
+		return vec;
+	}
 }
