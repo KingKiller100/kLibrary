@@ -34,4 +34,15 @@ namespace klib::kFileSystem
 	{
 		return std::filesystem::remove_all(filepath);
 	}
+
+	bool CheckFileExists(const Path& path) noexcept
+	{
+		return CheckFileExists(path.wstring());
+	}
+
+	bool CheckDirectoryExists(const Path& path) noexcept
+	{
+		const auto exists = std::filesystem::exists(path);
+		return exists;
+	}
 }

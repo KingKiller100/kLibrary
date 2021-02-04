@@ -184,7 +184,6 @@ namespace klib {
 		template<class CharType = char>
 		constexpr bool CheckFileExists(const CharType* filepath) noexcept
 		{
-
 			const auto path = CorrectFilePathSeparators<CharType>(filepath);
 
 			FileReader<CharType> reader(path);
@@ -204,27 +203,25 @@ namespace klib {
 		}
 
 
-		constexpr bool CheckFileExists(const Path& path) noexcept
-		{
-			return CheckFileExists(path.wstring());
-		}
+		bool CheckFileExists(const Path& path) noexcept;
 
 
 		/**
 		 * \brief
 		 *		Checks (from folder holding the executable file in current directory) if a directory exists
-		 * \param directoryPath
+		 * \param path
 		 *		folder (or full directory)
 		 * \return
 		 *		TRUE if it exists or FALSE if it does not exist
 		 */
 
+		bool CheckDirectoryExists(const Path& path) noexcept;
+
 		template<class CharType = char>
 		constexpr bool CheckDirectoryExists(const kString::StringReader<CharType>& directoryPath) noexcept
 		{
 #if MSVC_PLATFORM_TOOLSET > 140
-			const auto exists = std::filesystem::exists(directoryPath);
-			return exists;
+			return CheckDirectoryExists(Path(directoryPath));
 #else
 			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
 			{
