@@ -64,7 +64,7 @@ namespace klib
 			name = newName;
 		}
 
-		std::string_view FileLogger::GetFileName() const
+		std::string FileLogger::GetFileName() const
 		{
 			return path.stem().string();
 		}
@@ -76,7 +76,7 @@ namespace klib
 			Open();
 		}
 
-		std::string_view FileLogger::GetExtension() const
+		std::string FileLogger::GetExtension() const
 		{
 			return path.extension().string();
 		}
@@ -86,7 +86,7 @@ namespace klib
 			path.replace_extension(newExtension);
 		}
 
-		std::string_view FileLogger::GetDirectory() const
+		std::string FileLogger::GetDirectory() const
 		{
 			return path.parent_path().string();
 		}
@@ -100,7 +100,7 @@ namespace klib
 			Open();
 		}
 
-		std::string_view FileLogger::GetPath() const
+		std::filesystem::path FileLogger::GetPath() const
 		{
 			return path.string();
 		}
