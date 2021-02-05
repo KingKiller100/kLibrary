@@ -18,7 +18,7 @@ namespace klib
 			MAC = BIT_SHIFT(4),
 			APPLE = IOS_SIM | IOS | MAC,
 			ANDROID = BIT_SHIFT(5),
-			LINUX = ANDROID + 1
+			LINUX = BIT_SHIFT(6) | ANDROID 
 		);
 
 		USE_RESULT PlatformOS GetPlatform() noexcept;

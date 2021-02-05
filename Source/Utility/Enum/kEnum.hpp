@@ -2,6 +2,7 @@
 
 #include "kEnumCore.hpp"
 #include "../String/kStringConverter.hpp"
+#include <functional>
 
 #define ENUM_X(x, enumName, underlying, ...)											\
 x enumName																				\
@@ -140,6 +141,14 @@ public:																					\
 	USE_RESULT constexpr bool operator<=(const T& other) const 							\
 	{																					\
 		return value <= other;															\
+	}																					\
+																						\
+	static void ForEach(std::function<void(enumName)> func)								\
+	{																					\
+		for (auto v : secret_impl_##enumName::values)									\
+		{																				\
+			func(v);																	\
+		}																				\
 	}																					\
 																						\
 	private:																			\
