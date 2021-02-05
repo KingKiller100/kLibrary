@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "../HelperMacros.hpp"
 
+#include <type_traits>
+
 namespace klib {
 	namespace kTemplate
 	{

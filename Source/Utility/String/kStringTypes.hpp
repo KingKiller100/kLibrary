@@ -66,6 +66,7 @@ namespace klib
 		}
 
 	}
+	
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kString;
 #endif
