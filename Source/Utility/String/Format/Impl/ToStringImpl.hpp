@@ -57,10 +57,8 @@ namespace klib::kString::secret::impl
 
 		try
 		{
-			const auto data = outFmt.data();
-
 			size_t openerPos = FindOpenerPosition(outFmt, argIndex, offset);
-			size_t closerPos = Find_First_Of(data, format::g_CloserSymbol<Char_t>, openerPos);
+			size_t closerPos = Find_First_Of(GetData(outFmt), format::g_CloserSymbol<Char_t>, openerPos);
 
 			const auto initialOpenerPos = openerPos;
 			size_t repSize = 0;
@@ -68,7 +66,7 @@ namespace klib::kString::secret::impl
 			while (openerPos != npos && closerPos != npos)
 			{
 				const auto infoSize = closerPos - openerPos;
-				const size_t colonPos = Find_First_Of(data, format::g_SpecifierSymbol<Char_t>, openerPos);
+				const size_t colonPos = Find_First_Of(GetData(outFmt), format::g_SpecifierSymbol<Char_t>, openerPos);
 
 				StringWriter<Char_t> specifier;
 
@@ -92,7 +90,7 @@ namespace klib::kString::secret::impl
 
 				openerPos = FindOpenerPosition(outFmt, argIndex, openerPos + repSize);
 				if (openerPos != npos)
-					closerPos = Find_First_Of(data, format::g_CloserSymbol<Char_t>, openerPos);
+					closerPos = Find_First_Of(GetData(outFmt), format::g_CloserSymbol<Char_t>, openerPos);
 			}
 
 			ToStringImpl<Char_t, Ts...>(outFmt, argIndex + 1, initialOpenerPos + repSize, argPack...);
