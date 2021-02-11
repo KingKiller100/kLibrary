@@ -1,6 +1,7 @@
 #include "pch.hpp"
 #include "ToString_Test.hpp"
 
+#include "../../Source/Utility/String/STL/VectorToString.hpp"
 #include "../../Source/Utility/String/kToString.hpp"
 
 #ifdef TESTING_ENABLED
@@ -49,6 +50,7 @@ namespace kTest::utility
 		VERIFY_MULTI(CustomTypeWithoutToStringTest());
 		VERIFY_MULTI(FormatToStringTest());
 		VERIFY_MULTI(DirectToStringTest());
+		VERIFY_MULTI(VectorSTL());
 		VERIFY_MULTI_END();
 	}
 
@@ -402,6 +404,51 @@ namespace kTest::utility
 			VERIFY(result == expected);
 		}
 
+		return success;
+	}
+
+	bool FormatToStringTester::VectorSTL()
+	{
+		{
+			std::vector<std::string> strings;
+
+			for (auto i = 0; i < 3; ++i)
+			{
+				strings.emplace_back("String " + std::to_string(i + 1));
+			}
+
+			const auto result = ToString<char>(tags::g_NoFormatTag, strings);
+			constexpr char expected[] = "String 1 String 2 String 3";
+			VERIFY(result == expected);
+		}
+		
+		{
+			std::vector<std::string> strings;
+
+			for (auto i = 0; i < 3; ++i)
+			{
+				strings.emplace_back("String " + std::to_string(i + 1));
+			}
+
+			const auto result = ToString<char>("{0:,}", strings);
+			constexpr char expected[] = "String 1, String 2, String 3";
+			VERIFY(result == expected);
+		}
+		
+		
+		{
+			std::vector<int> numbers;
+
+			for (auto i = 0; i < 3; ++i)
+			{
+				numbers.emplace_back(i+1);
+			}
+
+			const auto result = ToString<char>("{0:,~2}", numbers);
+			constexpr char expected[] = "01, 02, 03";
+			VERIFY(result == expected);
+		}
+		
 		return success;
 	}
 }

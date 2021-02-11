@@ -53,13 +53,12 @@ namespace klib {
 
 		namespace tags
 		{
-			struct NoFormatTag { NoFormatTag() = default; };
-			struct ListTag { ListTag() = default; };
-
+			constexpr struct NoFormatTag { NoFormatTag() = default; } g_NoFormatTag;
+			constexpr struct ListTag { ListTag() = default; } g_ListTag;
 		}
 
 		template<class CharT, typename T, typename ...Ts>
-		USE_RESULT constexpr std::basic_string<CharT> ToString(tags::NoFormatTag&&, const T& arg, const  Ts& ...argPack)
+		USE_RESULT constexpr std::basic_string<CharT> ToString(tags::NoFormatTag, const T& arg, const  Ts& ...argPack)
 		{
 			using DataTypes = std::variant<std::monostate, T, Ts...>;
 			constexpr auto argCount = std::variant_size_v<DataTypes> -1;
@@ -79,7 +78,7 @@ namespace klib {
 		}
 
 		template<class CharT, typename T, typename ...Ts>
-		USE_RESULT constexpr std::basic_string<CharT> ToString(tags::ListTag&&, const T& arg, const  Ts& ...argPack)
+		USE_RESULT constexpr std::basic_string<CharT> ToString(tags::ListTag, const T& arg, const  Ts& ...argPack)
 		{
 			using DataTypes = std::variant<std::monostate, T, Ts...>;
 			constexpr auto argCount = std::variant_size_v<DataTypes> -1;

@@ -22,6 +22,8 @@ namespace kTest::utility
 		bool CustomTypeWithoutToStringTest();
 		bool FormatToStringTest();
 		bool DirectToStringTest();
+
+		bool VectorSTL();
 	};
 }
 #endif

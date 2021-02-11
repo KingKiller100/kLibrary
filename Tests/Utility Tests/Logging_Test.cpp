@@ -262,7 +262,7 @@ namespace kTest::utility
 		Logging dummy(std::filesystem::current_path() / "Dummy", "Dummy");
 		dummy.AddDestination<DummyLogger>();
 		
-		auto& dest = klib::kTemplate::ToImpl<DummyLogger>(dummy.GetExtraDestination(0));
+		auto& dest = dummy.GetExtraDestination<DummyLogger>(0);
 		dest.Open();
 		dest.SetFormat("&n: [&p]: &t", LogLevel::NRM);
 		dummy.AddEntry(LogLevel::NRM, "Normal test");

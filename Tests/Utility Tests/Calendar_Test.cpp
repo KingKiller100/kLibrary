@@ -389,9 +389,11 @@ namespace kTest::utility
 
 		const auto dateSuffix = [&]()
 		{
-			return (dateTime.wDay % 10) == 1 ? "st"
-				: (dateTime.wDay % 10) == 2 ? "nd"
-				: (dateTime.wDay % 10) == 3 ? "rd"
+			const auto d = dateTime.wDay;
+
+			return (d % 10 == 1 && (d > 20 || d < 10)) ? "st"
+				: (d % 10 == 2 && (d > 20 || d < 10)) ? "nd"
+				: (d % 10 == 3 && (d > 20 || d < 10)) ? "rd"
 				: "th";
 		};
 
@@ -731,19 +733,19 @@ namespace kTest::utility
 			VERIFY(dotwMatch);
 			VERIFY(monthMatch);
 			VERIFY(yearMatch);
-			
+
 			const auto& t = calendar.GetTime();
 			const auto hourMatch = t.GetHour() == localTime.wHour;
 			const auto minMatch = t.GetMinute() == localTime.wMinute;
 			const auto secMatch = t.GetSecond() == localTime.wSecond;
 			const auto milliMatch = t.GetMillisecond() == localTime.wMilliseconds;
-			
+
 			VERIFY(hourMatch);
 			VERIFY(minMatch);
 			VERIFY(secMatch);
 			VERIFY(milliMatch);
 		}
-		
+
 		{
 			SYSTEMTIME systemTime;
 			::GetSystemTime(&systemTime);
@@ -759,19 +761,19 @@ namespace kTest::utility
 			VERIFY(dotwMatch);
 			VERIFY(monthMatch);
 			VERIFY(yearMatch);
-			
+
 			const auto& t = calendar.GetTime();
 			const auto hourMatch = t.GetHour() == systemTime.wHour;
 			const auto minMatch = t.GetMinute() == systemTime.wMinute;
 			const auto secMatch = t.GetSecond() == systemTime.wSecond;
 			const auto milliMatch = t.GetMillisecond() == systemTime.wMilliseconds;
-			
+
 			VERIFY(hourMatch);
 			VERIFY(minMatch);
 			VERIFY(secMatch);
 			VERIFY(milliMatch);
 		}
-		
+
 		return success;
 	}
 }

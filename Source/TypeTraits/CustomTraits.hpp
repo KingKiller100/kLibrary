@@ -4,6 +4,8 @@
 
 #include <type_traits>
 
+#include "STLContainersTraits.hpp"
+
 namespace klib::type_trait
 {
 	template<typename T>
@@ -13,6 +15,7 @@ namespace klib::type_trait
 		&& !Is_SmartPtr_V<T>
 		&& !std::is_pointer_v<T>
 		&& !std::is_array_v<T>
+		&& !Is_STL_V<T>
 	>
 	{};
 

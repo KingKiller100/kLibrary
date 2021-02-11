@@ -7,6 +7,8 @@
 #include "Destinations/kFileLogger.hpp"
 #include "Destinations/kConsoleLogger.hpp"
 
+#include "../../Template/kToImpl.hpp"
+
 #include <cstdint>
 #include <deque>
 #include <string>
@@ -29,7 +31,6 @@ namespace klib
 			ENUM_CLASS(LogDestType, std::uint8_t
 				, FILE = 0
 				, CONSOLE
-				, MAXCOUNT
 			);
 
 		public:
@@ -110,29 +111,46 @@ namespace klib
 			/**
 			 * \brief
 			 *		Returns user added log destination
+			 * \tparam T
+			 *		Derived iLoggerDestination type
 			 * \param index
 			 *		index of extra logger
 			 * \return
-			 *		iLoggerDestination
+			 *		T&
 			 */
-			USE_RESULT iLoggerDestination& GetExtraDestination(size_t index);
-
+			template<typename T>
+			USE_RESULT T& GetExtraDestination(size_t index)
+			{
+				return kTemplate::ToImpl<T>(*destinations[LogDestType::Count() + index]);
+			}
+			
 			/**
 			 * \brief
 			 *		Returns user added log destination
-			 * \param index
+			 * \tparam T
+			 *		Derived iLoggerDestination type
+			 * \param index 
 			 *		index of extra logger
 			 * \return
-			 *		iLoggerDestination
+			 *		T&
 			 */
-			const iLoggerDestination& GetExtraDestination(size_t index) const;
+			template<typename T>
+			const T& GetExtraDestination(size_t index) const
+			{
+				return kTemplate::ToImpl<T>(*destinations[LogDestType::Count() + index]);
+			}
 
 			/**
-			 * \brief
+			 * \brief 
 			 *		Adds a new destination to send log entries
+			 * \tparam T
+			 *		Derived iLoggerDestination type
+			 * \tparam Params
+			 *		Parameters to derived type's ctor
+			 * \param params 
 			 */
 			template<typename T, typename ...Params>
-			void AddDestination(Params... params)
+			void AddDestination(Params&& ...params)
 			{
 				T* dest = new T(std::forward<Params>(params)...);
 				dest->SetName(&name);

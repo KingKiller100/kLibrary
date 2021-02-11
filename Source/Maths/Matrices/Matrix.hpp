@@ -701,7 +701,7 @@ namespace kmaths
 				const Type res = left * right;
 				result[col] += res;
 #else
-				result[col] += (v[col] * elems[row][col]);
+				result[col] += (v[col] * m[row][col]);
 #endif
 			}
 

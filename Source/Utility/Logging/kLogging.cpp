@@ -4,7 +4,6 @@
 #include "kLogMessage.hpp"
 #include "kLogDescriptor.hpp"
 
-#include "../../Template/kToImpl.hpp"
 #include "../String/kToString.hpp"
 #include "../FileSystem/kFileSystem.hpp"
 
@@ -93,17 +92,7 @@ namespace klib::kLogs
 	{
 		return ToImpl<ConsoleLogger>(destinations.at(LogDestType::CONSOLE));
 	}
-
-	iLoggerDestination& Logging::GetExtraDestination(size_t index)
-	{
-		return *destinations[LogDestType::MAXCOUNT + index];
-	}
-
-	const iLoggerDestination& Logging::GetExtraDestination(size_t index) const
-	{
-		return *destinations[LogDestType::MAXCOUNT + index];
-	}
-
+	
 	void Logging::SetCacheMode(const bool enable) noexcept
 	{
 		if (enable)

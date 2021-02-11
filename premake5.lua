@@ -17,8 +17,6 @@ project "kLibrary"
     {
         "Source/**.hpp",
         "Source/**.cpp",
-        "Tests/**.hpp",
-        "Tests/**.cpp",
         "cpp.hint"
     }
 
@@ -26,18 +24,6 @@ project "kLibrary"
     {
         "Bcrypt.lib",
     }
-
-    -- prebuildcommands
-    -- {
-    --     ("IF EXIST \"$(ProjectDir)Include Files\\\" ( del /f /s /q \"$(ProjectDir)Include Files\\\" ) ELSE (mkdir \"Include Files\")"),
-    -- }
-
-    -- postbuildcommands
-    -- {
-    --     ("xcopy /s /y \"$(ProjectDir)Source\" \"$(ProjectDir)Include Files\""),
-    --     ("del /s /q /f \"$(ProjectDir)Include Files\\*.cpp\""),
-    --     ("del \"$(ProjectDir)Include Files\\pch.hpp\" /s /f /q"),
-    -- }
 
     filter "system:Windows"
         systemversion "latest"
@@ -55,7 +41,6 @@ project "kLibrary"
         removefiles
         {
             "Source/**/*Test*",
-            "Tests/**/*Test*"
         }
         symbols "On"
         runtime "Debug"
@@ -64,13 +49,18 @@ project "kLibrary"
         defines "KLIB_TEST"
         symbols "On"
         runtime "Debug"
+        
+        files 
+        {    
+            "Tests/**.hpp",
+            "Tests/**.cpp",
+        }
 
     filter "configurations:Release"
         defines "KLIB_RELEASE"
         removefiles
         {
             "Source/**/*Test*",
-            "Tests/**/*Test*",
         }
         optimize "Full"
         runtime "Release"
@@ -80,7 +70,6 @@ project "kLibrary"
         removefiles
         {
             "Source/**/*Test*",
-            "Tests/**/*Test*",
         }
         optimize "Speed"
         runtime "Release"
