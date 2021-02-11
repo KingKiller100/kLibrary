@@ -25,6 +25,7 @@ namespace klib::type_trait
 		using Type = T;
 		using Limits_t = std::numeric_limits<T>;
 		static constexpr auto Bytes = sizeof(Type);
+		static constexpr auto Bits = Bytes * 8;
 	};
 
 	template<typename T>

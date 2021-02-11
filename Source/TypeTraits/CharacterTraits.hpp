@@ -18,7 +18,9 @@ namespace klib::type_trait
 		using Limits_t = std::numeric_limits<Type>;
 		using Underlying_t = std::char_traits<T>;
 		using Integer_t = typename Underlying_t::int_type;
-		
+		static constexpr auto Bytes = sizeof(T);
+		static constexpr auto Bits = Bytes * 8;
+
 		static constexpr auto NullTerminator = T();
 
 		// Character Compare Results

@@ -31,6 +31,8 @@ namespace klib::type_trait
 		using Type = bool;
 		using Limits_t = std::numeric_limits<Type>;
 		static constexpr auto Bytes = sizeof(Type);
+		static constexpr auto Bits = Bytes * 8;
+
 		static constexpr bool True = true;
 		static constexpr bool False = false;
 	};

@@ -46,6 +46,7 @@ namespace klib::type_trait
 		using Limits_t = std::numeric_limits<Type>;
 
 		static constexpr auto Bytes = sizeof(Type);
+		static constexpr auto Bits = Bytes * 8;
 		static constexpr auto Mantissa = Limits_t::digits;
 		static constexpr auto Exponent = Bytes - Mantissa;
 		static constexpr auto DotIndex = Mantissa - 3;
@@ -75,6 +76,7 @@ namespace klib::type_trait
 		using Limits_t = std::numeric_limits<Type>;
 
 		static constexpr auto Bytes = sizeof(Type);
+		static constexpr auto Bits = Bytes * 8;
 		static constexpr auto Mantissa = Limits_t::digits;
 		static constexpr auto Exponent = Bytes - Mantissa;
 		static constexpr auto DotIndex = Mantissa - 3;
@@ -104,6 +106,7 @@ namespace klib::type_trait
 		using Limits_t = std::numeric_limits<Type>;
 
 		static constexpr auto Bytes = sizeof(Type);
+		static constexpr auto Bits = Bytes * 8;
 		static constexpr auto Mantissa = Limits_t::digits;
 		static constexpr auto Exponent = Bytes - Mantissa;
 		static constexpr auto DotIndex = Mantissa - 3;
