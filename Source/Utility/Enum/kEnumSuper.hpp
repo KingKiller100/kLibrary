@@ -32,7 +32,7 @@ public:																					\
 		const auto& v = secret_impl_##enumName::values;									\
 		const auto& vb = secret_impl_##baseEnum::values;								\
 		if (std::find(std::begin(v), std::end(v), val) == v.end()						\
-			|| std::find(std::begin(vb), std::end(vb), val) == vb.end())				\
+			&& std::find(std::begin(vb), std::end(vb), val) == vb.end())				\
 		{																				\
 			throw std::out_of_range("Value given is out of enum's range");				\
 		}																				\
