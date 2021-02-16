@@ -15,8 +15,6 @@
 #include "TypeTraits/StringTraits.hpp"
 #include "TypeTraits/TemplateTraits.hpp"
 
-// Platform OS
-#include "Platform/kPlatform.hpp"
 
 // Templates
 #include "Template/kByteStorager.hpp"
@@ -30,6 +28,9 @@
 #include "Testing/TesterManager.hpp"
 
 // Util Includes
+
+// Platform OS
+#include "Utility/Platform/kPlatform.hpp"
 
 // Bits
 #include "Utility/Bits/kBitTricks.hpp"

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../HelperMacros.hpp"
+#include "../../HelperMacros.hpp"
 
-#include "../Utility/Enum/kEnum.hpp"
+#include "../Enum/kEnum.hpp"
 
 namespace klib
 {

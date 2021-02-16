@@ -3,7 +3,7 @@
 
 #include "Platform/Windows/kCalenderInfoSourceWindows.hpp"
 #include "../Debug/Exceptions/CalenderExceptions.hpp"
-#include "../../Platform/kPlatform.hpp"
+#include "../Platform/kPlatform.hpp"
 
 namespace klib::kCalendar
 {

@@ -31,7 +31,6 @@ namespace klib::kPlatform
 
 #endif
 
-
 		return PlatformOS::UNKNOWN;
 	}
 }
