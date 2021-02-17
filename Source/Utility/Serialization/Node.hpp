@@ -8,6 +8,16 @@
 
 namespace kml
 {
+	struct NodeData;
+	
+	template<typename T>
+	class Converter
+	{
+	public:
+		static void Encode(NodeData* data, const T& input);
+		static void Decode(NodeData* data, T& output);
+	};
+	
 	struct NodeData
 	{
 		std::string rawData;
@@ -15,15 +25,22 @@ namespace kml
 		std::string value;
 
 		template<typename T>
-		T Get()
+		void Get(T& out)
 		{
-			return klib::kString::StrTo<T>(rawData);
+			Converter<T>::Decode(*this, out);
 		}
 
 		template<typename T>
-		T Get(const T& defaultValue)
+		void Get(T& out, const T& defaultValue)
 		{
-			return klib::kString::TryStrTo<T>(rawData, defaultValue);
+			try
+			{
+				Converter<T>::Decode(*this, out);
+			}
+			catch (...)
+			{+
+				out = defaultValue;
+			}
 		}
 	};
 	
@@ -33,6 +50,6 @@ namespace kml
 		std::unique_ptr<Node> prev;
 		std::unique_ptr<Node> next;
 		NodeData data;
-
 	};
+
 }
