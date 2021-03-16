@@ -51,14 +51,14 @@ namespace klib::type_trait
 		static constexpr auto Exponent = Bytes - Mantissa;
 		static constexpr auto DotIndex = Mantissa - 3;
 
-		USE_RESULT static constexpr Unsigned_t UintBitCast(Type val) noexcept
+		USE_RESULT static Unsigned_t UintBitCast(Type val) noexcept
 		{
 			Precision_t p;
 			p.f = val;
 			return p.u;
 		}
 
-		USE_RESULT static constexpr typename Precision_t::Parts Parts(Type val) noexcept
+		USE_RESULT static Precision_t::Parts Parts(Type val) noexcept
 		{
 			Precision_t p;
 			p.f = val;
@@ -81,14 +81,14 @@ namespace klib::type_trait
 		static constexpr auto Exponent = Bytes - Mantissa;
 		static constexpr auto DotIndex = Mantissa - 3;
 
-		USE_RESULT static constexpr Unsigned_t UintBitCast(Type val) noexcept
+		USE_RESULT static Unsigned_t UintBitCast(Type val) noexcept
 		{
 			Precision_t p;
 			p.f = val;
 			return p.u;
 		}
 
-		USE_RESULT static constexpr typename Precision_t::Parts Parts(Type val) noexcept
+		USE_RESULT static Precision_t::Parts Parts(Type val) noexcept
 		{
 			Precision_t p;
 			p.f = val;
@@ -111,14 +111,14 @@ namespace klib::type_trait
 		static constexpr auto Exponent = Bytes - Mantissa;
 		static constexpr auto DotIndex = Mantissa - 3;
 
-		USE_RESULT static constexpr Unsigned_t UintBitCast(Type val) noexcept
+		USE_RESULT static Unsigned_t UintBitCast(Type val) noexcept
 		{
 			Precision_t p;
 			p.f = val;
 			return p.u;
 		}
 
-		USE_RESULT static constexpr typename Precision_t::Parts Parts(Type val) noexcept
+		USE_RESULT static Precision_t::Parts Parts(Type val) noexcept
 		{
 			Precision_t p;
 			p.f = val;
