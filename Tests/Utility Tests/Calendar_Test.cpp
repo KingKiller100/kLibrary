@@ -27,14 +27,14 @@ namespace kTest::utility
 	{
 		T* buffer = nullptr;
 
-		if _CONSTEXPR_IF(std::is_same_v<T, char>)
+		if constexpr(std::is_same_v<T, char>)
 		{
 			const auto length = 1 + std::snprintf(nullptr, 0, format, arg, args...);
 			if (length <= 0) throw std::exception();
 			buffer = new T[length]{};
 			sprintf_s(buffer, length, format, arg, args...);
 		}
-		else if _CONSTEXPR_IF(std::is_same_v<T, wchar_t>)
+		else if constexpr(std::is_same_v<T, wchar_t>)
 		{
 			const auto length = 1 + _snwprintf_l(nullptr, 0, format, nullptr, arg, args...);
 			if (length <= 0) throw std::exception();

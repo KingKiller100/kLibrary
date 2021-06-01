@@ -31,50 +31,50 @@ namespace klib::kStopwatch
 			>>
 			USE_RESULT constexpr std::basic_string_view<CharT> GetUnitsStr(UnitStrLength length = UnitStrLength::SHORT) noexcept
 		{
-			if _CONSTEXPR_IF(std::is_same_v<Units, Hours>)
+			if constexpr(std::is_same_v<Units, Hours>)
 			{
 				return kString::Convert<CharT>(length.Compare(UnitStrLength::SHORT,
 					"h", "hours"
 				)
 					);
 			}
-			else if _CONSTEXPR_IF(std::is_same_v<Units, Mins>)
+			else if constexpr(std::is_same_v<Units, Mins>)
 			{
 				return kString::Convert<CharT>(length.Compare(UnitStrLength::SHORT,
 					"m", "minutes"
 				));
 			}
-			else if _CONSTEXPR_IF(std::is_same_v<Units, Secs>)
+			else if constexpr(std::is_same_v<Units, Secs>)
 			{
 				return kString::Convert<CharT>(length.Compare(UnitStrLength::SHORT,
 					"s", "seconds"
 				));
 			}
-			else if _CONSTEXPR_IF(std::is_same_v<Units, Millis>)
+			else if constexpr(std::is_same_v<Units, Millis>)
 			{
 				return kString::Convert<CharT>(length.Compare(UnitStrLength::SHORT,
 					"ms", "milliseconds"
 				));
 			}
-			else if _CONSTEXPR_IF(std::is_same_v<Units, Micros>)
+			else if constexpr(std::is_same_v<Units, Micros>)
 			{
 				return kString::Convert<CharT>(length.Compare(UnitStrLength::SHORT,
 					"us", "microseconds"
 				));
 			}
-			else if _CONSTEXPR_IF(std::is_same_v<Units, Nanos>)
+			else if constexpr(std::is_same_v<Units, Nanos>)
 			{
 				return kString::Convert<CharT>(length.Compare(UnitStrLength::SHORT,
 					"ns", "nanoseconds"
 				));
 			}
-			else if _CONSTEXPR_IF(std::is_same_v<Units, Pico>)
+			else if constexpr(std::is_same_v<Units, Pico>)
 			{
 				return kString::Convert<CharT>(length.Compare(UnitStrLength::SHORT,
 					"ps", "picoseconds"
 				));
 			}
-			else if _CONSTEXPR_IF(std::is_same_v<Units, Femto>)
+			else if constexpr(std::is_same_v<Units, Femto>)
 			{
 				return kString::Convert<CharT>(length.Compare(UnitStrLength::SHORT,
 					"fs", "femtoseconds"
@@ -199,7 +199,7 @@ namespace klib::kStopwatch
 
 		const auto diff = std::chrono::duration_cast<Duration_t>(duration);
 
-		if _CONSTEXPR_IF(type_trait::Is_It_V<Units, units::Hours, units::Mins>)
+		if constexpr(type_trait::Is_It_V<Units, units::Hours, units::Mins>)
 			return static_cast<Rep>(sixtieth * diff.count());
 		else
 			return static_cast<Rep>(thousandth * diff.count());

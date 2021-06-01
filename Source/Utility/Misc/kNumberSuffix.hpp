@@ -14,7 +14,7 @@ namespace klib::kMisc
 		const auto remainder = n % 10;
 		const auto forceTH = n > 10 && n < 20;
 
-		if _CONSTEXPR_IF(std::is_same_v<Char_t, wchar_t>)
+		if constexpr(std::is_same_v<Char_t, wchar_t>)
 		{
 			if (forceTH)
 				return L"th";
@@ -24,7 +24,7 @@ namespace klib::kMisc
 				: remainder == 3 ? L"rd"
 				: L"th";
 		}
-		else if _CONSTEXPR_IF(std::is_same_v<Char_t, char16_t>)
+		else if constexpr(std::is_same_v<Char_t, char16_t>)
 		{
 			if (forceTH)
 				return u"th";
@@ -34,7 +34,7 @@ namespace klib::kMisc
 				: remainder == 3 ? u"rd"
 				: u"th";
 		}
-		else if _CONSTEXPR_IF(std::is_same_v<Char_t, char32_t>)
+		else if constexpr(std::is_same_v<Char_t, char32_t>)
 		{
 			if (forceTH)
 				return U"th";
@@ -45,7 +45,7 @@ namespace klib::kMisc
 				: U"th";
 		}
 #if __cpp_char8_t
-		else if _CONSTEXPR_IF(std::is_same_v<Char_t, char8_t>)
+		else if constexpr(std::is_same_v<Char_t, char8_t>)
 		{
 			if (forceTH)
 				return u8"th";

@@ -31,7 +31,7 @@ namespace kmaths
 	template <typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Modulus(T num, T base) noexcept
 	{
-		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
+		if constexpr(std::is_floating_point_v<T>)
 		{
 			const auto mod = (num < 0)
 				? FloatRemainder(num, base) + base
@@ -41,7 +41,7 @@ namespace kmaths
 		else
 		{
 			const T rem = num % base;
-			if _CONSTEXPR_IF(-1 % 2 == 1)
+			if constexpr(-1 % 2 == 1)
 			{
 				return rem;
 			}

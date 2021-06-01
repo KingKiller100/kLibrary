@@ -23,7 +23,7 @@ namespace klib
 			>>
 			USE_RESULT constexpr DestChar* Convert(const SourceChar* source) noexcept
 		{
-			if _CONSTEXPR_IF(std::is_same_v<SourceChar, DestChar>)
+			if constexpr(std::is_same_v<SourceChar, DestChar>)
 				return (DestChar*)source;
 			else
 			{

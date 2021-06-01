@@ -137,7 +137,7 @@ namespace kmaths
 				constexpr auto ZeroPointFive = constants::ZeroPointFive<Accuracy_t>;
 
 				auto maxIterations = 0;
-				if _CONSTEXPR_IF(std::is_same_v<T, float>)
+				if constexpr(std::is_same_v<T, float>)
 					maxIterations = 7;
 				else
 					maxIterations = 16;
@@ -354,7 +354,7 @@ namespace kmaths
 	USE_RESULT constexpr T Root(T num, size_t root)
 	{
 		using namespace kmaths::secret::impl;
-		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
+		if constexpr(!std::is_floating_point_v<T>)
 			return RootImpl<float, T>(CAST(float, num), root);
 		else
 			return RootImpl<T>(num, root);
@@ -399,7 +399,7 @@ namespace kmaths
 
 		const int8_t sign = isNegative ? -1 : 1;
 
-		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
+		if constexpr(!std::is_floating_point_v<T>)
 		{
 			const auto pow = PowerOfImpl<float>(base, numerator * sign);
 			const auto powRoot = RootImpl<float>(pow, denominator);
@@ -451,7 +451,7 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr T Log10(const T x)
 	{
-		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
+		if constexpr(std::is_floating_point_v<T>)
 		{
 			constexpr auto ln10 = constants::Ln10<T>;
 			return Round<T>(NaturalLogarithm<T>(x) / ln10, Max_Decimal_Precision_V<T>);
@@ -467,7 +467,7 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr T Log2(const T x)
 	{
-		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
+		if constexpr(std::is_floating_point_v<T>)
 		{
 			constexpr auto ln2 = constants::Ln2<T>;
 			return Round<T>(NaturalLogarithm<T>(x) / ln2, Max_Decimal_Precision_V<T>);
@@ -487,7 +487,7 @@ namespace kmaths
 	USE_RESULT constexpr T Exponential(T x) noexcept
 	{
 		using namespace kmaths::secret::impl;
-		if _CONSTEXPR_IF(std::is_integral_v<T>)
+		if constexpr(std::is_integral_v<T>)
 			return CAST(T, ExponentialImpl<float>(CAST(float, x)));
 		else
 			return ExponentialImpl<T>(x);
@@ -662,7 +662,7 @@ namespace kmaths
 	template<typename T, class = std::enable_if_t<std::is_arithmetic_v<T>>>
 	USE_RESULT constexpr T Factorial(T n)
 	{
-		if _CONSTEXPR_IF(std::is_floating_point_v<T>)
+		if constexpr(std::is_floating_point_v<T>)
 			return Factorial_Floating_Point<T>(n);
 		else
 			return Factorial_Integral<T>(n);

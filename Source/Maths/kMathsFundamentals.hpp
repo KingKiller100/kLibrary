@@ -62,7 +62,7 @@ namespace kmaths
 	template<typename Dest_t, typename Source_t>
 	USE_RESULT constexpr Dest_t Convert(Source_t&& source)
 	{
-		if _CONSTEXPR_IF(std::is_arithmetic_v<Dest_t>)
+		if constexpr(std::is_arithmetic_v<Dest_t>)
 		{
 			constexpr auto max = std::numeric_limits<Dest_t>::max();
 			constexpr auto min = std::numeric_limits<Dest_t>::min();
@@ -131,14 +131,14 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr T Abs(T x) noexcept
 	{
-		if _CONSTEXPR_IF(std::is_unsigned_v<T>)
+		if constexpr(std::is_unsigned_v<T>)
 			return x;
 		else
 		{
 			if (x >= 0)
 				return x;
 
-			if _CONSTEXPR_IF(std::is_integral_v<T>)
+			if constexpr(std::is_integral_v<T>)
 				return ~x + constants::One<T>;
 			else
 				return -x;

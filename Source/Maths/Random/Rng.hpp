@@ -53,7 +53,7 @@ namespace kmaths
 			>>
 			Primitive_t Generate(Primitive_t lowerBound, Primitive_t upperBound) noexcept
 			{
-				if _CONSTEXPR_IF(std::is_floating_point_v<Primitive_t>)
+				if constexpr(std::is_floating_point_v<Primitive_t>)
 				{
 					std::uniform_real_distribution<Primitive_t> distribution(lowerBound, upperBound);
 					return distribution(generator);
@@ -102,7 +102,7 @@ namespace kmaths
 			>>
 			Primitive_t Generate(Primitive_t lowerBound, Primitive_t upperBound) noexcept
 			{
-				if _CONSTEXPR_IF(std::is_floating_point_v<Primitive_t>)
+				if constexpr(std::is_floating_point_v<Primitive_t>)
 				{
 					std::uniform_real_distribution<Primitive_t> distribution(lowerBound, upperBound);
 					return distribution(generator);
@@ -151,7 +151,7 @@ namespace kmaths
 			>>
 			USE_RESULT Primitive_t Generate(Primitive_t lowerBound, Primitive_t upperBound) noexcept
 			{
-				if _CONSTEXPR_IF(std::is_floating_point_v<Primitive_t>)
+				if constexpr(std::is_floating_point_v<Primitive_t>)
 				{
 					std::uniform_real_distribution<Primitive_t> distribution(lowerBound, upperBound);
 					return distribution(generator);
@@ -200,7 +200,7 @@ namespace kmaths
 			>>
 			USE_RESULT Primitive_t Generate(Primitive_t lowerBound, Primitive_t upperBound) noexcept
 			{
-				if _CONSTEXPR_IF(std::is_floating_point_v<Primitive_t>)
+				if constexpr(std::is_floating_point_v<Primitive_t>)
 				{
 					std::uniform_real_distribution<Primitive_t> distribution(lowerBound, upperBound);
 					return distribution(generator);

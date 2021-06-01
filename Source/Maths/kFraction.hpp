@@ -32,7 +32,7 @@ namespace kmaths
 		template<typename T>
 		USE_RESULT constexpr T GetReal() const noexcept
 		{
-			if _CONSTEXPR_IF(std::is_signed_v<T>)
+			if constexpr(std::is_signed_v<T>)
 			{
 				const T num = CAST(T, numerator);
 				const T signedNum = isNegative ? -num : num;

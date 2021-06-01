@@ -133,7 +133,7 @@ namespace kmaths
 
 		USE_RESULT constexpr Vector Inverse() const noexcept
 		{
-			if _CONSTEXPR_IF(std::is_integral_v<Type>)
+			if constexpr(std::is_integral_v<Type>)
 				return *this;
 			else
 				return Vector(constants::OneOver<Type>(x), constants::OneOver<Type>(y), constants::OneOver<Type>(z));

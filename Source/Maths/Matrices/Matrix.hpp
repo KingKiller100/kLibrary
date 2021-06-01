@@ -121,7 +121,7 @@ namespace kmaths
 			Matrix inverse;
 			const auto determinant = this->GetDeterminant();
 
-			if _CONSTEXPR_IF(Rows == 2)
+			if constexpr(Rows == 2)
 			{
 				Vector<Type, 2> copy[2];
 				if (determinant != 0.f)
@@ -133,7 +133,7 @@ namespace kmaths
 				}
 				inverse = { copy[0], copy[1] };
 			}
-			else if _CONSTEXPR_IF(Rows > 2)
+			else if constexpr(Rows > 2)
 			{
 				auto positiveCoefficient = true;
 				for (auto row = 0u; row < Rows; ++row)
@@ -156,7 +156,7 @@ namespace kmaths
 			}
 			else
 			{
-				if _CONSTEXPR_IF(std::is_floating_point_v<Type>)
+				if constexpr(std::is_floating_point_v<Type>)
 					return Matrix(constants::OneOver<Type>(elems[0][0]));
 				else
 					return Matrix();
@@ -425,7 +425,7 @@ namespace kmaths
 #endif
 					}
 
-					if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
+					if constexpr(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
 						m[row][col] = HandleFloatingPointError<Type>(m[row][col]);
 				}
 			}
@@ -461,7 +461,7 @@ namespace kmaths
 		//#endif
 		//				}
 		//
-		//				if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
+		//				if constexpr(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
 		//					result[row] = HandleFloatingPointError<Type>(result[row]);
 		//			}
 		//
@@ -478,7 +478,7 @@ namespace kmaths
 		template<typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>, U>>
 		USE_RESULT constexpr Matrix operator/(const U scalar) const noexcept
 		{
-			//if _CONSTEXPR_IF(std::is_floating_point_v<Type>)
+			//if constexpr(std::is_floating_point_v<Type>)
 			//{
 			//	const auto multipler = constants::OneOver<Type>(scalar);
 			//	return *this * multipler;
@@ -705,7 +705,7 @@ namespace kmaths
 #endif
 			}
 
-			if _CONSTEXPR_IF(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
+			if constexpr(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
 				result[col] = HandleFloatingPointError<Type>(result[col]);
 		}
 

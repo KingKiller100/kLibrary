@@ -34,7 +34,7 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr Vector2<T> Rotate(const Vector2<T>& position, const T angle) noexcept
 	{
-		if _CONSTEXPR_IF(angle == CAST(T, 0))
+		if constexpr(angle == CAST(T, 0))
 			return Vector2<T>();
 
 		const auto rotation = atan2(position.Y(), position.X()) + angle;

@@ -24,7 +24,7 @@ namespace klib {
 			template<size_t Count>
 			constexpr size_t InitialFormatStringSize()
 			{
-				if _CONSTEXPR_IF(Count < 10)
+				if constexpr(Count < 10)
 				{
 					return Count + 2 * Count;
 				}

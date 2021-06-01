@@ -83,7 +83,7 @@ namespace klib::kString::secret::impl
 				outFmt.erase(openerPos, infoSize + 1);
 				outFmt.insert(openerPos, GetData(replacement), repSize);
 
-				if _CONSTEXPR_IF(type_trait::Is_CString_V<decltype(replacement)>)
+				if constexpr(type_trait::Is_CString_V<decltype(replacement)>)
 				{
 					delete[] replacement;
 				}

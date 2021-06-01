@@ -28,7 +28,7 @@ namespace klib::kString
 			CharType* buffer = nullptr;
 			auto length = npos;
 
-			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
+			if constexpr(std::is_same_v<CharType, char>)
 			{
 				length = _snprintf(nullptr, 0, format
 					, stringify::Identity<CharType, T>::Get(arg1)
@@ -39,7 +39,7 @@ namespace klib::kString
 					, stringify::Identity<CharType, T>::Get(arg1)
 					, stringify::Identity<CharType, Ts>::Get(argPack)...);
 			}
-			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
+			else if constexpr(std::is_same_v<CharType, wchar_t>)
 			{
 				length = _snwprintf(nullptr, 0, format
 					, stringify::Identity<CharType, T>::Get(arg1)

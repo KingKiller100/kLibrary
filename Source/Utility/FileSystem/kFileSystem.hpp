@@ -77,7 +77,7 @@ namespace klib {
 #if defined(KFILEFYSTEM_NO_EXCEPTIONS)
 			return false;
 #else
-			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
+			if constexpr(std::is_same_v<CharType, char>)
 			{
 				const auto failMsg = "Cannot create/open file: " + filePath.string();
 				OutputDebugStringA(failMsg.c_str());
@@ -154,11 +154,11 @@ namespace klib {
 		template<class CharType = char>
 		bool DeleteDirectory(const kString::StringReader<CharType>& directory)
 		{
-			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
+			if constexpr(std::is_same_v<CharType, char>)
 			{
 				return _rmdir(directory.data()) == 0; // 0 == SUCCESS
 			}
-			else if _CONSTEXPR_IF(std::is_same_v<CharType, wchar_t>)
+			else if constexpr(std::is_same_v<CharType, wchar_t>)
 			{
 				return _wrmkdir(directory.data()) == 0; // 0 == SUCCESS
 			}
@@ -223,7 +223,7 @@ namespace klib {
 #if MSVC_PLATFORM_TOOLSET > 140
 			return CheckDirectoryExists(Path(directoryPath));
 #else
-			if _CONSTEXPR_IF(std::is_same_v<CharType, char>)
+			if constexpr(std::is_same_v<CharType, char>)
 			{
 				struct stat info {};
 				const auto statResult = stat(GetParentPath(directoryPath).data(), &info);
@@ -292,13 +292,13 @@ namespace klib {
 			{
 				Char* cwdBuffer = nullptr;
 				std::uint32_t length = 0;
-				if _CONSTEXPR_IF(std::is_same_v<Char, char>)
+				if constexpr(std::is_same_v<Char, char>)
 				{
 					length = GetCurrentDirectoryA(0, nullptr);
 					cwdBuffer = new Char[length]{};
 					::GetCurrentDirectoryA(length, cwdBuffer);
 				}
-				else if _CONSTEXPR_IF(std::is_same_v<Char, wchar_t>)
+				else if constexpr(std::is_same_v<Char, wchar_t>)
 				{
 					length = GetCurrentDirectoryW(0, nullptr);
 					cwdBuffer = new Char[length]{};
@@ -365,11 +365,11 @@ namespace klib {
 				Char* exeBuffer = new Char[bufferSize]{};
 
 				std::uint32_t length = 0;
-				if _CONSTEXPR_IF(std::is_same_v<Char, char>)
+				if constexpr(std::is_same_v<Char, char>)
 				{
 					length = ::GetModuleFileNameA(nullptr, exeBuffer, bufferSize);
 				}
-				else if _CONSTEXPR_IF(std::is_same_v<Char, wchar_t>)
+				else if constexpr(std::is_same_v<Char, wchar_t>)
 				{
 					length = ::GetModuleFileNameW(nullptr, exeBuffer, bufferSize);
 				}

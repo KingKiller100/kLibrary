@@ -73,7 +73,7 @@ namespace kmaths
 			return _Small_powers_of_ten[power];
 
 		constexpr auto ten = CAST(T, 10);
-		if _CONSTEXPR_IF(!std::is_floating_point_v<T>)
+		if constexpr(!std::is_floating_point_v<T>)
 		{
 			if (power < 0)
 				return 0;
