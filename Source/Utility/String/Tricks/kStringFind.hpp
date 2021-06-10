@@ -12,12 +12,12 @@ namespace klib::kString
 {
 	namespace secret::impl
 	{
-		template<typename CStringA, typename Char_t, typename CmpFunc_t, typename DirectionFunc_t, class = std::enable_if_t <
+		template<typename CStringA, typename Char_t, typename CmpFunc_t, typename ArthimeticFunc_t, class = std::enable_if_t <
 			type_trait::Is_CString_V<CStringA>
 			&& type_trait::Is_Char_V<Char_t>
-			&& std::is_same_v<klib::type_trait::Simplify_t<CStringA>, Char_t>
+			&& std::is_same_v<type_trait::Simplify_t<CStringA>, Char_t>
 			>>
-			USE_RESULT constexpr size_t FindCharImpl(const CStringA& hayStack, Char_t needle, size_t offset, CmpFunc_t&& cmpFunc, DirectionFunc_t&& directionFunc)
+			USE_RESULT constexpr size_t FindCharImpl(const CStringA& hayStack, Char_t needle, size_t offset, CmpFunc_t&& cmpFunc, ArthimeticFunc_t&& directionFunc)
 		{
 			using namespace type_trait;
 			using PossibleString_t = std::basic_string<Char_t>;
@@ -45,7 +45,7 @@ namespace klib::kString
 		USE_RESULT constexpr size_t Find(const CStringA hayStack, const CStringB needle, size_t offset = 0)
 	{
 		using namespace type_trait;
-		using Char_t = typename type_trait::Is_CString<CStringA>::Char_t;
+		using Char_t = typename Is_CString<CStringA>::Char_t;
 		using PossibleString_t = std::basic_string<Char_t>;
 
 		constexpr Char_t nt = g_NullTerminator<Char_t>;
@@ -176,15 +176,15 @@ namespace klib::kString
 				)
 			>>
 			USE_RESULT constexpr size_t Count(const StringType& str, const Stringish search
-				, const size_t offset = 0, CaseSensitive cs = CaseSensitive::NO)
+				, const size_t offset = 0, CaseSensitivity cs = CaseSensitivity::INSENSITIVE)
 		{
 			size_t count = 0;
 
-			const auto hayStack = cs.Compare(CaseSensitive::YES
+			const auto hayStack = cs.Compare(CaseSensitivity::SENSITIVE
 				, ToWriter(str)
 				, ToLower(str));
 
-			const auto needle = cs == CaseSensitive::YES
+			const auto needle = cs == CaseSensitivity::SENSITIVE
 				? search
 				: ToLower(search);
 

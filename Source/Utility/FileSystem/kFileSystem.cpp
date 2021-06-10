@@ -35,6 +35,15 @@ namespace klib::kFileSystem
 		return std::filesystem::remove_all(filepath);
 	}
 
+	bool DeleteDirectory(const Path& directory)
+	{
+		if (CheckDirectoryExists(directory))
+		{
+			return _wrmdir(directory.c_str()) == 0; // 0 == SUCCESS
+		}
+		return false;
+	}
+
 	bool CheckFileExists(const Path& path) noexcept
 	{
 		return CheckFileExists(path.wstring());

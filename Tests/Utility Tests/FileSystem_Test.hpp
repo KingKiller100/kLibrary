@@ -16,6 +16,7 @@ namespace kTest::utility
 	private:
 		bool FunctionalityTest();
 		bool PathToStringTest();
+		bool PathStringTest();
 		
 		template<typename Dest, typename Source>
 		std::basic_string<Dest> SwitchStringFormat(Source source)

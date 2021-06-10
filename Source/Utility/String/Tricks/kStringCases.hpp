@@ -101,5 +101,5 @@ namespace klib::kString
 	}
 	
 
-	ENUM_CLASS(CaseSensitive, std::uint8_t, YES, NO);
+	ENUM_CLASS(CaseSensitivity, std::uint8_t, SENSITIVE, INSENSITIVE);
 }

@@ -4,6 +4,7 @@
 #ifdef TESTING_ENABLED
 #include "../../Source/Utility/FileSystem/kFileSystem.hpp"
 #include "../../Source/Utility/FileSystem/kFileSystemToString.hpp"
+#include "../../Source/Utility/FileSystem/kPathString.hpp"
 #include "../../Source/Utility/String/kToString.hpp"
 
 namespace kTest::utility
@@ -21,6 +22,7 @@ namespace kTest::utility
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(FunctionalityTest());
 		VERIFY_MULTI(PathToStringTest());
+		VERIFY_MULTI(PathStringTest());
 		VERIFY_MULTI_END();
 	}
 
@@ -146,14 +148,14 @@ namespace kTest::utility
 		const std::string_view dir = "C:\\Files\\";
 		const auto file = std::string("FileTest");
 		const auto ext = std::string(".txt");
-		
+
 		const Path path = dir + file + ext;
 
 		{
 			const auto result = klib::kString::ToString("{0:p}", path);
 			VERIFY(result == dir.substr(0, dir.size() - 1));
 		}
-		
+
 		{
 			const auto result = klib::kString::ToString("{0:d}", path);
 			VERIFY(result == dir.substr(0, dir.size() - 1));
@@ -172,6 +174,33 @@ namespace kTest::utility
 		{
 			const auto result = klib::kString::ToString(u"{0:fe}", path);
 			VERIFY(result == u"FileTest.txt");
+		}
+
+		return success;
+	}
+
+	bool FileSystemTester::PathStringTest()
+	{
+		{
+			const auto pathA = klib::kFileSystem::PathString<char>("../Game/LoZ.exe");
+			const auto pathB = klib::kFileSystem::PathString<char>("..\\Game\\LoZ.exe");
+			VERIFY(pathA == pathB);
+		}
+		
+		{
+			const auto pathA = klib::kFileSystem::PathString<char16_t>(u"../Game/LoZ.exe");
+			const auto pathB = klib::kFileSystem::PathString<char16_t>(u"..\\Game\\LoZ.exe");
+			VERIFY(pathA == pathB);
+		}
+		
+		{
+			const auto pathA = klib::kFileSystem::PathString<char8_t>(u8"../Game/LoZ.exe");
+			const auto pathB = klib::kFileSystem::PathString<char8_t>(u8"..\\Game\\LoZ.exe");
+			const auto fs = klib::kFileSystem::Path(pathA);
+			VERIFY(pathA == pathB);
+		}
+
+		{
 		}
 
 		return success;

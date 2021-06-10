@@ -1,5 +1,6 @@
 #pragma once
 
+#include "kPathString.hpp"
 #include "kFileSystemTypes.hpp"
 
 #include "../String/kStringConverter.hpp"
@@ -27,9 +28,9 @@ namespace klib {
 		{
 			inline bool g_Update_CWD = true;
 		}
-
+		
 		template<class CharType, class = std::enable_if_t<type_trait::Is_Char_V<CharType>>>
-		constexpr auto pathSeparator = CharType('\\');
+		constexpr auto pathSeparator = secret::impl::s_IsDos ? CharType('\\') : CharType('/');
 
 		template<class SourceType, class = std::enable_if_t<type_trait::Is_String_V<SourceType>>>
 		USE_RESULT constexpr auto CorrectFilePathSeparators(const SourceType& src)
@@ -151,26 +152,7 @@ namespace klib {
 		 *		- The folder is completely empty (including empty of system and hidden folder files)
 		 *		- This directory is not the current directory of this application.
 		 */
-		template<class CharType = char>
-		bool DeleteDirectory(const kString::StringReader<CharType>& directory)
-		{
-			if constexpr(std::is_same_v<CharType, char>)
-			{
-				return _rmdir(directory.data()) == 0; // 0 == SUCCESS
-			}
-			else if constexpr(std::is_same_v<CharType, wchar_t>)
-			{
-				return _wrmkdir(directory.data()) == 0; // 0 == SUCCESS
-			}
-			else
-			{
-				kString::StringWriter<wchar_t> temp;
-				for (auto& c : directory)
-					temp += CAST(wchar_t, c);
-				return DeleteDirectory<wchar_t>(temp);
-			}
-			return false;
-		}
+		bool DeleteDirectory(const Path& directory);
 
 		/**
 		 * \brief

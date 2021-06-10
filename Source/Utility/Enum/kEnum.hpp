@@ -9,7 +9,7 @@ x enumName																				\
 {																						\
 public:																					\
 	using underlying_t = underlying;													\
-	enum InternalEnum_t : underlying { __VA_ARGS__ };									\
+	enum Value : underlying { __VA_ARGS__ };									\
 																						\
 protected:																				\
 	struct secret_impl_##enumName														\
@@ -24,7 +24,7 @@ protected:																				\
 	};																					\
 																						\
 public:																					\
-	constexpr enumName(InternalEnum_t value)											\
+	constexpr enumName(Value value)											\
 		: value(value)																	\
 	{}																					\
 																						\
@@ -38,20 +38,20 @@ public:																					\
 		}																				\
 	}																					\
 																						\
-	constexpr enumName& operator=(const InternalEnum_t value)							\
+	constexpr enumName& operator=(const Value value)							\
 	{																					\
 		this->value = value;															\
 		return *this;																	\
 	}																					\
 																						\
-	constexpr operator InternalEnum_t() const											\
+	constexpr operator Value() const											\
 	{																					\
-		return static_cast<InternalEnum_t>(value);										\
+		return static_cast<Value>(value);										\
 	}																					\
 																						\
-	USE_RESULT constexpr InternalEnum_t ToEnum() const									\
+	USE_RESULT constexpr Value ToEnum() const									\
 	{																					\
-		return static_cast<InternalEnum_t>(value);										\
+		return static_cast<Value>(value);										\
 	}																					\
 																						\
 	USE_RESULT constexpr underlying ToUnderlying() const								\
@@ -64,7 +64,7 @@ public:																					\
 		return secret_impl_##enumName::size;											\
 	}																					\
 																						\
-	USE_RESULT constexpr bool MaskCmp(InternalEnum_t target) const						\
+	USE_RESULT constexpr bool MaskCmp(Value target) const						\
 	{																					\
 		return MaskCmp(target, true, false);											\
 	}																					\
@@ -72,7 +72,7 @@ public:																					\
 	template<typename T1, typename T2, typename = std::enable_if_t<						\
 	std::is_convertible_v<T2, T1>														\
 	>>																					\
-	USE_RESULT constexpr std::decay_t<T1> MaskCmp(InternalEnum_t mask					\
+	USE_RESULT constexpr std::decay_t<T1> MaskCmp(Value mask					\
 		, T1&& successState, T2&& failState) const										\
 	{																					\
 		if (mask & value)																\
@@ -80,13 +80,13 @@ public:																					\
 		return failState;																\
 	}																					\
 																						\
-	USE_RESULT constexpr bool Compare(InternalEnum_t target) const						\
+	USE_RESULT constexpr bool Compare(Value target) const						\
 	{																					\
 		return Compare(target, true, false);											\
 	}																					\
 																						\
 	template<typename T1, typename T2>													\
-	USE_RESULT constexpr std::decay_t<T1> Compare(InternalEnum_t target					\
+	USE_RESULT constexpr std::decay_t<T1> Compare(Value target					\
 		, T1&& successState, T2&& failState) const										\
 	{																					\
 		if (target == value)															\
@@ -209,7 +209,7 @@ public:																					\
 		}																				\
 	}																					\
 																						\
-	static constexpr InternalEnum_t FromStringImpl(const char* s, size_t index)			\
+	static constexpr Value FromStringImpl(const char* s, size_t index)			\
 	{																					\
 		using namespace klib::kEnum::secret::impl;										\
 																						\
@@ -221,7 +221,7 @@ public:																					\
 				secret_impl_##enumName::raw_names[index].data(), s);					\
 																						\
 		const auto ret = matches														\
-			? static_cast<InternalEnum_t>(secret_impl_##enumName::values[index])		\
+			? static_cast<Value>(secret_impl_##enumName::values[index])		\
 			: FromStringImpl(s, index + 1);												\
 																						\
 		return ret;																		\

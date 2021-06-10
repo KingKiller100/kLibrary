@@ -133,7 +133,7 @@ namespace klib::kLogs
 		inline static constexpr auto DetailSpecifier = '&';
 
 	protected:
-		std::unordered_map<LogLevel::InternalEnum_t, std::string> formatMap;
+		std::unordered_map<LogLevel::Value, std::string> formatMap;
 
 	private:
 		static const std::unordered_map<char, std::string> LogFormatSpecifiersMap;

@@ -157,7 +157,7 @@ namespace kTest::utility
 
 		{
 			constexpr std::string_view test("Aquarium");
-			const auto count = Count(test, 'a', 0, CaseSensitive::YES);
+			const auto count = Count(test, 'a', 0, CaseSensitivity::SENSITIVE);
 			VERIFY(count == 1);
 		}
 

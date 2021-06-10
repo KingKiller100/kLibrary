@@ -35,7 +35,7 @@ namespace klib
 			using FileLines = std::vector<kString::StringWriter<Char_t>>;
 
 		// STL vector of STL filesystem paths
-		using PathList = std::vector<std::filesystem::path>;
+		using PathList = std::vector<Path>;
 
 		// --------------------------------------------------------------------------------------
 	}

@@ -156,7 +156,7 @@ namespace klib::kStopwatch
 	{   // Based on std::chrono::steady_clock
 		using Units_t = Units;
 		using Rep_t = typename Units_t::Rep_t;
-		using Period_t = std::ratio_multiply<std::ratio<_XTIME_NSECS_PER_TICK, 1>, typename Units_t::Period_t>;
+		using Period_t = std::chrono::ambiguous_local_time;
 		using Duration_t = std::chrono::duration<Rep_t, Period_t>;
 		using Underlying_t = std::chrono::system_clock;
 		using TimePoint_t = std::chrono::time_point<Underlying_t, Duration_t>;
