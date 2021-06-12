@@ -85,5 +85,15 @@ namespace klib::kDebug
 	{
 		BreakPointImpl();
 	}
+	
+	void WriteToOutputWindow(std::string_view msg)
+	{
+		WriteToOutputWindowImpl(msg);
+	}
+	
+	void WriteToOutputWindow(std::wstring_view msg)
+	{
+		WriteToOutputWindowImpl(msg);
+	}
 
 }

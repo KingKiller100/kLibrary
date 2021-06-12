@@ -3,6 +3,7 @@
 #include "kPathString.hpp"
 #include "kFileSystemTypes.hpp"
 
+#include "../Debug/kDebugger.hpp"
 #include "../String/kStringConverter.hpp"
 #include"../String/kStringTricks.hpp"
 
@@ -81,17 +82,16 @@ namespace klib {
 			if constexpr(std::is_same_v<CharType, char>)
 			{
 				const auto failMsg = "Cannot create/open file: " + filePath.string();
-				OutputDebugStringA(failMsg.c_str());
+				kDebug::WriteToOutputWindow(failMsg);
 			}
 			else
 			{
 				const auto failMsg = L"Cannot create/open file: " + filePath.wstring();
-				OutputDebugStringW(failMsg.c_str());
+				kDebug::WriteToOutputWindow(failMsg);
 			}
 
 			throw std::runtime_error("Unable to write to file: " + filePath.string<char>());
 #endif 
-
 		}
 
 		/**

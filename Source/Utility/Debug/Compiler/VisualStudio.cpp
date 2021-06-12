@@ -1,8 +1,6 @@
 ﻿#include "pch.hpp"
 #include "VisualStudio.hpp"
-#include "../../../HelperMacros.hpp"
 
-#include <Windows.h>
 
 namespace klib::kDebug::compiler::visual_studio
 {
@@ -13,6 +11,6 @@ namespace klib::kDebug::compiler::visual_studio
 
 	bool IsDebuggerAttachedImpl() noexcept
 	{
-		return ::IsDebuggerPresent() == KLIB_TRUE;
+		return ::IsDebuggerPresent() == TRUE;
 	}
 }

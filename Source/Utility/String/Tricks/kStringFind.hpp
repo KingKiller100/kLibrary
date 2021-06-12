@@ -2,6 +2,7 @@
 #include "kStringSize.hpp"
 #include "kStringCases.hpp"
 
+#include "../../../Maths/kMathsFundamentals.hpp"
 #include "../../../Template/kComparisonOperators.hpp"
 #include "../../../Template/kArthimeticOperators.hpp"
 
@@ -109,7 +110,7 @@ namespace klib::kString
 		USE_RESULT constexpr size_t Find_Last_Of(const CStringA& str, Char_t search, size_t offset = type_trait::g_NoPos<std::basic_string<Char_t>>)
 	{
 		using namespace kTemplate;
-		offset = std::min(offset, GetSize(str) - 1);
+		offset = kmaths::Min(offset, GetSize(str) - 1);
 		const size_t pos = secret::impl::FindCharImpl(str, search, offset, ComparisonOperators::Equality, ArithmeticOperators::Decrement);
 		return pos;
 	}
@@ -122,7 +123,7 @@ namespace klib::kString
 		USE_RESULT constexpr size_t Find_Last_Not_Of(const CStringA& str, Char_t search, size_t offset = type_trait::g_NoPos<std::basic_string<Char_t>>)
 	{
 		using namespace kTemplate;
-		offset = std::min(offset, GetSize(str) - 1);
+		offset = kmaths::Min(offset, GetSize(str) - 1);
 		const size_t pos = secret::impl::FindCharImpl(str, search, offset, ComparisonOperators::Inequality, ArithmeticOperators::Decrement);
 		return pos;
 	}

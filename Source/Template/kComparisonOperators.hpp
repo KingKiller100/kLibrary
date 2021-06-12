@@ -14,7 +14,7 @@ namespace klib
 				template<typename T1, typename T2>
 				USE_RESULT constexpr bool operator()(T1&& lhs, T2&& rhs) const noexcept(noexcept(static_cast<T1&&>(lhs) == static_cast<T2&&>(rhs)))
 				{
-					return std::forward<T1>(lhs) == static_cast<T2&&>(rhs);
+					return static_cast<T1&&>(lhs) == static_cast<T2&&>(rhs);
 				}
 			};
 			
@@ -23,43 +23,43 @@ namespace klib
 				template<typename T1, typename T2>
 				USE_RESULT constexpr bool operator()(T1&& lhs, T2&& rhs) const noexcept(noexcept(static_cast<T1&&>(lhs) != static_cast<T2&&>(rhs)))
 				{
-					return std::forward<T1>(lhs) != static_cast<T2&&>(rhs);
+					return static_cast<T1&&>(lhs) != static_cast<T2&&>(rhs);
 				}
 			};
 			
 			struct GreaterThanOperator
 			{
 				template<typename T1, typename T2>
-				USE_RESULT constexpr bool operator()(T1&& big, T2&& small) const noexcept(noexcept(static_cast<T1&&>(big) > static_cast<T2&&>(small)))
+				USE_RESULT constexpr bool operator()(T1&& bigger, T2&& smaller) const noexcept(noexcept(static_cast<T1&&>(bigger) > static_cast<T2&&>(smaller)))
 				{
-					return std::forward<T1>(big) > static_cast<T2&&>(small);
+					return static_cast<T1&&>(bigger) > static_cast<T2&&>(smaller);
 				}
 			};
 			
 			struct GreaterThanEqualOperator
 			{
 				template<typename T1, typename T2>
-				USE_RESULT constexpr bool operator()(T1&& big, T2&& small) const noexcept(noexcept(static_cast<T1&&>(big) >= static_cast<T2&&>(small)))
+				USE_RESULT constexpr bool operator()(T1&& bigger, T2&& smaller) const noexcept(noexcept(static_cast<T1&&>(bigger) >= static_cast<T2&&>(smaller)))
 				{
-					return std::forward<T1>(big) >= static_cast<T2&&>(small);
+					return static_cast<T1&&>(bigger) >= static_cast<T2&&>(smaller);
 				}
 			};
 			
 			struct LessThanOperator
 			{
 				template<typename T1, typename T2>
-				USE_RESULT constexpr bool operator()(T1&& small, T2&& big) const noexcept(noexcept(static_cast<T1&&>(small) < static_cast<T2&&>(big)))
+				USE_RESULT constexpr bool operator()(T1&& smaller, T2&& bigger) const noexcept(noexcept(static_cast<T1&&>(smaller) < static_cast<T2&&>(bigger)))
 				{
-					return std::forward<T1>(small) < static_cast<T2&&>(big);
+					return static_cast<T1&&>(smaller) < static_cast<T2&&>(bigger);
 				}
 			};
 			
 			struct LessThanEqualOperator
 			{
 				template<typename T1, typename T2>
-				USE_RESULT constexpr bool operator()(T1&& small, T2&& big) const noexcept(noexcept(static_cast<T1&&>(small) <= static_cast<T2&&>(big)))
+				USE_RESULT constexpr bool operator()(T1&& smaller, T2&& bigger) const noexcept(noexcept(static_cast<T1&&>(smaller) <= static_cast<T2&&>(bigger)))
 				{
-					return std::forward<T1>(small) <= static_cast<T2&&>(big);
+					return static_cast<T1&&>(smaller) <= static_cast<T2&&>(bigger);
 				}
 			};
 		}

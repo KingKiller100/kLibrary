@@ -182,27 +182,29 @@ namespace kTest::utility
 	bool FileSystemTester::PathStringTest()
 	{
 		{
-			const auto pathA = klib::kFileSystem::PathString<char>("../Game/LoZ.exe");
-			const auto pathB = klib::kFileSystem::PathString<char>("..\\Game\\LoZ.exe");
+			const auto pathA = klib::kFileSystem::DOSPathString<char>("../Game/LoZ.exe");
+			const auto pathB = klib::kFileSystem::DOSPathStringView<char>("..\\Game\\LoZ.exe");
 			VERIFY(pathA == pathB);
 		}
 		
 		{
-			const auto pathA = klib::kFileSystem::PathString<char16_t>(u"../Game/LoZ.exe");
-			const auto pathB = klib::kFileSystem::PathString<char16_t>(u"..\\Game\\LoZ.exe");
+			const auto pathA = klib::kFileSystem::UnixPathString<char16_t>(u"../Game/LoZ.exe");
+			const auto pathB = klib::kFileSystem::UnixPathString<char16_t>(u"..\\Game\\LoZ.exe");
 			VERIFY(pathA == pathB);
 		}
 		
 		{
-			const auto pathA = klib::kFileSystem::PathString<char8_t>(u8"../Game/LoZ.exe");
-			const auto pathB = klib::kFileSystem::PathString<char8_t>(u8"..\\Game\\LoZ.exe");
-			const auto fs = klib::kFileSystem::Path(pathA);
+			const auto pathA = klib::kFileSystem::DOSPathString<char8_t>(u8"../Game/LoZ.exe");
+			const auto pathB = klib::kFileSystem::DOSPathString<char8_t>(u8"..\\game\\LoZ.exe");
 			VERIFY(pathA == pathB);
 		}
-
+		
 		{
+			const auto pathA = klib::kFileSystem::UnixPathString<char32_t>(U"../Game/LoZ.exe");
+			const auto pathB = klib::kFileSystem::UnixPathString<char32_t>(U"..\\game\\LoZ.exe");
+			VERIFY(pathA != pathB);
 		}
-
+		
 		return success;
 	}
 }

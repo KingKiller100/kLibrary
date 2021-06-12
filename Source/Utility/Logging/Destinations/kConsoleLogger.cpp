@@ -6,6 +6,7 @@
 
 #include "../../Calendar/kCalendar.hpp"
 #include "../../Calendar/kCalendarToString.hpp"
+#include "../../Debug/kDebugger.hpp"
 #include "../../String/kToString.hpp"
 
 #include <mutex>
@@ -217,7 +218,9 @@ namespace klib
 		void ConsoleLogger::OutputToDebugString(const std::string_view& msg)
 		{
 			if (enableDebugStringOutput)
-				OutputDebugStringA(msg.data());
+			{
+				kDebug::WriteToOutputWindow(msg);
+			}
 		}
 
 		void ConsoleLogger::OutputToConsole(const std::string_view& msg) const
