@@ -153,7 +153,7 @@ namespace klib::kStopwatch
 		type_trait::Is_Specialization_V<Units, kCalendar::TimeComponentBase>
 		>>
 		struct SystemClock
-	{   // Based on std::chrono::steady_clock
+	{   // Based on std::chrono::system_clock
 		using Units_t = Units;
 		using Rep_t = typename Units_t::Rep_t;
 		using Period_t = std::chrono::ambiguous_local_time;

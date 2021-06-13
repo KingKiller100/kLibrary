@@ -12,27 +12,29 @@ public:																					\
 protected:																				\
 	struct secret_impl_##enumName														\
 	{																					\
-		static constexpr auto size = IDENTITY(COUNT(__VA_ARGS__));						\
+		static constexpr auto realSize = IDENTITY(COUNT(__VA_ARGS__));					\
 																						\
-		static constexpr std::array<underlying_t, size> values =						\
+		static constexpr auto size = realSize +	secret_impl_##baseEnum::size;			\
+																						\
+		static constexpr std::array<underlying_t, realSize> values =					\
 		{ IDENTITY(IGNORE_ASSIGN(__VA_ARGS__)) };										\
 																						\
-		static constexpr std::array<std::string_view, size> raw_names =					\
+		static constexpr std::array<std::string_view, realSize> raw_names =				\
 		{ IDENTITY(STRINGIZE(__VA_ARGS__)) };											\
 	};																					\
 																						\
 public:																					\
 	constexpr enumName(InternalEnum_t value)											\
-		: baseEnum(baseEnum::InternalEnum_t{}), value(value)							\
+		: baseEnum(baseEnum::Value{}), value(value)										\
 	{}																					\
 																						\
 	constexpr enumName(underlying_t val)												\
-		: baseEnum(baseEnum::InternalEnum_t{}), value(val)								\
+		: baseEnum(baseEnum::Value{}), value(val)										\
 	{																					\
-		const auto& v = secret_impl_##enumName::values;									\
-		const auto& vb = secret_impl_##baseEnum::values;								\
-		if (std::find(std::begin(v), std::end(v), val) == v.end()						\
-			&& std::find(std::begin(vb), std::end(vb), val) == vb.end())				\
+		const auto& vals = secret_impl_##enumName::values;								\
+		const auto& baseVals = secret_impl_##baseEnum::values;							\
+		if (std::find(std::begin(vals), std::end(vals), val) == vals.end() && 			\
+			std::find(std::begin(baseVals), std::end(baseVals), val) == baseVals.end())	\
 		{																				\
 			throw std::out_of_range("Value given is out of enum's range");				\
 		}																				\
@@ -154,7 +156,7 @@ public:																					\
 	template<class Char_t>																\
 	USE_RESULT const Char_t* TrimmedNames() const										\
 	{																					\
-		static std::unique_ptr<Char_t[]> the_names[secret_impl_##enumName::size];		\
+		static std::unique_ptr<Char_t[]> the_names[secret_impl_##enumName::realSize];	\
 		static bool  initialized = false;												\
 		size_t index = 0;																\
 																						\
@@ -169,17 +171,17 @@ public:																					\
 			if (ToEnum() == secret_impl_##enumName::values[index])						\
 				break;																	\
 		}																				\
-		while (++index < secret_impl_##enumName::size);									\
+		while (++index < secret_impl_##enumName::realSize);								\
 																						\
 		return the_names[index].get();													\
 	}																					\
 																						\
 	template<class Char_t>																\
 	constexpr void InitializeNames(std::unique_ptr<Char_t[]>							\
-		(&the_names)[secret_impl_##enumName::size]) const								\
+		(&the_names)[secret_impl_##enumName::realSize]) const							\
 	{																					\
 		using namespace klib::kEnum::secret::impl;										\
-		for (auto i = 0; i < secret_impl_##enumName::size; ++i)							\
+		for (auto i = 0; i < secret_impl_##enumName::realSize; ++i)						\
 		{																				\
 			const auto & raw_name = secret_impl_##enumName::raw_names[i];				\
 			auto& name = the_names[i];													\
