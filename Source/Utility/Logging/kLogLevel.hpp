@@ -10,6 +10,7 @@ namespace klib
 	{
 		ENUM_CLASS(LogLevel, std::uint8_t,
 			RAW, // Verbatim
+			TRC, // Trace
 			DBG, // Debug
 			NRM, // Normal
 			INF, // Informative

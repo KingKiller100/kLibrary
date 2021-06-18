@@ -26,6 +26,10 @@ namespace klib
 
 			LogDestWithFormatSpecifier::SetFormat(
 				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
+				, LogLevel::TRC);
+
+			LogDestWithFormatSpecifier::SetFormat(
+				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
 				, LogLevel::BNR);
 
 			LogDestWithFormatSpecifier::SetFormat(

@@ -15,6 +15,17 @@ namespace klib {
 		public:
 			using Char_t = Char;
 
+			template<typename StringishA_t, class = std::enable_if_t<
+				type_trait::Is_Stringish_V<StringishA_t>
+				>>
+				constexpr BasicMutableSourceInfo(const std::filesystem::path& filename, const size_t fileLine
+					, const StringishA_t& function)
+				: file(filename)
+				, line(fileLine)
+				, func(function)
+				, timeStamp("")
+			{}
+
 			template<typename StringishA_t, typename StringishB_t, class = std::enable_if_t<
 				type_trait::Is_Stringish_V<StringishA_t>
 				&& type_trait::Is_Stringish_V<StringishB_t>

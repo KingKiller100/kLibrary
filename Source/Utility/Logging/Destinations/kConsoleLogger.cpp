@@ -36,6 +36,10 @@ namespace klib
 
 			LogDestWithFormatSpecifier::SetFormat(
 				"[&hh:&zz:&ss:&ccc] [&n] [&p]: &t"
+				, LogLevel::TRC);
+
+			LogDestWithFormatSpecifier::SetFormat(
+				"[&hh:&zz:&ss:&ccc] [&n] [&p]: &t"
 				, LogLevel::BNR);
 
 			LogDestWithFormatSpecifier::SetFormat(
@@ -206,7 +210,7 @@ namespace klib
 
 		void ConsoleLogger::Flush(const std::string_view& msg)
 		{
-			std::scoped_lock<decltype(g_kConsoleLoggerMutex)> scoped_lock(g_kConsoleLoggerMutex);
+			std::scoped_lock scoped_lock(g_kConsoleLoggerMutex);
 
 			if (!active)
 				return;
