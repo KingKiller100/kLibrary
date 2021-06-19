@@ -59,7 +59,7 @@ namespace klib {
 		 */
 		template<class CharType = char>
 		constexpr bool WriteFile(const Path& filePath,
-			const kString::StringReader<CharType>& content, std::ios::openmode mode = std::ios::out | std::ios::app)
+			const kString::StringReader<CharType>& content, std::ios::openmode mode = std::ios::out)
 		{
 			FileWriter<CharType> outFile(filePath, mode);
 
@@ -92,6 +92,21 @@ namespace klib {
 
 			throw std::runtime_error("Unable to write to file: " + filePath.string<char>());
 #endif 
+		}
+
+		/**
+		 * \brief
+		 *		Outputs a file to the specified directory and appends it with the given string of data
+		 * \param filePath
+		 *		The full file directory with the final filename and file extension
+		 * \param content
+		 *		The data to fill the file with.
+		 */
+		template<class CharType = char>
+		constexpr bool AppendFile(const Path& filePath,
+			const kString::StringReader<CharType>& content)
+		{
+			return WriteFile(filePath, content, std::ios::out | std::ios::app);
 		}
 
 		/**

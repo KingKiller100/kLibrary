@@ -202,9 +202,7 @@ namespace klib
 				const std::string spacing(25, ' ');
 				const auto logMsg = spacing + msg + spacing;
 
-				Flush(padding);
-				Flush(logMsg);
-				Flush(padding);
+				Flush(padding + logMsg + padding);
 				Flush("\n");
 			}
 
@@ -213,7 +211,7 @@ namespace klib
 
 		void FileLogger::Flush(const std::string_view& msg)
 		{
-			std::scoped_lock<decltype(lock)> scoped_lock(lock);
+			std::scoped_lock scoped_lock(lock);
 
 			if (!IsOpen())
 				return;
