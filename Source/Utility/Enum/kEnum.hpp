@@ -8,7 +8,7 @@
 x enumName																				\
 {																						\
 public:																					\
-	using underlying_t = underlying;													\
+	using Underlying_t = underlying;													\
 	enum Value : underlying { __VA_ARGS__ };									\
 																						\
 protected:																				\

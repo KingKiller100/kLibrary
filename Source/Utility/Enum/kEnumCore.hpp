@@ -79,8 +79,8 @@ namespace klib::kEnum::secret::impl
 		U _value;
 	};
 
-	// Prepends "(ignore_assign<underlying_t>)" to each argument.
-#define IGNORE_ASSIGN_SINGLE(e) (klib::kEnum::secret::impl::ignore_assign<underlying_t>)e,
+	// Prepends "(ignore_assign<Underlying_t>)" to each argument.
+#define IGNORE_ASSIGN_SINGLE(e) (klib::kEnum::secret::impl::ignore_assign<Underlying_t>)e,
 #define IGNORE_ASSIGN(...) \
     IDENTITY(MAP(IGNORE_ASSIGN_SINGLE, __VA_ARGS__))
 

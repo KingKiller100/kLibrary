@@ -7,7 +7,7 @@
 x enumName : public baseEnum															\
 {																						\
 public:																					\
-	enum InternalEnum_t : underlying_t { __VA_ARGS__ };									\
+	enum InternalEnum_t : Underlying_t { __VA_ARGS__ };									\
 																						\
 protected:																				\
 	struct secret_impl_##enumName														\
@@ -16,7 +16,7 @@ protected:																				\
 																						\
 		static constexpr auto size = realSize +	secret_impl_##baseEnum::size;			\
 																						\
-		static constexpr std::array<underlying_t, realSize> values =					\
+		static constexpr std::array<Underlying_t, realSize> values =					\
 		{ IDENTITY(IGNORE_ASSIGN(__VA_ARGS__)) };										\
 																						\
 		static constexpr std::array<std::string_view, realSize> raw_names =				\
@@ -28,7 +28,7 @@ public:																					\
 		: baseEnum(baseEnum::Value{}), value(value)										\
 	{}																					\
 																						\
-	constexpr enumName(underlying_t val)												\
+	constexpr enumName(Underlying_t val)												\
 		: baseEnum(baseEnum::Value{}), value(val)										\
 	{																					\
 		const auto& vals = secret_impl_##enumName::values;								\
@@ -56,7 +56,7 @@ public:																					\
 		return static_cast<InternalEnum_t>(value);										\
 	}																					\
 																						\
-	USE_RESULT constexpr underlying_t ToUnderlying() const								\
+	USE_RESULT constexpr Underlying_t ToUnderlying() const								\
 	{																					\
 		return value;																	\
 	}																					\
@@ -222,7 +222,7 @@ public:																					\
 	}																					\
 																						\
 private:																				\
-	underlying_t value;																	\
+	Underlying_t value;																	\
 };																						\
 
 #define SUPER_ENUM_X_FWD_DCL(x, enumName) x enumName
