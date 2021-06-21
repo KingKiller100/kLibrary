@@ -15,6 +15,9 @@ namespace klib {
 		public:
 			using Char_t = Char;
 
+			constexpr BasicMutableSourceInfo()
+				= default;
+
 			template<typename StringishA_t, class = std::enable_if_t<
 				type_trait::Is_Stringish_V<StringishA_t>
 				>>
