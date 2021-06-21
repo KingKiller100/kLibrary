@@ -37,7 +37,7 @@ namespace klib::kDebug
 #	define kAssert(condition, msg) kAssertCB(condition, msg, klib::kDebug::NoAssertCB)
 
 #else
-#	define kAssert(condition, msg, cb) ((void)0);
-#	define Assert(condition, msg) kAssert(condition, msg, klib::kDebug::NoAssertCB)
+#	define kAssertCB(condition, msg, cb) ((void)0)
+#	define kAssert(condition, msg) ((void)0);
 #endif
 
