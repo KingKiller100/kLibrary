@@ -1,4 +1,5 @@
 #pragma once
+#include "../FileSystem/kFileSystemTypes.hpp"
 #include <chrono>
 
 namespace klib
@@ -9,21 +10,32 @@ namespace klib
 		{
 			DEBUG, RELEASE
 		};
-		
+
 		constexpr RuntimeConfiguration GetRuntimeConfiguration() noexcept
 		{
-			return 
+			return
 #if !defined(NDEBUG) || defined(KLIB_DEBUG)
-			RuntimeConfiguration::DEBUG;
+				RuntimeConfiguration::DEBUG;
 #else
-			RuntimeConfiguration::RELEASE;
+				RuntimeConfiguration::RELEASE;
 #endif
 		}
-		
-		template<class CharT>
-		void IsDebuggerAttached(const CharT* filename, std::chrono::milliseconds = std::chrono::milliseconds(500)) noexcept;
+
+		constexpr auto GetRuntimeConfigurationStr() noexcept
+		{
+			return GetRuntimeConfiguration() == RuntimeConfiguration::DEBUG
+				? "Debug"
+				: "Release";
+		}
+
+
+		void WaitForDebugger(const kFileSystem::Path& path,
+			std::chrono::milliseconds refreshTime = std::chrono::milliseconds(500)) noexcept;
+
+		bool ScanForDebugger(std::chrono::milliseconds waitTime);
+
 		void BreakPoint() noexcept;
-		
+
 		void WriteToOutputWindow(std::basic_string_view<char> msg);
 		void WriteToOutputWindow(std::basic_string_view<wchar_t> msg);
 	}
