@@ -28,7 +28,8 @@ namespace kTest::utility
 
 	bool DebugTester::IsDebuggerAttachedTest()
 	{
-		IsDebuggerAttached("DebugTest", 1000ms);
+		// WaitForDebugger("DebugTest", 1000ms);
+		ScanForDebugger(1000ms);
 		return success;
 	}
 

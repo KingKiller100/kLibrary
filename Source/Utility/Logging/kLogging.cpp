@@ -58,7 +58,7 @@ namespace klib::kLogs
 		}
 	}
 
-	constexpr void Logging::ToggleLoggingEnabled() noexcept
+	void Logging::ToggleLoggingEnabled() noexcept
 	{
 		isEnabled = !isEnabled;
 	}

@@ -68,7 +68,7 @@ namespace klib
 			 * \brief
 			 *		Toggles if logging system is enabled
 			 */
-			constexpr void ToggleLoggingEnabled() noexcept;
+			void ToggleLoggingEnabled() noexcept;
 
 			/**
 			 * \brief
