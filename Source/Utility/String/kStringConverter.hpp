@@ -45,24 +45,35 @@ namespace klib
 			}
 		}
 
-		template<class DestChar, class SourceChar, class = std::enable_if_t <
+		template<class DestChar,
+		typename DestTraits = std::char_traits<DestChar>,
+		typename DestAllocT = std::allocator<DestChar>,
+		class SourceChar = char,
+		typename SourceTraits = std::char_traits<SourceChar>,
+		typename SourceAllocT = std::allocator<SourceChar>,
+		class = std::enable_if_t <
 			type_trait::Is_Char_V<DestChar>
 			&& type_trait::Is_Char_V<SourceChar>
 			&& type_trait::Is_String_V<std::basic_string<DestChar>>
 			&& type_trait::Is_String_V<std::basic_string<SourceChar>>
 			>>
-			USE_RESULT std::basic_string<DestChar> Convert(const std::basic_string<SourceChar>& source) noexcept
+			USE_RESULT std::basic_string<DestChar, DestTraits, DestAllocT> Convert(const std::basic_string<SourceChar, SourceTraits, SourceAllocT>& source) noexcept
 		{
 			return Convert<DestChar>(source.data());
 		}
 
-		template<class DestChar, class SourceChar, class = std::enable_if_t <
+		template<class DestChar,
+		typename DestTraits = std::char_traits<DestChar>,
+		typename DestAllocT = std::allocator<DestChar>,
+		class SourceChar = char,
+		typename SourceTraits = std::char_traits<SourceChar>,
+		class = std::enable_if_t <
 			type_trait::Is_Char_V<DestChar>
 			&& type_trait::Is_Char_V<SourceChar>
 			&& type_trait::Is_String_V<std::basic_string_view<DestChar>>
 			&& type_trait::Is_String_V<std::basic_string_view<SourceChar>>
 			>>
-			USE_RESULT std::basic_string<DestChar> Convert(const std::basic_string_view<SourceChar>& source) noexcept
+			USE_RESULT std::basic_string<DestChar, DestTraits, DestAllocT> Convert(const std::basic_string_view<SourceChar, SourceTraits>& source) noexcept
 		{
 			return Convert<DestChar>(source.data());
 		}
