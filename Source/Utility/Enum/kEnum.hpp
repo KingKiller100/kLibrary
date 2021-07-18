@@ -34,24 +34,25 @@ public:																					\
 		const auto& v = secret_impl_##enumName::values;									\
 		if (std::find(std::begin(v), std::end(v), val) == v.end())						\
 		{																				\
-			throw std::out_of_range("Value given is out of enum's range");				\
+			throw std::out_of_range("Value given is not mapped to a value for "			\
+				"enum type " #enumName);												\
 		}																				\
 	}																					\
 																						\
-	constexpr enumName& operator=(const Value value)							\
+	constexpr enumName& operator=(const Value value)									\
 	{																					\
 		this->value = value;															\
 		return *this;																	\
 	}																					\
 																						\
-	constexpr operator Value() const											\
+	constexpr operator Value() const													\
 	{																					\
-		return static_cast<Value>(value);										\
+		return static_cast<Value>(value);												\
 	}																					\
 																						\
-	USE_RESULT constexpr Value ToEnum() const									\
+	USE_RESULT constexpr Value ToEnum() const											\
 	{																					\
-		return static_cast<Value>(value);										\
+		return static_cast<Value>(value);												\
 	}																					\
 																						\
 	USE_RESULT constexpr underlying ToUnderlying() const								\
@@ -64,7 +65,7 @@ public:																					\
 		return secret_impl_##enumName::size;											\
 	}																					\
 																						\
-	USE_RESULT constexpr bool MaskCmp(Value target) const						\
+	USE_RESULT constexpr bool MaskCmp(Value target) const								\
 	{																					\
 		return MaskCmp(target, true, false);											\
 	}																					\
