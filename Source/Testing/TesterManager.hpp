@@ -43,7 +43,7 @@ namespace kTest
 		TesterManager(Token&);
 		~TesterManager();
 
-		void Initialize();
+		void Initialize(bool skipPerformanceTesting = false);
 		void InitializeMaths() const;
 		void InitializeUtility(bool includeTimeTests = true) const;
 		void InitializeTemplates() const;
@@ -68,6 +68,7 @@ namespace kTest
 		std::set<std::shared_ptr<TesterBase>> tests;
 		std::vector<double> testTimes;
 		bool success;
+		bool skipPerformanceTests;
 		std::mutex consoleMutex;
 		std::mutex fileMutex;
 		std::ofstream file;

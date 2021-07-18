@@ -27,6 +27,7 @@ namespace kTest
 
 	TesterManager::TesterManager(Token&)
 		: success(true)
+		, skipPerformanceTests(false)
 	{
 		std::cout.precision(3);
 	}
@@ -36,10 +37,12 @@ namespace kTest
 		Shutdown();
 	}
 
-	void TesterManager::Initialize()
+	void TesterManager::Initialize(bool skipPerformanceTesting)
 	{
 		using namespace klib;
 
+		skipPerformanceTests = skipPerformanceTesting;
+		
 		kFileSystem::SetCurrentWorkingDirectory(kFileSystem::GetExeDirectory());
 
 		path = std::filesystem::current_path().string() + "\\Test Results\\";
@@ -141,7 +144,6 @@ namespace kTest
 		}
 	}
 
-
 	double TesterManager::GetAverageTime() const
 	{
 		double avgTime(0);
@@ -155,10 +157,9 @@ namespace kTest
 
 	void TesterManager::RunPerformanceTests() const
 	{
-		if (!success)
+		if (!success || skipPerformanceTests)
 			return;
-
-		std::cout << std::endl;
+		
 		auto& test = performance::PerformanceTestManager::Get();
 		std::cout << "Now Testing: " << test.GetName() << " ";
 		test.Run();
