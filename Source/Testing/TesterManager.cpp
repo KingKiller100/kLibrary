@@ -103,7 +103,7 @@ namespace kTest
 		}
 		const auto maxThreads = (std::min<size_t>)(ULTRA_THREAD_RIPPER, tests.size());
 		noOfThreads = std::clamp<size_t>(noOfThreads, SINGLE, maxThreads);
-		
+
 		std::cout << "Testing: " << (noOfThreads > 1 ? "Multi-Threaded" : "Single Threaded") <<
 			"[" << noOfThreads << "]" << "\n";
 
@@ -121,7 +121,6 @@ namespace kTest
 		const unsigned millis = CAST(unsigned, std::chrono::milliseconds::period::den * remainder);
 		const auto avgTime = GetAverageTime();
 
-
 		auto timeStr = Sprintf("Total Runtime: %us %ums | ", secs, millis);
 		timeStr.append(Sprintf("Average Runtime: %.3fms", avgTime));
 
@@ -129,38 +128,32 @@ namespace kTest
 
 		std::cout << "\n" << timeStr << "\n";
 
-		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path;
-		std::cout << "\n\nPress the \"ENTER\" key to continue" << std::endl;
-		std::cin.get();
+		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path << std::endl;
 	}
 
 	void TesterManager::PerformTests(const size_t noOfThreads, std::clock_t& outStart)
 	{
 		if (noOfThreads != 0)
 		{
-			[&] {
-				kThread::ThreadPool threads(noOfThreads);
+			kThread::ThreadPool threads(noOfThreads);
 
-				outStart = std::clock();
-				for (const auto& test : tests)
-				{
-					threads.QueueJob({ [this, &test]
-						{
-							Run(*test);
-						}
-						, test->GetName() });
-				}
-			}();
+			outStart = std::clock();
+			for (const auto& test : tests)
+			{
+				threads.QueueJob({ [this, &test]
+					{
+						Run(*test);
+					}
+					, test->GetName() });
+			}
 		}
 		else
 		{
-			[&] {
-				outStart = std::clock();
-				for (const auto& test : tests)
-				{
-					Run(*test);
-				}
-			}();
+			outStart = std::clock();
+			for (const auto& test : tests)
+			{
+				Run(*test);
+			}
 		}
 	}
 
@@ -239,7 +232,7 @@ namespace kTest
 			: kMisc::ConsoleColour::SCARLET_RED);
 
 		std::cout << (pass ? "Pass" : "Fail");
-		
+
 		SetConsoleTextAttribute(hConsole, kMisc::ConsoleColour::LIGHT_GREY);
 
 		std::cout << " " << resTimeStr << "\n";

@@ -47,7 +47,7 @@ namespace kTest
 		}
 		catch (const std::exception& e)
 		{
-			std::cout << e.what();
+			std::cerr << e.what();
 			failureData.append(klib::kString::Sprintf("\tCase \"%s\" crashed. Report: %s\n"
 				, currentTestName
 				, e.what()));
@@ -69,7 +69,7 @@ namespace kTest
 	                                      const char* function, const std::uint32_t line)
 	{
 		success = false;
-		failureData.append(klib::kString::Sprintf("\t Test Case: \"%s\" Condition: \"%s\"" 
+		failureData.append(klib::kString::Sprintf("\tTest Case: \"%s\" Condition: \"%s\"" 
 			"\n\tFile: %s"
 			"\n\tFunction: %s"
 			"\n\tLine: %d\n\n", 
