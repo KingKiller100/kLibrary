@@ -12,19 +12,19 @@ namespace kTest::utility
 		~EnumTester() override;
 
 	protected:
-		void Test() override;
+		void Prepare() noexcept override;
 
 	private:
-		bool FundamentalTest();
-		bool ToStringTest();
-		bool SizeOfTest();
-		bool CompareTest();
-		bool MaskCmpTest();
-		bool ToEnumTest();
-		bool ToUnderlyingTest();
-		bool PrettyTypeTest();
-		bool PrettyValueTest();
-		bool FromStringTest();
+		void FundamentalTest();
+		void ToStringTest();
+		void SizeOfTest();
+		void CompareTest();
+		void MaskCmpTest();
+		void ToEnumTest();
+		void ToUnderlyingTest();
+		void PrettyTypeTest();
+		void PrettyValueTest();
+		void FromStringTest();
 	};
 }
 #endif

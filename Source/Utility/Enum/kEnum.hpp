@@ -9,7 +9,7 @@ x enumName																				\
 {																						\
 public:																					\
 	using Underlying_t = underlying;													\
-	enum Value : underlying { __VA_ARGS__ };									\
+	enum Value : underlying { __VA_ARGS__ };											\
 																						\
 protected:																				\
 	struct secret_impl_##enumName														\
@@ -24,7 +24,7 @@ protected:																				\
 	};																					\
 																						\
 public:																					\
-	constexpr enumName(Value value)											\
+	constexpr enumName(Value value)														\
 		: value(value)																	\
 	{}																					\
 																						\
@@ -35,7 +35,7 @@ public:																					\
 		if (std::find(std::begin(v), std::end(v), val) == v.end())						\
 		{																				\
 			throw std::out_of_range("Value given is not mapped to a value for "			\
-				"enum type " #enumName);												\
+				"enum type \"" #enumName "\"");											\
 		}																				\
 	}																					\
 																						\
