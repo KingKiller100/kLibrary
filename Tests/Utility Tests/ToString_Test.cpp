@@ -38,7 +38,7 @@ namespace kTest::utility
 	FormatToStringTester::~FormatToStringTester()
 		= default;
 
-	void FormatToStringTester::Prepare()
+	void FormatToStringTester::Prepare() noexcept
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(SprintfWrapperTest());

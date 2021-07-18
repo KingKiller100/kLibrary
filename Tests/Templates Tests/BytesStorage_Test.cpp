@@ -20,7 +20,7 @@ namespace kTest::templates
 	using namespace klib::kTemplate;
 	using namespace kmaths;
 	
-	void BytesStorageTester::Prepare()
+	void BytesStorageTester::Prepare() noexcept
 	{
 		VERIFY_MULTI_INIT();
 		//VERIFY_MULTI(CharacterTest());

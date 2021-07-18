@@ -12,7 +12,7 @@ namespace kTest::maths
 		~AlgorithmsTester();
 
 	protected:
-		void Prepare() override;
+		void Prepare() noexcept override;
 
 	private:
 		bool CountTest();

@@ -47,7 +47,7 @@ namespace kTest::utility
 		return str;
 	}
 
-	void CalendarTester::Prepare()
+	void CalendarTester::Prepare() noexcept
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(DayTest());

@@ -17,7 +17,7 @@ namespace kTest::utility
 	using namespace klib::kDebug;
 	using namespace std::chrono_literals;
 	
-	void DebugTester::Prepare()
+	void DebugTester::Prepare() noexcept
 	{
 		VERIFY_MULTI_INIT()
 		VERIFY_MULTI(IsDebuggerAttachedTest())

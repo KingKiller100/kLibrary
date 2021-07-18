@@ -18,7 +18,7 @@ namespace kTest::maths
 
 	using namespace kmaths;
 
-	void FractionTester::Prepare()
+	void FractionTester::Prepare() noexcept
 	{
 		VERIFY_MULTI_INIT();
 

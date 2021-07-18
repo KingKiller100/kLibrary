@@ -15,7 +15,7 @@ namespace kTest::utility
 
 	using namespace klib::kBits;
 	
-	void BitTricksTester::Prepare()
+	void BitTricksTester::Prepare() noexcept
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(SetTest());

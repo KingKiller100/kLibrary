@@ -11,7 +11,7 @@ namespace kTest::utility
 		~CalendarTester() override;
 		
 	protected:
-		void Prepare() override;
+		void Prepare() noexcept override;
 
 	private:
 		bool DayTest();

@@ -12,7 +12,7 @@ namespace kTest::maths
 		~FractionTester() override;
 
 	protected:
-		void Prepare() override;
+		void Prepare() noexcept override;
 
 	private:
 		double RoundTo4(double x);

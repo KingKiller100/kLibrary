@@ -11,7 +11,7 @@ namespace kTest::utility
 		~ProfilerTester() override;
 
 	protected:
-		void Prepare() override;
+		void Prepare() noexcept override;
 
 	private:
 		bool MillisecondsTest();

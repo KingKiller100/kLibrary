@@ -15,7 +15,7 @@ namespace kTest::utility
 	StringManipulationTester::~StringManipulationTester()
 		= default;
 
-	void StringManipulationTester::Prepare()
+	void StringManipulationTester::Prepare() noexcept
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(ToWriterAndToReaderTest());

@@ -11,7 +11,7 @@ namespace kTest::maths
 		~MatricesTester() override;
 
 	protected:
-		void Prepare() override;
+		void Prepare() noexcept override;
 
 	private:
 		bool DynamicMatrixTest();

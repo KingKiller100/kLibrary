@@ -19,7 +19,7 @@ namespace kTest::maths
 
 	using namespace kmaths;
 	using namespace kmaths::kRng;
-	void RandomTester::Prepare()
+	void RandomTester::Prepare() noexcept
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(IntegerBCryptTest());

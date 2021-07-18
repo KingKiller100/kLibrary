@@ -18,7 +18,7 @@ namespace kTest::maths
 	VectorsTester::~VectorsTester()
 		= default;
 
-	void VectorsTester::Prepare()
+	void VectorsTester::Prepare() noexcept
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(VectorTest());

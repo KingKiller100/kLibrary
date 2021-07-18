@@ -12,7 +12,7 @@ namespace kTest::utility
 		~StringConverterTester() override;
 
 	protected:
-		void Prepare() override;
+		void Prepare() noexcept override;
 
 	private:
 		void ConvertUTF16ToUTF32();

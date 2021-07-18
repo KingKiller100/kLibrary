@@ -18,7 +18,7 @@ namespace kTest::utility
 	using namespace klib::kStopwatch;
 	using namespace std::chrono_literals;
 	
-	void ProfilerTester::Prepare()
+	void ProfilerTester::Prepare() noexcept
 	{
 		VERIFY_MULTI_INIT();
 		// VERIFY_MULTI(MillisecondsTest());

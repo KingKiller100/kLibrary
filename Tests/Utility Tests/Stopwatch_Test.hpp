@@ -11,7 +11,7 @@ namespace kTest::utility
 		~StopWatchTester() override;
 		
 	protected:
-		void Prepare() override;
+		void Prepare() noexcept override;
 		
 	private:
 		bool GeneralTimeTest();

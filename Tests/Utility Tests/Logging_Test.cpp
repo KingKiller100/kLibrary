@@ -20,7 +20,7 @@ namespace kTest::utility
 	LoggingTester::~LoggingTester()
 		= default;
 
-	void LoggingTester::Prepare()
+	void LoggingTester::Prepare() noexcept
 	{
 		ADD_TEST(LogTest());
 		ADD_TEST(DummyLoggerTest());

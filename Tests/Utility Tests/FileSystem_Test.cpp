@@ -17,7 +17,7 @@ namespace kTest::utility
 	FileSystemTester::~FileSystemTester()
 		= default;
 
-	void FileSystemTester::Prepare()
+	void FileSystemTester::Prepare() noexcept
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(FunctionalityTest());

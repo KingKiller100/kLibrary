@@ -15,7 +15,7 @@ namespace kTest::utility
 	StringViewTester::~StringViewTester()
 		= default;
 
-	void StringViewTester::Prepare()
+	void StringViewTester::Prepare() noexcept
 	{
 		using namespace klib::kString;
 

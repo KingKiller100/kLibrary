@@ -20,7 +20,7 @@ namespace kTest::utility
 	using namespace klib::kStopwatch;
 	using namespace std::chrono_literals;
 
-	void StopWatchTester::Prepare()
+	void StopWatchTester::Prepare() noexcept
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(GeneralTimeTest());

@@ -11,7 +11,7 @@ namespace kTest::utility
 		~FormatToStringTester();
 
 	private:
-		void Prepare() override;
+		void Prepare() noexcept override;
 
 		bool IdentityTest();
 		bool SprintfWrapperTest();

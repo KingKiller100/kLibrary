@@ -13,7 +13,7 @@ namespace kTest::utility
 	StringConverterTester::~StringConverterTester()
 		= default;
 
-	void StringConverterTester::Prepare()
+	void StringConverterTester::Prepare() noexcept
 	{
 		ADD_TEST(ConvertUTF16ToUTF32());
 		ADD_TEST(ConvertASCIIToUTF16());

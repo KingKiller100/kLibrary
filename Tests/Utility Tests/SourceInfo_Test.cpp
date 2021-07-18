@@ -19,7 +19,7 @@ namespace kTest::utility
 	{
 	}
 
-	void SourceInfoTester::Prepare()
+	void SourceInfoTester::Prepare() noexcept
 	{
 		VERIFY_MULTI_INIT()
 		VERIFY_MULTI(InfoTest())

@@ -19,7 +19,7 @@ namespace kTest::maths
 	AlgorithmsTester::~AlgorithmsTester()
 		= default;
 
-	void AlgorithmsTester::Prepare()
+	void AlgorithmsTester::Prepare() noexcept
 	{
 		VERIFY_MULTI_INIT();
 		

@@ -16,7 +16,7 @@ namespace kTest::maths
 	MatricesTester::~MatricesTester()
 		= default;
 
-	void MatricesTester::Prepare()
+	void MatricesTester::Prepare() noexcept
 	{
 		VERIFY_MULTI_INIT();
 

@@ -12,7 +12,7 @@ namespace kTest::maths
 		~VectorsTester() override;
 
 	protected:
-		void Prepare() override;
+		void Prepare() noexcept override;
 		
 	private:
 		bool VectorTest();
