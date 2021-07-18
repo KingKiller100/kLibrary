@@ -52,6 +52,39 @@ namespace klib
 			return text;
 		}
 
+		template<class CharT = char, class = std::enable_if_t<
+			type_trait::Is_Char_V<CharT>
+			>>
+		USE_RESULT constexpr StringWriter<CharT> Replace(const CharT* str, const CharT* oldStr, const CharT* newStr) noexcept
+		{
+			using StrW = StringWriter<CharT>;
+
+			auto text = StrW(str);
+			
+			auto oldStrPos = Find(str, oldStr);
+
+			if (oldStrPos == StrW::npos)
+				return text;
+
+			if (str[0] == oldStr)
+				text[0] = oldStr;
+
+			do {
+				text[oldStrPos] = newStr;
+				oldStrPos = Find_First_Of(text.data(), oldStr);
+			} while (oldStrPos != StrW::npos);
+
+			return text;
+		}
+
+		template<class StringT, typename = std::enable_if_t<
+			type_trait::Is_String_V<StringT>
+		>>
+		USE_RESULT constexpr StringWriter<typename StringT::value_type> Replace(const StringT& str, const StringT& oldChar, const StringT& newChar) noexcept
+		{
+			return Replace<typename StringT::value_type>(str.data(), oldChar.data(), newChar.data());
+		}
+
 		template<class StringT, typename = std::enable_if_t<
 			type_trait::Is_String_V<StringT>
 		>>
