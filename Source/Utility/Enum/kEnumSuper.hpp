@@ -124,6 +124,13 @@ public:																					\
 		return name;																	\
 	}																					\
 																						\
+	template<class Char_t = char>														\
+	USE_RESULT const Char_t* C_Str() const												\
+	{																					\
+		const auto name = ToStringImpl<Char_t>();										\
+		return name;																	\
+	}																					\
+																						\
 	USE_RESULT constexpr bool operator<(const enumName& other) const 					\
 	{																					\
 		return value < other.value;														\
