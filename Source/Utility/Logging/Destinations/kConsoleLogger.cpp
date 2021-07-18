@@ -164,15 +164,15 @@ namespace klib
 			case LogLevel::WRN:
 				consoleColour = ConsoleColour::YELLOW;
 				break;
-			case LogLevel::RAW:
-			case LogLevel::BNR:
-				consoleColour = ConsoleColour::WHITE;
-				break;
 			case LogLevel::ERR:
 				consoleColour = ConsoleColour::SCARLET_RED;
 				break;
 			case LogLevel::FTL:
 				consoleColour = ConsoleColour::RED_BG_WHITE_TEXT;
+				break;
+			case LogLevel::RAW:
+			case LogLevel::BNR:
+				consoleColour = ConsoleColour::WHITE;
 				break;
 			default:
 				throw std::runtime_error("Unknown log level! Cannot map to a known console colour: "
@@ -208,7 +208,7 @@ namespace klib
 			enableDebugStringOutput = enable;
 		}
 
-		void ConsoleLogger::Flush(const std::string_view& msg)
+		void ConsoleLogger::Flush(const std::string_view& msg) const
 		{
 			std::scoped_lock scoped_lock(g_kConsoleLoggerMutex);
 
@@ -219,7 +219,7 @@ namespace klib
 			OutputToDebugString(msg);
 		}
 
-		void ConsoleLogger::OutputToDebugString(const std::string_view& msg)
+		void ConsoleLogger::OutputToDebugString(const std::string_view& msg) const
 		{
 			if (enableDebugStringOutput)
 			{

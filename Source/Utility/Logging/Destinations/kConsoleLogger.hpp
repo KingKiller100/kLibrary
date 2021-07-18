@@ -35,8 +35,8 @@ namespace klib
 
 			std::string CreateLogText(const LogMessage& msg, const LogDescriptor& desc) const;
 
-			void Flush(const std::string_view& msg);
-			void OutputToDebugString(const std::string_view& msg);
+			void Flush(const std::string_view& msg) const;
+			void OutputToDebugString(const std::string_view& msg) const;
 			void OutputToConsole(const std::string_view& msg) const;
 
 		private:
