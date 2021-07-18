@@ -43,13 +43,6 @@ namespace kTest
 				const auto& test = testData.second;
 				test();
 			}
-			
-			for (auto&& testData : deprecatedTestCases)
-			{
-				currentTestName = testData.first;
-				const auto& test = testData.second;
-				(void)test();
-			}
 		}
 		catch (const std::exception& e)
 		{
@@ -67,12 +60,7 @@ namespace kTest
 	{
 		testCases.emplace(testName, testFunc);
 	}
-
-	void TesterBase::AddTest(const char* testName, DeprecatedTestCaseFunc testFunc)
-	{
-		deprecatedTestCases.emplace(testName, testFunc);
-	}
-
+	
 	void TesterBase::ReportFailedTestCase(const char* condition, const char* file,
 	                                      const char* function, const std::uint32_t line)
 	{

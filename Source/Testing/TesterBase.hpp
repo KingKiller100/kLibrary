@@ -15,7 +15,6 @@ namespace kTest
 	{
 	protected:
 		using TestCaseFunc = std::function<void()>;
-		using DeprecatedTestCaseFunc = std::function<bool()>;
 
 	public:
 		TesterBase(const char* name) noexcept;
@@ -32,7 +31,6 @@ namespace kTest
 	protected:
 		virtual void Prepare() noexcept = 0;
 		void AddTest(const char* testName, TestCaseFunc testFunc);
-		void AddTest(const char* testName, DeprecatedTestCaseFunc testFunc);
 
 	protected:
 		void ReportFailedTestCase(const char* condition, const char* file, const char* function, const std::uint32_t line);
@@ -43,7 +41,6 @@ namespace kTest
 		std::string name;
 		std::string failureData;
 		std::unordered_map<std::string, TestCaseFunc> testCases;
-		std::unordered_map<std::string, DeprecatedTestCaseFunc> deprecatedTestCases;
 		std::string_view currentTestName;
 	};
 
