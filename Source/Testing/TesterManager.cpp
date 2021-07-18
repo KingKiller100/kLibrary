@@ -36,22 +36,6 @@ namespace kTest
 		Shutdown();
 	}
 
-	void TesterManager::Shutdown()
-	{
-		if (file.is_open())
-			file.close();
-
-		ClearAllTests();
-	}
-
-	void TesterManager::ClearAllTests()
-	{
-		if (!tests.empty())
-			tests.clear();
-
-		testTimes.clear();
-	}
-
 	void TesterManager::Initialize()
 	{
 		using namespace klib;
@@ -193,7 +177,7 @@ namespace kTest
 		const auto duration = end - start;
 
 		const auto testTime =
-			static_cast<double>(std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count()) / 1000000;
+			static_cast<double>(std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count()) / 1'000'000;
 
 		testTimes.push_back(testTime);
 
@@ -207,10 +191,10 @@ namespace kTest
 			success = false;
 
 		const auto results = pass
-			? Sprintf("Success: Test Name: %s %s\n\n",
+			? Sprintf("Success: %s %s\n\n",
 				test.GetName(),
 				resTimeStr) // Success Case
-			: Sprintf("Failure: Test Name: %s %s\n%s",
+			: Sprintf("Failure: %s %s\n%s",
 				test.GetName(),
 				resTimeStr,
 				test.GetFailureData()); // Fail Case
@@ -243,6 +227,22 @@ namespace kTest
 		const auto scopeLocker = std::scoped_lock(fileMutex);
 		file << results;
 		std::flush(file);
+	}
+
+	void TesterManager::Shutdown()
+	{
+		if (file.is_open())
+			file.close();
+
+		ClearAllTests();
+	}
+
+	void TesterManager::ClearAllTests()
+	{
+		if (!tests.empty())
+			tests.clear();
+
+		testTimes.clear();
 	}
 
 	TesterManager& TesterManager::Get()

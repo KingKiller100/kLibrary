@@ -57,8 +57,7 @@ namespace kTest::performance
 		}
 
 		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path;
-		std::cout << "\n\nPress the \"ENTER\" key to continue" << std::endl;
-		std::cin.get();
+		std::cout << std::endl;
 	}
 
 	void PerformanceTestManager::InitializeTests()

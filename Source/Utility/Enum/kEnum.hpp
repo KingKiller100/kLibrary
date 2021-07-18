@@ -116,7 +116,7 @@ public:																					\
 	}																					\
 																						\
 	template<class Char_t = char>														\
-	USE_RESULT const Char_t* ToString() const											\
+	USE_RESULT std::basic_string_view<Char_t> ToString() const							\
 	{																					\
 		const auto name = ToStringImpl<Char_t>();										\
 		return name;																	\

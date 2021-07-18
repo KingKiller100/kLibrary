@@ -71,7 +71,7 @@ namespace kTest::utility
 			const auto& v = secret_impl_TestResults::values;
 			if (std::find(std::begin(v), std::end(v), val) == v.end())
 			{
-				throw std::out_of_range("Value given is not mapped to a value for " "enum type " "\"TestResults\"");
+				throw std::out_of_range("Value given is not mapped to a value for " "enum type \"" "TestResults" "\"");
 			}
 		}
 
@@ -119,7 +119,7 @@ namespace kTest::utility
 		[[nodiscard]] static constexpr std::string_view PrettyType() { return "enum " "TestResults"; }
 
 		template <class Char_t = char>
-		[[nodiscard]] const Char_t* ToString() const
+		[[nodiscard]] std::basic_string_view<Char_t> ToString() const
 		{
 			const auto name = ToStringImpl<Char_t>();
 			return name;
@@ -186,9 +186,8 @@ namespace kTest::utility
 		static constexpr Value FromStringImpl(const char* s, size_t index)
 		{
 			using namespace klib::kEnum::secret::impl;
-			if (index >= secret_impl_TestResults::size)
-				std::_Xout_of_range(
-					"Name does not map to a value in enum: " "TestResults");
+			if (index >= secret_impl_TestResults::size) std::_Xout_of_range(
+				"Name does not map to a value in enum: " "TestResults");
 			const auto matches = matches_untrimmed(secret_impl_TestResults::raw_names[index].data(), s);
 			const auto ret = matches
 				                 ? static_cast<Value>(secret_impl_TestResults::values[index])

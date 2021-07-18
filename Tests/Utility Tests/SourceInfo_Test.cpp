@@ -52,16 +52,16 @@ namespace kTest::utility
 
 		{
 			constexpr auto source = U16SOURCE_INFO();
-			VERIFY_COMPILE_TIME(source.file == U16_STR( __FILE__ ));
+			VERIFY_COMPILE_TIME(source.file == U16_STR(__FILE__));
 			VERIFY_COMPILE_TIME(source.line == kFILELINE - 2);
-			VERIFY_COMPILE_TIME(source.func == U16_STR( __FUNCTION__ ));
+			VERIFY_COMPILE_TIME(source.func == U16_STR(__FUNCTION__));
 		}
 
 		{
 			const auto source = U32SOURCE_INFO();
-			VERIFY(source.file == U32_STR( __FILE__ ));
+			VERIFY(source.file == U32_STR(__FILE__));
 			VERIFY(source.line == kFILELINE - 2);
-			VERIFY(source.func == U32_STR( __FUNCTION__ ));
+			VERIFY(source.func == U32_STR(__FUNCTION__));
 		}
 
 #ifdef MSVC_PLATFORM_TOOLSET
@@ -139,9 +139,9 @@ namespace kTest::utility
 		std::string func = __FUNCTION__;
 
 		{
-			const auto source = SOURCE_INFO();
+			const auto source = SOURCE_INFO(); const auto lineStr = std::to_string(__LINE__);
 			const auto result = ToString("{0:l}", source);
-			VERIFY(result == "147");
+			VERIFY(result == lineStr);
 		}
 
 		{
@@ -151,9 +151,9 @@ namespace kTest::utility
 		}
 
 		{
-			const auto source = SOURCE_INFO();
+			const auto source = SOURCE_INFO(); const auto lineStr = " [" + std::to_string(__LINE__) + "]";
 			const auto result = ToString("{0:fl}", source);
-			VERIFY(result == file + " [159]");
+			VERIFY(result == file + lineStr);
 		}
 
 		{
@@ -169,15 +169,15 @@ namespace kTest::utility
 		}
 
 		{
-			const auto source = SOURCE_INFO();
+			const auto source = SOURCE_INFO(); const auto lineStr = std::to_string(__LINE__);
 			const auto result = ToString("{0:a}", source);
-			VERIFY(result.find("File: " + file + " Line: 177 Function: " + func) != std::string::npos);
+			VERIFY(result.find("File: " + file + " Line: " + lineStr + " Function: " + func) != std::string::npos);
 		}
 
 		{
-			const auto source = SOURCE_INFO();
+			const auto source = SOURCE_INFO(); const auto lineStr = std::to_string(__LINE__);
 			const auto result = ToString("{0}", source);
-			VERIFY(result.find("File: " + file + " Line: 183 Function: " + func) != std::string::npos);
+			VERIFY(result.find("File: " + file + " Line: " + lineStr + " Function: " + func) != std::string::npos);
 		}
 	}
 
@@ -213,7 +213,7 @@ namespace kTest::utility
 			source.file = source.file.filename();
 			VERIFY(source.file == std::filesystem::path(__FILEW__).filename());
 			VERIFY(source.line == kFILELINE - 3);
-			VERIFY(source.func ==u"");
+			VERIFY(source.func == u"");
 		}
 	}
 
@@ -223,9 +223,9 @@ namespace kTest::utility
 		std::wstring func = __FUNCTIONW__;
 
 		{
-			const auto source = MUT_SRC_INFO();
+			const auto source = MUT_SRC_INFO(); const auto lineStr = std::to_string(__LINE__);
 			const auto result = ToString("{0:l}", source);
-			VERIFY(result == "237");
+			VERIFY(result == lineStr);
 		}
 
 		{
@@ -247,15 +247,15 @@ namespace kTest::utility
 		}
 
 		{
-			const auto source = WSOURCE_INFO();
+			const auto source = WSOURCE_INFO(); const auto lineStr = std::to_wstring(__LINE__);
 			const auto result = ToString(L"{0:a}", source);
-			VERIFY(result.find(L"File: " + file + L" Line: 261 Function: " + func) != std::string::npos);
+			VERIFY(result.find(L"File: " + file + L" Line: " + lineStr + L" Function: " + func) != std::string::npos);
 		}
 
 		{
-			const auto source = WSOURCE_INFO();
+			const auto source = WSOURCE_INFO(); const auto lineStr = std::to_wstring(__LINE__);
 			const auto result = ToString(L"{0}", source);
-			VERIFY(result.find(L"File: " + file + L" Line: 267 Function: " + func) != std::string::npos);
+			VERIFY(result.find(L"File: " + file + L" Line: " + lineStr + L" Function: " + func) != std::string::npos);
 		}
 	}
 }

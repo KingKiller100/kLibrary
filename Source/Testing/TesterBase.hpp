@@ -24,8 +24,8 @@ namespace kTest
 
 		virtual ~TesterBase();
 
-		const char* GetName() const noexcept;
-		const std::string& GetFailureData() const noexcept;
+		[[nodiscard]] const char* GetName() const noexcept;
+		[[nodiscard]] const std::string& GetFailureData() const noexcept;
 
 		bool Run() noexcept;
 

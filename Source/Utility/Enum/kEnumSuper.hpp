@@ -36,7 +36,8 @@ public:																					\
 		if (std::find(std::begin(vals), std::end(vals), val) == vals.end() && 			\
 			std::find(std::begin(baseVals), std::end(baseVals), val) == baseVals.end())	\
 		{																				\
-			throw std::out_of_range("Value given is out of enum's range");				\
+			throw std::out_of_range("Value given is not mapped to a value for "			\
+				"enum type \"" #enumName "\"");											\
 		}																				\
 	}																					\
 																						\
@@ -117,7 +118,7 @@ public:																					\
 	}																					\
 																						\
 	template<class Char_t = char>														\
-	USE_RESULT const Char_t* ToString() const											\
+	USE_RESULT std::basic_string_view<Char_t> ToString() const							\
 	{																					\
 		const auto name = ToStringImpl<Char_t>();										\
 		return name;																	\
