@@ -10,8 +10,11 @@ namespace kTest::utility
 		StringViewTester();
 		~StringViewTester() override;
 
-	private:
+	protected:
 		void Prepare() noexcept override;
+
+	private:
+		void FullTest();
 	};
 
 }

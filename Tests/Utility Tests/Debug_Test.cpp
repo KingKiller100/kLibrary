@@ -1,12 +1,13 @@
 #include "pch.hpp"
 #include "Debug_Test.hpp"
 
+#ifdef TESTING_ENABLED
+
 #include "../../Source/Utility/Debug/kDebugger.hpp"
 #include "../../Source/Utility/Debug/kAssert.hpp"
 
-#ifdef TESTING_ENABLED
 namespace kTest::utility
-{	
+{
 	DebugTester::DebugTester()
 		: TesterBase("Debug Test")
 	{}
@@ -16,38 +17,53 @@ namespace kTest::utility
 
 	using namespace klib::kDebug;
 	using namespace std::chrono_literals;
-	
+
 	void DebugTester::Prepare() noexcept
 	{
-		VERIFY_MULTI_INIT()
-		VERIFY_MULTI(IsDebuggerAttachedTest())
-		VERIFY_MULTI(BreakPointTest())
-		VERIFY_MULTI(FailedConditionExceptionTest())
-		VERIFY_MULTI_END()
+		ADD_TEST(IsDebuggerAttachedTest());
+		ADD_TEST(BreakPointTest());
+		ADD_TEST(FailedConditionExceptionTest());
 	}
 
-	bool DebugTester::IsDebuggerAttachedTest()
+	void DebugTester::IsDebuggerAttachedTest()
 	{
-		// WaitForDebugger("DebugTest", 1000ms);
-		ScanForDebugger(1000ms);
-		
+		constexpr auto waitTime = 1000ms;
+		using Duration = std::remove_const_t<decltype(waitTime)>;
+
+		const auto startTimePoint = std::chrono::high_resolution_clock::now();
+		Duration duration(0);
+
+		ScanForDebugger(waitTime);
+
+		const auto endTimePoint = std::chrono::high_resolution_clock::now();
+
+		duration = std::chrono::duration_cast<Duration>(endTimePoint - startTimePoint);
+
+		if (IsDebuggerAttached())
+		{
+			VERIFY(waitTime > duration); // Should be a quick check since debugger is attached
+		}
+		else
+		{
+			VERIFY(waitTime <= duration); // Should timeout due to no debugger being attached
+		}
 	}
 
-	bool DebugTester::BreakPointTest()
+	void DebugTester::BreakPointTest()
 	{
 		//klib::kDebug::BreakPoint(); // Works Great!
-		
 	}
 
-	bool DebugTester::FailedConditionExceptionTest()
+	void DebugTester::FailedConditionExceptionTest()
 	{
-		success = false;
+		bool failedConditionExceptionTest = false;
 		FailedConditionException("Assert", "Working Great!", SOURCE_INFO(),
 			[&](std::string&, const SourceInfo&)
-			{
-				success = true;
-			});
-		
+		{
+			failedConditionExceptionTest = true;
+		});
+
+		VERIFY(failedConditionExceptionTest);
 	}
 }
 #endif

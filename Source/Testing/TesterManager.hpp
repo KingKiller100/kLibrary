@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../HelperMacros.hpp"
+#include "EnableTesting.hpp"
 
+#ifdef TESTING_ENABLED
 #include <fstream>
 #include <functional>
 #include <memory>
@@ -10,7 +11,6 @@
 #include <string>
 #include <vector>
 
-#ifdef TESTING_ENABLED
 namespace kTest
 {
 	class TesterBase;

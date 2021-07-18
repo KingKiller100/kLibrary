@@ -14,9 +14,9 @@ namespace kTest::utility
 		void Prepare() noexcept override;
 
 	private:
-		bool IsDebuggerAttachedTest();
-		bool BreakPointTest();
-		bool FailedConditionExceptionTest();
+		void IsDebuggerAttachedTest();
+		void BreakPointTest();
+		void FailedConditionExceptionTest();
 	};
 }
 #endif

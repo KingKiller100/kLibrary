@@ -14,79 +14,74 @@ namespace kTest::maths
 {
 	AlgorithmsTester::AlgorithmsTester()
 		: TesterBase("Algorithms Test")
-	{}
+	{
+	}
 
 	AlgorithmsTester::~AlgorithmsTester()
-		= default;
+	= default;
 
 	void AlgorithmsTester::Prepare() noexcept
 	{
-		VERIFY_MULTI_INIT();
-		
-		VERIFY_MULTI(IsInfTest());
-		VERIFY_MULTI(IsNaNTest());
-		VERIFY_MULTI(CountTest());
-		VERIFY_MULTI(AbsTest());
-		VERIFY_MULTI(TanTest());
-		VERIFY_MULTI(SineTest());
-		VERIFY_MULTI(SignTest());
-		VERIFY_MULTI(SwapTest());
-		VERIFY_MULTI(FloorTest());
-		VERIFY_MULTI(CosineTest());
-		VERIFY_MULTI(MinMaxTest());
-		VERIFY_MULTI(ToDegreesTest());
-		VERIFY_MULTI(ToRadiansTest());
-		VERIFY_MULTI(ConstantsTest());
-		VERIFY_MULTI(IsNegativeTest());
-		VERIFY_MULTI(ConversionTest());
-		VERIFY_MULTI(CountDigitsTest());
-		VERIFY_MULTI(BinarySearchTest());
-		VERIFY_MULTI(BinarySearchClosestTest());
+		ADD_TEST(IsInfTest());
+		ADD_TEST(IsNaNTest());
+		ADD_TEST(CountTest());
+		ADD_TEST(AbsTest());
+		ADD_TEST(TanTest());
+		ADD_TEST(SineTest());
+		ADD_TEST(SignTest());
+		ADD_TEST(SwapTest());
+		ADD_TEST(FloorTest());
+		ADD_TEST(CosineTest());
+		ADD_TEST(MinMaxTest());
+		ADD_TEST(ToDegreesTest());
+		ADD_TEST(ToRadiansTest());
+		ADD_TEST(ConstantsTest());
+		ADD_TEST(IsNegativeTest());
+		ADD_TEST(ConversionTest());
+		ADD_TEST(CountDigitsTest());
+		ADD_TEST(BinarySearchTest());
+		ADD_TEST(BinarySearchClosestTest());
 
 
-		VERIFY_MULTI(ClampTest());
-		VERIFY_MULTI(PowerOfTest());
-		VERIFY_MULTI(AbsClampTest());
-		VERIFY_MULTI(RealToFractionTest());
-		VERIFY_MULTI(PowerOfFractionTest());
+		ADD_TEST(ClampTest());
+		ADD_TEST(PowerOfTest());
+		ADD_TEST(AbsClampTest());
+		ADD_TEST(RealToFractionTest());
+		ADD_TEST(PowerOfFractionTest());
 
-		VERIFY_MULTI(RootTest());
-		VERIFY_MULTI(GammaTest());
-		VERIFY_MULTI(Log10Test());
-		VERIFY_MULTI(RoundingTest());
-		VERIFY_MULTI(FactorialTest());
-		VERIFY_MULTI(SquareRootTest());
+		ADD_TEST(RootTest());
+		ADD_TEST(GammaTest());
+		ADD_TEST(Log10Test());
+		ADD_TEST(RoundingTest());
+		ADD_TEST(FactorialTest());
+		ADD_TEST(SquareRootTest());
 
-		VERIFY_MULTI(Log2Test());
-		VERIFY_MULTI(InverseSquareRootTest());
+		ADD_TEST(Log2Test());
+		ADD_TEST(InverseSquareRootTest());
 
-		VERIFY_MULTI(ModulusTest());
-		VERIFY_MULTI(FloatingPointRemainderTest());
-
-		VERIFY_MULTI_END();
+		ADD_TEST(ModulusTest());
+		ADD_TEST(FloatingPointRemainderTest());
 	}
 
 	using namespace kmaths;
 	using namespace constants;
 
-	bool AlgorithmsTester::CountTest()
+	void AlgorithmsTester::CountTest()
 	{
 		{
 			constexpr kmaths::Vector2d a{}, b{}, c{}, d{}, e{}, f{};
 			constexpr auto count = kmaths::Count(a, b, c, d, e, f);
 			VERIFY_COMPILE_TIME(count == 6);
 		}
-		
+
 		{
 			constexpr std::string_view one;
 			constexpr auto count = kmaths::Count(one);
 			VERIFY_COMPILE_TIME(count == 1);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::SineTest()
+	void AlgorithmsTester::SineTest()
 	{
 		{
 			constexpr auto x = 0;
@@ -160,12 +155,9 @@ namespace kTest::maths
 
 			VERIFY(resultRounded == expectedRounded);
 		}
-
-
-		
 	}
 
-	bool AlgorithmsTester::CosineTest()
+	void AlgorithmsTester::CosineTest()
 	{
 		{
 			constexpr auto x = 0.0;
@@ -243,11 +235,9 @@ namespace kTest::maths
 
 			VERIFY(resultRounded == expectedRounded);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::TanTest()
+	void AlgorithmsTester::TanTest()
 	{
 		{
 			constexpr auto x = 0.0;
@@ -273,16 +263,16 @@ namespace kTest::maths
 
 		// Tan(pi / 2) == Div/0
 		{
-				constexpr auto x = constants::Pi_Over_2<Accuracy_t>;
-				const auto result = Tan(x);
-				VERIFY(std::isinf(result));
+			constexpr auto x = constants::Pi_Over_2<Accuracy_t>;
+			const auto result = Tan(x);
+			VERIFY(std::isinf(result));
 		}
 
 		// Tan(3*pi / 2) == Div/0
 		{
-				constexpr auto x = 3 * constants::Pi_Over_2<Accuracy_t>;
-				const auto result = Tan(x, 500);
-				VERIFY(std::isinf(result));
+			constexpr auto x = 3 * constants::Pi_Over_2<Accuracy_t>;
+			const auto result = Tan(x, 500);
+			VERIFY(std::isinf(result));
 		}
 
 		{
@@ -317,13 +307,10 @@ namespace kTest::maths
 
 			VERIFY(resultRounded == expectedRounded);
 		}
-
-
-		
 	}
 
 
-	bool AlgorithmsTester::ConstantsTest()
+	void AlgorithmsTester::ConstantsTest()
 	{
 		{
 			constexpr auto vec = constants::One<Vector3d>;
@@ -352,11 +339,9 @@ namespace kTest::maths
 				for (auto col = 0u; col < mat.GetColumns(); ++col)
 					VERIFY(mat[row][col] == 2);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::ConversionTest()
+	void AlgorithmsTester::ConversionTest()
 	{
 		constexpr auto num = 300;
 		constexpr auto maxInt = std::numeric_limits<int>::max();
@@ -379,7 +364,7 @@ namespace kTest::maths
 		constexpr auto charToString_View = Convert<std::string_view>("YOLO");
 		VERIFY_COMPILE_TIME(charToString_View == "YOLO");
 
-		constexpr int container[3][2] = { {1, 3}, {5, 6}, {0, 5} };
+		constexpr int container[3][2] = {{1, 3}, {5, 6}, {0, 5}};
 		const auto arrayToMatrix = Convert<Matrix3x2s>(container);
 
 		{
@@ -388,10 +373,10 @@ namespace kTest::maths
 			for (auto row = 0; row < vecToMat.GetRows(); ++row)
 				for (auto col = 0; col < vecToMat.GetColumns(); ++col)
 					VERIFY(vecToMat[row][col] == (
-					(row == col)
+						(row == col)
 						? 5
 						: 0)
-					);
+				);
 		}
 
 		const auto doubleToVec = Convert<Vector4d>(5);
@@ -399,11 +384,9 @@ namespace kTest::maths
 		VERIFY(doubleToVec.Y() == 5.0);
 		VERIFY(doubleToVec.Z() == 5.0);
 		VERIFY(doubleToVec.W() == 5.0);
-
-		
 	}
 
-	bool AlgorithmsTester::CountDigitsTest()
+	void AlgorithmsTester::CountDigitsTest()
 	{
 		{
 			constexpr auto num = 1;
@@ -470,11 +453,9 @@ namespace kTest::maths
 			constexpr auto digits = CountIntegerDigits(num);
 			VERIFY_COMPILE_TIME(digits == 1);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::IsNegativeTest()
+	void AlgorithmsTester::IsNegativeTest()
 	{
 		{
 			constexpr auto value = -15;
@@ -499,12 +480,10 @@ namespace kTest::maths
 			constexpr auto result = IsNegative(value);
 			VERIFY_COMPILE_TIME(result == true)
 		}
-
-		
 	}
 
 
-	bool AlgorithmsTester::MinMaxTest()
+	void AlgorithmsTester::MinMaxTest()
 	{
 		constexpr auto big = 1000LL;
 		constexpr auto small = 2.55l;
@@ -523,11 +502,9 @@ namespace kTest::maths
 		VERIFY_COMPILE_TIME(biggestPred == big);
 		constexpr auto smallestPred = Min(small, big, std::less{});
 		VERIFY_COMPILE_TIME(smallestPred == small);
-
-		
 	}
 
-	bool AlgorithmsTester::FloorTest()
+	void AlgorithmsTester::FloorTest()
 	{
 		{
 			constexpr auto decimal = 100.4756;
@@ -577,11 +554,9 @@ namespace kTest::maths
 			const auto expected = std::floor(decimal);
 			VERIFY(result == expected);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::RealToFractionTest()
+	void AlgorithmsTester::RealToFractionTest()
 	{
 		{
 			constexpr auto decimal = 0.25;
@@ -645,108 +620,101 @@ namespace kTest::maths
 			const auto f2d = fraction.GetReal<decltype(decimal)>();
 			VERIFY(f2d == decimal);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::BinarySearchTest()
+	void AlgorithmsTester::BinarySearchTest()
 	{
 		{
-			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			constexpr double list[] = {0, 1, 2, 3, 4, 5, 6};
 			const auto idx = BinarySearch(list, 4.0);
 			VERIFY_COMPILE_TIME(idx == 4);
 		}
 
 		{
-			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			constexpr double list[] = {0, 1, 2, 3, 4, 5, 6};
 			const auto idx = BinarySearch(list, -4.0);
 			VERIFY_COMPILE_TIME(idx == -1);
 		}
 
 		{
-			constexpr int list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			constexpr int list[] = {0, 1, 2, 3, 4, 5, 6};
 			const auto idx = BinarySearch(list, 14);
 			VERIFY_COMPILE_TIME(idx == -1);
 		}
 
 		{
-			const auto* const list = new long long[7]{ 0, 1, 2, 3, 4, 5, 6 };
+			const auto* const list = new long long[7]{0, 1, 2, 3, 4, 5, 6};
 			const auto idx = BinarySearch(list, 6ll, 7);
 			VERIFY(idx == 6);
 			delete[] list;
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::BinarySearchClosestTest()
+	void AlgorithmsTester::BinarySearchClosestTest()
 	{
-
 		{
-			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			constexpr double list[] = {0, 1, 2, 3, 4, 5, 6};
 			const auto idx = BinarySearchClosest(list, 1.0);
 			VERIFY_COMPILE_TIME(idx == 1);
 		}
 
 		{
-			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			constexpr double list[] = {0, 1, 2, 3, 4, 5, 6};
 			const auto idx = BinarySearchClosest(list, 3.0);
 			VERIFY_COMPILE_TIME(idx == 3);
 		}
 
 		{
-			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			constexpr double list[] = {0, 1, 2, 3, 4, 5, 6};
 			const auto idx = BinarySearchClosest(list, 5.0);
 			VERIFY_COMPILE_TIME(idx == 5);
 		}
 
 		{
-			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			constexpr double list[] = {0, 1, 2, 3, 4, 5, 6};
 			const auto idx = BinarySearchClosest(list, -5.0);
 			VERIFY_COMPILE_TIME(idx == 0);
 		}
 
 		{
-			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			constexpr double list[] = {0, 1, 2, 3, 4, 5, 6};
 			const auto idx = BinarySearchClosest(list, 4.25);
 			VERIFY_COMPILE_TIME(idx == 4);
 		}
 
 		{
-			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			constexpr double list[] = {0, 1, 2, 3, 4, 5, 6};
 			const auto idx = BinarySearchClosest(list, 2.25);
 			VERIFY_COMPILE_TIME(idx == 2);
 		}
 
 		{
-			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			constexpr double list[] = {0, 1, 2, 3, 4, 5, 6};
 			const auto idx = BinarySearchClosest(list, 7.0);
 			VERIFY_COMPILE_TIME(idx == 6);
 		}
 
 		{
-			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			constexpr double list[] = {0, 1, 2, 3, 4, 5, 6};
 			const auto idx = BinarySearchClosest(list, -1.0);
 			VERIFY_COMPILE_TIME(idx == 0);
 		}
 
 		{
-			constexpr double list[] = { 0, 1, 2, 3, 4, 5, 6 };
+			constexpr double list[] = {0, 1, 2, 3, 4, 5, 6};
 			const auto idx = BinarySearchClosest(list, 1.5);
 			VERIFY_COMPILE_TIME(idx == 2);
 		}
 
 		{
-			const auto* list = new long long[7]{ 0, 1, 2, 3, 4, 5, 6 };
+			const auto* list = new long long[7]{0, 1, 2, 3, 4, 5, 6};
 			const auto idx = BinarySearchClosest(list, 6ll, 7);
 			VERIFY(idx == 6);
 			delete[] list;
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::RoundingTest()
+	void AlgorithmsTester::RoundingTest()
 	{
 		{
 			constexpr auto accuracy = 3;
@@ -792,11 +760,9 @@ namespace kTest::maths
 			const auto expectedVal = 128.4939;
 			VERIFY(rounded == expectedVal);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::PowerOfTest()
+	void AlgorithmsTester::PowerOfTest()
 	{
 		{
 			constexpr auto power = -4.0f;
@@ -861,11 +827,9 @@ namespace kTest::maths
 			//const auto expectedVal =  std::pow(num, power);
 			//VERIFY(value == expectedVal);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::SwapTest()
+	void AlgorithmsTester::SwapTest()
 	{
 		{
 			auto thirty = 30;
@@ -894,8 +858,8 @@ namespace kTest::maths
 		}
 
 		{
-			std::unique_ptr<int> fiveHundred = std::make_unique<int>(200);
-			std::unique_ptr<int> twoHundred = std::make_unique<int>(500);
+			auto fiveHundred = std::make_unique<int>(200);
+			auto twoHundred = std::make_unique<int>(500);
 
 			VERIFY(*fiveHundred == 200);
 			VERIFY(*twoHundred == 500);
@@ -905,11 +869,9 @@ namespace kTest::maths
 			VERIFY(*fiveHundred == 500);
 			VERIFY(*twoHundred == 200);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::GammaTest()
+	void AlgorithmsTester::GammaTest()
 	{
 		{
 			auto x = 1.5;
@@ -969,12 +931,9 @@ namespace kTest::maths
 			const auto expected = CAST(decltype(result), std::tgamma(x));
 			VERIFY(result == expected);
 		}
-
-
-		
 	}
 
-	bool AlgorithmsTester::FactorialTest()
+	void AlgorithmsTester::FactorialTest()
 	{
 		{
 			auto z = 5;
@@ -996,11 +955,9 @@ namespace kTest::maths
 			auto expected = std::tgamma(z + 1);
 			VERIFY(result == expected);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::ClampTest()
+	void AlgorithmsTester::ClampTest()
 	{
 		{
 			constexpr auto value = 15;
@@ -1078,7 +1035,6 @@ namespace kTest::maths
 		{
 			try
 			{
-
 				constexpr auto value = -9.0;
 				constexpr decltype(value) upper = -20;
 				constexpr decltype(value) lower = -1;
@@ -1086,7 +1042,7 @@ namespace kTest::maths
 				const auto expected = std::clamp(value, lower, upper);
 				VERIFY(result == expected);
 			}
-			catch (const klib::kDebug::MathsLogicError & e)
+			catch (const klib::kDebug::MathsLogicError& e)
 			{
 				constexpr auto msg = "Max value cannot be less than or equal to min value";
 				const auto result = std::strcmp(e.what(), msg) == 0;
@@ -1096,24 +1052,21 @@ namespace kTest::maths
 
 		{
 			constexpr auto value = Vector2f(4, 3); // MagSq = 25
-			constexpr decltype(value) upper = Vector2f(2, 4); // MagSQ = 20
-			constexpr decltype(value) lower = Vector2f(-2); // MagSQ = 8
+			constexpr const auto upper = Vector2f(2, 4); // MagSQ = 20
+			constexpr const auto lower = Vector2f(-2); // MagSQ = 8
 			const auto result = Clamp(value, lower, upper); // Compares MagSQ values
 			const auto expected = std::clamp(value, lower, upper);
 			VERIFY(result == expected);
 		}
-
-
-		
 	}
 
-	bool AlgorithmsTester::AbsClampTest()
+	void AlgorithmsTester::AbsClampTest()
 	{
 		constexpr auto stdAbsClamp = [](const auto& v, const auto& minimum, const auto& maximum)
 		{
 			return IsNegative(v)
-				? -std::clamp(v, minimum, maximum)
-				: std::clamp(v, minimum, maximum);
+				       ? -std::clamp(v, minimum, maximum)
+				       : std::clamp(v, minimum, maximum);
 		};
 
 		{
@@ -1190,17 +1143,15 @@ namespace kTest::maths
 
 		{
 			constexpr auto value = Vector2f(4, 3); // MagSq = 25
-			constexpr decltype(value) upper = Vector2f(2, 4); // MagSQ = 20
-			constexpr decltype(value) lower = Vector2f(-2); // MagSQ = 8
+			constexpr const auto upper = Vector2f(2, 4); // MagSQ = 20
+			constexpr const auto lower = Vector2f(-2); // MagSQ = 8
 			const auto result = AbsClamp(value, lower, upper);
 			const auto expected = stdAbsClamp(value, lower, upper);
 			VERIFY(result == expected);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::ToDegreesTest()
+	void AlgorithmsTester::ToDegreesTest()
 	{
 		constexpr auto piTo180 = ToDegrees(constants::Pi<int>);
 		VERIFY_COMPILE_TIME(piTo180 == 180);
@@ -1216,11 +1167,9 @@ namespace kTest::maths
 
 		constexpr auto pitimes3Over2To270 = ToDegrees<constants::Accuracy_t>(constants::Pi_Over_2<Accuracy_t> * 3);
 		VERIFY_COMPILE_TIME(pitimes3Over2To270 == 270.0l);
-
-		
 	}
 
-	bool AlgorithmsTester::ToRadiansTest()
+	void AlgorithmsTester::ToRadiansTest()
 	{
 		constexpr auto deg180ToPi = ToRadians<int>(180);
 		VERIFY_COMPILE_TIME(deg180ToPi == static_cast<decltype(deg180ToPi)>(M_PI));
@@ -1236,11 +1185,9 @@ namespace kTest::maths
 
 		constexpr auto deg270To3PiOver2 = ToRadians<long double>(270);
 		VERIFY_COMPILE_TIME(deg270To3PiOver2 == static_cast<decltype(deg270To3PiOver2)>(M_PI_2 * 3));
-
-		
 	}
 
-	bool AlgorithmsTester::Log10Test()
+	void AlgorithmsTester::Log10Test()
 	{
 		{
 			constexpr auto number = 0.1;
@@ -1329,11 +1276,9 @@ namespace kTest::maths
 
 			VERIFY(resultRounded == expectedRounded);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::SquareRootTest()
+	void AlgorithmsTester::SquareRootTest()
 	{
 		{
 			constexpr auto square = 125348;
@@ -1439,11 +1384,9 @@ namespace kTest::maths
 			const auto expected = std::sqrtf(square); // 1.77245390...
 			VERIFY(root == expected);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::InverseSquareRootTest()
+	void AlgorithmsTester::InverseSquareRootTest()
 	{
 		{
 			constexpr auto square = 225;
@@ -1464,11 +1407,9 @@ namespace kTest::maths
 			VERIFY(root == expectedRoot);
 			VERIFY(invRoot == expectedInv);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::RootTest()
+	void AlgorithmsTester::RootTest()
 	{
 		{
 			constexpr auto exponent = -1;
@@ -1602,7 +1543,6 @@ namespace kTest::maths
 		{
 			try
 			{
-
 				constexpr auto exponent = -64;
 				constexpr auto power = 6;
 				auto root = Root(exponent, power);
@@ -1615,12 +1555,10 @@ namespace kTest::maths
 				VERIFY(msg == e.what());
 			}
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::Log2Test()
-	{		
+	void AlgorithmsTester::Log2Test()
+	{
 		{
 			constexpr auto x = 8;
 			const auto result = Log2(x);
@@ -1628,18 +1566,18 @@ namespace kTest::maths
 
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			constexpr auto x = 64.5f;
 			const auto result = Log2(x);
 			const auto expected = std::log2(x);
-			
+
 			const auto resultRounded = Round(result, Max_Decimal_Precision_V<decltype(x)>);
 			const auto expectedRounded = Round(expected, Max_Decimal_Precision_V<decltype(x)>);
 
 			VERIFY(resultRounded == expectedRounded);
 		}
-		
+
 		{
 			constexpr auto x = 128.F;
 			const auto result = Log2(x);
@@ -1650,31 +1588,28 @@ namespace kTest::maths
 
 			VERIFY(resultRounded == expectedRounded);
 		}
-		
+
 		{
 			constexpr auto x = 4096;
 			const auto result = Log2(x);
 			const auto expected = std::log2(x);
 
 			VERIFY(result == expected);
-
 		}
-		
+
 		{
 			constexpr auto x = 40.0;
 			const auto result = Log2(x);
-			const auto expected = std::log2(x); 
+			const auto expected = std::log2(x);
 
 			const auto resultRounded = Round(result, 12);
 			const auto expectedRounded = Round(expected, 12);
 
 			VERIFY(resultRounded == expectedRounded);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::PowerOfFractionTest()
+	void AlgorithmsTester::PowerOfFractionTest()
 	{
 		{
 			constexpr auto numerator = 2;
@@ -1718,11 +1653,9 @@ namespace kTest::maths
 			constexpr auto expected = Vector2f(25);
 			VERIFY(result == expected);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::FloatingPointRemainderTest()
+	void AlgorithmsTester::FloatingPointRemainderTest()
 	{
 		{
 			constexpr auto num = 11.1;
@@ -1763,11 +1696,9 @@ namespace kTest::maths
 			const auto expected = std::fmod(num, base);
 			VERIFY(result == expected);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::ModulusTest()
+	void AlgorithmsTester::ModulusTest()
 	{
 		{
 			constexpr auto num = 10;
@@ -1800,11 +1731,9 @@ namespace kTest::maths
 			const auto expected = std::fmodf(num, base);
 			VERIFY(result == expected);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::IsInfTest()
+	void AlgorithmsTester::IsInfTest()
 	{
 		{
 			constexpr auto num = -5.5;
@@ -1812,32 +1741,30 @@ namespace kTest::maths
 			const auto expected = std::isinf(num);
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			constexpr auto num = 5.5;
 			const auto result = kmaths::IsInf(num);
 			const auto expected = std::isinf(num);
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			constexpr auto num = -std::numeric_limits<double>::infinity();
 			const auto result = kmaths::IsInf(num);
 			const auto expected = std::isinf(num);
 			VERIFY(result == expected);
 		}
-		
+
 		{
 			constexpr auto num = std::numeric_limits<double>::infinity();
 			const auto result = kmaths::IsInf(num);
 			const auto expected = std::isinf(num);
 			VERIFY(result == expected);
 		}
-		
-		
 	}
 
-	bool AlgorithmsTester::IsNaNTest()
+	void AlgorithmsTester::IsNaNTest()
 	{
 		{
 			constexpr auto num = 5.5f;
@@ -1859,11 +1786,9 @@ namespace kTest::maths
 			const auto expected = std::isnan(num);
 			VERIFY(result == expected);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::SignTest()
+	void AlgorithmsTester::SignTest()
 	{
 		{
 			constexpr auto num = -1;
@@ -1894,11 +1819,9 @@ namespace kTest::maths
 			const auto result = Sign(num);
 			VERIFY_COMPILE_TIME(result == -1);
 		}
-
-		
 	}
 
-	bool AlgorithmsTester::AbsTest()
+	void AlgorithmsTester::AbsTest()
 	{
 		{
 			constexpr auto num = -1;
@@ -1935,9 +1858,6 @@ namespace kTest::maths
 			const auto result = Abs(num);
 			VERIFY(result == 10.5);
 		}
-
-		
 	}
-
 }
 #endif

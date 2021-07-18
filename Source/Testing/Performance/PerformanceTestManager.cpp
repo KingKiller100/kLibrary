@@ -2,13 +2,13 @@
 #include "PerformanceTestManager.hpp"
 #include "PerformanceTestBase.hpp"
 
+#ifdef TESTING_ENABLED
 #include "../SetUpTests.hpp"
 
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 
-#ifdef TESTING_ENABLED
 namespace kTest::performance
 {
 	PerformanceTestManager::PerformanceTestManager(const Token&)
@@ -18,21 +18,24 @@ namespace kTest::performance
 	PerformanceTestManager::~PerformanceTestManager()
 		= default;
 
-	void PerformanceTestManager::Initialize()
+	void PerformanceTestManager::Prepare() noexcept
 	{
-		namespace fs = std::filesystem;
+		ADD_TEST(RunAll());
+	}
 
-		path = fs::current_path();
-		path += "\\Speed Results\\";
-		const auto isMade = fs::create_directory(path);
+	void PerformanceTestManager::RunAll()
+	{
+		path = std::filesystem::current_path();
+		path /= "Speed Results";
+		const auto isMade = std::filesystem::create_directory(path);
 
-		if (!fs::exists(path))
+		if (!std::filesystem::exists(path))
 		{
 			throw std::runtime_error("Test Results path could not be created/found. Please check why!");
 		}
-		
+
 		const auto endIter = std::filesystem::directory_iterator();
-		
+
 		for (auto iter = std::filesystem::directory_iterator(path);
 			iter != endIter;
 			++iter)
@@ -40,20 +43,12 @@ namespace kTest::performance
 			const auto isFile = iter->is_regular_file();
 			if (isFile)
 			{
-				fs::remove(*iter);
+				std::filesystem::remove(*iter);
 			}
 		}
 
 		InitializeTests();
-	}
-
-	void PerformanceTestManager::ShutDown()
-	{
-		ClearAll();
-	}
-
-	void PerformanceTestManager::RunAll()
-	{
+		
 		for (auto& test : tests)
 		{
 			std::cout << "\n";
@@ -64,6 +59,11 @@ namespace kTest::performance
 		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path;
 		std::cout << "\n\nPress the \"ENTER\" key to continue" << std::endl;
 		std::cin.get();
+	}
+
+	void PerformanceTestManager::InitializeTests()
+	{
+		InitializeAllPerformanceTests();
 	}
 
 	void PerformanceTestManager::RunTest(PerformanceTestBase * test)
@@ -84,24 +84,9 @@ namespace kTest::performance
 		tests.insert(test);
 	}
 
-	void PerformanceTestManager::ClearAll()
-	{
-		for (auto& test : tests)
-		{
-			delete test;
-			// test = nullptr;
-		}
-		tests.clear();
-	}
-
 	void PerformanceTestManager::CollectResult(const std::string_view& result)
 	{
 		results.append(result);
-	}
-
-	void PerformanceTestManager::InitializeTests()
-	{
-		InitializeAllPerformanceTests();
 	}
 
 	void PerformanceTestManager::OutputResult(const std::string& name)
@@ -117,13 +102,26 @@ namespace kTest::performance
 		results.clear();
 	}
 
-	void PerformanceTestManager::Test()
+	void PerformanceTestManager::CleanUp()
 	{
-		Initialize();
-		RunAll();
 		ShutDown();
 	}
 
+	void PerformanceTestManager::ShutDown()
+	{
+		ClearAll();
+	}
+
+	void PerformanceTestManager::ClearAll()
+	{
+		for (auto& test : tests)
+		{
+			delete test;
+			// test = nullptr;
+		}
+		tests.clear();
+	}
+	
 	PerformanceTestManager& PerformanceTestManager::Get()
 	{
 		static Token t;

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "../HelperMacros.hpp"
+#include "EnableTesting.hpp"
+
+#ifdef TESTING_ENABLED
 
 #include "../Utility/String/kSprintf.hpp"
 
@@ -8,7 +10,6 @@
 
 #include <string>
 
-#ifdef TESTING_ENABLED
 namespace kTest
 {
 	class TesterBase : public klib::type_trait::NonCopyable
@@ -31,7 +32,7 @@ namespace kTest
 	protected:
 		virtual void Prepare() noexcept = 0;
 		virtual void CleanUp();
-		void AddTest(const char* testName, TestCaseFunc testFunc);
+		void AddTestCaseImpl(const char* testName, TestCaseFunc testFunc);
 
 	protected:
 		void ReportFailedTestCase(const char* condition, const char* file, const char* function, const std::uint32_t line);
@@ -45,7 +46,7 @@ namespace kTest
 		std::string_view currentTestName;
 	};
 
-#define ADD_TEST(test) this->AddTest(#test, [this](){ test; });
+#define ADD_TEST(test) this->AddTestCaseImpl(#test, [this](){ test; })
 	
 	// If results are wrong, change name to failed test function signature and line, else continues to next line
 #define VERIFY(test)\

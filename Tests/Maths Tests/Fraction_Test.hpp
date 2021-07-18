@@ -17,14 +17,14 @@ namespace kTest::maths
 	private:
 		double RoundTo4(double x);
 		
-		bool AddTest();
-		bool SubtractTest();
-		bool MultiplyTest();
-		bool DivideTest();
-		bool NonSimplifiedTest();
-		bool RationalTest();
-		bool IrrationalTest();
-		bool GetRealTest();
+		void AddTest();
+		void SubtractTest();
+		void MultiplyTest();
+		void DivideTest();
+		void NonSimplifiedTest();
+		void RationalTest();
+		void IrrationalTest();
+		void GetRealTest();
 
 	};
 }

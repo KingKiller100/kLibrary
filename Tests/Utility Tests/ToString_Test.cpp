@@ -32,7 +32,7 @@ namespace klib::kString::stringify
 namespace kTest::utility
 {
 	FormatToStringTester::FormatToStringTester()
-		: TesterBase("Formatting To String Test")
+		: TesterBase("Format To String Test")
 	{	}
 
 	FormatToStringTester::~FormatToStringTester()
@@ -40,24 +40,22 @@ namespace kTest::utility
 
 	void FormatToStringTester::Prepare() noexcept
 	{
-		VERIFY_MULTI_INIT();
-		VERIFY_MULTI(SprintfWrapperTest());
-		VERIFY_MULTI(StringifyFloatingPointTest());
-		VERIFY_MULTI(StringifyBinaryTest());
-		VERIFY_MULTI(StringifyHexTest());
-		VERIFY_MULTI(IdentityTest());
-		VERIFY_MULTI(CustomTypeWithToStringTest());
-		VERIFY_MULTI(CustomTypeWithoutToStringTest());
-		VERIFY_MULTI(FormatToStringTest());
-		VERIFY_MULTI(DirectToStringTest());
-		VERIFY_MULTI(VectorSTL());
-		VERIFY_MULTI_END();
+		ADD_TEST(SprintfWrapperTest());
+		ADD_TEST(StringifyFloatingPointTest());
+		ADD_TEST(StringifyBinaryTest());
+		ADD_TEST(StringifyHexTest());
+		ADD_TEST(IdentityTest());
+		ADD_TEST(CustomTypeWithToStringTest());
+		ADD_TEST(CustomTypeWithoutToStringTest());
+		ADD_TEST(FormatToStringTest());
+		ADD_TEST(DirectToStringTest());
+		ADD_TEST(VectorSTL());
 	}
 
 	using namespace klib;
 	using namespace kString;
 
-	bool FormatToStringTester::IdentityTest()
+	void FormatToStringTester::IdentityTest()
 	{
 #ifdef __cpp_char8_t
 		{
@@ -104,7 +102,7 @@ namespace kTest::utility
 	}
 
 
-	bool FormatToStringTester::SprintfWrapperTest()
+	void FormatToStringTester::SprintfWrapperTest()
 	{
 		const struct ObjectWithToString
 		{
@@ -140,7 +138,7 @@ namespace kTest::utility
 		
 	}
 
-	bool FormatToStringTester::StringifyFloatingPointTest()
+	void FormatToStringTester::StringifyFloatingPointTest()
 	{
 		{
 			const auto num = std::numeric_limits<float>::quiet_NaN();
@@ -242,7 +240,7 @@ namespace kTest::utility
 		
 	}
 
-	bool FormatToStringTester::StringifyHexTest()
+	void FormatToStringTester::StringifyHexTest()
 	{
 		{
 			constexpr auto input = 1000;
@@ -282,7 +280,7 @@ namespace kTest::utility
 		
 	}
 
-	bool FormatToStringTester::StringifyBinaryTest()
+	void FormatToStringTester::StringifyBinaryTest()
 	{
 		{
 			constexpr auto input = 2ull;
@@ -322,7 +320,7 @@ namespace kTest::utility
 		
 	}
 
-	bool FormatToStringTester::CustomTypeWithToStringTest()
+	void FormatToStringTester::CustomTypeWithToStringTest()
 	{
 		const struct ObjectWithToString
 		{			
@@ -340,7 +338,7 @@ namespace kTest::utility
 		
 	}
 
-	bool FormatToStringTester::CustomTypeWithoutToStringTest()
+	void FormatToStringTester::CustomTypeWithoutToStringTest()
 	{
 		ObjectWithoutToString owts;
 
@@ -351,7 +349,7 @@ namespace kTest::utility
 		
 	}
 
-	bool FormatToStringTester::FormatToStringTest()
+	void FormatToStringTester::FormatToStringTest()
 	{
 
 		const auto tempIntPtr = std::make_unique<int>(76);
@@ -386,7 +384,7 @@ namespace kTest::utility
 		
 	}
 
-	bool FormatToStringTester::DirectToStringTest()
+	void FormatToStringTester::DirectToStringTest()
 	{
 		{
 #ifdef __cpp_char8_t
@@ -407,7 +405,7 @@ namespace kTest::utility
 		
 	}
 
-	bool FormatToStringTester::VectorSTL()
+	void FormatToStringTester::VectorSTL()
 	{
 		{
 			std::vector<std::string> strings;

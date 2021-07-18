@@ -49,26 +49,26 @@ namespace kTest::utility
 
 	void CalendarTester::Prepare() noexcept
 	{
-		VERIFY_MULTI_INIT();
-		VERIFY_MULTI(DayTest());
-		VERIFY_MULTI(YearTest());
-		VERIFY_MULTI(MonthTest());
-		VERIFY_MULTI(MillisecondTest());
-		VERIFY_MULTI(SecondTest());
-		VERIFY_MULTI(MinuteTest());
-		VERIFY_MULTI(HourTest());
-		VERIFY_MULTI(ToStringTest());
-		VERIFY_MULTI(CreateTimeTest());
-		VERIFY_MULTI(GetTimeTextTest());
-		VERIFY_MULTI(DayOfTheWeekTest());
-		VERIFY_MULTI(GetTimeComponentTest());
-		VERIFY_MULTI(GetDateInTextFormatTest());
-		VERIFY_MULTI(GetDateInNumericalFormatTest());
-		VERIFY_MULTI(BasicCalenadarTest());
-		VERIFY_MULTI_END();
+		
+		ADD_TEST(DayTest());
+		ADD_TEST(YearTest());
+		ADD_TEST(MonthTest());
+		ADD_TEST(MillisecondTest());
+		ADD_TEST(SecondTest());
+		ADD_TEST(MinuteTest());
+		ADD_TEST(HourTest());
+		ADD_TEST(ToStringTest());
+		ADD_TEST(CreateTimeTest());
+		ADD_TEST(GetTimeTextTest());
+		ADD_TEST(DayOfTheWeekTest());
+		ADD_TEST(GetTimeComponentTest());
+		ADD_TEST(GetDateInTextFormatTest());
+		ADD_TEST(GetDateInNumericalFormatTest());
+		ADD_TEST(BasicCalenadarTest());
+		
 	}
 
-	bool CalendarTester::DayTest()
+	void CalendarTester::DayTest()
 	{
 		{
 			constexpr Day day(16, Day::WEDNESDAY);
@@ -121,7 +121,7 @@ namespace kTest::utility
 		
 	}
 
-	bool CalendarTester::YearTest()
+	void CalendarTester::YearTest()
 	{
 		{
 			constexpr Year year(2004);
@@ -174,7 +174,7 @@ namespace kTest::utility
 		
 	}
 
-	bool CalendarTester::MonthTest()
+	void CalendarTester::MonthTest()
 	{
 		{
 			constexpr Month month(Month::MAR);
@@ -226,7 +226,7 @@ namespace kTest::utility
 		
 	}
 
-	bool CalendarTester::MillisecondTest()
+	void CalendarTester::MillisecondTest()
 	{
 		{
 			const Millisecond millis(300);
@@ -264,7 +264,7 @@ namespace kTest::utility
 		
 	}
 
-	bool CalendarTester::SecondTest()
+	void CalendarTester::SecondTest()
 	{
 		{
 			const Second sec(30);
@@ -300,7 +300,7 @@ namespace kTest::utility
 		
 	}
 
-	bool CalendarTester::MinuteTest()
+	void CalendarTester::MinuteTest()
 	{
 		{
 			const Minute minute(30);
@@ -335,7 +335,7 @@ namespace kTest::utility
 		
 	}
 
-	bool CalendarTester::HourTest()
+	void CalendarTester::HourTest()
 	{
 		{
 			const Hour hour(12);
@@ -420,7 +420,7 @@ namespace kTest::utility
 		return dateStr;
 	}
 
-	bool CalendarTester::GetTimeTextTest()
+	void CalendarTester::GetTimeTextTest()
 	{
 		{
 			SYSTEMTIME localTime;
@@ -474,7 +474,7 @@ namespace kTest::utility
 		
 	}
 
-	bool CalendarTester::DayOfTheWeekTest()
+	void CalendarTester::DayOfTheWeekTest()
 	{
 		{
 			constexpr auto dotw = Day::TUESDAY;
@@ -497,7 +497,7 @@ namespace kTest::utility
 		
 	}
 
-	bool CalendarTester::ToStringTest()
+	void CalendarTester::ToStringTest()
 	{
 		{
 			const Date date(Day::MONDAY, 1, Month::JAN, 1998);
@@ -544,7 +544,7 @@ namespace kTest::utility
 		
 	}
 
-	bool CalendarTester::GetTimeComponentTest()
+	void CalendarTester::GetTimeComponentTest()
 	{
 		{
 			SYSTEMTIME localTime;
@@ -584,7 +584,7 @@ namespace kTest::utility
 
 
 
-	bool CalendarTester::GetDateInTextFormatTest()
+	void CalendarTester::GetDateInTextFormatTest()
 	{
 		{
 			SYSTEMTIME localTime;
@@ -638,7 +638,7 @@ namespace kTest::utility
 		
 	}
 
-	bool CalendarTester::GetDateInNumericalFormatTest()
+	void CalendarTester::GetDateInNumericalFormatTest()
 	{
 		{
 			SYSTEMTIME localTime;
@@ -678,7 +678,7 @@ namespace kTest::utility
 		
 	}
 
-	bool CalendarTester::CreateTimeTest()
+	void CalendarTester::CreateTimeTest()
 	{
 		{
 			const auto result = CreateTime(12, 30, 25);
@@ -716,7 +716,7 @@ namespace kTest::utility
 		
 	}
 
-	bool CalendarTester::BasicCalenadarTest()
+	void CalendarTester::BasicCalenadarTest()
 	{
 		{
 			SYSTEMTIME localTime;

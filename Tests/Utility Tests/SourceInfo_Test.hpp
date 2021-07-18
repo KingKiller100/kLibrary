@@ -14,12 +14,12 @@ namespace kTest::utility
 		void Prepare() noexcept override;
 
 	private:
-		bool InfoTest();
-		bool MutInfoTest();
-		bool InfoNoFuncTest();
-		bool MutInfoNoFuncTest();
-		bool ToStringTest();
-		bool MutToStringTest();
+		void InfoTest();
+		void MutInfoTest();
+		void InfoNoFuncTest();
+		void MutInfoNoFuncTest();
+		void ToStringTest();
+		void MutToStringTest();
 	};
 }
 #endif

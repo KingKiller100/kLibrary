@@ -1,36 +1,35 @@
 ﻿#include "pch.hpp"
 #include "BytesStorage_Test.hpp"
 
+#ifdef TESTING_ENABLED
 #include "../../Source/Template/kByteStorager.hpp"
 
 #include "../../Source/Maths/Vectors/Vector2.hpp"
 #include "../../Source/Maths/Vectors/Vector3.hpp"
 
 
-#ifdef TESTING_ENABLED
 namespace kTest::templates
 {
 	BytesStorageTester::BytesStorageTester()
 		: TesterBase("Bytes Storage Test")
-	{}
+	{
+	}
 
 	BytesStorageTester::~BytesStorageTester()
-		= default;
+	= default;
 
 	using namespace klib::kTemplate;
 	using namespace kmaths;
-	
+
 	void BytesStorageTester::Prepare() noexcept
 	{
-		VERIFY_MULTI_INIT();
-		//VERIFY_MULTI(CharacterTest());
-		VERIFY_MULTI(IntegerTest());
-		VERIFY_MULTI(SizeTypeTest());
-		VERIFY_MULTI(VectorTest());
-		VERIFY_MULTI_END();
+		//ADD_TEST(CharacterTest());
+		ADD_TEST(IntegerTest());
+		ADD_TEST(SizeTypeTest());
+		ADD_TEST(VectorTest());
 	}
 
-	bool BytesStorageTester::CharacterTest()
+	void BytesStorageTester::CharacterTest()
 	{
 		using TestType = char;
 
@@ -105,12 +104,9 @@ namespace kTest::templates
 			const auto size = storage.GetLength();
 			VERIFY(size == (volume * storageTypeValue) / typeSize);
 		}
-
-
-		
 	}
 
-	bool BytesStorageTester::IntegerTest()
+	void BytesStorageTester::IntegerTest()
 	{
 		using TestType = int;
 
@@ -185,11 +181,9 @@ namespace kTest::templates
 			const auto size = storage.GetLength();
 			VERIFY(size == (volume * storageTypeValue) / typeSize);
 		}
-
-		
 	}
 
-	bool BytesStorageTester::SizeTypeTest()
+	void BytesStorageTester::SizeTypeTest()
 	{
 		using TestType = size_t;
 
@@ -264,13 +258,10 @@ namespace kTest::templates
 			constexpr auto size = storage.GetLength();
 			VERIFY(size == (volume * storageTypeValue) / typeSize);
 		}
-
-		
 	}
 
-	bool BytesStorageTester::StringTest()
+	void BytesStorageTester::StringTest()
 	{
-
 		using TestType = std::wstring;
 		constexpr auto typeSize = sizeof(TestType);
 
@@ -342,13 +333,10 @@ namespace kTest::templates
 			const auto size = storage.GetLength();
 			VERIFY(size == (volume * storageTypeValue) / typeSize);
 		}
-
-		
 	}
 
-	bool BytesStorageTester::VectorTest()
+	void BytesStorageTester::VectorTest()
 	{
-
 		{
 			using TestType = Vector<double, 50>;
 			constexpr auto volume = 100;
@@ -423,8 +411,6 @@ namespace kTest::templates
 			const auto size = storage.GetLength();
 			VERIFY(size == (volume * storageTypeValue) / typeSize);
 		}
-
-		
 	}
 }
-#endif 
+#endif

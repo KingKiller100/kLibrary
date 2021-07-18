@@ -28,6 +28,11 @@ namespace kTest::maths
 
 	void QuaternionsTester::Prepare() noexcept
 	{
+		ADD_TEST(QuaToMat());
+	}
+
+	void QuaternionsTester::QuaToMat()
+	{
 		constexpr Matrix3x4f trianglePoints = {
 			{ 2, 1, 0, 1 },
 			{ 2, 5, 0, 1 },
@@ -84,8 +89,6 @@ namespace kTest::maths
 		//};
 		//constexpr Quaternionf orientation(1, 2, 3, 4);
 		//constexpr auto ans = orientation.CalculateTransformMatrix(position);
-
-
 
 	}
 }

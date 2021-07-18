@@ -8,22 +8,23 @@ namespace kTest::utility
 	{
 	public:
 		FormatToStringTester();
-		~FormatToStringTester();
+		~FormatToStringTester() override;
 
-	private:
+	protected:
 		void Prepare() noexcept override;
 
-		bool IdentityTest();
-		bool SprintfWrapperTest();
-		bool StringifyFloatingPointTest();
-		bool StringifyHexTest();
-		bool StringifyBinaryTest();
-		bool CustomTypeWithToStringTest();
-		bool CustomTypeWithoutToStringTest();
-		bool FormatToStringTest();
-		bool DirectToStringTest();
+	private:
+		void IdentityTest();
+		void SprintfWrapperTest();
+		void StringifyFloatingPointTest();
+		void StringifyHexTest();
+		void StringifyBinaryTest();
+		void CustomTypeWithToStringTest();
+		void CustomTypeWithoutToStringTest();
+		void FormatToStringTest();
+		void DirectToStringTest();
 
-		bool VectorSTL();
+		void VectorSTL();
 	};
 }
 #endif

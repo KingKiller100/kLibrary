@@ -11,10 +11,15 @@ namespace klib::kDebug
 #ifdef MSVC_PLATFORM_TOOLSET
 	using namespace compiler::visual_studio;
 #endif
-	
+
+	bool IsDebuggerAttached() noexcept
+	{
+		return IsDebuggerAttachedImpl();
+	}
+
 	void WaitForDebugger(const kFileSystem::Path& flagName, std::chrono::milliseconds refreshTime) noexcept
 	{
-		if (IsDebuggerAttachedImpl())
+		if (IsDebuggerAttached())
 			return;
 		
 		while (kFileSystem::CheckFileExists(flagName))

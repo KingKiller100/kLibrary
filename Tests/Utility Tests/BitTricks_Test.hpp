@@ -14,10 +14,10 @@ namespace kTest::utility
 		void Prepare() noexcept override;
 
 	private:
-		bool SetTest();
-		bool ClearTest();
-		bool CheckTest();
-		bool ToggleTest();
+		void SetTest();
+		void ClearTest();
+		void CheckTest();
+		void ToggleTest();
 	};
 }
 #endif

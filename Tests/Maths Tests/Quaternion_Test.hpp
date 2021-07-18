@@ -13,6 +13,9 @@ namespace kTest::maths
 
 	protected:
 		void Prepare() noexcept override;
+
+	private:
+		void QuaToMat();
 	};
 }
 #endif

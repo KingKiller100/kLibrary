@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../../HelperMacros.hpp"
+#include "../EnableTesting.hpp"
 
+#ifdef TESTING_ENABLED
 #include "../../Utility/Profiler/kProfiler.hpp"
 
 #include <cstdint>
@@ -10,7 +11,6 @@
 #include <string>
 #include <vector>
 
-#ifdef TESTING_ENABLED
 namespace kTest::performance
 {
 	struct AverageTime

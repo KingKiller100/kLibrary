@@ -1,6 +1,8 @@
 #include "pch.hpp"
 #include "TesterManager.hpp"
 
+#ifdef TESTING_ENABLED
+
 #include "TesterBase.hpp"
 
 #include "SetUpTests.hpp"
@@ -11,17 +13,13 @@
 // Change console colour
 #include "../Utility/Misc/kConsoleColour.hpp"
 
-#include "../Maths/kMathsFundamentals.hpp"
 #include "../Utility/Thread/kThreadPool.hpp"
 #include "../Utility/FileSystem/kFileSystem.hpp"
 
 #include <iostream>
 #include <mutex>
-#include <stack>
 #include <Windows.h>
 
-
-#ifdef TESTING_ENABLED
 namespace kTest
 {
 	using namespace klib;

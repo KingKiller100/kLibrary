@@ -14,9 +14,9 @@ namespace kTest::utility
 		void Prepare() noexcept override;
 
 	private:
-		bool FunctionalityTest();
-		bool PathToStringTest();
-		bool PathStringTest();
+		void FunctionalityTest();
+		void PathToStringTest();
+		void PathStringTest();
 		
 		template<typename Dest, typename Source>
 		std::basic_string<Dest> SwitchStringFormat(Source source)

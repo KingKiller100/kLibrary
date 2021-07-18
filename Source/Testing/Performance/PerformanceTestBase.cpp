@@ -1,13 +1,13 @@
 ﻿#include "pch.hpp"
 #include "PerformanceTestBase.hpp"
 
+#ifdef TESTING_ENABLED
 #include "PerformanceTestManager.hpp"
 
 #include "../../Utility/String/kSprintf.hpp"
 
 #include <iostream>
 
-#ifdef TESTING_ENABLED
 namespace kTest::performance
 {
 	PerformanceTestBase::PerformanceTestBase(const char* name) noexcept

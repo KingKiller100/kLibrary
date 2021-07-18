@@ -14,20 +14,20 @@ namespace kTest::utility
 	private:
 		void Prepare() noexcept override;
 
-		bool StrToTest();
-		bool CountTest();
-		bool ReplaceTest();
-		bool RemoveTest();
-		bool SplitTest();
-		bool ToLower();
-		bool ToUpper();
-		bool ToWriterAndToReaderTest();
-		bool IsWhiteSpaceOrNullTest();
-		bool FindTest();
-		bool FindFirstOfTest();
-		bool FindFirstNotOfTest();
-		bool FindLastOfTest();
-		bool FindLastNotOfTest();
+		void StrToTest();
+		void CountTest();
+		void ReplaceTest();
+		void RemoveTest();
+		void SplitTest();
+		void ToLower();
+		void ToUpper();
+		void ToWriterAndToReaderTest();
+		void IsWhiteSpaceOrNullTest();
+		void FindTest();
+		void FindFirstOfTest();
+		void FindFirstNotOfTest();
+		void FindLastOfTest();
+		void FindLastNotOfTest();
 	};
 
 }

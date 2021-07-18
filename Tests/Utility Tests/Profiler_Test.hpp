@@ -14,8 +14,8 @@ namespace kTest::utility
 		void Prepare() noexcept override;
 
 	private:
-		bool MillisecondsTest();
-		bool SecondsTest();
+		void MillisecondsTest();
+		void SecondsTest();
 	};
 }
 #endif

@@ -15,10 +15,10 @@ namespace kTest::maths
 		void Prepare() noexcept override;
 		
 	private:
-		bool VectorTest();
-		bool Vector2Test();
-		bool Vector3Test();
-		bool Vector4Test();
+		void VectorTest();
+		void Vector2Test();
+		void Vector3Test();
+		void Vector4Test();
 	};
 }
 #endif

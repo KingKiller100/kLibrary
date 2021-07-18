@@ -14,13 +14,13 @@ namespace kTest::utility
 		void Prepare() noexcept override;
 		
 	private:
-		bool GeneralTimeTest();
-		bool PauseTest();
-		bool MicrosecondsTest();
-		bool MillisecondsTest();
-		bool SecondsTest();
-		bool MinutesTest();
-		bool HoursTest();
+		void GeneralTimeTest();
+		void PauseTest();
+		void MicrosecondsTest();
+		void MillisecondsTest();
+		void SecondsTest();
+		void MinutesTest();
+		void HoursTest();
 	};
 }
 #endif

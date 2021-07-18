@@ -15,10 +15,10 @@ namespace kTest::maths
 		void Prepare() noexcept override;
 
 	private:
-		bool IntegerBCryptTest();
-		bool IntegerTimeTest();
-		bool FloatingBCryptPointTest();
-		bool FloatingTimePointTest();
+		void IntegerBCryptTest();
+		void IntegerTimeTest();
+		void FloatingBCryptPointTest();
+		void FloatingTimePointTest();
 	};
 }
 #endif

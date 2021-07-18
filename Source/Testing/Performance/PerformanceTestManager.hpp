@@ -2,12 +2,12 @@
 
 #include "../TesterBase.hpp"
 
+#ifdef TESTING_ENABLED
+
 #include <filesystem>
 #include <string>
 #include <unordered_set>
 
-
-#ifdef TESTING_ENABLED
 namespace kTest::performance
 {
 	class PerformanceTestBase;
@@ -29,10 +29,9 @@ namespace kTest::performance
 		static PerformanceTestManager& Get();
 	
 	protected:
-		void Test() override;
-		
+		void Prepare() noexcept override;
+		void CleanUp() override;
 	private:
-		void Initialize();
 		void ShutDown();
 		void RunAll();
 		void RunTest(PerformanceTestBase* test);

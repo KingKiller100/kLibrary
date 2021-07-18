@@ -28,6 +28,7 @@ namespace klib
 				: "Release";
 		}
 
+		bool IsDebuggerAttached() noexcept;
 
 		void WaitForDebugger(const kFileSystem::Path& path,
 			std::chrono::milliseconds refreshTime = std::chrono::milliseconds(500)) noexcept;

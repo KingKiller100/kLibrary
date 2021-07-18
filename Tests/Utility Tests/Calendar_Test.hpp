@@ -14,26 +14,26 @@ namespace kTest::utility
 		void Prepare() noexcept override;
 
 	private:
-		bool DayTest();
-		bool MonthTest();
-		bool YearTest();
-		bool MillisecondTest();
-		bool SecondTest();
-		bool MinuteTest();
-		bool HourTest();
+		void DayTest();
+		void MonthTest();
+		void YearTest();
+		void MillisecondTest();
+		void SecondTest();
+		void MinuteTest();
+		void HourTest();
 		
-		bool GetTimeTextTest();
-		bool DayOfTheWeekTest();
+		void GetTimeTextTest();
+		void DayOfTheWeekTest();
 
-		bool ToStringTest();
+		void ToStringTest();
 		
-		bool GetTimeComponentTest();
-		bool GetDateInTextFormatTest();
-		bool GetDateInNumericalFormatTest();
+		void GetTimeComponentTest();
+		void GetDateInTextFormatTest();
+		void GetDateInNumericalFormatTest();
 
-		bool CreateTimeTest();
+		void CreateTimeTest();
 
-		bool BasicCalenadarTest();
+		void BasicCalenadarTest();
 	};
 }
 #endif

@@ -1,6 +1,7 @@
 ﻿#include "pch.hpp"
 #include "SourceInfo_Test.hpp"
 
+#ifdef TESTING_ENABLED
 #include "../../Source/Utility/String/kToString.hpp"
 #include "../../Source/Utility/String/kStringConverter.hpp"
 #include "../../Source/Utility/Debug/Source/kSourceInfo.hpp"
@@ -8,12 +9,12 @@
 #include "../../Source/Utility/Debug/Source/kSourceInfoToString.hpp"
 #include "../../Source/Utility/Debug/Source/kMutableSourceInfoToString.hpp"
 
-#ifdef TESTING_ENABLED
 namespace kTest::utility
 {
 	SourceInfoTester::SourceInfoTester()
 		: TesterBase("Source Code Information Test")
-	{}
+	{
+	}
 
 	SourceInfoTester::~SourceInfoTester()
 	{
@@ -21,21 +22,19 @@ namespace kTest::utility
 
 	void SourceInfoTester::Prepare() noexcept
 	{
-		VERIFY_MULTI_INIT()
-		VERIFY_MULTI(InfoTest())
-		VERIFY_MULTI(InfoNoFuncTest())
-		VERIFY_MULTI(ToStringTest())
-		VERIFY_MULTI(MutInfoTest())
-		VERIFY_MULTI(MutInfoNoFuncTest())
-		VERIFY_MULTI(MutToStringTest())
-		VERIFY_MULTI_END()
+		ADD_TEST(InfoTest());
+		ADD_TEST(InfoNoFuncTest());
+		ADD_TEST(ToStringTest());
+		ADD_TEST(MutInfoTest());
+		ADD_TEST(MutInfoNoFuncTest());
+		ADD_TEST(MutToStringTest());
 	}
-	
+
 	using namespace klib;
 	using namespace kDebug;
 	using namespace kString;
-	
-	bool SourceInfoTester::InfoTest()
+
+	void SourceInfoTester::InfoTest()
 	{
 		{
 			constexpr auto source = SOURCE_INFO();
@@ -43,21 +42,21 @@ namespace kTest::utility
 			VERIFY_COMPILE_TIME(source.line == kFILELINE - 2);
 			VERIFY_COMPILE_TIME(source.func == __FUNCTION__);
 		}
-		
+
 		{
 			constexpr auto source = WSOURCE_INFO();
 			VERIFY_COMPILE_TIME(source.file == __FILEW__);
 			VERIFY_COMPILE_TIME(source.line == kFILELINE - 2);
 			VERIFY_COMPILE_TIME(source.func == __FUNCTIONW__);
 		}
-		
+
 		{
 			constexpr auto source = U16SOURCE_INFO();
 			VERIFY_COMPILE_TIME(source.file == U16_STR( __FILE__ ));
 			VERIFY_COMPILE_TIME(source.line == kFILELINE - 2);
 			VERIFY_COMPILE_TIME(source.func == U16_STR( __FUNCTION__ ));
 		}
-		
+
 		{
 			const auto source = U32SOURCE_INFO();
 			VERIFY(source.file == U32_STR( __FILE__ ));
@@ -72,7 +71,7 @@ namespace kTest::utility
 			VERIFY_COMPILE_TIME(source.line == kFILELINE - 2);
 			VERIFY_COMPILE_TIME(source.func == __FUNCSIG__);
 		}
-		
+
 		{
 			constexpr auto source = U16SOURCE_INFO_VS();
 			VERIFY_COMPILE_TIME(source.file == U16_STR(__FILE__));
@@ -83,7 +82,7 @@ namespace kTest::utility
 
 		{
 			using Char_t = char16_t;
-			constexpr auto  file = u"Test.txt";
+			constexpr auto file = u"Test.txt";
 			constexpr std::int32_t line = 212;
 			constexpr auto func = u"void Test()";
 			const auto source = BasicSourceInfo<Char_t>(file, line, func);
@@ -91,7 +90,7 @@ namespace kTest::utility
 			VERIFY(source.line == 212);
 			VERIFY(source.func == u"void Test()");
 		}
-		
+
 		{
 			using Char_t = char32_t;
 			const std::basic_string<Char_t> file = Convert<Char_t>(__FILE__);
@@ -102,7 +101,7 @@ namespace kTest::utility
 			VERIFY(source.line == 73);
 			VERIFY(source.func == func);
 		}
-		
+
 #ifdef __cpp_char8_t
 		{
 			using Char_t = char8_t;
@@ -115,11 +114,9 @@ namespace kTest::utility
 			VERIFY(source.func == func);
 		}
 #endif
-		
-		
 	}
 
-	bool SourceInfoTester::InfoNoFuncTest()
+	void SourceInfoTester::InfoNoFuncTest()
 	{
 		{
 			const auto source = SOURCE_INFO_NO_FUNC();
@@ -134,61 +131,57 @@ namespace kTest::utility
 			VERIFY_COMPILE_TIME(source.line == kFILELINE - 2);
 			VERIFY_COMPILE_TIME(source.func == L"");
 		}
-		
-		
 	}
 
-	bool SourceInfoTester::ToStringTest()
+	void SourceInfoTester::ToStringTest()
 	{
 		std::string file = __FILE__;
 		std::string func = __FUNCTION__;
-		
+
 		{
 			const auto source = SOURCE_INFO();
 			const auto result = ToString("{0:l}", source);
 			VERIFY(result == "147");
 		}
-		
+
 		{
 			const auto source = SOURCE_INFO();
 			const auto result = ToString("{0:f}", source);
 			VERIFY(result == file);
 		}
-		
+
 		{
 			const auto source = SOURCE_INFO();
 			const auto result = ToString("{0:fl}", source);
 			VERIFY(result == file + " [159]");
 		}
-		
+
 		{
 			const auto source = SOURCE_INFO();
 			const auto result = ToString("{0:z}", source);
 			VERIFY(result == func);
 		}
-		
+
 		{
 			const auto source = SOURCE_INFO();
 			const auto result = ToString("{0:t}", source);
 			VERIFY(!result.empty());
 		}
-		
+
 		{
 			const auto source = SOURCE_INFO();
 			const auto result = ToString("{0:a}", source);
 			VERIFY(result.find("File: " + file + " Line: 177 Function: " + func) != std::string::npos);
 		}
-		
+
 		{
 			const auto source = SOURCE_INFO();
 			const auto result = ToString("{0}", source);
 			VERIFY(result.find("File: " + file + " Line: 183 Function: " + func) != std::string::npos);
 		}
-		
-		
 	}
 
-	bool SourceInfoTester::MutInfoTest()
+	void SourceInfoTester::MutInfoTest()
 	{
 		{
 			const auto source = MUT_SRC_INFO();
@@ -196,7 +189,7 @@ namespace kTest::utility
 			VERIFY(source.line == kFILELINE - 2);
 			VERIFY(source.func == __FUNCTION__);
 		}
-		
+
 		{
 			auto source = WMUT_SRC_INFO();
 			source.file = source.file.filename();
@@ -204,11 +197,9 @@ namespace kTest::utility
 			VERIFY(source.line == kFILELINE - 3);
 			VERIFY(source.func == __FUNCTIONW__);
 		}
-		
-		
 	}
 
-	bool SourceInfoTester::MutInfoNoFuncTest()
+	void SourceInfoTester::MutInfoNoFuncTest()
 	{
 		{
 			const auto source = MUT_SRC_INFO_NO_FUNC();
@@ -224,11 +215,9 @@ namespace kTest::utility
 			VERIFY(source.line == kFILELINE - 3);
 			VERIFY(source.func ==u"");
 		}
-		
-		
 	}
 
-	bool SourceInfoTester::MutToStringTest()
+	void SourceInfoTester::MutToStringTest()
 	{
 		std::wstring file = __FILEW__;
 		std::wstring func = __FUNCTIONW__;
@@ -268,8 +257,6 @@ namespace kTest::utility
 			const auto result = ToString(L"{0}", source);
 			VERIFY(result.find(L"File: " + file + L" Line: 267 Function: " + func) != std::string::npos);
 		}
-		
-		
 	}
 }
 #endif

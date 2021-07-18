@@ -7,37 +7,36 @@
 namespace kTest::utility
 {
 	static const auto npos = std::string::npos;
-	
+
 	StringManipulationTester::StringManipulationTester()
 		: TesterBase("String Manipulator Test")
-	{}
+	{
+	}
 
 	StringManipulationTester::~StringManipulationTester()
-		= default;
+	= default;
 
 	void StringManipulationTester::Prepare() noexcept
 	{
-		VERIFY_MULTI_INIT();
-		VERIFY_MULTI(ToWriterAndToReaderTest());
-		VERIFY_MULTI(ToLower());
-		VERIFY_MULTI(ToUpper());
-		VERIFY_MULTI(RemoveTest());
-		VERIFY_MULTI(StrToTest());
-		VERIFY_MULTI(CountTest());
-		VERIFY_MULTI(ReplaceTest());
-		VERIFY_MULTI(SplitTest());
-		VERIFY_MULTI(IsWhiteSpaceOrNullTest());
-		VERIFY_MULTI(FindTest());
-		VERIFY_MULTI(FindFirstOfTest());
-		VERIFY_MULTI(FindFirstNotOfTest());
-		VERIFY_MULTI(FindLastOfTest());
-		VERIFY_MULTI(FindLastNotOfTest());
-		VERIFY_MULTI_END();
+		ADD_TEST(ToWriterAndToReaderTest());
+		ADD_TEST(ToLower());
+		ADD_TEST(ToUpper());
+		ADD_TEST(RemoveTest());
+		ADD_TEST(StrToTest());
+		ADD_TEST(CountTest());
+		ADD_TEST(ReplaceTest());
+		ADD_TEST(SplitTest());
+		ADD_TEST(IsWhiteSpaceOrNullTest());
+		ADD_TEST(FindTest());
+		ADD_TEST(FindFirstOfTest());
+		ADD_TEST(FindFirstNotOfTest());
+		ADD_TEST(FindLastOfTest());
+		ADD_TEST(FindLastNotOfTest());
 	}
 
 	using namespace klib::kString;
 
-	bool StringManipulationTester::StrToTest()
+	void StringManipulationTester::StrToTest()
 	{
 		{
 			const std::string str = "1000";
@@ -137,11 +136,9 @@ namespace kTest::utility
 			constexpr Int_t expected = 0x1f;
 			VERIFY(expected == res);
 		}
-
-		
 	}
 
-	bool StringManipulationTester::CountTest()
+	void StringManipulationTester::CountTest()
 	{
 		{
 			constexpr std::string_view test("Aquarium");
@@ -184,20 +181,16 @@ namespace kTest::utility
 			const auto count = Count(test, L'q');
 			VERIFY(count == 0);
 		}
-
-		
 	}
 
-	bool StringManipulationTester::ReplaceTest()
+	void StringManipulationTester::ReplaceTest()
 	{
 		const auto text = klib::kString::StringWriter<char>("My name is Rob");
 		const auto res = Replace(text, 'R', 'B');
 		VERIFY(res.compare("My name is Bob") == 0);
-
-		
 	}
 
-	bool StringManipulationTester::RemoveTest()
+	void StringManipulationTester::RemoveTest()
 	{
 		{
 			std::string test("test");
@@ -219,11 +212,9 @@ namespace kTest::utility
 			VERIFY(!removed);
 			VERIFY(test == "the brown fox jumped over the black zoo fence");
 		}
-
-		
 	}
 
-	bool StringManipulationTester::SplitTest()
+	void StringManipulationTester::SplitTest()
 	{
 		const klib::kString::StringWriter<char32_t> poem = U"The wheels on the bus go round and round";
 
@@ -248,11 +239,9 @@ namespace kTest::utility
 		VERIFY(splitsWithSpace[6].compare(U"round ") == 0);
 		VERIFY(splitsWithSpace[7].compare(U"and ") == 0);
 		VERIFY(splitsWithSpace[8].compare(U"round") == 0);
-
-		
 	}
 
-	bool StringManipulationTester::ToLower()
+	void StringManipulationTester::ToLower()
 	{
 		{
 			constexpr char text[] = "EXAMPLE TEXT";
@@ -283,16 +272,14 @@ namespace kTest::utility
 		}
 
 		{
-			constexpr const char32_t* text = U"EXAMPLE TEXT";
+			constexpr const auto text = U"EXAMPLE TEXT";
 			const auto res = klib::kString::ToLower(text);
 			constexpr std::u32string_view expected = U"example text";
 			VERIFY(expected == res);
 		}
-
-		
 	}
 
-	bool StringManipulationTester::ToUpper()
+	void StringManipulationTester::ToUpper()
 	{
 		{
 			constexpr char text[] = "example text 345";
@@ -323,17 +310,15 @@ namespace kTest::utility
 		}
 
 		{
-			constexpr const char32_t* text = U"example text";
+			constexpr const auto text = U"example text";
 			const auto res = klib::kString::ToUpper(text);
 			constexpr std::u32string_view expected = U"EXAMPLE TEXT";
 			VERIFY(expected == res);
 		}
-
-		
 	}
 
 
-	bool StringManipulationTester::ToWriterAndToReaderTest()
+	void StringManipulationTester::ToWriterAndToReaderTest()
 	{
 		{
 			constexpr auto string = "String";
@@ -386,7 +371,7 @@ namespace kTest::utility
 			VERIFY(writer == string);
 			VERIFY(reader == string);
 
-			using CharType = klib::type_trait::Simplify_t  <decltype(string)>;
+			using CharType = klib::type_trait::Simplify_t<decltype(string)>;
 			using WriterType = klib::type_trait::Simplify_t<decltype(writer)>;
 			using ReaderType = klib::type_trait::Simplify_t<decltype(reader)>;
 
@@ -440,34 +425,31 @@ namespace kTest::utility
 			VERIFY_COMPILE_TIME(sameReaderType);
 			VERIFY_COMPILE_TIME(not_match_W_R);
 		}
-#endif 
-
-		
-
+#endif
 	}
 
-	bool StringManipulationTester::IsWhiteSpaceOrNullTest()
+	void StringManipulationTester::IsWhiteSpaceOrNullTest()
 	{
 		const auto h = klib::type_trait::Is_CString_V<const char*>;
-		
+
 		{
 			constexpr char* str = nullptr;
 			const auto result = IsWhiteSpaceOrNull(str);
 			VERIFY(result == false);
 		}
-		
+
 		{
 			constexpr char str[] = "   ";
 			const auto result = IsWhiteSpaceOrNull(str);
 			VERIFY(result == true);
 		}
-		
+
 		{
 			constexpr char16_t str[] = u"  f";
 			const auto result = IsWhiteSpaceOrNull(str);
 			VERIFY(result == false);
 		}
-		
+
 #if __cpp_char8_t
 		{
 			constexpr std::u8string_view str = u8"f  ";
@@ -475,29 +457,27 @@ namespace kTest::utility
 			VERIFY(result == false);
 		}
 #endif
-		
+
 		{
 			const std::string str = "";
 			const auto result = IsWhiteSpaceOrNull(str);
 			VERIFY(result == true);
 		}
-		
+
 		{
 			const std::string str = "     ";
 			const auto result = IsWhiteSpaceOrNull(str);
 			VERIFY(result == true);
 		}
-		
+
 		{
 			const std::string str = "   d  ";
 			const auto result = IsWhiteSpaceOrNull(str);
 			VERIFY(result == false);
 		}
-		
-		
 	}
 
-	bool StringManipulationTester::FindTest()
+	void StringManipulationTester::FindTest()
 	{
 		{
 			constexpr auto str = "upgrade";
@@ -507,7 +487,7 @@ namespace kTest::utility
 			const auto expected = sv.find(search);
 			VERIFY(pos == expected);
 		}
-		
+
 		{
 			constexpr std::string_view str = "upgrade";
 			constexpr auto search = "pain";
@@ -516,7 +496,7 @@ namespace kTest::utility
 			const auto expected = sv.find(search);
 			VERIFY(pos == expected);
 		}
-		
+
 		{
 			constexpr std::string_view str = "upgrade";
 			constexpr auto search = "ad";
@@ -526,7 +506,7 @@ namespace kTest::utility
 			const auto pass = pos == expected || pos == 4;
 			VERIFY(pass);
 		}
-		
+
 		{
 			constexpr char str[] = "upgrade";
 			constexpr auto search = "p";
@@ -535,18 +515,16 @@ namespace kTest::utility
 			const auto expected = sv.find(search);
 			VERIFY(pos == expected);
 		}
-		
+
 		// { // Does not compile due to trying to access nullptr
 		// 	constexpr char *str = nullptr;
 		// 	constexpr char* search = nullptr;
 		// 	constexpr auto pos = Find(str, search);
 		// 	VERIFY(pos == npos);
 		// }
-		
-		
 	}
 
-	bool StringManipulationTester::FindFirstOfTest()
+	void StringManipulationTester::FindFirstOfTest()
 	{
 		{
 			constexpr auto str = "upgrade";
@@ -556,7 +534,7 @@ namespace kTest::utility
 			constexpr auto expected = sv.find_first_of(search);
 			VERIFY(pos == expected);
 		}
-			
+
 		{
 			constexpr auto str = "upgrade";
 			constexpr auto search = 'p';
@@ -565,7 +543,7 @@ namespace kTest::utility
 			constexpr auto expected = sv.find_first_of(search);
 			VERIFY(pos == expected);
 		}
-		
+
 		{
 			constexpr auto str = "upgrade";
 			constexpr auto search = 'q';
@@ -574,7 +552,7 @@ namespace kTest::utility
 			constexpr auto expected = sv.find_first_of(search);
 			VERIFY(pos == expected);
 		}
-		
+
 		{
 			constexpr auto str = "upgraddde";
 			constexpr auto search = 'd';
@@ -583,12 +561,9 @@ namespace kTest::utility
 			constexpr auto expected = sv.find_first_of(search);
 			VERIFY(pos == expected);
 		}
-
-		
-		
 	}
 
-	bool StringManipulationTester::FindFirstNotOfTest()
+	void StringManipulationTester::FindFirstNotOfTest()
 	{
 		{
 			constexpr auto str = "upgrade";
@@ -625,11 +600,9 @@ namespace kTest::utility
 			constexpr auto expected = sv.find_first_not_of(search);
 			VERIFY(pos == expected);
 		}
-		
-		
 	}
 
-	bool StringManipulationTester::FindLastOfTest()
+	void StringManipulationTester::FindLastOfTest()
 	{
 		{
 			constexpr auto str = "aggregate";
@@ -666,11 +639,9 @@ namespace kTest::utility
 			constexpr auto expected = sv.find_last_of(search, 2);
 			VERIFY(pos == expected);
 		}
-		
-		
 	}
 
-	bool StringManipulationTester::FindLastNotOfTest()
+	void StringManipulationTester::FindLastNotOfTest()
 	{
 		{
 			constexpr auto str = "aggregate";
@@ -707,8 +678,6 @@ namespace kTest::utility
 			constexpr auto expected = sv.find_last_not_of(search, 2);
 			VERIFY(pos == 2);
 		}
-		
-		
 	}
 }
 #endif

@@ -13,25 +13,24 @@ namespace kTest::maths
 
 	VectorsTester::VectorsTester()
 		: TesterBase("Vectors X/2/3/4 Test")
-	{ }
+	{
+	}
 
 	VectorsTester::~VectorsTester()
-		= default;
+	= default;
 
 	void VectorsTester::Prepare() noexcept
 	{
-		VERIFY_MULTI_INIT();
-		VERIFY_MULTI(VectorTest());
-		VERIFY_MULTI(Vector2Test());
-		VERIFY_MULTI(Vector3Test());
-		VERIFY_MULTI(Vector4Test());
-		VERIFY_MULTI_END();
+		ADD_TEST(VectorTest());
+		ADD_TEST(Vector2Test());
+		ADD_TEST(Vector3Test());
+		ADD_TEST(Vector4Test());
 	}
 
-	bool VectorsTester::VectorTest()
+	void VectorsTester::VectorTest()
 	{
 		auto vec2f = Vector<float, 2>(4.f);
-		auto vec2d = Vector<double, 2>{ 5, 12 };
+		auto vec2d = Vector<double, 2>{5, 12};
 
 		auto res1 = (vec2f + vec2d);
 		VERIFY(res1.X() == 9.0 && res1.Y() == 16.0);
@@ -98,7 +97,7 @@ namespace kTest::maths
 		//const auto crossPFail = vec2s.CrossProduct(vec2s); // unable to compile due to not having only 3 axes
 
 		auto vec4u = Vector<unsigned, 4>();
-		constexpr char chars[] = { 'H', 'E', 'L', 'P', '\0' };
+		constexpr char chars[] = {'H', 'E', 'L', 'P', '\0'};
 		constexpr auto vec5c = Vector<char, 5>(chars);
 
 		constexpr auto w = vec5c.W();
@@ -120,7 +119,7 @@ namespace kTest::maths
 		for (auto i = 0; i < vecULL.GetLength(); ++i)
 			VERIFY(vecULL[i] == 100);
 
-		constexpr bool bools[] = { true, false, false, true, false, false, true };
+		constexpr bool bools[] = {true, false, false, true, false, false, true};
 		constexpr auto vecBool = Vector<bool, 7>(bools);
 		constexpr auto b6 = vecBool[6];
 		VERIFY_COMPILE_TIME(b6 == true);
@@ -144,8 +143,8 @@ namespace kTest::maths
 		constexpr auto noEqual = lhs != rhs;
 		VERIFY_COMPILE_TIME(noEqual)
 
-			// Functions
-			constexpr auto magnitudeSq = lhs.MagnitudeSQ();
+		// Functions
+		constexpr auto magnitudeSq = lhs.MagnitudeSQ();
 		VERIFY_COMPILE_TIME(magnitudeSq == 125);
 		constexpr auto magnitude = lhs.Magnitude();
 		VERIFY_COMPILE_TIME(magnitude == 11.180339887498949);
@@ -177,11 +176,9 @@ namespace kTest::maths
 		VERIFY_COMPILE_TIME(greater == false);
 		constexpr bool less = lhs3d <= compareVal;
 		VERIFY_COMPILE_TIME(less == true);
-
-		
 	}
 
-	bool VectorsTester::Vector2Test()
+	void VectorsTester::Vector2Test()
 	{
 		constexpr auto vec2f = Vector2f(4.f);
 		constexpr auto vec2d = Vector2d(5, 12);
@@ -218,12 +215,9 @@ namespace kTest::maths
 		constexpr auto perp = vec2d.Perpendicular();
 		VERIFY_COMPILE_TIME(perp.x == -12.0);
 		VERIFY_COMPILE_TIME(perp.y == 5.0);
-
-
-		
 	}
 
-	bool VectorsTester::Vector3Test()
+	void VectorsTester::Vector3Test()
 	{
 		constexpr Vector3d data(5, 6, 7);
 		const auto ptr = data.GetPointerToData();
@@ -235,11 +229,9 @@ namespace kTest::maths
 		VERIFY_COMPILE_TIME(cross.x == -4);
 		VERIFY_COMPILE_TIME(cross.y == 8);
 		VERIFY_COMPILE_TIME(cross.z == -4);
-
-		
 	}
 
-	bool VectorsTester::Vector4Test()
+	void VectorsTester::Vector4Test()
 	{
 		constexpr Vector4d vector4(2, 2, 2, 2);
 		const auto ptr = vector4.GetPointerToData();
@@ -247,8 +239,6 @@ namespace kTest::maths
 		VERIFY(value == vector4.w);
 
 		VERIFY(vector4 == 4);
-
-		
 	}
 }
 #endif

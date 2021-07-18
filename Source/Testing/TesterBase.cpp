@@ -1,9 +1,9 @@
 #include "pch.hpp"
 #include "TesterBase.hpp"
 
-#include <iostream>
-
 #ifdef TESTING_ENABLED
+
+#include <iostream>
 
 namespace kTest
 {
@@ -60,7 +60,7 @@ namespace kTest
 	void TesterBase::CleanUp()
 	{}
 
-	void TesterBase::AddTest(const char* testName, TestCaseFunc testFunc)
+	void TesterBase::AddTestCaseImpl(const char* testName, TestCaseFunc testFunc)
 	{
 		testCases.emplace(testName, testFunc);
 	}

@@ -1,13 +1,13 @@
 #include "pch.hpp"
 #include "../Utility Tests/Stopwatch_Test.hpp"
 
+#ifdef TESTING_ENABLED
 #include "../../Source/Maths/kMathsApproximately.hpp"
 #include "../../Source/Utility/Stopwatch/kStopwatch.hpp"
 #include "../../Source/Utility/String/kToString.hpp"
 
 #include <thread>
 
-#ifdef TESTING_ENABLED
 namespace kTest::utility
 {
 	StopWatchTester::StopWatchTester()
@@ -22,18 +22,18 @@ namespace kTest::utility
 
 	void StopWatchTester::Prepare() noexcept
 	{
-		VERIFY_MULTI_INIT();
-		VERIFY_MULTI(GeneralTimeTest());
-		VERIFY_MULTI(PauseTest());
-		// VERIFY_MULTI(MicrosecondsTest());
-		// VERIFY_MULTI(MillisecondsTest());
-		VERIFY_MULTI(SecondsTest());
-		// VERIFY_MULTI(MinutesTest());
-		// VERIFY_MULTI(HoursTest()); // Too long to test
-		VERIFY_MULTI_END();
+		
+		ADD_TEST(GeneralTimeTest());
+		ADD_TEST(PauseTest());
+		// ADD_TEST(MicrosecondsTest());
+		// ADD_TEST(MillisecondsTest());
+		ADD_TEST(SecondsTest());
+		// ADD_TEST(MinutesTest());
+		// ADD_TEST(HoursTest()); // Too long to test
+		
 	}
 
-	bool StopWatchTester::GeneralTimeTest()
+	void StopWatchTester::GeneralTimeTest()
 	{
 		{
 			constexpr auto pauseTime = 750ms;
@@ -92,7 +92,7 @@ namespace kTest::utility
 		
 	}
 
-	bool StopWatchTester::PauseTest()
+	void StopWatchTester::PauseTest()
 	{
 		constexpr auto allowance = 50;
 		
@@ -131,7 +131,7 @@ namespace kTest::utility
 		
 	}
 
-	bool StopWatchTester::MicrosecondsTest()
+	void StopWatchTester::MicrosecondsTest()
 	{
 		constexpr auto duration = 100'000us;
 		constexpr auto allowance = 5000;
@@ -145,7 +145,7 @@ namespace kTest::utility
 		
 	}
 
-	bool StopWatchTester::MillisecondsTest()
+	void StopWatchTester::MillisecondsTest()
 	{
 		constexpr auto duration = 100ms;
 		constexpr auto allowance = 25;
@@ -159,7 +159,7 @@ namespace kTest::utility
 		
 	}
 
-	bool StopWatchTester::SecondsTest()
+	void StopWatchTester::SecondsTest()
 	{
 		constexpr auto duration = 0.5s;
 		constexpr auto allowance = 0.05f;
@@ -173,7 +173,7 @@ namespace kTest::utility
 		
 	}
 
-	bool StopWatchTester::MinutesTest()
+	void StopWatchTester::MinutesTest()
 	{
 		constexpr auto duration = 0.25min;
 		constexpr auto allowance = 0;
@@ -187,7 +187,7 @@ namespace kTest::utility
 		
 	}
 
-	bool StopWatchTester::HoursTest()
+	void StopWatchTester::HoursTest()
 	{
 		constexpr auto duration = 0.25h;
 		constexpr auto allowance = 0;

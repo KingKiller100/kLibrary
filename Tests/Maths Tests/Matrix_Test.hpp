@@ -14,13 +14,13 @@ namespace kTest::maths
 		void Prepare() noexcept override;
 
 	private:
-		bool DynamicMatrixTest();
-		bool AddTest();
-		bool SubtractTest();
-		bool DivideTest();
-		bool MultiplyTest();
-		bool ConstexprTest();
-		bool InitializerListTest();
+		void DynamicMatrixTest();
+		void AddTest();
+		void SubtractTest();
+		void DivideTest();
+		void MultiplyTest();
+		void ConstexprTest();
+		void InitializerListTest();
 	};
 }
 #endif

@@ -9,28 +9,25 @@
 
 namespace kTest::utility
 {
-
 	FileSystemTester::FileSystemTester()
 		: TesterBase("File System Test")
-	{	}
+	{
+	}
 
 	FileSystemTester::~FileSystemTester()
-		= default;
+	= default;
 
 	void FileSystemTester::Prepare() noexcept
 	{
-		VERIFY_MULTI_INIT();
-		VERIFY_MULTI(FunctionalityTest());
-		VERIFY_MULTI(PathToStringTest());
-		VERIFY_MULTI(PathStringTest());
-		VERIFY_MULTI_END();
+		ADD_TEST(FunctionalityTest());
+		ADD_TEST(PathToStringTest());
+		ADD_TEST(PathStringTest());
 	}
 
 	using namespace klib::kFileSystem;
 
-	bool FileSystemTester::FunctionalityTest()
+	void FileSystemTester::FunctionalityTest()
 	{
-
 		const auto exeDir = std::string(GetExeDirectory<char>());
 		const auto w_exeDir = GetExeDirectory<wchar_t>();
 		const auto exeDir16 = GetExeDirectory<char16_t>();
@@ -100,7 +97,8 @@ namespace kTest::utility
 		const auto wCheckDirNotExist = CheckDirectoryExists<wchar_t>(wExeDir + L"None-Existing-Directory\\");
 		VERIFY(wCheckDirNotExist == false);
 
-		const auto multipleCreated = CreateNewDirectories((exeDir + "Create Directories Test\\Success1\\Success2\\").c_str());
+		const auto multipleCreated = CreateNewDirectories(
+			(exeDir + "Create Directories Test\\Success1\\Success2\\").c_str());
 		VERIFY(multipleCreated == true);
 
 		const auto isDirDeleted = DeleteDirectory((exeDir + "Create Directories Test\\Success1\\Success2\\").c_str());
@@ -137,13 +135,11 @@ namespace kTest::utility
 		VERIFY(fileTestExt2 == "File.win");
 		const auto fileTestExt3 = AppendFileExtension(fileNoExt, "win.test");
 		VERIFY(fileTestExt3 == "File.win.test");
-
-		
 	}
 
 	using namespace klib::kString::operators;
 
-	bool FileSystemTester::PathToStringTest()
+	void FileSystemTester::PathToStringTest()
 	{
 		const std::string_view dir = "C:\\Files\\";
 		const auto file = std::string("FileTest");
@@ -175,37 +171,33 @@ namespace kTest::utility
 			const auto result = klib::kString::ToString(u"{0:fe}", path);
 			VERIFY(result == u"FileTest.txt");
 		}
-
-		
 	}
 
-	bool FileSystemTester::PathStringTest()
+	void FileSystemTester::PathStringTest()
 	{
 		{
 			const auto pathA = klib::kFileSystem::DOSPathString<char>("../Game/LoZ.exe");
 			const auto pathB = klib::kFileSystem::DOSPathStringView<char>("..\\Game\\LoZ.exe");
 			VERIFY(pathA == pathB);
 		}
-		
+
 		{
 			const auto pathA = klib::kFileSystem::UnixPathString<char16_t>(u"../Game/LoZ.exe");
 			const auto pathB = klib::kFileSystem::UnixPathString<char16_t>(u"..\\Game\\LoZ.exe");
 			VERIFY(pathA == pathB);
 		}
-		
+
 		{
 			const auto pathA = klib::kFileSystem::DOSPathString<char8_t>(u8"../Game/LoZ.exe");
 			const auto pathB = klib::kFileSystem::DOSPathString<char8_t>(u8"..\\game\\LoZ.exe");
 			VERIFY(pathA == pathB);
 		}
-		
+
 		{
 			const auto pathA = klib::kFileSystem::UnixPathString<char32_t>(U"../Game/LoZ.exe");
 			const auto pathB = klib::kFileSystem::UnixPathString<char32_t>(U"..\\game\\LoZ.exe");
 			VERIFY(pathA != pathB);
 		}
-		
-		
 	}
 }
 #endif

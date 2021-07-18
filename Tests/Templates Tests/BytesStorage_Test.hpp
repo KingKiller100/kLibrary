@@ -14,11 +14,11 @@ namespace kTest::templates
 		void Prepare() noexcept override;
 
 	private:
-		bool CharacterTest();
-		bool IntegerTest();
-		bool SizeTypeTest();
-		bool StringTest();
-		bool VectorTest();
+		void CharacterTest();
+		void IntegerTest();
+		void SizeTypeTest();
+		void StringTest();
+		void VectorTest();
 	};
 }
 #endif

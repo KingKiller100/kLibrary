@@ -12,25 +12,25 @@ namespace kTest::maths
 {
 	RandomTester::RandomTester()
 		: TesterBase("Random Number Tester")
-	{}
+	{
+	}
 
 	RandomTester::~RandomTester()
-		= default;
+	= default;
 
 	using namespace kmaths;
 	using namespace kmaths::kRng;
+
 	void RandomTester::Prepare() noexcept
 	{
-		VERIFY_MULTI_INIT();
-		VERIFY_MULTI(IntegerBCryptTest());
-		VERIFY_MULTI(FloatingBCryptPointTest());
+		ADD_TEST(IntegerBCryptTest());
+		ADD_TEST(FloatingBCryptPointTest());
 
-		VERIFY_MULTI(IntegerTimeTest());
-		VERIFY_MULTI(FloatingTimePointTest());
-		VERIFY_MULTI_END();
+		ADD_TEST(IntegerTimeTest());
+		ADD_TEST(FloatingTimePointTest());
 	}
 
-	bool RandomTester::IntegerBCryptTest()
+	void RandomTester::IntegerBCryptTest()
 	{
 		using namespace std::chrono_literals;
 
@@ -61,11 +61,9 @@ namespace kTest::maths
 			VERIFY(lb <= a && a <= ub);
 			VERIFY(lb <= b && b <= ub);
 		}
-
-		
 	}
 
-	bool RandomTester::IntegerTimeTest()
+	void RandomTester::IntegerTimeTest()
 	{
 		using namespace std::chrono_literals;
 		{
@@ -99,12 +97,9 @@ namespace kTest::maths
 			VERIFY(lb <= a&& a <= ub);
 			VERIFY(lb <= b&& b <= ub);
 		}
-
-		
-
 	}
 
-	bool RandomTester::FloatingBCryptPointTest()
+	void RandomTester::FloatingBCryptPointTest()
 	{
 		using namespace std::chrono_literals;
 
@@ -133,12 +128,10 @@ namespace kTest::maths
 			VERIFY(lb <= a&& a <= ub);
 			VERIFY(lb <= b&& b <= ub);
 		}
-
-		
 	}
 
 
-	bool RandomTester::FloatingTimePointTest()
+	void RandomTester::FloatingTimePointTest()
 	{
 		using namespace std::chrono_literals;
 
@@ -167,10 +160,6 @@ namespace kTest::maths
 			VERIFY(lb <= a&& a <= ub);
 			VERIFY(lb <= b&& b <= ub);
 		}
-
-		
 	}
 }
 #endif
-
-

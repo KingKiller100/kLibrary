@@ -1,47 +1,46 @@
 #include "pch.hpp"
 #include "Matrix_Test.hpp"
 
+#ifdef TESTING_ENABLED
+
 #include "../../Source/Maths/Vectors/Vector.hpp"
 #include "../../Source/Maths/Matrices/MatrixMathsHelper.hpp"
 #include "../../Source/Maths/Matrices/PredefinedMatrices.hpp"
 
-#ifdef TESTING_ENABLED
 namespace kTest::maths
 {
-
 	MatricesTester::MatricesTester()
 		: TesterBase("Matrix MxN Test")
-	{	}
+	{
+	}
 
 	MatricesTester::~MatricesTester()
-		= default;
+	= default;
 
 	void MatricesTester::Prepare() noexcept
 	{
-		VERIFY_MULTI_INIT();
+		ADD_TEST(DynamicMatrixTest());
 
-		VERIFY_MULTI(DynamicMatrixTest());
+		ADD_TEST(AddTest());
+		ADD_TEST(DivideTest());
+		ADD_TEST(SubtractTest());
+		ADD_TEST(MultiplyTest());
+		ADD_TEST(InitializerListTest());
 
-		VERIFY_MULTI(AddTest());
-		VERIFY_MULTI(DivideTest());
-		VERIFY_MULTI(SubtractTest());
-		VERIFY_MULTI(MultiplyTest());
-		VERIFY_MULTI(InitializerListTest());
-
-		VERIFY_MULTI(ConstexprTest());
-
-		VERIFY_MULTI_END();
+		ADD_TEST(ConstexprTest());
 	}
 
 	using namespace kmaths;
-	bool MatricesTester::DynamicMatrixTest()
+
+	void MatricesTester::DynamicMatrixTest()
 	{
 		constexpr auto m0 = Matrix<float, 2, 3>(1);
 		constexpr auto m1 = Matrix<float, 3, 2>(1);
 		//m1.Identity(); Cannot compile since function is only usable for square matrices
 		//m1.Inverse();	 Cannot compile since function is only usable for square matrices
 
-		for (auto i = 0u; i < m0.GetRows(); ++i) {
+		for (auto i = 0u; i < m0.GetRows(); ++i)
+		{
 			for (auto j = 0u; j < m0.GetColumns(); ++j)
 			{
 				VERIFY(m0[i][j] == 1);
@@ -62,11 +61,11 @@ namespace kTest::maths
 		const auto m10 = m8 * m9;
 		//const auto m11 = m8 / m9;
 		const auto m12 = Matrix<int, 5, 5>{
-			{ 1,  2, 1, 0, 2 },
-			{ 4, 11, 8, 0, 1 },
-			{ 1,  6, 1, 0, 3 },
-			{ 0,  0, 0, 6, 5 },
-			{ 3,  5, 7, 6, 4 }
+			{1, 2, 1, 0, 2},
+			{4, 11, 8, 0, 1},
+			{1, 6, 1, 0, 3},
+			{0, 0, 0, 6, 5},
+			{3, 5, 7, 6, 4}
 		};
 
 		const auto determinantM12 = m12.GetDeterminant();
@@ -100,7 +99,8 @@ namespace kTest::maths
 
 		const auto identity1 = inverse3x3 * m14;
 		const auto identity2 = m14 * inverse3x3;
-		for (auto r = 0u; r < m14.GetRows(); ++r) {
+		for (auto r = 0u; r < m14.GetRows(); ++r)
+		{
 			for (auto c = 0u; c < inverse3x3.GetColumns(); ++c)
 			{
 				VERIFY(identity1[r][c] == (r == c ? 1.0 : 0.0));
@@ -108,7 +108,7 @@ namespace kTest::maths
 			}
 		}
 
-		const Matrix<float, 3, 1> colVec{ {10}, {10}, {10} };
+		const Matrix<float, 3, 1> colVec{{10}, {10}, {10}};
 		const auto newVec = m0 * colVec;
 		VERIFY(newVec[0][0] == 30.f);
 		VERIFY(newVec[1][0] == 30.f);
@@ -117,44 +117,39 @@ namespace kTest::maths
 		VERIFY(newVec2[0][0] == 0.f);
 		VERIFY(newVec2[1][0] == -10.f);
 		VERIFY(newVec2[2][0] == 10.f);
-
-		
 	}
 
-	bool MatricesTester::AddTest()
+	void MatricesTester::AddTest()
 	{
 		constexpr auto m1 = Matrix<float, 3, 2>(1.f);
 		constexpr auto m2 = Matrix<float, 3, 2>(2.f);
 		const auto result = m1 + m2;
 
-		for (auto row = 0u; row < result.GetRows(); ++row) {
+		for (auto row = 0u; row < result.GetRows(); ++row)
+		{
 			for (auto col = 0u; col < result.GetColumns(); ++col)
 			{
 				VERIFY(result[row][col] == 3.f);
 			}
 		}
-
-
-		
 	}
 
-	bool MatricesTester::SubtractTest()
+	void MatricesTester::SubtractTest()
 	{
 		constexpr auto m1 = Matrix<float, 3, 2>(1.f);
 		constexpr auto m2 = Matrix<float, 3, 2>(2.f);
 		const auto result = m1 - m2;
 
-		for (auto row = 0u; row < result.GetRows(); ++row) {
+		for (auto row = 0u; row < result.GetRows(); ++row)
+		{
 			for (auto col = 0u; col < result.GetColumns(); ++col)
 			{
 				VERIFY(result[row][col] == -1.f);
 			}
 		}
-
-		
 	}
 
-	bool MatricesTester::DivideTest()
+	void MatricesTester::DivideTest()
 	{
 		{
 			constexpr auto m1 = Matrix<float, 3, 2>(10.f);
@@ -181,12 +176,9 @@ namespace kTest::maths
 			VERIFY(y == 0.05f);
 			VERIFY(z == 0.075f);
 		}
-
-
-		
 	}
 
-	bool MatricesTester::MultiplyTest()
+	void MatricesTester::MultiplyTest()
 	{
 		{
 			constexpr auto m1 = Matrix<float, 3, 2>(10.f);
@@ -214,11 +206,9 @@ namespace kTest::maths
 			VERIFY(result.Y() == 60.f);
 			VERIFY(result.Z() == 60.f);
 		}
-
-		
 	}
 
-	bool MatricesTester::InitializerListTest()
+	void MatricesTester::InitializerListTest()
 	{
 		//{
 		//	const auto mat = Matrix4x4s{
@@ -255,14 +245,15 @@ namespace kTest::maths
 
 		{
 			constexpr int arr[16] = {
-					1, 1, 1, 1,
-					1, 1, 1, 1,
-					0, 0, 0, 0,
+				1, 1, 1, 1,
+				1, 1, 1, 1,
+				0, 0, 0, 0,
 			};
-			
+
 			const auto mat = Matrix4x4s(arr);
 
-			for (auto row = 0; row < mat.GetRows(); row++) {
+			for (auto row = 0; row < mat.GetRows(); row++)
+			{
 				for (auto col = 0; col < mat.GetColumns(); col++)
 				{
 					const auto expected = ((row * mat.GetColumns()) + col) > 7 ? 0 : 1;
@@ -270,11 +261,9 @@ namespace kTest::maths
 				}
 			}
 		}
-
-		
 	}
 
-	bool MatricesTester::ConstexprTest()
+	void MatricesTester::ConstexprTest()
 	{
 		// Currently constexpr supported functions for matrices
 
@@ -316,8 +305,6 @@ namespace kTest::maths
 		UNUSED constexpr auto scalarDiv = m15 / 2;
 		UNUSED constexpr auto subtract = m15 - dummyMat;
 		UNUSED constexpr auto scalarMul = m15 * 5;
-
-		
 	}
 }
 #endif
