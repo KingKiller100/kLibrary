@@ -30,6 +30,7 @@ namespace kTest
 
 	protected:
 		virtual void Prepare() noexcept = 0;
+		virtual void CleanUp();
 		void AddTest(const char* testName, TestCaseFunc testFunc);
 
 	protected:

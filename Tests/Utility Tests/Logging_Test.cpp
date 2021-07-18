@@ -22,12 +22,13 @@ namespace kTest::utility
 
 	void LoggingTester::Prepare()
 	{
-		VERIFY(LogTest() == true);
-		VERIFY(DummyLoggerTest() == true);
+		ADD_TEST(LogTest());
+		ADD_TEST(DummyLoggerTest());
+	}
 
+	void LoggingTester::CleanUp()
+	{
 		std::filesystem::remove_all(fullFilePathToDelete);
-		const auto stem = fullFilePathToDelete.stem();
-		const auto ext = fullFilePathToDelete.extension();
 		std::filesystem::remove(fullFilePathToDelete.parent_path());
 	}
 
@@ -132,12 +133,14 @@ namespace kTest::utility
 		std::stringstream buffer;
 	};
 
-	bool LoggingTester::LogTest()
+	void LoggingTester::LogTest()
 	{
-		const char* filename = "DiffFileName";
-		const auto dir = std::filesystem::current_path().string() + "\\Test Results\\Log Test Dir\\";
+		const std::string filename = "DiffFileName";
+		auto dir = std::filesystem::current_path();
+		dir /= "Test Results";
+		dir /= "Log Test Dir";
 		const auto* const extension = ".log";
-		const std::filesystem::path path = dir + filename + extension;
+		const std::filesystem::path path = dir / (filename + extension);
 
 		auto testLogger = std::make_unique<Logging>(path);
 
@@ -231,7 +234,7 @@ namespace kTest::utility
 		testLogger->AddFatal(LogMessage("FATAL!", __FILE__, __LINE__));
 		testLogger->FinalOutput(false);
 
-		fullFilePathToDelete = dir + filename + extension;
+		fullFilePathToDelete = dir / (filename + extension);
 		VERIFY(std::filesystem::exists(fullFilePathToDelete.c_str()) == true);
 
 		{
@@ -240,24 +243,28 @@ namespace kTest::utility
 			testLogger->AddEntry(desc, msg);
 			const auto hasCache = testLogger->HasCache();
 			VERIFY(!hasCache);
-			const bool prevSuccess = success;
+
+			bool crashWhenTryingToAccessEmptyCache;
+			
 			try
 			{
-				success = false;
 				const auto& last = testLogger->GetLastCachedEntry();
 				VERIFY(!last.HasText(msg));
 				VERIFY(!last.HasDescription(desc));
+				crashWhenTryingToAccessEmptyCache = false;
 			}
 			catch (...)
 			{
-				success = prevSuccess;
+				crashWhenTryingToAccessEmptyCache = true;
 			}
+
+			VERIFY(crashWhenTryingToAccessEmptyCache);
 		}
 
 		
 	}
 
-	bool LoggingTester::DummyLoggerTest()
+	void LoggingTester::DummyLoggerTest()
 	{
 		Logging dummy(std::filesystem::current_path() / "Dummy", "Dummy");
 		dummy.AddDestination<DummyLogger>();

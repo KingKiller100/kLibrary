@@ -13,6 +13,12 @@ namespace kTest::utility
 
 	protected:
 		void Prepare() override;
+
+	private:
+		void ConvertUTF16ToUTF32();
+		void ConvertASCIIToUTF16();
+		void ConvertASCIIToUTF32();
+		void ConvertASCIIToUTF8();
 	};
 }
 #endif

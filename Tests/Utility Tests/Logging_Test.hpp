@@ -11,11 +11,14 @@ namespace kTest::utility
 	public:
 		LoggingTester();
 		~LoggingTester() override;
-		
+
+	protected:
+		void Prepare() noexcept override;
+		void CleanUp() override;
+	
 	private:
-		void Prepare() override;
-		bool LogTest();
-		bool DummyLoggerTest();
+		void LogTest();
+		void DummyLoggerTest();
 
 	private:
 		std::filesystem::path fullFilePathToDelete;

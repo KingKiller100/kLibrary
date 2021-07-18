@@ -42,6 +42,7 @@ namespace kTest
 				currentTestName = testData.first;
 				const auto& test = testData.second;
 				test();
+				CleanUp();
 			}
 		}
 		catch (const std::exception& e)
@@ -55,6 +56,9 @@ namespace kTest
 		currentTestName = "";
 		return success;
 	}
+
+	void TesterBase::CleanUp()
+	{}
 
 	void TesterBase::AddTest(const char* testName, TestCaseFunc testFunc)
 	{
