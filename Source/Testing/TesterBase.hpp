@@ -11,8 +11,12 @@
 #ifdef TESTING_ENABLED
 namespace kTest
 {
-	class TesterBase
+	class TesterBase : public klib::type_trait::NonCopyable
 	{
+	protected:
+		using TestCaseFunc = std::function<void()>;
+		using DeprecatedTestCaseFunc = std::function<bool()>;
+
 	public:
 		TesterBase(const char* name) noexcept;
 		TesterBase(TesterBase&& other) noexcept;
@@ -25,43 +29,39 @@ namespace kTest
 
 		bool Run() noexcept;
 
-		// Deleted Funcs
-		TesterBase(const TesterBase& other) = delete;
-		TesterBase& operator=(const TesterBase& other) = delete;
+	protected:
+		virtual void Prepare() noexcept = 0;
+		void AddTest(const char* testName, TestCaseFunc testFunc);
+		void AddTest(const char* testName, DeprecatedTestCaseFunc testFunc);
 
 	protected:
-		virtual void Test() = 0;
-
-	protected:
+		void ReportFailedTestCase(const char* condition, const char* file, const char* function, const std::uint32_t line);
+	
+	private:
 		bool success;
 
 		std::string name;
 		std::string failureData;
+		std::unordered_map<std::string, TestCaseFunc> testCases;
+		std::unordered_map<std::string, DeprecatedTestCaseFunc> deprecatedTestCases;
+		std::string_view currentTestName;
 	};
 
+#define ADD_TEST(test) this->AddTest(#test, [this](){ test; });
+	
 	// If results are wrong, change name to failed test function signature and line, else continues to next line
 #define VERIFY(test)\
 	if ((test) == false)\
 	{\
-		this->success = false; \
-		this->failureData.append(klib::kString::Sprintf("\tCondition: %s\n\tFile: %s\n\tFunction: %s\n\tLine: %d\n\n", #test, __FILE__, __FUNCSIG__, __LINE__));\
+		this->ReportFailedTestCase(#test, __FILE__, __FUNCTION__, __LINE__); \
 	}\
 
 #if MSVC_PLATFORM_TOOLSET > 141
 	// Verify result of a test if result is available at compile time
-#	define VERIFY_COMPILE_TIME(test) this->success = klib::type_trait::Compile_Time_Test< test >::value;
+#	define VERIFY_COMPILE_TIME(test) klib::type_trait::Compile_Time_Test< test >::value;
 #else
 #	define VERIFY_COMPILE_TIME(test) VERIFY(test)
 #endif
-
-	
-	// Verify using multiple test functions
-#define VERIFY_MULTI_INIT() bool noFails = true;
-#define VERIFY_MULTI_END()  this->success = noFails;
-#define VERIFY_MULTI(func) VERIFY(func == true)\
-if (!success) noFails = false;\
-success = true;\
-
 
 }
 #endif
