@@ -20,7 +20,7 @@ namespace kTest::utility
 	LoggingTester::~LoggingTester()
 		= default;
 
-	void LoggingTester::Test()
+	void LoggingTester::Prepare()
 	{
 		VERIFY(LogTest() == true);
 		VERIFY(DummyLoggerTest() == true);
@@ -254,7 +254,7 @@ namespace kTest::utility
 			}
 		}
 
-		return success;
+		
 	}
 
 	bool LoggingTester::DummyLoggerTest()
@@ -276,7 +276,7 @@ namespace kTest::utility
 		VERIFY(!dest.IsOpen());
 
 		
-		return success;
+		
 	}
 }
 #endif

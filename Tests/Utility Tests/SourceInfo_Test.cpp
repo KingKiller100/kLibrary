@@ -19,7 +19,7 @@ namespace kTest::utility
 	{
 	}
 
-	void SourceInfoTester::Test()
+	void SourceInfoTester::Prepare()
 	{
 		VERIFY_MULTI_INIT()
 		VERIFY_MULTI(InfoTest())
@@ -116,7 +116,7 @@ namespace kTest::utility
 		}
 #endif
 		
-		return success;
+		
 	}
 
 	bool SourceInfoTester::InfoNoFuncTest()
@@ -135,7 +135,7 @@ namespace kTest::utility
 			VERIFY_COMPILE_TIME(source.func == L"");
 		}
 		
-		return success;
+		
 	}
 
 	bool SourceInfoTester::ToStringTest()
@@ -185,7 +185,7 @@ namespace kTest::utility
 			VERIFY(result.find("File: " + file + " Line: 183 Function: " + func) != std::string::npos);
 		}
 		
-		return success;
+		
 	}
 
 	bool SourceInfoTester::MutInfoTest()
@@ -205,7 +205,7 @@ namespace kTest::utility
 			VERIFY(source.func == __FUNCTIONW__);
 		}
 		
-		return success;
+		
 	}
 
 	bool SourceInfoTester::MutInfoNoFuncTest()
@@ -225,7 +225,7 @@ namespace kTest::utility
 			VERIFY(source.func ==u"");
 		}
 		
-		return success;
+		
 	}
 
 	bool SourceInfoTester::MutToStringTest()
@@ -269,7 +269,7 @@ namespace kTest::utility
 			VERIFY(result.find(L"File: " + file + L" Line: 267 Function: " + func) != std::string::npos);
 		}
 		
-		return success;
+		
 	}
 }
 #endif

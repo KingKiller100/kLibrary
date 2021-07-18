@@ -12,7 +12,7 @@ namespace kTest::utility
 		~StringConverterTester() override;
 
 	protected:
-		void Test() override;
+		void Prepare() override;
 	};
 }
 #endif

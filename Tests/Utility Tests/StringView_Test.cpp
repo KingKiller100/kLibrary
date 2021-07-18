@@ -15,7 +15,7 @@ namespace kTest::utility
 	StringViewTester::~StringViewTester()
 		= default;
 
-	void StringViewTester::Test()
+	void StringViewTester::Prepare()
 	{
 		using namespace klib::kString;
 

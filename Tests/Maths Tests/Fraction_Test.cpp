@@ -18,7 +18,7 @@ namespace kTest::maths
 
 	using namespace kmaths;
 
-	void FractionTester::Test()
+	void FractionTester::Prepare()
 	{
 		VERIFY_MULTI_INIT();
 
@@ -121,7 +121,7 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
-		return success;
+		
 	}
 
 	bool FractionTester::SubtractTest()
@@ -210,7 +210,7 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
-		return success;
+		
 	}
 
 	bool FractionTester::MultiplyTest()
@@ -285,7 +285,7 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
-		return success;
+		
 	}
 
 	bool FractionTester::DivideTest()
@@ -360,7 +360,7 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
-		return success;
+		
 	}
 
 	bool FractionTester::NonSimplifiedTest()
@@ -407,7 +407,7 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
-		return success;
+		
 	}
 
 
@@ -463,7 +463,7 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(f2r == -0.5);
 		}
 
-		return success;
+		
 	}
 
 	bool FractionTester::IrrationalTest()
@@ -504,7 +504,7 @@ namespace kTest::maths
 			VERIFY(f2rRounded == eRounded);
 		}
 
-		return success;
+		
 	}
 
 	bool FractionTester::GetRealTest()
@@ -545,7 +545,7 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(f2r == expected);
 		}
 
-		return success;
+		
 	}
 
 

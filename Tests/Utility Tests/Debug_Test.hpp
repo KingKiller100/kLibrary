@@ -11,7 +11,7 @@ namespace kTest::utility
 		~DebugTester() override;
 		
 	protected:
-		void Test() override;
+		void Prepare() override;
 
 	private:
 		bool IsDebuggerAttachedTest();

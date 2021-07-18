@@ -11,7 +11,7 @@ namespace kTest::utility
 		~StringViewTester() override;
 
 	private:
-		void Test() override;
+		void Prepare() override;
 	};
 
 }

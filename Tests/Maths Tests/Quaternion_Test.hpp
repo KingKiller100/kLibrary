@@ -12,7 +12,7 @@ namespace kTest::maths
 		~QuaternionsTester() override;
 
 	protected:
-		void Test() override;
+		void Prepare() override;
 	};
 }
 #endif

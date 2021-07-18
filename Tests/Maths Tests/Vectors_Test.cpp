@@ -18,7 +18,7 @@ namespace kTest::maths
 	VectorsTester::~VectorsTester()
 		= default;
 
-	void VectorsTester::Test()
+	void VectorsTester::Prepare()
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(VectorTest());
@@ -178,7 +178,7 @@ namespace kTest::maths
 		constexpr bool less = lhs3d <= compareVal;
 		VERIFY_COMPILE_TIME(less == true);
 
-		return success;
+		
 	}
 
 	bool VectorsTester::Vector2Test()
@@ -220,7 +220,7 @@ namespace kTest::maths
 		VERIFY_COMPILE_TIME(perp.y == 5.0);
 
 
-		return success;
+		
 	}
 
 	bool VectorsTester::Vector3Test()
@@ -236,7 +236,7 @@ namespace kTest::maths
 		VERIFY_COMPILE_TIME(cross.y == 8);
 		VERIFY_COMPILE_TIME(cross.z == -4);
 
-		return success;
+		
 	}
 
 	bool VectorsTester::Vector4Test()
@@ -248,7 +248,7 @@ namespace kTest::maths
 
 		VERIFY(vector4 == 4);
 
-		return success;
+		
 	}
 }
 #endif

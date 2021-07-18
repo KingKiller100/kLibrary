@@ -12,7 +12,7 @@ namespace kTest::utility
 		~StringManipulationTester();
 
 	private:
-		void Test() override;
+		void Prepare() override;
 
 		bool StrToTest();
 		bool CountTest();

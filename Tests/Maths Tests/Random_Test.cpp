@@ -19,7 +19,7 @@ namespace kTest::maths
 
 	using namespace kmaths;
 	using namespace kmaths::kRng;
-	void RandomTester::Test()
+	void RandomTester::Prepare()
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(IntegerBCryptTest());
@@ -62,7 +62,7 @@ namespace kTest::maths
 			VERIFY(lb <= b && b <= ub);
 		}
 
-		return success;
+		
 	}
 
 	bool RandomTester::IntegerTimeTest()
@@ -100,7 +100,7 @@ namespace kTest::maths
 			VERIFY(lb <= b&& b <= ub);
 		}
 
-		return success;
+		
 
 	}
 
@@ -134,7 +134,7 @@ namespace kTest::maths
 			VERIFY(lb <= b&& b <= ub);
 		}
 
-		return success;
+		
 	}
 
 
@@ -168,7 +168,7 @@ namespace kTest::maths
 			VERIFY(lb <= b&& b <= ub);
 		}
 
-		return success;
+		
 	}
 }
 #endif

@@ -20,7 +20,7 @@ namespace kTest::templates
 	using namespace klib::kTemplate;
 	using namespace kmaths;
 	
-	void BytesStorageTester::Test()
+	void BytesStorageTester::Prepare()
 	{
 		VERIFY_MULTI_INIT();
 		//VERIFY_MULTI(CharacterTest());
@@ -107,7 +107,7 @@ namespace kTest::templates
 		}
 
 
-		return success;
+		
 	}
 
 	bool BytesStorageTester::IntegerTest()
@@ -186,7 +186,7 @@ namespace kTest::templates
 			VERIFY(size == (volume * storageTypeValue) / typeSize);
 		}
 
-		return success;
+		
 	}
 
 	bool BytesStorageTester::SizeTypeTest()
@@ -265,7 +265,7 @@ namespace kTest::templates
 			VERIFY(size == (volume * storageTypeValue) / typeSize);
 		}
 
-		return success;
+		
 	}
 
 	bool BytesStorageTester::StringTest()
@@ -343,7 +343,7 @@ namespace kTest::templates
 			VERIFY(size == (volume * storageTypeValue) / typeSize);
 		}
 
-		return success;
+		
 	}
 
 	bool BytesStorageTester::VectorTest()
@@ -424,7 +424,7 @@ namespace kTest::templates
 			VERIFY(size == (volume * storageTypeValue) / typeSize);
 		}
 
-		return success;
+		
 	}
 }
 #endif 

@@ -38,7 +38,7 @@ namespace kTest::utility
 	FormatToStringTester::~FormatToStringTester()
 		= default;
 
-	void FormatToStringTester::Test()
+	void FormatToStringTester::Prepare()
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(SprintfWrapperTest());
@@ -100,7 +100,7 @@ namespace kTest::utility
 			VERIFY_COMPILE_TIME(expected);
 		}
 
-		return success;
+		
 	}
 
 
@@ -137,7 +137,7 @@ namespace kTest::utility
 			VERIFY(result == expected);
 		}
 
-		return success;
+		
 	}
 
 	bool FormatToStringTester::StringifyFloatingPointTest()
@@ -239,7 +239,7 @@ namespace kTest::utility
 			VERIFY(result == "2.0000625549769348588e+00")
 		}
 
-		return success;
+		
 	}
 
 	bool FormatToStringTester::StringifyHexTest()
@@ -279,7 +279,7 @@ namespace kTest::utility
 			VERIFY(expected == result);
 		}
 
-		return success;
+		
 	}
 
 	bool FormatToStringTester::StringifyBinaryTest()
@@ -319,7 +319,7 @@ namespace kTest::utility
 			VERIFY(result == u"aa100");
 		}
 
-		return success;
+		
 	}
 
 	bool FormatToStringTester::CustomTypeWithToStringTest()
@@ -337,7 +337,7 @@ namespace kTest::utility
 		constexpr auto expected = "Bitches ain't shit but hoes and tricks";
 		VERIFY(result == expected);
 
-		return success;
+		
 	}
 
 	bool FormatToStringTester::CustomTypeWithoutToStringTest()
@@ -348,7 +348,7 @@ namespace kTest::utility
 		constexpr auto expected = "String made using identity overloading";
 		VERIFY(expected == result);
 
-		return success;
+		
 	}
 
 	bool FormatToStringTester::FormatToStringTest()
@@ -383,7 +383,7 @@ namespace kTest::utility
 		VERIFY(testStr8 == "Booleans - Text:true Int:1");
 		VERIFY(hex == "0x03e8");
 
-		return success;
+		
 	}
 
 	bool FormatToStringTester::DirectToStringTest()
@@ -404,7 +404,7 @@ namespace kTest::utility
 			VERIFY(result == expected);
 		}
 
-		return success;
+		
 	}
 
 	bool FormatToStringTester::VectorSTL()
@@ -449,7 +449,7 @@ namespace kTest::utility
 			VERIFY(result == expected);
 		}
 		
-		return success;
+		
 	}
 }
 #endif

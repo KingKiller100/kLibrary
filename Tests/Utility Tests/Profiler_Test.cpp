@@ -18,7 +18,7 @@ namespace kTest::utility
 	using namespace klib::kStopwatch;
 	using namespace std::chrono_literals;
 	
-	void ProfilerTester::Test()
+	void ProfilerTester::Prepare()
 	{
 		VERIFY_MULTI_INIT();
 		// VERIFY_MULTI(MillisecondsTest());
@@ -56,7 +56,7 @@ namespace kTest::utility
 			std::this_thread::sleep_for(750ms);
 		}
 
-		return success;
+		
 	}
 
 	bool ProfilerTester::SecondsTest()
@@ -97,7 +97,7 @@ namespace kTest::utility
 			std::this_thread::sleep_for(waitTime);
 		}
 
-		return success;
+		
 	}
 }
 #endif

@@ -17,7 +17,7 @@ namespace kTest::utility
 	FileSystemTester::~FileSystemTester()
 		= default;
 
-	void FileSystemTester::Test()
+	void FileSystemTester::Prepare()
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(FunctionalityTest());
@@ -138,7 +138,7 @@ namespace kTest::utility
 		const auto fileTestExt3 = AppendFileExtension(fileNoExt, "win.test");
 		VERIFY(fileTestExt3 == "File.win.test");
 
-		return success;
+		
 	}
 
 	using namespace klib::kString::operators;
@@ -176,7 +176,7 @@ namespace kTest::utility
 			VERIFY(result == u"FileTest.txt");
 		}
 
-		return success;
+		
 	}
 
 	bool FileSystemTester::PathStringTest()
@@ -205,7 +205,7 @@ namespace kTest::utility
 			VERIFY(pathA != pathB);
 		}
 		
-		return success;
+		
 	}
 }
 #endif

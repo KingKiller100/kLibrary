@@ -15,7 +15,7 @@ namespace kTest::utility
 	StringManipulationTester::~StringManipulationTester()
 		= default;
 
-	void StringManipulationTester::Test()
+	void StringManipulationTester::Prepare()
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(ToWriterAndToReaderTest());
@@ -138,7 +138,7 @@ namespace kTest::utility
 			VERIFY(expected == res);
 		}
 
-		return success;
+		
 	}
 
 	bool StringManipulationTester::CountTest()
@@ -185,7 +185,7 @@ namespace kTest::utility
 			VERIFY(count == 0);
 		}
 
-		return success;
+		
 	}
 
 	bool StringManipulationTester::ReplaceTest()
@@ -194,7 +194,7 @@ namespace kTest::utility
 		const auto res = Replace(text, 'R', 'B');
 		VERIFY(res.compare("My name is Bob") == 0);
 
-		return success;
+		
 	}
 
 	bool StringManipulationTester::RemoveTest()
@@ -220,7 +220,7 @@ namespace kTest::utility
 			VERIFY(test == "the brown fox jumped over the black zoo fence");
 		}
 
-		return success;
+		
 	}
 
 	bool StringManipulationTester::SplitTest()
@@ -249,7 +249,7 @@ namespace kTest::utility
 		VERIFY(splitsWithSpace[7].compare(U"and ") == 0);
 		VERIFY(splitsWithSpace[8].compare(U"round") == 0);
 
-		return success;
+		
 	}
 
 	bool StringManipulationTester::ToLower()
@@ -289,7 +289,7 @@ namespace kTest::utility
 			VERIFY(expected == res);
 		}
 
-		return success;
+		
 	}
 
 	bool StringManipulationTester::ToUpper()
@@ -329,7 +329,7 @@ namespace kTest::utility
 			VERIFY(expected == res);
 		}
 
-		return success;
+		
 	}
 
 
@@ -442,7 +442,7 @@ namespace kTest::utility
 		}
 #endif 
 
-		return success;
+		
 
 	}
 
@@ -494,7 +494,7 @@ namespace kTest::utility
 			VERIFY(result == false);
 		}
 		
-		return success;
+		
 	}
 
 	bool StringManipulationTester::FindTest()
@@ -543,7 +543,7 @@ namespace kTest::utility
 		// 	VERIFY(pos == npos);
 		// }
 		
-		return success;
+		
 	}
 
 	bool StringManipulationTester::FindFirstOfTest()
@@ -585,7 +585,7 @@ namespace kTest::utility
 		}
 
 		
-		return success;
+		
 	}
 
 	bool StringManipulationTester::FindFirstNotOfTest()
@@ -626,7 +626,7 @@ namespace kTest::utility
 			VERIFY(pos == expected);
 		}
 		
-		return success;
+		
 	}
 
 	bool StringManipulationTester::FindLastOfTest()
@@ -667,7 +667,7 @@ namespace kTest::utility
 			VERIFY(pos == expected);
 		}
 		
-		return success;
+		
 	}
 
 	bool StringManipulationTester::FindLastNotOfTest()
@@ -708,7 +708,7 @@ namespace kTest::utility
 			VERIFY(pos == 2);
 		}
 		
-		return success;
+		
 	}
 }
 #endif

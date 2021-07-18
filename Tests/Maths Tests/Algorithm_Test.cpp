@@ -19,7 +19,7 @@ namespace kTest::maths
 	AlgorithmsTester::~AlgorithmsTester()
 		= default;
 
-	void AlgorithmsTester::Test()
+	void AlgorithmsTester::Prepare()
 	{
 		VERIFY_MULTI_INIT();
 		
@@ -83,7 +83,7 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(count == 1);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::SineTest()
@@ -162,7 +162,7 @@ namespace kTest::maths
 		}
 
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::CosineTest()
@@ -244,7 +244,7 @@ namespace kTest::maths
 			VERIFY(resultRounded == expectedRounded);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::TanTest()
@@ -319,7 +319,7 @@ namespace kTest::maths
 		}
 
 
-		return success;
+		
 	}
 
 
@@ -353,7 +353,7 @@ namespace kTest::maths
 					VERIFY(mat[row][col] == 2);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::ConversionTest()
@@ -400,7 +400,7 @@ namespace kTest::maths
 		VERIFY(doubleToVec.Z() == 5.0);
 		VERIFY(doubleToVec.W() == 5.0);
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::CountDigitsTest()
@@ -471,7 +471,7 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(digits == 1);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::IsNegativeTest()
@@ -500,7 +500,7 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(result == true)
 		}
 
-		return success;
+		
 	}
 
 
@@ -524,7 +524,7 @@ namespace kTest::maths
 		constexpr auto smallestPred = Min(small, big, std::less{});
 		VERIFY_COMPILE_TIME(smallestPred == small);
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::FloorTest()
@@ -578,7 +578,7 @@ namespace kTest::maths
 			VERIFY(result == expected);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::RealToFractionTest()
@@ -646,7 +646,7 @@ namespace kTest::maths
 			VERIFY(f2d == decimal);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::BinarySearchTest()
@@ -676,7 +676,7 @@ namespace kTest::maths
 			delete[] list;
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::BinarySearchClosestTest()
@@ -743,7 +743,7 @@ namespace kTest::maths
 			delete[] list;
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::RoundingTest()
@@ -793,7 +793,7 @@ namespace kTest::maths
 			VERIFY(rounded == expectedVal);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::PowerOfTest()
@@ -862,7 +862,7 @@ namespace kTest::maths
 			//VERIFY(value == expectedVal);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::SwapTest()
@@ -906,7 +906,7 @@ namespace kTest::maths
 			VERIFY(*twoHundred == 200);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::GammaTest()
@@ -971,7 +971,7 @@ namespace kTest::maths
 		}
 
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::FactorialTest()
@@ -997,7 +997,7 @@ namespace kTest::maths
 			VERIFY(result == expected);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::ClampTest()
@@ -1104,7 +1104,7 @@ namespace kTest::maths
 		}
 
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::AbsClampTest()
@@ -1197,7 +1197,7 @@ namespace kTest::maths
 			VERIFY(result == expected);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::ToDegreesTest()
@@ -1217,7 +1217,7 @@ namespace kTest::maths
 		constexpr auto pitimes3Over2To270 = ToDegrees<constants::Accuracy_t>(constants::Pi_Over_2<Accuracy_t> * 3);
 		VERIFY_COMPILE_TIME(pitimes3Over2To270 == 270.0l);
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::ToRadiansTest()
@@ -1237,7 +1237,7 @@ namespace kTest::maths
 		constexpr auto deg270To3PiOver2 = ToRadians<long double>(270);
 		VERIFY_COMPILE_TIME(deg270To3PiOver2 == static_cast<decltype(deg270To3PiOver2)>(M_PI_2 * 3));
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::Log10Test()
@@ -1330,7 +1330,7 @@ namespace kTest::maths
 			VERIFY(resultRounded == expectedRounded);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::SquareRootTest()
@@ -1440,7 +1440,7 @@ namespace kTest::maths
 			VERIFY(root == expected);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::InverseSquareRootTest()
@@ -1465,7 +1465,7 @@ namespace kTest::maths
 			VERIFY(invRoot == expectedInv);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::RootTest()
@@ -1616,7 +1616,7 @@ namespace kTest::maths
 			}
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::Log2Test()
@@ -1671,7 +1671,7 @@ namespace kTest::maths
 			VERIFY(resultRounded == expectedRounded);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::PowerOfFractionTest()
@@ -1719,7 +1719,7 @@ namespace kTest::maths
 			VERIFY(result == expected);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::FloatingPointRemainderTest()
@@ -1764,7 +1764,7 @@ namespace kTest::maths
 			VERIFY(result == expected);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::ModulusTest()
@@ -1801,7 +1801,7 @@ namespace kTest::maths
 			VERIFY(result == expected);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::IsInfTest()
@@ -1834,7 +1834,7 @@ namespace kTest::maths
 			VERIFY(result == expected);
 		}
 		
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::IsNaNTest()
@@ -1860,7 +1860,7 @@ namespace kTest::maths
 			VERIFY(result == expected);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::SignTest()
@@ -1895,7 +1895,7 @@ namespace kTest::maths
 			VERIFY_COMPILE_TIME(result == -1);
 		}
 
-		return success;
+		
 	}
 
 	bool AlgorithmsTester::AbsTest()
@@ -1936,7 +1936,7 @@ namespace kTest::maths
 			VERIFY(result == 10.5);
 		}
 
-		return success;
+		
 	}
 
 }

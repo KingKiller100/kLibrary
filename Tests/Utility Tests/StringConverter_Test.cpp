@@ -13,7 +13,7 @@ namespace kTest::utility
 	StringConverterTester::~StringConverterTester()
 		= default;
 
-	void StringConverterTester::Test()
+	void StringConverterTester::Prepare()
 	{
 		constexpr auto str16 = u"I'm a char32 ptr";
 		const std::u32string str32 = klib::kString::Convert<char32_t>(str16);

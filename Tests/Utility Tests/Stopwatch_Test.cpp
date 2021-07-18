@@ -20,7 +20,7 @@ namespace kTest::utility
 	using namespace klib::kStopwatch;
 	using namespace std::chrono_literals;
 
-	void StopWatchTester::Test()
+	void StopWatchTester::Prepare()
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(GeneralTimeTest());
@@ -89,7 +89,7 @@ namespace kTest::utility
 			VERIFY(kmaths::Approximately(dt3, expectedElapsedTime2, allowance));
 		}
 
-		return success;
+		
 	}
 
 	bool StopWatchTester::PauseTest()
@@ -128,7 +128,7 @@ namespace kTest::utility
 		VERIFY(!sw.IsRunning());
 		VERIFY(dt < elapsed);
 
-		return success;
+		
 	}
 
 	bool StopWatchTester::MicrosecondsTest()
@@ -142,7 +142,7 @@ namespace kTest::utility
 		const auto now = sw.GetElapsedTime();
 		VERIFY(kmaths::Approximately(now, duration.count() + allowance, allowance));
 
-		return success;
+		
 	}
 
 	bool StopWatchTester::MillisecondsTest()
@@ -156,7 +156,7 @@ namespace kTest::utility
 		const auto now = sw.GetElapsedTime<units::Millis>();
 		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 
-		return success;
+		
 	}
 
 	bool StopWatchTester::SecondsTest()
@@ -170,7 +170,7 @@ namespace kTest::utility
 		const auto now = sw.GetElapsedTime();
 		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 
-		return success;
+		
 	}
 
 	bool StopWatchTester::MinutesTest()
@@ -184,7 +184,7 @@ namespace kTest::utility
 		const auto now = sw.GetElapsedTime();
 		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 
-		return success;
+		
 	}
 
 	bool StopWatchTester::HoursTest()
@@ -198,7 +198,7 @@ namespace kTest::utility
 		const auto now = sw.GetElapsedTime();
 		VERIFY(kmaths::Approximately(now, duration.count(), allowance));
 
-		return success;
+		
 	}
 }
 #endif

@@ -47,7 +47,7 @@ namespace kTest::utility
 		return str;
 	}
 
-	void CalendarTester::Test()
+	void CalendarTester::Prepare()
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(DayTest());
@@ -118,7 +118,7 @@ namespace kTest::utility
 			VERIFY(day.ToString("ddddd") == "Monday");
 		}
 
-		return success;
+		
 	}
 
 	bool CalendarTester::YearTest()
@@ -171,7 +171,7 @@ namespace kTest::utility
 			VERIFY_COMPILE_TIME(yearsFromMonths == 20);
 		}
 
-		return success;
+		
 	}
 
 	bool CalendarTester::MonthTest()
@@ -223,7 +223,7 @@ namespace kTest::utility
 			VERIFY_COMPILE_TIME(monthFromDays == expected);
 		}
 
-		return success;
+		
 	}
 
 	bool CalendarTester::MillisecondTest()
@@ -261,7 +261,7 @@ namespace kTest::utility
 			VERIFY(millis.ToString("ccccc") == "075ms");
 		}
 
-		return success;
+		
 	}
 
 	bool CalendarTester::SecondTest()
@@ -297,7 +297,7 @@ namespace kTest::utility
 			VERIFY(sec.ToString("ssss") == "100s");
 		}
 
-		return success;
+		
 	}
 
 	bool CalendarTester::MinuteTest()
@@ -332,7 +332,7 @@ namespace kTest::utility
 			VERIFY(minute.ToString("mmmm") == "1000m");
 		}
 
-		return success;
+		
 	}
 
 	bool CalendarTester::HourTest()
@@ -367,7 +367,7 @@ namespace kTest::utility
 			VERIFY(hour.ToString("hhhh") == "30h");
 		}
 
-		return success;
+		
 	}
 
 	auto DateTextFunc(const SYSTEMTIME dateTime, Date::DateTextLength format = Date::DateTextLength::FULL) -> decltype(auto)
@@ -471,7 +471,7 @@ namespace kTest::utility
 		}
 
 
-		return success;
+		
 	}
 
 	bool CalendarTester::DayOfTheWeekTest()
@@ -494,7 +494,7 @@ namespace kTest::utility
 			VERIFY_COMPILE_TIME(result == "Sunday");
 		}
 
-		return success;
+		
 	}
 
 	bool CalendarTester::ToStringTest()
@@ -541,7 +541,7 @@ namespace kTest::utility
 			VERIFY(expected == result);
 		}
 
-		return success;
+		
 	}
 
 	bool CalendarTester::GetTimeComponentTest()
@@ -579,7 +579,7 @@ namespace kTest::utility
 		}
 
 
-		return success;
+		
 	}
 
 
@@ -635,7 +635,7 @@ namespace kTest::utility
 		}
 
 
-		return success;
+		
 	}
 
 	bool CalendarTester::GetDateInNumericalFormatTest()
@@ -675,7 +675,7 @@ namespace kTest::utility
 		}
 
 
-		return success;
+		
 	}
 
 	bool CalendarTester::CreateTimeTest()
@@ -713,7 +713,7 @@ namespace kTest::utility
 			VERIFY(result == expected);
 		}
 
-		return success;
+		
 	}
 
 	bool CalendarTester::BasicCalenadarTest()
@@ -774,7 +774,7 @@ namespace kTest::utility
 			VERIFY(milliMatch);
 		}
 
-		return success;
+		
 	}
 }
 #endif

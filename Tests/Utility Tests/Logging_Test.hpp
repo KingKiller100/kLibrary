@@ -13,7 +13,7 @@ namespace kTest::utility
 		~LoggingTester() override;
 		
 	private:
-		void Test() override;
+		void Prepare() override;
 		bool LogTest();
 		bool DummyLoggerTest();
 

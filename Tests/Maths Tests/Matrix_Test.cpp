@@ -16,7 +16,7 @@ namespace kTest::maths
 	MatricesTester::~MatricesTester()
 		= default;
 
-	void MatricesTester::Test()
+	void MatricesTester::Prepare()
 	{
 		VERIFY_MULTI_INIT();
 
@@ -118,7 +118,7 @@ namespace kTest::maths
 		VERIFY(newVec2[1][0] == -10.f);
 		VERIFY(newVec2[2][0] == 10.f);
 
-		return success;
+		
 	}
 
 	bool MatricesTester::AddTest()
@@ -135,7 +135,7 @@ namespace kTest::maths
 		}
 
 
-		return success;
+		
 	}
 
 	bool MatricesTester::SubtractTest()
@@ -151,7 +151,7 @@ namespace kTest::maths
 			}
 		}
 
-		return success;
+		
 	}
 
 	bool MatricesTester::DivideTest()
@@ -183,7 +183,7 @@ namespace kTest::maths
 		}
 
 
-		return success;
+		
 	}
 
 	bool MatricesTester::MultiplyTest()
@@ -215,7 +215,7 @@ namespace kTest::maths
 			VERIFY(result.Z() == 60.f);
 		}
 
-		return success;
+		
 	}
 
 	bool MatricesTester::InitializerListTest()
@@ -271,7 +271,7 @@ namespace kTest::maths
 			}
 		}
 
-		return success;
+		
 	}
 
 	bool MatricesTester::ConstexprTest()
@@ -317,7 +317,7 @@ namespace kTest::maths
 		UNUSED constexpr auto subtract = m15 - dummyMat;
 		UNUSED constexpr auto scalarMul = m15 * 5;
 
-		return success;
+		
 	}
 }
 #endif

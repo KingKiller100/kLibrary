@@ -26,7 +26,7 @@ namespace kTest::maths
 		return ((val > lb) && (ub > val));
 	};
 
-	void QuaternionsTester::Test()
+	void QuaternionsTester::Prepare()
 	{
 		constexpr Matrix3x4f trianglePoints = {
 			{ 2, 1, 0, 1 },

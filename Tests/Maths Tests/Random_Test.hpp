@@ -12,7 +12,7 @@ namespace kTest::maths
 		~RandomTester() override;
 
 	protected:
-		void Test() override;
+		void Prepare() override;
 
 	private:
 		bool IntegerBCryptTest();

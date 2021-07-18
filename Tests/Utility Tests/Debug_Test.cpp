@@ -17,7 +17,7 @@ namespace kTest::utility
 	using namespace klib::kDebug;
 	using namespace std::chrono_literals;
 	
-	void DebugTester::Test()
+	void DebugTester::Prepare()
 	{
 		VERIFY_MULTI_INIT()
 		VERIFY_MULTI(IsDebuggerAttachedTest())
@@ -30,13 +30,13 @@ namespace kTest::utility
 	{
 		// WaitForDebugger("DebugTest", 1000ms);
 		ScanForDebugger(1000ms);
-		return success;
+		
 	}
 
 	bool DebugTester::BreakPointTest()
 	{
 		//klib::kDebug::BreakPoint(); // Works Great!
-		return success;
+		
 	}
 
 	bool DebugTester::FailedConditionExceptionTest()
@@ -47,7 +47,7 @@ namespace kTest::utility
 			{
 				success = true;
 			});
-		return success;
+		
 	}
 }
 #endif

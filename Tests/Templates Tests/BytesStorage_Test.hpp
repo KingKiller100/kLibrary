@@ -11,7 +11,7 @@ namespace kTest::templates
 		~BytesStorageTester() override;
 
 	protected:
-		void Test() override;
+		void Prepare() override;
 
 	private:
 		bool CharacterTest();

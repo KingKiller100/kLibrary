@@ -15,7 +15,7 @@ namespace kTest::utility
 
 	using namespace klib::kBits;
 	
-	void BitTricksTester::Test()
+	void BitTricksTester::Prepare()
 	{
 		VERIFY_MULTI_INIT();
 		VERIFY_MULTI(SetTest());
@@ -51,7 +51,7 @@ namespace kTest::utility
 			VERIFY(num == 0b0100);
 		}
 		
-		return success;
+		
 	}
 
 	bool BitTricksTester::ClearTest()
@@ -74,7 +74,7 @@ namespace kTest::utility
 			VERIFY(num == 0b0000u);
 		}
 		
-		return success;
+		
 	}
 
 	bool BitTricksTester::CheckTest()
@@ -97,7 +97,7 @@ namespace kTest::utility
 			VERIFY(isSet == true);
 		}
 		
-		return success;
+		
 	}
 
 	bool BitTricksTester::ToggleTest()
@@ -120,7 +120,7 @@ namespace kTest::utility
 			VERIFY(num == 0b0000u);
 		}
 		
-		return success;
+		
 	}
 }
 #endif
