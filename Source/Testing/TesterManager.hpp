@@ -17,7 +17,6 @@ namespace kTest
 
 	class TesterManager
 	{
-		struct Token {};
 	public:
 		enum Threads : size_t
 		{
@@ -40,21 +39,16 @@ namespace kTest
 	public:
 		using Test_t = TesterBase;
 
-		TesterManager(Token&);
+		TesterManager();
 		~TesterManager();
 
 		void Initialize(bool skipPerformanceTesting = false);
-		void InitializeMaths() const;
-		void InitializeUtility(bool includeTimeTests = true) const;
-		void InitializeTemplates() const;
 		void Shutdown();
 		void RunPerformanceTests() const;
 		void Add(TesterBase* test);
 		void RunAll(size_t noOfThreads = 1);
 		void ClearAllTests();
-
-		static TesterManager& Get();
-
+		
 	private:
 		void Run(TesterBase& test);
 		void WriteToConsole(const bool result, const std::string& nameOpenerStr,

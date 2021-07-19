@@ -62,7 +62,7 @@ namespace kTest::performance
 
 	void PerformanceTestManager::InitializeTests()
 	{
-		InitializeAllPerformanceTests();
+		InitializeAllPerformanceTests(this);
 	}
 
 	void PerformanceTestManager::RunTest(PerformanceTestBase * test)
@@ -113,10 +113,10 @@ namespace kTest::performance
 
 	void PerformanceTestManager::ClearAll()
 	{
-		for (auto& test : tests)
+		for (auto* test : tests)
 		{
 			delete test;
-			// test = nullptr;
+			test = nullptr;
 		}
 		tests.clear();
 	}

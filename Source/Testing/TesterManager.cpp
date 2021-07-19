@@ -25,7 +25,7 @@ namespace kTest
 	using namespace klib;
 	using namespace kString;
 
-	TesterManager::TesterManager(Token&)
+	TesterManager::TesterManager()
 		: success(true)
 		, skipPerformanceTests(false)
 	{
@@ -58,22 +58,7 @@ namespace kTest
 
 		file.open(path, std::ios::out | std::ios::app);
 	}
-
-	void TesterManager::InitializeMaths() const
-	{
-		InitializeMathsTests();
-	}
-
-	void TesterManager::InitializeUtility(bool includeTimeTests) const
-	{
-		InitializeUtilityTests(includeTimeTests);
-	}
-
-	void TesterManager::InitializeTemplates() const
-	{
-		InitializeTemplateTests();
-	}
-
+	
 	void TesterManager::Add(TesterBase* test)
 	{
 		tests.insert(std::unique_ptr<TesterBase>(std::move(test)));
@@ -244,13 +229,6 @@ namespace kTest
 			tests.clear();
 
 		testTimes.clear();
-	}
-
-	TesterManager& TesterManager::Get()
-	{
-		static Token t;
-		static TesterManager instance(t);
-		return instance;
 	}
 }
 #endif // TESTING_ENABLED

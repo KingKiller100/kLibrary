@@ -44,69 +44,69 @@ namespace kTest
 	{
 		namespace
 		{
-			void AddUtilityPerformanceTests()
+			void AddUtilityPerformanceTests(PerformanceTestManager* pm)
 			{
 				// Utility
-				AddTest<PerformanceTestManager>(new util::StrToSpeedTest());
-				AddTest<PerformanceTestManager>(new util::ToStringSpeedTest());
+				AddTest<util::StrToSpeedTest>(pm);
+				AddTest<util::ToStringSpeedTest>(pm);
 			}
 
-			void AddMathsPerformanceTests()
+			void AddMathsPerformanceTests(PerformanceTestManager* pm)
 			{
 				// Maths
-				AddTest<PerformanceTestManager>(new maths::AlgorithmsSpeedTest());
-				AddTest<PerformanceTestManager>(new maths::VectorSpeedTest());
+				AddTest<maths::AlgorithmsSpeedTest>(pm);
+				AddTest<maths::VectorSpeedTest>(pm);
 			}
 		}
 
-		void InitializeAllPerformanceTests()
+		void InitializeAllPerformanceTests(PerformanceTestManager* pm)
 		{
-			AddUtilityPerformanceTests();
-			AddMathsPerformanceTests();
+			AddUtilityPerformanceTests(pm);
+			AddMathsPerformanceTests(pm);
 		}
 	}
 
-	void InitializeMathsTests()
+	void InitializeMathsTests(TesterManager* tm)
 	{
-		AddTest<TesterManager>(new maths::FractionTester());
-		AddTest<TesterManager>(new maths::AlgorithmsTester());
-		AddTest<TesterManager>(new maths::VectorsTester());
-		AddTest<TesterManager>(new maths::MatricesTester());
-		AddTest<TesterManager>(new maths::QuaternionsTester());
-		AddTest<TesterManager>(new maths::RandomTester());
+		AddTest<maths::FractionTester>(tm);
+		AddTest<maths::AlgorithmsTester>(tm);
+		AddTest<maths::VectorsTester>(tm);
+		AddTest<maths::MatricesTester>(tm);
+		AddTest<maths::QuaternionsTester>(tm);
+		AddTest<maths::RandomTester>(tm);
 	}
 
-	void InitializeUtilityTests(bool includeTimeTests)
+	void InitializeUtilityTests(TesterManager* tm, bool includeTimeTests)
 	{
-		AddTest<TesterManager>(new utility::BitTricksTester());
-		AddTest<TesterManager>(new utility::StringConverterTester());
-		AddTest<TesterManager>(new utility::EnumTester());
-		AddTest<TesterManager>(new utility::StringManipulationTester());
-		AddTest<TesterManager>(new utility::FormatToStringTester());
-		AddTest<TesterManager>(new utility::SourceInfoTester());
-		AddTest<TesterManager>(new utility::CalendarTester());
-		AddTest<TesterManager>(new utility::FileSystemTester());
-		AddTest<TesterManager>(new utility::DebugTester());
-		AddTest<TesterManager>(new utility::LoggingTester());
-		AddTest<TesterManager>(new utility::StringViewTester());
+		AddTest<utility::BitTricksTester>(tm);
+		AddTest<utility::StringConverterTester>(tm);
+		AddTest<utility::EnumTester>(tm);
+		AddTest<utility::StringManipulationTester>(tm);
+		AddTest<utility::FormatToStringTester>(tm);
+		AddTest<utility::SourceInfoTester>(tm);
+		AddTest<utility::CalendarTester>(tm);
+		AddTest<utility::FileSystemTester>(tm);
+		AddTest<utility::DebugTester>(tm);
+		AddTest<utility::LoggingTester>(tm);
+		AddTest<utility::StringViewTester>(tm);
 		
 		if (includeTimeTests)
 		{
-			AddTest<TesterManager>(new utility::StopWatchTester());
-			AddTest<TesterManager>(new utility::ProfilerTester());
+			AddTest<utility::StopWatchTester>(tm);
+			AddTest<utility::ProfilerTester>(tm);
 		}
 	}
 
-	void InitializeTemplateTests()
+	void InitializeTemplateTests(TesterManager* tm)
 	{
-		AddTest<TesterManager>(new templates::BytesStorageTester());
+		AddTest<templates::BytesStorageTester>(tm);
 	}
 
 
-	void InitializeAllTests()
+	void InitializeAllTests(TesterManager* tm)
 	{
-		InitializeMathsTests();
-		InitializeUtilityTests(true);
-		InitializeTemplateTests();
+		InitializeMathsTests(tm);
+		InitializeUtilityTests(tm, true);
+		InitializeTemplateTests(tm);
 	}
 }

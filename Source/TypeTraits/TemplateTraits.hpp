@@ -26,18 +26,5 @@ namespace klib::type_trait
 
 	template<typename T>
 	using Simplify_t = std::remove_cv_t<std::remove_pointer_t<std::decay_t<T>>>;
-
-	struct NonCopyable
-	{
-		NonCopyable() noexcept = default;
-
-		NonCopyable(NonCopyable&&) noexcept = default;
-		NonCopyable& operator=(NonCopyable&&) noexcept = default;
-
-		// Deletes copy ctor and assignment to prevent copying
-		NonCopyable(const NonCopyable&) = delete;
-		NonCopyable& operator=(const NonCopyable&) const = delete;
-	};
-
 }
 

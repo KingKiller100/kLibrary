@@ -2,9 +2,9 @@
 
 namespace kTest
 {
-	template<class TestManager>
-	void AddTest(typename TestManager::Test_t* test)
+	template<typename Test, typename TestManager>
+	void AddTest(TestManager* tm)
 	{
-		TestManager::Get().Add(test);
+		tm->Add(new Test{});
 	}
 }

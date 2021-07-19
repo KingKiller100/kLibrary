@@ -12,7 +12,7 @@
 
 namespace kTest
 {
-	class TesterBase : public klib::type_trait::NonCopyable
+	class TesterBase
 	{
 	protected:
 		using TestCaseFunc = std::function<void()>;
@@ -57,7 +57,7 @@ namespace kTest
 
 #if MSVC_PLATFORM_TOOLSET > 141
 	// Verify result of a test if result is available at compile time
-#	define VERIFY_COMPILE_TIME(test) klib::type_trait::Compile_Time_Test< test >::value;
+#	define VERIFY_COMPILE_TIME(test) (void)klib::type_trait::Compile_Time_Test< test >::value;
 #else
 #	define VERIFY_COMPILE_TIME(test) VERIFY(test)
 #endif

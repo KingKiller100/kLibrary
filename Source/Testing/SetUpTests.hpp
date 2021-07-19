@@ -1,14 +1,17 @@
 ﻿#pragma once
+#include "TesterManager.hpp"
+#include "Performance/PerformanceTestManager.hpp"
+
 
 namespace kTest
 {
 	namespace performance
 	{
-		void InitializeAllPerformanceTests();
+		void InitializeAllPerformanceTests(PerformanceTestManager* pm);
 	}
 
-	void InitializeMathsTests();
-	void InitializeUtilityTests(bool includeTimeTests);
-	void InitializeTemplateTests();
-	void InitializeAllTests();
+	void InitializeMathsTests(TesterManager* tm);
+	void InitializeUtilityTests(TesterManager* tm, bool includeTimeTests);
+	void InitializeTemplateTests(TesterManager* tm);
+	void InitializeAllTests(TesterManager* tm);
 }
