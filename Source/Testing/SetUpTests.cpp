@@ -44,14 +44,14 @@ namespace kTest
 	{
 		namespace
 		{
-			void AddUtilityPerformanceTests(PerformanceTestManager* pm)
+			void AddUtilityPerformanceTests(PerformanceTestManager& pm)
 			{
 				// Utility
 				AddTest<util::StrToSpeedTest>(pm);
 				AddTest<util::ToStringSpeedTest>(pm);
 			}
 
-			void AddMathsPerformanceTests(PerformanceTestManager* pm)
+			void AddMathsPerformanceTests(PerformanceTestManager& pm)
 			{
 				// Maths
 				AddTest<maths::AlgorithmsSpeedTest>(pm);
@@ -59,14 +59,14 @@ namespace kTest
 			}
 		}
 
-		void InitializeAllPerformanceTests(PerformanceTestManager* pm)
+		void InitializeAllPerformanceTests(PerformanceTestManager& pm)
 		{
 			AddUtilityPerformanceTests(pm);
 			AddMathsPerformanceTests(pm);
 		}
 	}
 
-	void InitializeMathsTests(TesterManager* tm)
+	void InitializeMathsTests(TesterManager& tm)
 	{
 		AddTest<maths::FractionTester>(tm);
 		AddTest<maths::AlgorithmsTester>(tm);
@@ -76,7 +76,7 @@ namespace kTest
 		AddTest<maths::RandomTester>(tm);
 	}
 
-	void InitializeUtilityTests(TesterManager* tm, bool includeTimeTests)
+	void InitializeUtilityTests(TesterManager& tm, bool includeTimeTests)
 	{
 		AddTest<utility::BitTricksTester>(tm);
 		AddTest<utility::StringConverterTester>(tm);
@@ -97,13 +97,13 @@ namespace kTest
 		}
 	}
 
-	void InitializeTemplateTests(TesterManager* tm)
+	void InitializeTemplateTests(TesterManager& tm)
 	{
 		AddTest<templates::BytesStorageTester>(tm);
 	}
 
 
-	void InitializeAllTests(TesterManager* tm)
+	void InitializeAllTests(TesterManager& tm)
 	{
 		InitializeMathsTests(tm);
 		InitializeUtilityTests(tm, true);

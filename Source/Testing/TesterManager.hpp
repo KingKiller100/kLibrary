@@ -51,9 +51,9 @@ namespace kTest
 		
 	private:
 		void Run(TesterBase& test);
-		void WriteToConsole(const bool result, const std::string& nameOpenerStr,
+		void WriteToConsole(const bool pass, const std::string& nameOpenerStr,
 			const std::string& resTimeStr);
-		double GetAverageTime() const;
+		[[nodiscard]] double GetAverageTime() const;
 		void WriteToFile(const std::string& results);
 		void PerformTests(const size_t noOfThreads, clock_t& outStart);
 

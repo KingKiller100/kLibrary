@@ -14,7 +14,7 @@ namespace klib::kCalendar
 	class Day : private CalendarComponentToStringImplExtended, public kTemplate::SimpleComparisonOperators<Day>
 	{
 	public:
-		enum DayOfTheWeek : unsigned char
+		enum DayOfTheWeek : std::uint16_t
 		{
 			SUNDAY = 0, MONDAY, TUESDAY,
 			WEDNESDAY, THURSDAY, FRIDAY,
@@ -36,7 +36,7 @@ namespace klib::kCalendar
 		static constexpr size_t DaysInLeapYear = 366;
 
 	public:
-		constexpr Day(std::uint16_t day = 1, DayOfTheWeek dotw = MONDAY) noexcept
+		constexpr Day(std::uint16_t day = 1, DayOfTheWeek dotw = DayOfTheWeek::MONDAY) noexcept
 			: day(day), dayOfTheWeek(dotw)
 		{}
 
@@ -64,12 +64,12 @@ namespace klib::kCalendar
 
 		USE_RESULT static constexpr auto DayOfTheWeekToString(DayOfTheWeek day)
 		{
-			constexpr std::array<const char*, DaysInWeek> kCalendar_DaysOfTheWeek = {
+			constexpr std::array kCalendar_DaysOfTheWeek = {
 				"Sunday", "Monday", "Tuesday", "Wednesday",
 			"Thursday", "Friday", "Saturday"
 			};
 
-			return kCalendar_DaysOfTheWeek[day];
+			return kCalendar_DaysOfTheWeek[static_cast<std::uint16_t>(day)];
 		}
 
 		USE_RESULT bool Verify() const;

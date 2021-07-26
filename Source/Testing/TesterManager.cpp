@@ -17,6 +17,7 @@
 #include "../Utility/FileSystem/kFileSystem.hpp"
 
 #include <iostream>
+#include <stdexcept>
 #include <mutex>
 #include <Windows.h>
 
@@ -50,7 +51,7 @@ namespace kTest
 
 		if (!isMade && !std::filesystem::exists(path))
 		{
-			throw std::runtime_error("Test Results directory could not be created/found. Please check why!");
+			throw std::runtime_error("Test results directory could not be created/found. Please check why!");
 		}
 
 		path += "Results.txt";
@@ -88,9 +89,9 @@ namespace kTest
 		const clock_t end = std::clock();
 
 		const auto finalTime = static_cast<double>(end - start) / CLOCKS_PER_SEC;
-		const auto secs = CAST(unsigned, finalTime);
+		const auto secs = static_cast<unsigned>(finalTime);
 		const auto remainder = finalTime - secs;
-		const unsigned millis = CAST(unsigned, std::chrono::milliseconds::period::den * remainder);
+		const unsigned millis = static_cast<unsigned>(std::chrono::milliseconds::period::den * remainder);
 		const auto avgTime = GetAverageTime();
 
 		auto timeStr = Sprintf("Total Runtime: %us %ums | ", secs, millis);
@@ -167,9 +168,8 @@ namespace kTest
 
 		testTimes.push_back(testTime);
 
-		const auto resTimeStr = Sprintf("| Runtime: %.3f%s"
-			, testTime
-			, "ms");
+		const auto resTimeStr = Sprintf("| Runtime: %.3fms"
+			, testTime);
 
 		WriteToConsole(pass, nameOpener, resTimeStr);
 

@@ -27,4 +27,9 @@ namespace klib::kLocale
 			g_Locale = std::locale(g_CurrentLocale.data(), cat);
 		}
 	}
+
+	void SetDefaultLocale()
+	{
+		SetLocale("", std::locale::all);
+	}
 }

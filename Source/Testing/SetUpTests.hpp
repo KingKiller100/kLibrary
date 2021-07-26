@@ -7,11 +7,11 @@ namespace kTest
 {
 	namespace performance
 	{
-		void InitializeAllPerformanceTests(PerformanceTestManager* pm);
+		void InitializeAllPerformanceTests(PerformanceTestManager& pm);
 	}
 
-	void InitializeMathsTests(TesterManager* tm);
-	void InitializeUtilityTests(TesterManager* tm, bool includeTimeTests);
-	void InitializeTemplateTests(TesterManager* tm);
-	void InitializeAllTests(TesterManager* tm);
+	void InitializeMathsTests(TesterManager& tm);
+	void InitializeUtilityTests(TesterManager& tm, bool includeTimeTests);
+	void InitializeTemplateTests(TesterManager& tm);
+	void InitializeAllTests(TesterManager& tm);
 }

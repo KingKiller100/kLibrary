@@ -52,10 +52,10 @@ namespace kmaths
 
 		constexpr void Simplify() noexcept
 		{
-			const auto lcf = LargestCommonFactor();
-			const auto oneOverLCF = 1.f / lcf;
-			numerator = CAST(Numerator_Value_Type, oneOverLCF * numerator);
-			denominator = CAST(Numerator_Value_Type, oneOverLCF * denominator);
+			const double lcf = LargestCommonFactor();
+			const auto oneOverLCF = 1.0 / lcf;
+			numerator = static_cast<Numerator_Value_Type>(oneOverLCF * numerator);
+			denominator = static_cast<Numerator_Value_Type>(oneOverLCF * denominator);
 
 			if (numerator == denominator)
 				numerator = denominator = 1;

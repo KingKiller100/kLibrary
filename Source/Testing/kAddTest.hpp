@@ -3,8 +3,8 @@
 namespace kTest
 {
 	template<typename Test, typename TestManager>
-	void AddTest(TestManager* tm)
+	void AddTest(TestManager& tm)
 	{
-		tm->Add(new Test{});
+		tm.Add(new Test{});
 	}
 }

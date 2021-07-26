@@ -51,6 +51,7 @@
 // Debug
 #include "Utility/Debug/kAssert.hpp"
 #include "Utility/Debug/kDebugger.hpp"
+#include "Utility/Debug/Exceptions/NotImplementedException.hpp"
 
 // Source code information
 #include "Utility/Debug/Source/kSourceInfo.hpp"

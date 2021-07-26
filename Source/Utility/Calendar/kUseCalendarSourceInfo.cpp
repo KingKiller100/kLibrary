@@ -24,6 +24,10 @@ namespace klib::kCalendar
 			, PlatformOS::APPLE
 			, os);
 		
+		os = os.MaskCmp(PlatformOS::LINUX
+			, PlatformOS::LINUX
+			, os);
+		
 		switch (os)
 		{
 		case PlatformOS::WINDOWS:
@@ -35,7 +39,6 @@ namespace klib::kCalendar
 			//break;
 		default:
 			throw kDebug::CalendarError("Unknown platform. Cannot create platform calendar information source");
-			break;
 		}
 	}
 

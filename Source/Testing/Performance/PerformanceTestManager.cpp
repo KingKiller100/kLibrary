@@ -62,7 +62,7 @@ namespace kTest::performance
 
 	void PerformanceTestManager::InitializeTests()
 	{
-		InitializeAllPerformanceTests(this);
+		InitializeAllPerformanceTests(*this);
 	}
 
 	void PerformanceTestManager::RunTest(PerformanceTestBase * test)

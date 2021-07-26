@@ -11,6 +11,7 @@ namespace klib::kLocale
 	const std::string& GetLocaleName();
 	void SetLocale(const std::string_view& localeName
 		, std::locale::category cat = std::locale::all);
+	void SetDefaultLocale();
 
 	template<typename Facet_t>
 	USE_RESULT constexpr const Facet_t& GetFacet() noexcept
