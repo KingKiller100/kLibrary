@@ -14,8 +14,8 @@ namespace klib::kFileSystem
 
 		Path dir(directory);
 
-		if (dir.wstring().back() != pathSeparator<Char>)
-			dir += pathSeparator<Char>; // Final suffix of directory char type must end with '\\'
+		if (dir.wstring().back() != PathSeparator<Char>)
+			dir += PathSeparator<Char>; // Final suffix of directory char type must end with '\\'
 
 		bool isDirCreated = std::filesystem::create_directories(dir);
 

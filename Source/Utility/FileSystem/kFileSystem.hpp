@@ -31,20 +31,20 @@ namespace klib {
 		}
 		
 		template<class CharType, class = std::enable_if_t<type_trait::Is_Char_V<CharType>>>
-		constexpr auto pathSeparator = secret::impl::s_IsDos ? CharType('\\') : CharType('/');
+		constexpr auto PathSeparator = secret::impl::s_IsDos ? CharType('\\') : CharType('/');
 
 		template<class SourceType, class = std::enable_if_t<type_trait::Is_String_V<SourceType>>>
 		USE_RESULT constexpr auto CorrectFilePathSeparators(const SourceType& src)
 		{
 			using CharType = typename SourceType::value_type;
-			return kString::Replace(src, CharType('/'), pathSeparator<CharType>);
+			return kString::Replace(src, CharType('/'), PathSeparator<CharType>);
 		}
 
 		template<class SourceType, class = std::enable_if_t<type_trait::Is_Char_V<SourceType>>>
 		USE_RESULT constexpr auto CorrectFilePathSeparators(const SourceType* src)
 		{
 			using CharType = SourceType;
-			return kString::Replace(src, CharType('/'), pathSeparator<CharType>);
+			return kString::Replace(src, CharType('/'), PathSeparator<CharType>);
 		}
 
 		/**
@@ -310,7 +310,7 @@ namespace klib {
 				}
 
 				cwdFullPath = kString::StringWriter<Char>(cwdBuffer, cwdBuffer + (length - 1));
-				cwdFullPath += pathSeparator<Char>;
+				cwdFullPath += PathSeparator<Char>;
 
 				delete[] cwdBuffer;
 				secret::helper::g_Update_CWD = false;
@@ -379,7 +379,7 @@ namespace klib {
 				}
 
 				exeFullPath = kString::StringWriter<Char>(exeBuffer, exeBuffer + (length - 1));
-				exeFullPath.erase(exeFullPath.find_last_of(pathSeparator<Char>) + 1);
+				exeFullPath.erase(exeFullPath.find_last_of(PathSeparator<Char>) + 1);
 
 				delete[] exeBuffer;
 			}
@@ -392,7 +392,7 @@ namespace klib {
 		{
 			using Char = std::decay_t<std::remove_pointer_t<CharType>>;
 			const auto p = CorrectFilePathSeparators(path);
-			const auto filename = p.substr(p.find_last_of(pathSeparator<Char>) + 1);
+			const auto filename = p.substr(p.find_last_of(PathSeparator<Char>) + 1);
 			return filename;
 		}
 
@@ -419,8 +419,8 @@ namespace klib {
 		USE_RESULT constexpr kString::StringWriter<CharType> GetParentPath(const kString::StringWriter<CharType>& path)
 		{
 			using Char = type_trait::Simplify_t<CharType>;
-			auto parentPath = kString::Replace(path, Char('/'), pathSeparator<Char>);
-			parentPath = parentPath.substr(0, parentPath.find_last_of(pathSeparator<Char>));
+			auto parentPath = kString::Replace(path, Char('/'), PathSeparator<Char>);
+			parentPath = parentPath.substr(0, parentPath.find_last_of(PathSeparator<Char>));
 			return parentPath;
 		}
 
