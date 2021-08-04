@@ -58,7 +58,7 @@ namespace kTest::utility
 	{
 		bool failedConditionExceptionTest = false;
 		FailedConditionException("Assert", "Working Great!", SOURCE_INFO(),
-			[&](std::string&, const SourceInfo&)
+			[&](std::string_view, std::string_view, const SourceInfo&)
 		{
 			failedConditionExceptionTest = true;
 		});

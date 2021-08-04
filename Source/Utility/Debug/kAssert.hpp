@@ -12,17 +12,12 @@ namespace klib::kDebug
 	class FailedConditionException final : public std::exception
 	{
 	public:
-		using AssertFunc_t = std::function<void(std::string&, const SourceInfo&)>;
+		using AssertFunc_t = std::function<void(std::string_view, std::string_view, const SourceInfo&)>;
 		
 	public:
 		FailedConditionException(const std::string_view& expected, const std::string_view& msg
 			, const SourceInfo& sourceInfo, const AssertFunc_t& cb);
 		~FailedConditionException() throw();
-
-		char const* what() const override;
-		
-	private:
-		std::string report;
 	};
 
 	static FailedConditionException::AssertFunc_t NoAssertCB = nullptr;

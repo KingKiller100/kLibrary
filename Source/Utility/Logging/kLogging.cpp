@@ -34,6 +34,8 @@ namespace klib::kLogs
 	{
 		if (!entriesCache.empty())
 			FinalOutput(false);
+
+		entriesCache.clear();
 	}
 
 	void Logging::Initialize(const std::filesystem::path& path)
