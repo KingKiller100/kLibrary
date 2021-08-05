@@ -23,7 +23,7 @@ namespace kTest
 			NONE = 0,
 			SINGLE = NONE,
 			DUAL = 2,
-			TRI = 3,
+			TRIPLE = 3,
 			QUAD = 4,
 			HEX = 6,
 			HEPT = 7,
