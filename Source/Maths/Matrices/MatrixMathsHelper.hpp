@@ -251,4 +251,62 @@ namespace kmaths
 		return transform;
 	}
 
+	template<typename T>
+	constexpr bool DecomposeTransform(TransformMatrix<T> m, Vector3<T>& position, Vector3<T>& rotation, Vector3<T>& scale) noexcept(std::is_arithmetic_v<T>)
+	{
+		using namespace constants;
+
+		static constexpr auto zero = Zero<T>;
+		static constexpr auto one = One<T>;
+
+		if (ApproximatelyZero<T>(m[3][3]))
+		{
+			return false;
+		}
+
+		// Isolate perspective [messy]
+		if (
+			ApproximatelyZero<T>(m[3][0])
+			|| ApproximatelyZero<T>(m[3][1])
+			|| ApproximatelyZero<T>(m[3][2])
+			)
+		{
+			// Clear perspective partition
+			m[3].Zero();
+			m[3][3] = one;
+		}
+
+		position = m[3];
+		m[3][0] = m[3][1] = m[3][2] = zero;
+
+		Vector3<T> columns[3], pDum3;
+
+		for (Length_t row = 0; row < 3; ++row)
+			for (Length_t col = 0; col < 3; ++col)
+			{
+				columns[row][col] = m[row][col];
+			}
+
+		scale.x = columns[0].MagnitudeSQ();
+		scale.y = columns[1].MagnitudeSQ();
+		scale.z = columns[2].MagnitudeSQ();
+		
+		columns[0] = columns[0].Normalize();
+		columns[1] = columns[1].Normalize();
+		columns[2] = columns[2].Normalize();
+
+		rotation.y = std::asin(-columns[2][0]);
+
+		if (cos(rotation.y) != 0) {
+			rotation.x = atan2(columns[1][2], columns[2][2]);
+			rotation.z = atan2(columns[0][1], columns[0][0]);
+		}
+		else {
+			rotation.x = atan2(-columns[2][0], columns[1][1]);
+			rotation.z = zero;
+		}
+
+		return true;
+	}
+
 }

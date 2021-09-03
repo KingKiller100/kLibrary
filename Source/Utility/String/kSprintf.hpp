@@ -21,30 +21,26 @@ namespace klib::kString
 		USE_RESULT constexpr std::basic_string<CharType> SprintfWrapperImpl(const CharType* format
 			, type_trait::SizeCondConstRef_t<T> arg1, type_trait::SizeCondConstRef_t<Ts> ...argPack)
 		{
-			using SignedSize_t = std::make_signed_t<size_t>;
-
-			constexpr SignedSize_t npos(0);
-
 			CharType* buffer = nullptr;
-			auto length = npos;
+			auto length = 0;
 
-			if constexpr(std::is_same_v<CharType, char>)
+			if constexpr (std::is_same_v<CharType, char>)
 			{
 				length = _snprintf(nullptr, 0, format
 					, stringify::Identity<CharType, T>::Get(arg1)
 					, stringify::Identity<CharType, Ts>::Get(argPack)...) + 1;
-				if (length <= npos) throw std::runtime_error("Error during char type \"" __FUNCSIG__ "\" formatting: string returned length <= 0");
+				if (length <= 0) throw std::runtime_error("Error during char type \"" __FUNCSIG__ "\" formatting: string returned length <= 0");
 				buffer = new CharType[length]();
 				sprintf_s(buffer, length, format
 					, stringify::Identity<CharType, T>::Get(arg1)
 					, stringify::Identity<CharType, Ts>::Get(argPack)...);
 			}
-			else if constexpr(std::is_same_v<CharType, wchar_t>)
+			else if constexpr (std::is_same_v<CharType, wchar_t>)
 			{
 				length = _snwprintf(nullptr, 0, format
 					, stringify::Identity<CharType, T>::Get(arg1)
 					, stringify::Identity<CharType, Ts>::Get(argPack)...) + 1;
-				if (length <= npos) throw std::runtime_error("Error during wchar_t type \"" __FUNCSIG__ "\" formatting: string returned length <= 0");
+				if (length <= 0) throw std::runtime_error("Error during wchar_t type \"" __FUNCSIG__ "\" formatting: string returned length <= 0");
 				buffer = new CharType[length]();
 				swprintf_s(buffer, length, format
 					, stringify::Identity<CharType, T>::Get(arg1)
@@ -53,7 +49,7 @@ namespace klib::kString
 			else
 			{
 				const auto fmt = kString::Convert<wchar_t>(format);
-				const auto str = SprintfWrapperImpl<wchar_t, T,Ts...>(fmt, arg1, argPack...);
+				const auto str = SprintfWrapperImpl<wchar_t, T, Ts...>(fmt, arg1, argPack...);
 				const auto text = kString::Convert<CharType>(str);
 				return text;
 			}

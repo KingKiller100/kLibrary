@@ -355,7 +355,7 @@ namespace kmaths
 		{
 			constexpr size_t size = C < Length ? C : Length;
 			for (size_t i = 0; i < size; ++i)
-				operator[](i) = CAST(Type, other[i]);
+				operator[](i) = static_cast<Type>(other[i]);
 			return *this;
 		}
 
@@ -364,7 +364,7 @@ namespace kmaths
 		{
 			constexpr size_t size = C < Length ? C : Length;
 			for (size_t i = 0; i < size; ++i)
-				operator[](i) = CAST(Type, other[i]);
+				operator[](i) = static_cast<Type>(other[i]);
 			return *this;
 		}
 
