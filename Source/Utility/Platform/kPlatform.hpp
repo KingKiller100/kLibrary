@@ -18,7 +18,7 @@ namespace klib
 			MAC = BIT_SHIFT(4),
 			APPLE = IOS_SIM | IOS | MAC,
 			ANDROID = BIT_SHIFT(5),
-			LINUX = BIT_SHIFT(6) | ANDROID 
+			LINUX = BIT_SHIFT(6) | ANDROID
 		);
 
 		constexpr PlatformOS GetPlatform() noexcept
@@ -51,10 +51,15 @@ namespace klib
 
 			return PlatformOS::UNKNOWN;
 		}
+
+		constexpr bool QueryPlatform(PlatformOS os) noexcept
+		{
+			return GetPlatform() & os;
+		}
 	}
- 
+
 #ifdef KLIB_SHORT_NAMESPACE
 	using namespace kPlatform;
 #endif
-	
+
 }
