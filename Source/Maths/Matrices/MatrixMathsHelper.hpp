@@ -82,7 +82,7 @@ namespace kmaths
 		auto res = GetTransformIdentity<T>();
 		res[0][0] = CAST(T, 2) / (right - left);
 		res[1][1] = CAST(T, 2) / (top - bottom);
-		res[2][2] = (zDir == ZAxisDirection::LEFT_HAND ? constants::Two<T> : constants::MinusOne<T> * constants::Two<T>)
+		res[2][2] = (zDir == ZAxisDirection::LEFT_HAND ? constants::Two<T> : constants::MinusOne<T> *constants::Two<T>)
 			/ (zFar - zNear);
 		res[3][0] = -(right + left) / (right - left);
 		res[3][1] = -(top + bottom) / (top - bottom);
@@ -191,7 +191,9 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Rotate2D(T radians) noexcept
 	{
-		const auto rotate = Rotate(GetTransformIdentity<T>(), radians, { CAST(T, 0), CAST(T, 0), constants::One<T> });
+		static constexpr auto zero = constants::Zero<T>;
+		static constexpr auto one = constants::One<T>;
+		const auto rotate = Rotate(GetTransformIdentity<T>(), radians, { zero, zero, one });
 		return rotate;
 	}
 
@@ -216,7 +218,7 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Scale2D(const Vector2<T>& v) noexcept
 	{
-		const auto scale = Scale<T>(GetTransformIdentity<T>(), { v[0], v[1], CAST(T, 1) });
+		const auto scale = Scale<T>(GetTransformIdentity<T>(), { v[0], v[1], constants::One<T> });
 		return scale;
 	}
 
@@ -239,7 +241,10 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> TRS(const Vector3<T>& position, const T radians, const Vector3<T>& axes, const Vector3<T>& scale) noexcept
 	{
-		const TransformMatrix<T> transform = Translate<T>(position) * Rotate<T>(radians, axes) * Scale<T>(scale);
+		const auto translateMat = Translate<T>(position);
+		const auto rotMat = Rotate<T>(radians, axes);
+		const auto scaleMat = Scale<T>(scale);
+		const TransformMatrix<T> transform = translateMat * rotMat * scaleMat;
 		return transform;
 	}
 
@@ -247,7 +252,10 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> TRS2D(const Vector3<T>& position, const T radians, const Vector2<T>& scale) noexcept
 	{
-		const TransformMatrix<T> transform = Translate<T>(position) * Rotate2D<T>(radians) * Scale2D<T>(scale);
+		const auto translateMat = Translate<T>(position);
+		const auto rotMat = Rotate2D<T>(radians);
+		const auto scaleMat = Scale2D<T>(scale);
+		const TransformMatrix<T> transform = translateMat * rotMat * scaleMat;
 		return transform;
 	}
 
@@ -258,6 +266,12 @@ namespace kmaths
 
 		static constexpr auto zero = Zero<T>;
 		static constexpr auto one = One<T>;
+
+		for (auto r = 0; r < m.GetRows(); ++r)
+		{
+			for (auto c = 0; c < m.GetColumns(); ++c)
+				m[r][c] /= m[3][3];
+		}
 
 		if (ApproximatelyZero<T>(m[3][3]))
 		{
@@ -290,7 +304,7 @@ namespace kmaths
 		scale.x = columns[0].MagnitudeSQ();
 		scale.y = columns[1].MagnitudeSQ();
 		scale.z = columns[2].MagnitudeSQ();
-		
+
 		columns[0] = columns[0].Normalize();
 		columns[1] = columns[1].Normalize();
 		columns[2] = columns[2].Normalize();
