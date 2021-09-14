@@ -324,6 +324,24 @@ namespace kmaths
 			return *this;
 		}
 
+		constexpr const Type& operator[](size_t index) const
+		{
+			if (index >= Length)
+			{
+				throw std::out_of_range("Index must be between 0 & 4");
+			}
+			return (&w)[index];
+		}
+
+		constexpr Type& operator[](size_t index)
+		{
+			if (index >= Length)
+			{
+				throw std::out_of_range("Index must be between 0 & 4");
+			}
+			return (&w)[index];
+		}
+
 	public:
 		T w = constants::One<T>;	// Holds the real component of the quaternion.
 		Vector3<T> v{};	// Holds 3 component vector of complex components of the quaternion.

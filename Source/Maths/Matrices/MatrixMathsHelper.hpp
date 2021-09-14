@@ -4,6 +4,7 @@
 
 #include "../../HelperMacros.hpp"
 #include "../Vectors/PredefinedVectors.hpp"
+#include "../Quaternions/Quaternions.hpp"
 
 #include <cstdint>
 
@@ -260,65 +261,155 @@ namespace kmaths
 	}
 
 	template<typename T>
-	constexpr bool DecomposeTransform(TransformMatrix<T> m, Vector3<T>& position, Vector3<T>& rotation, Vector3<T>& scale) noexcept(std::is_arithmetic_v<T>)
+	constexpr bool DecomposeTransform(TransformMatrix<T> const& ModelMatrix, Vector3<T>& Scale, Quaternion<T>& Orientation, Vector3<T>& Translation, Vector3<T>& Skew, Vector4<T>& Perspective)
 	{
-		using namespace constants;
+		TransformMatrix<T> LocalMatrix(ModelMatrix);
 
-		static constexpr auto zero = Zero<T>;
-		static constexpr auto one = One<T>;
-
-		for (auto r = 0; r < m.GetRows(); ++r)
-		{
-			for (auto c = 0; c < m.GetColumns(); ++c)
-				m[r][c] /= m[3][3];
-		}
-
-		if (ApproximatelyZero<T>(m[3][3]))
-		{
+		// Normalize the matrix.
+		if (ApproximatelyZero(LocalMatrix[3][3]))
 			return false;
-		}
 
-		// Isolate perspective [messy]
+		for (Length_t i = 0; i < 4; ++i)
+			for (Length_t j = 0; j < 4; ++j)
+				LocalMatrix[i][j] /= LocalMatrix[3][3];
+
+		// perspectiveMatrix is used to solve for perspective, but it also provides
+		// an easy way to test for singularity of the upper 3x3 component.
+		Matrix4x4<T> PerspectiveMatrix(LocalMatrix);
+
+		for (Length_t i = 0; i < 3; i++)
+			PerspectiveMatrix[i][3] = static_cast<T>(0);
+		PerspectiveMatrix[3][3] = static_cast<T>(1);
+
+		/// TODO: Fixme!
+		if (ApproximatelyZero(PerspectiveMatrix.GetDeterminant()))
+			return false;
+
+		// First, isolate perspective.  This is the messiest.
 		if (
-			ApproximatelyZero<T>(m[3][0])
-			|| ApproximatelyZero<T>(m[3][1])
-			|| ApproximatelyZero<T>(m[3][2])
-			)
+			ApproximatelyZero(LocalMatrix[0][3]) ||
+			ApproximatelyZero(LocalMatrix[1][3]) ||
+			ApproximatelyZero(LocalMatrix[2][3]))
 		{
-			// Clear perspective partition
-			m[3].Zero();
-			m[3][3] = one;
+			// rightHandSide is the right hand side of the equation.
+			Vector4<T> leftHandSide = LocalMatrix[3];
+
+			// Solve the equation by inverting PerspectiveMatrix and multiplying
+			// rightHandSide by the inverse.  (This is the easiest way, not
+			// necessarily the best.)
+			Matrix4x4<T> InversePerspectiveMatrix = PerspectiveMatrix.Inverse();//   inverse(PerspectiveMatrix, inversePerspectiveMatrix);
+			Matrix4x4<T> TransposedInversePerspectiveMatrix = InversePerspectiveMatrix.Transpose();//   transposeMatrix4(inversePerspectiveMatrix, transposedInversePerspectiveMatrix);
+
+			Perspective = leftHandSide * TransposedInversePerspectiveMatrix;
+			//  v4MulPointByMatrix(rightHandSide, transposedInversePerspectiveMatrix, perspectivePoint);
+
+			// Clear the perspective partition
+			LocalMatrix[0][3] = LocalMatrix[1][3] = LocalMatrix[2][3] = static_cast<T>(0);
+			LocalMatrix[3][3] = static_cast<T>(1);
+		}
+		else
+		{
+			// No perspective.
+			Perspective = Vector4<T>(0, 0, 0, 1);
 		}
 
-		position = m[3];
-		m[3][0] = m[3][1] = m[3][2] = zero;
+		// Next take care of translation (easy).
+		Translation = Vector3<T>(LocalMatrix[3]);
+		LocalMatrix[3] = Vector4<T>(0, 0, 0, LocalMatrix[3].w);
 
-		Vector3<T> columns[3], pDum3;
+		Vector3<T> Row[3], Pdum3;
 
-		for (Length_t row = 0; row < 3; ++row)
-			for (Length_t col = 0; col < 3; ++col)
+		// Now get scale and shear.
+		for (Length_t i = 0; i < 3; ++i)
+			for (Length_t j = 0; j < 3; ++j)
+				Row[i][j] = LocalMatrix[i][j];
+
+		// Compute X scale factor and normalize first row.
+		Scale.x = Row[0].Magnitude();// v3Length(Row[0]);
+
+		Row[0] /= Row[0].Magnitude();
+
+		// Compute XY shear factor and make 2nd row orthogonal to 1st.
+		Skew.z = Row[0].DotProduct(Row[1]);
+		Row[1] = Row[1] * (Row[0] * -Skew.z);
+
+		// Now, compute Y scale and normalize 2nd row.
+		Scale.y = Row[1].Magnitude();
+		Row[1] /= Row[1].Magnitude();
+		Skew.z /= Scale.y;
+
+		// Compute XZ and YZ shears, orthogonalize 3rd row.
+		Skew.y = Row[0].DotProduct(Row[2]);
+		Row[2] = Row[2] * Row[0] * -Skew.y;
+		Skew.x = Row[1].DotProduct(Row[2]);
+		Row[2] = Row[2] * Row[1] * -Skew.x;
+
+		// Next, get Z scale and normalize 3rd row.
+		Scale.z = (Row[2].Magnitude());
+		Row[2] /= Row[2].Magnitude();
+		Skew.y /= Scale.z;
+		Skew.x /= Scale.z;
+
+		// At this point, the matrix (in rows[]) is orthonormal.
+		// Check for a coordinate system flip.  If the determinant
+		// is -1, then negate the matrix and the scaling factors.
+		Pdum3 = Row[1].CrossProduct(Row[2]); // v3Cross(row[1], row[2], Pdum3);
+		if (Row[0].DotProduct(Pdum3) < 0)
+		{
+			for (Length_t i = 0; i < 3; i++)
 			{
-				columns[row][col] = m[row][col];
+				Scale[i] *= static_cast<T>(-1);
+				Row[i] *= static_cast<T>(-1);
 			}
-
-		scale.x = columns[0].MagnitudeSQ();
-		scale.y = columns[1].MagnitudeSQ();
-		scale.z = columns[2].MagnitudeSQ();
-
-		columns[0] = columns[0].Normalize();
-		columns[1] = columns[1].Normalize();
-		columns[2] = columns[2].Normalize();
-
-		rotation.y = std::asin(-columns[2][0]);
-
-		if (cos(rotation.y) != 0) {
-			rotation.x = atan2(columns[1][2], columns[2][2]);
-			rotation.z = atan2(columns[0][1], columns[0][0]);
 		}
-		else {
-			rotation.x = atan2(-columns[2][0], columns[1][1]);
-			rotation.z = zero;
-		}
+
+		// Now, get the rotations out, as described in the gem.
+
+		// FIXME - Add the ability to return either quaternions (which are
+		// easier to recompose with) or Euler angles (rx, ry, rz), which
+		// are easier for authors to deal with. The latter will only be useful
+		// when we fix https://bugs.webkit.org/show_bug.cgi?id=23799, so I
+		// will leave the Euler angle code here for now.
+
+		// ret.rotateY = asin(-Row[0][2]);
+		// if (cos(ret.rotateY) != 0) {
+		//     ret.rotateX = atan2(Row[1][2], Row[2][2]);
+		//     ret.rotateZ = atan2(Row[0][1], Row[0][0]);
+		// } else {
+		//     ret.rotateX = atan2(-Row[2][0], Row[1][1]);
+		//     ret.rotateZ = 0;
+		// }
+
+		int i, j, k = 0;
+		T root, trace = Row[0].x + Row[1].y + Row[2].z;
+		if (trace > static_cast<T>(0))
+		{
+			root = sqrt(trace + static_cast<T>(1.0));
+			Orientation.w = static_cast<T>(0.5) * root;
+			root = static_cast<T>(0.5) / root;
+			Orientation.v.x = root * (Row[1].z - Row[2].y);
+			Orientation.v.y = root * (Row[2].x - Row[0].z);
+			Orientation.v.z = root * (Row[0].y - Row[1].x);
+		} // End if > 0
+		else
+		{
+			static int Next[3] = { 1, 2, 0 };
+			i = 0;
+			if (Row[1].y > Row[0].x) i = 1;
+			if (Row[2].z > Row[i][i]) i = 2;
+			j = Next[i];
+			k = Next[j];
+			
+			int off = 1;
+
+			root = sqrt(Row[i][i] - Row[j][j] - Row[k][k] + static_cast<T>(1.0));
+
+			Orientation[i + off] = static_cast<T>(0.5) * root;
+			root = static_cast<T>(0.5) / root;
+			Orientation[j + off] = root * (Row[i][j] + Row[j][i]);
+			Orientation[k + off] = root * (Row[i][k] + Row[k][i]);
+			Orientation.w = root * (Row[j][k] - Row[k][j]);
+		} // End if <= 0
 
 		return true;
 	}

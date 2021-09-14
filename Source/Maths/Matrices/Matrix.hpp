@@ -443,38 +443,6 @@ namespace kmaths
 			return m;
 		}
 
-		// For Column Major Matrix -Vector operations /////////////////////////////////////////////////////////////////
-		//		template<typename U>
-		//		USE_RESULT constexpr Vector<U, Rows> operator*(const Vector<U, Columns>& v) const noexcept
-		//		{
-		//			Column_Type result;
-		//
-		//			for (auto row = 0; row < Rows; ++row) {
-		//				for (auto col = 0u; col < Columns; ++col) {
-		//#ifdef KLIB_DEBUG
-		//					const auto left = elems[row][col];
-		//					const auto right = v[col];
-		//					const Type res = left * right;
-		//					result[row] += res;
-		//#else
-		//					result[row] += (elems[row][col] * v[col]);
-		//#endif
-		//				}
-		//
-		//				if constexpr(std::is_floating_point_v<Type>) // Round to reduce floating point precision error
-		//					result[row] = HandleFloatingPointError<Type>(result[row]);
-		//			}
-		//
-		//			return result;
-		//		}
-
-				//template<typename U>
-				//USE_RESULT constexpr Vector<U, Rows> operator/(const Vector<U, Columns>& v) const noexcept
-				//{
-				//	return Inverse() * v;
-				//}
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 		template<typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>, U>>
 		USE_RESULT constexpr Matrix operator/(const U scalar) const noexcept
 		{
@@ -717,4 +685,20 @@ namespace kmaths
 	{
 		return operator*(v, m.Inverse());
 	}
+
+	// For Column Major Matrix -Vector operations /////////////////////////////////////////////////////////////////
+	template<typename T, Length_t R, Length_t C>
+	USE_RESULT constexpr Matrix<T, R, C> operator*(const Matrix<T, R, C>& m, const Vector<T, C>& v) noexcept
+	{
+		Matrix<T, C, 1> vm;
+		v[0] = v;
+		return m * vm;
+	}
+	
+	template<typename T, Length_t R, Length_t C>
+	USE_RESULT constexpr Matrix<T, R, C> operator/(const Matrix<T, R, C>& m, const Vector<T, C>& v) noexcept
+	{
+		return m.Inverse() * v;
+	}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
