@@ -517,6 +517,12 @@ namespace kmaths
 		template<typename Type, Length_t C>
 		friend constexpr Vector<Type, C> operator/(const Vector<Type, N>& v, const Matrix<Type, N, C>& m) noexcept;
 
+		template<typename T, Length_t R, Length_t C>
+		friend constexpr Matrix<T, R, C> operator*(const Matrix<T, R, C>& m, const Vector<T, C>& v) noexcept;
+
+		template<typename T, Length_t R, Length_t C>
+		friend constexpr Matrix<T, R, C> operator/(const Matrix<T, R, C>& m, const Vector<T, C>& v) noexcept;
+
 	private:
 		Type dimensions[N]{};
 	};
