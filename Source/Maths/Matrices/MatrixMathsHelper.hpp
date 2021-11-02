@@ -150,10 +150,8 @@ namespace kmaths
 	template<typename T>
 	USE_RESULT constexpr TransformMatrix<T> Rotate(const TransformMatrix<T>& m, T radians, const Vector3<T>& axes) noexcept
 	{
-		const auto a = radians;
-
-		const T cosA = Cosine(a);
-		const T sinA = Sine(a);
+		const T cosA = Cosine(radians);
+		const T sinA = Sine(radians);
 
 		Vector3<T> axis = axes.Normalize();
 		Vector3<T> temp = axis * (constants::One<T> -cosA);
