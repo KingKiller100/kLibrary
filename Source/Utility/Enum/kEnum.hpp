@@ -4,8 +4,8 @@
 #include "../String/kStringConverter.hpp"
 #include <functional>
 
-#define ENUM_X(x, enumName, underlying, ...)											\
-x enumName																				\
+#define ENUM_X(structure, enumName, underlying, ...)									\
+structure enumName																		\
 {																						\
 public:																					\
 	using Underlying_t = underlying;													\
@@ -73,7 +73,7 @@ public:																					\
 	template<typename T1, typename T2, typename = std::enable_if_t<						\
 	std::is_convertible_v<T2, T1>														\
 	>>																					\
-	USE_RESULT constexpr std::decay_t<T1> MaskCmp(Value mask					\
+	USE_RESULT constexpr std::decay_t<T1> MaskCmp(Value mask							\
 		, T1&& successState, T2&& failState) const										\
 	{																					\
 		if (mask & value)																\
@@ -81,13 +81,13 @@ public:																					\
 		return failState;																\
 	}																					\
 																						\
-	USE_RESULT constexpr bool Compare(Value target) const						\
+	USE_RESULT constexpr bool Compare(Value target) const								\
 	{																					\
 		return Compare(target, true, false);											\
 	}																					\
 																						\
 	template<typename T1, typename T2>													\
-	USE_RESULT constexpr std::decay_t<T1> Compare(Value target					\
+	USE_RESULT constexpr std::decay_t<T1> Compare(Value target							\
 		, T1&& successState, T2&& failState) const										\
 	{																					\
 		if (target == value)															\
@@ -151,11 +151,17 @@ public:																					\
 		return value <= other;															\
 	}																					\
 																						\
-	static void ForEach(std::function<void(enumName)> func)								\
+	static constexpr enumName FromUnderlying(underlying v)								\
+	{																					\
+		return enumName(static_cast<Value>(v));											\
+	}																					\
+																						\
+	static void ForEach(std::function<bool( enumName )> func)							\
 	{																					\
 		for (auto v : secret_impl_##enumName::values)									\
 		{																				\
-			func(v);																	\
+			if ( !func( v ) )															\
+				break;																	\
 		}																				\
 	}																					\
 																						\
@@ -217,7 +223,7 @@ public:																					\
 		}																				\
 	}																					\
 																						\
-	static constexpr Value FromStringImpl(const char* s, size_t index)			\
+	static constexpr Value FromStringImpl(const char* s, size_t index)					\
 	{																					\
 		using namespace klib::kEnum::secret::impl;										\
 																						\
@@ -229,7 +235,7 @@ public:																					\
 				secret_impl_##enumName::raw_names[index].data(), s);					\
 																						\
 		const auto ret = matches														\
-			? static_cast<Value>(secret_impl_##enumName::values[index])		\
+			? static_cast<Value>(secret_impl_##enumName::values[index])					\
 			: FromStringImpl(s, index + 1);												\
 																						\
 		return ret;																		\
@@ -238,8 +244,9 @@ public:																					\
 private:																				\
 	underlying value;																	\
 };																						\
+																						\
 
-#define ENUM_X_FWD_DCL(x, enumName) x enumName
+#define ENUM_X_FWD_DCL(structure, enumName) structure enumName
 
 #define ENUM_CLASS_FWD_DCL(enumName) ENUM_X_FWD_DCL(class, enumName)
 #define ENUM_CLASS(enumName, underlying, ...) ENUM_X(class, enumName, underlying, __VA_ARGS__)
