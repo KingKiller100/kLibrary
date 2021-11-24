@@ -5,20 +5,21 @@
 #include <fstream>
 #include <mutex>
 
+
 namespace klib
 {
 	namespace kLogs
 	{
-		class LogDescriptor;
+		class LogProfile;
 		struct LogMessage;
 
 		class FileLogger final : public LogDestWithFormatSpecifier
 		{
 		public:
-			FileLogger(std::string* newName, const std::filesystem::path& path);
+			FileLogger(const std::filesystem::path& path);
 			~FileLogger() noexcept;
 
-			void SetName(std::string* newName) override;
+			std::string_view GetName() const override;
 
 			USE_RESULT std::string GetFileName() const;
 			void SetFileName(const std::string_view& newFilename);
@@ -38,15 +39,13 @@ namespace klib
 
 			bool IsOpen() const override;
 
-			void Close(const bool outputClosingMsg) override;
+			void Close() override;
 
 		private:
 			void Flush(const std::string_view& msg);
-			std::string CreateLogText(const LogMessage& msg, const LogDescriptor& desc) const;
+			std::string CreateLogText( const LogProfile&, const LogMessage& msg ) const;
 
 		private:
-			std::string* name;
-
 			std::filesystem::path path;
 			std::fstream fileStream;
 			std::mutex lock;

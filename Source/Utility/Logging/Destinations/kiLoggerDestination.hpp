@@ -19,11 +19,11 @@ namespace klib::kLogs
 
 		/**
 		 * \brief
-		 *		Change name of the logger
-		 * \param[in] newName
-		 *		STL string representing a name
+		 *		Returns name of logger destination
+		 * \return
+		 *		Destination's name
 		 */
-		virtual void SetName(std::string* newName) = 0;
+		virtual std::string_view GetName() const = 0;
 
 		/**
 		 * \brief
@@ -53,7 +53,7 @@ namespace klib::kLogs
 		 *	\param[in] outputClosingMsg
 		 *			whether we should output the close message when closing
 		 */
-		virtual void Close(const bool outputClosingMsg) = 0;
+		virtual void Close() = 0;
 	};
 
 	struct LogDestWithFormatSpecifier : public iLoggerDestination
@@ -86,7 +86,7 @@ namespace klib::kLogs
 		 * \param lvl
 		 *		Log level to change the format for
 		 */
-		virtual void SetFormat(const std::string_view& format, const LogLevel lvl) noexcept;
+		virtual void SetFormat( const LogLevel lvl, const std::string_view& format ) noexcept;
 	public:
 		inline static constexpr auto DetailSpecifier = '&';
 

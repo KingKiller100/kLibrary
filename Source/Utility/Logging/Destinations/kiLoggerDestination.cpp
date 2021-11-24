@@ -20,7 +20,7 @@ namespace klib::kLogs
 			{'e', "13"}, // Source function
 	};
 
-	void LogDestWithFormatSpecifier::SetFormat(const std::string_view& format, const LogLevel lvl) noexcept
+	void LogDestWithFormatSpecifier::SetFormat( const LogLevel lvl, const std::string_view& format ) noexcept
 	{
 		auto& logFormat = formatMap[lvl];
 

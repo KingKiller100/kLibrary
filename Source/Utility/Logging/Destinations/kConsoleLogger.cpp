@@ -32,42 +32,42 @@ namespace klib
 			, consoleColour(ConsoleColour::WHITE)
 			, enableDebugStringOutput(false)
 		{
-			LogDestWithFormatSpecifier::SetFormat("&t", LogLevel::RAW);
+			LogDestWithFormatSpecifier::SetFormat(LogLevel::RAW, "&t");
 
 			LogDestWithFormatSpecifier::SetFormat(
-				"[&hh:&zz:&ss:&ccc] [&n] [&p]: &t"
-				, LogLevel::TRC);
+				LogLevel::TRC
+				, "[&hh:&zz:&ss:&ccc] [&n] [&p]: &t");
 
 			LogDestWithFormatSpecifier::SetFormat(
-				"[&hh:&zz:&ss:&ccc] [&n] [&p]: &t"
-				, LogLevel::BNR);
+				LogLevel::BNR
+				, "[&hh:&zz:&ss:&ccc] [&n] [&p]: &t");
 
 			LogDestWithFormatSpecifier::SetFormat(
-				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
-				, LogLevel::DBG);
+				LogLevel::DBG
+				, "[&hh:&zz:&ss:&ccc] [&n] [&w]: &t");
 
 			LogDestWithFormatSpecifier::SetFormat(
-				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
-				, LogLevel::NRM);
+				LogLevel::NRM
+				, "[&hh:&zz:&ss:&ccc] [&n] [&w]: &t");
 
 			LogDestWithFormatSpecifier::SetFormat(
-				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
-				, LogLevel::INF);
+				LogLevel::INF
+				, "[&hh:&zz:&ss:&ccc] [&n] [&w]: &t");
 
 			LogDestWithFormatSpecifier::SetFormat(
-				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
-				, LogLevel::WRN);
+				LogLevel::WRN
+				, "[&hh:&zz:&ss:&ccc] [&n] [&w]: &t");
 
 			LogDestWithFormatSpecifier::SetFormat(
-				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
-				"\n[Source]: &f [&l]"
-				, LogLevel::ERR);
+				LogLevel::ERR
+				, "[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
+				"\n[Source]: &f [&l]");
 
 			LogDestWithFormatSpecifier::SetFormat(
-				"[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
+				LogLevel::FTL
+				, "[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
 				"\n[File]: &f"
-				"\n[Line]: &l"
-				, LogLevel::FTL);
+				"\n[Line]: &l");
 		}
 
 		ConsoleLogger::~ConsoleLogger() noexcept

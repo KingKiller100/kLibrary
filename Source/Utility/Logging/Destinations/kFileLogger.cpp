@@ -2,9 +2,9 @@
 #include "kFileLogger.hpp"
 
 #include "../kLogEntry.hpp"
+#include "../kLogProfile.hpp"
 
 #include "../../Calendar/kCalendar.hpp"
-#include "../../Calendar/kCalendarToString.hpp"
 #include "../../String/kToString.hpp"
 #include "../../FileSystem/kFileSystem.hpp"
 
@@ -18,54 +18,47 @@ namespace klib
 
 	namespace kLogs
 	{
-		FileLogger::FileLogger(std::string* newName, const std::filesystem::path& path)
-			: name(newName)
-			, path(path)
+		FileLogger::FileLogger(const std::filesystem::path& path)
+			: path(path)
 		{
-			LogDestWithFormatSpecifier::SetFormat("&t", LogLevel::RAW);
+			LogDestWithFormatSpecifier::SetFormat(
+				LogLevel::TRC
+				, "[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t");
 
 			LogDestWithFormatSpecifier::SetFormat(
-				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
-				, LogLevel::TRC);
+				LogLevel::DBG
+				, "[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t");
 
 			LogDestWithFormatSpecifier::SetFormat(
-				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
-				, LogLevel::BNR);
+				LogLevel::NRM
+				, "[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t");
 
 			LogDestWithFormatSpecifier::SetFormat(
-				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
-				, LogLevel::DBG);
+				LogLevel::INF
+				, "[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t");
 
 			LogDestWithFormatSpecifier::SetFormat(
-				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
-				, LogLevel::NRM);
+				LogLevel::WRN
+				, "[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t");
 
 			LogDestWithFormatSpecifier::SetFormat(
-				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
-				, LogLevel::INF);
+				LogLevel::ERR
+				, "[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
+				"\n                  [Source]: &f [&l]");
 
 			LogDestWithFormatSpecifier::SetFormat(
-				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
-				, LogLevel::WRN);
-
-			LogDestWithFormatSpecifier::SetFormat(
-				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
-				"\n                  [Source]: &f [&l]"
-				, LogLevel::ERR);
-
-			LogDestWithFormatSpecifier::SetFormat(
-				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
+				LogLevel::FTL
+				, "[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
 				"\n                  [File]: &f"
-				"\n                  [Line]: &l"
-				, LogLevel::FTL);
+				"\n                  [Line]: &l");
 		}
 
 		FileLogger::~FileLogger() noexcept
 			= default;
 
-		void FileLogger::SetName(std::string* newName)
+		std::string_view FileLogger::GetName() const
 		{
-			name = newName;
+			return "Console Logger";
 		}
 
 		std::string FileLogger::GetFileName() const
@@ -75,7 +68,7 @@ namespace klib
 
 		void FileLogger::SetFileName(const std::string_view& newFilename)
 		{
-			Close(true);
+			Close();
 			path.replace_filename(GetFileNameWithoutExtension(newFilename));
 			Open();
 		}
@@ -97,7 +90,7 @@ namespace klib
 
 		void FileLogger::SetDirectory(const std::filesystem::path& newDir)
 		{
-			Close(false);
+			Close();
 			const auto filename = path.filename().string();
 			path.clear();
 			path = (newDir / filename);
@@ -137,12 +130,12 @@ namespace klib
 			if (!IsOpen())
 				return;
 
-			const auto logLine = CreateLogText(entry.GetMsg(), entry.GetDescriptor());
+			const auto logLine = CreateLogText(entry.GetProfile(), entry.GetMsg());
 
 			Flush(logLine);
 		}
 
-		std::string FileLogger::CreateLogText(const LogMessage& msg, const LogDescriptor& desc) const
+		std::string FileLogger::CreateLogText( const LogProfile& profile, const LogMessage& msg ) const
 		{
 			// Message details
 			const auto& t = msg.time;
@@ -161,8 +154,7 @@ namespace klib
 			const auto& sourceInfo = msg.sourceInfo;
 
 			// Description details
-			const auto lvl = desc.lvl;
-			const auto info = desc.info;
+			const auto name = profile.GetName();
 			
 			const auto format = formatMap.at(lvl);
 
@@ -174,9 +166,7 @@ namespace klib
 				minute,
 				second,
 				milli,
-				*name,
-				info,
-				lvl.ToUnderlying(),
+				name,
 				text,
 				sourceInfo.file,
 				sourceInfo.line,
