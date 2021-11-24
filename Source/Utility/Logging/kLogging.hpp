@@ -2,20 +2,18 @@
 
 #include "kLogLevel.hpp"
 #include "kLogEntry.hpp"
+#include "kLogProfile.hpp"
 #include "kLogMessage.hpp"
-
-#include "Destinations/kFileLogger.hpp"
-#include "Destinations/kConsoleLogger.hpp"
-
-#include "../../Template/kToImpl.hpp"
 
 #include <cstdint>
 #include <deque>
 #include <string>
 #include <vector>
 
-namespace std {
-	namespace filesystem {
+namespace std
+{
+	namespace filesystem
+	{
 		class path;
 	}
 }
@@ -28,117 +26,58 @@ namespace klib
 
 		class Logging
 		{
-			ENUM_CLASS(LogDestType, std::uint8_t
-				, FILE = 0
-				, CONSOLE
-			);
+		public:
+			// using LogEntries = std::deque<LogEntry>;
+			// using LogDestList = std::vector<std::unique_ptr<iLoggerDestination>>;
 
 		public:
-			using LogEntries = std::deque<LogEntry>;
-			using LogDestList = std::vector<std::unique_ptr<iLoggerDestination>>;
-
-		public:
-			Logging(const std::string_view& directory, const std::string_view& filename
-				, const std::string_view& extension
-				, const std::string_view& name = "Logger");
-
-			Logging(const std::filesystem::path& path, const std::string_view& name = "Logger");
+			Logging();
 
 			~Logging();
 
-			/**
-			 * \brief
-			 *		Change name of the logger
-			 * \param[in] newName
-			 *		STL string representing a name
-			 */
-			void SetName(const std::string_view& newName);
+			void Register( const LogProfile& profile, LogLevel level );
 
 			/**
 			 * \brief
 			 *		Set minimum level of a log that can be stored
+			 * \param[in] profile
+			 *		Log profile
 			 * \param[in] newMinLevel
 			 *		New minimum log level
 			 * \note
 			 *		No logs less than this given level will be stored by the log system.
 			 */
-			void SetMinimumLoggingLevel(const LogLevel newMinLevel) noexcept;
+			void SetLevel( const LogProfile& profile, LogLevel newMinLevel ) noexcept;
+
+			/**
+			 * \brief
+			 *		Set minimum log level for all profiles
+			 * \param newMinLevel
+			 *		New min log level
+			 */
+			void SetGlobalLevel( const LogLevel newMinLevel ) noexcept;
+
+			/**
+			 * \brief
+			 *		Get a profile's log level
+			 * \param profile
+			 *		Log level of the given profile
+			 * \return
+			 *		Profile's current log level
+			 */
+			LogLevel GetLevel( const LogProfile& profile ) const;
 
 			/**
 			 * \brief
 			 *		Toggles if logging system is enabled
 			 */
-			void ToggleLoggingEnabled() noexcept;
+			void EnableOutput( bool enabled ) noexcept;
 
 			/**
 			 * \brief
 			 *		Toggles whether logs output to system to keep a local cache
 			 */
-			void SetCacheMode(const bool enable) noexcept;
-
-			/**
-			 * \brief
-			 *		Gets the file logger
-			 * \return
-			 *		FileLogger ref
-			 */
-			FileLogger& GetFile();
-
-			/**
-			 * \brief
-			 *		Gets the file logger
-			 * \return
-			 *		FileLogger ref
-			 */
-			const FileLogger& GetFile() const;
-
-			/**
-			 * \brief
-			 *		Gets the console logger
-			 * \return
-			 *		ConsoleLogger ref
-			 */
-			ConsoleLogger& GetConsole();
-
-			/**
-			 * \brief
-			 *		Gets the console logger
-			 * \return
-			 *		ConsoleLogger ref
-			 */
-			const ConsoleLogger& GetConsole() const;
-
-			/**
-			 * \brief
-			 *		Returns user added log destination
-			 * \tparam T
-			 *		Derived iLoggerDestination type
-			 * \param index
-			 *		index of extra logger
-			 * \return
-			 *		T&
-			 */
-			template<typename T>
-			USE_RESULT T& GetExtraDestination(size_t index)
-			{
-				return kTemplate::ToImpl<T>(*destinations[LogDestType::Count() + index]);
-			}
-			
-			/**
-			 * \brief
-			 *		Returns user added log destination
-			 * \tparam T
-			 *		Derived iLoggerDestination type
-			 * \param index 
-			 *		index of extra logger
-			 * \return
-			 *		T&
-			 */
-			template<typename T>
-			const T& GetExtraDestination(size_t index) const
-			{
-				return kTemplate::ToImpl<T>(*destinations[LogDestType::Count() + index]);
-			}
+			void SetCacheMode( const bool caching ) noexcept;
 
 			/**
 			 * \brief 
@@ -149,19 +88,13 @@ namespace klib
 			 *		Parameters to derived type's ctor
 			 * \param params 
 			 */
-			template<typename T, typename ...Params>
-			void AddDestination(Params&& ...params)
+			template <typename T, typename ...Params>
+			void AddDestination( Params&& ...params )
 			{
-				T* dest = new T(std::forward<Params>(params)...);
-				dest->SetName(&name);
-				destinations.emplace_back(dest);
+				T* dest = new T( std::forward<Params>( params )... );
+				dest->SetName( &name );
+				destinations.emplace_back( dest );
 			}
-
-			/**
-			 * \brief
-			 *		Outputs cached kLogs to file
-			 */
-			void FinalOutput(bool outputDefaultClosingMsg);
 
 			/**
 			 * \brief
@@ -171,19 +104,11 @@ namespace klib
 
 			/**
 			 * \brief
-			 *		Outputs all cached kLogs up to file with the logged error message at the end
-			 * \param msg
-			 *		Error information
-			 */
-			void AddFatal(const LogMessage& msg);
-
-			/**
-			 * \brief
 			 *		Logs text verbatim. No time, data or padding
 			 * \param text
 			 *		Text to log
 			 */
-			void AddRaw(const std::string_view& text = "");
+			void AddRaw( const std::string_view& text = "" );
 
 			/**
 			 * \brief
@@ -193,7 +118,7 @@ namespace klib
 			 * \param level
 			 *		Log entry details
 			 */
-			void AddEntry(const LogLevel& level, const LogMessage& message);
+			void AddEntry( const LogProfile& profile, const LogLevel& level, const LogMessage& message );
 
 			/**
 			 * \brief
@@ -209,8 +134,14 @@ namespace klib
 			 * \param paddingCount
 			 *		Repetition of paddings
 			 */
-			void AddBanner(const std::string_view& descriptor, const LogMessage& message, const std::string_view& frontPadding, const std::
-				string_view& backPadding, const std::uint16_t paddingCount);
+			void AddBanner(
+				const std::string_view& descriptor
+				, const LogMessage& message
+				, const std::string_view& frontPadding
+				, const std::
+				string_view& backPadding
+				, const std::uint16_t paddingCount
+			);
 
 			/**
 			 * \brief
@@ -235,17 +166,7 @@ namespace klib
 			 * \return
 			 *		TRUE if managed to erase any, FALSE if nothing erased or not in cache mode
 			 */
-			bool ErasePrevious(size_t count);
-
-			/**
-			 * \brief
-			 *		Checks log level is above the minimum
-			 * \param lvl
-			 *		Log level of upcoming entry
-			 * \return
-			 *		TRUE if equal/above minimum log level
-			 */
-			bool IsLoggable(const LogLevel lvl) const;
+			bool ErasePrevious( size_t count );
 
 			/**
 			 * \brief
@@ -258,11 +179,9 @@ namespace klib
 		private:
 			/**
 			 * \brief
-			 *		Opens log destinations
+			 *		Initialize logging system
 			 */
-			void Open();
-
-			void Initialize(const std::filesystem::path& path);
+			void Initialize();
 
 			/**
 			 * \brief
@@ -272,29 +191,27 @@ namespace klib
 			 * \param entry
 			 *		Log description
 			 */
-			void AddLog(const LogEntry& entry);
+			void AddLog( const LogEntry& entry );
+
+			/**
+			 * \brief
+			 *		Open log destinations
+			 */
+			void Open();
 
 			/**
 			 * \brief
 			 *		Outputs logs to file then closes it
 			 */
-			void Close(bool outputDefaultClosingMsg);
+			void Close();
 
 		protected:
-			LogEntries entriesCache; // Queue buffer to cache the logged messages
+			std::deque<LogEntry> entriesCache; // Queue buffer to cache the logged messages
 
-			LogLevel minimumLoggingLevel;
-			LogDestList destinations;
-			std::string name;
-			bool isEnabled;
+			std::unordered_map<LogProfile, LogLevel> logLevels;
+			std::vector<std::shared_ptr<iLoggerDestination>> destinations;
 
-			const bool g_EnableDebugLogging =
-#ifdef KLOG_OPT_DBG_STR
-				true
-#else
-				false
-#endif
-				;
+			bool outputEnabled;
 		};
 	}
 

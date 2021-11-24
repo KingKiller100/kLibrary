@@ -4,42 +4,26 @@
 
 namespace klib::kLogs
 {
-	LogEntry::LogEntry(const LogMessage& message, const LogDescriptor& descriptor)
-		: message(message)
-		, descriptor(descriptor)
+	LogEntry::LogEntry( const LogProfile& profile, const LogMessage& message )
+		: profile( profile )
+		, message( message )
 	{}
 
 	LogEntry::~LogEntry()
-		= default;
+	= default;
 
-	bool LogEntry::HasText(const std::string_view& msg) const
+	bool LogEntry::HasText( const std::string_view& msg ) const
 	{
-		return message.text.find(msg) != std::string::npos;
+		return message.text.find( msg ) != std::string::npos;
 	}
 
-	bool LogEntry::HasDescription(const LogDescriptor& desc) const
+	const LogProfile& LogEntry::GetProfile() const
 	{
-		return  descriptor.lvl == desc.lvl
-			|| descriptor.info == desc.info;
-	}
-
-	bool LogEntry::HasDescription(const std::string_view& desc) const
-	{
-		return HasDescription(LogDescriptor(desc));
-	}
-
-	bool LogEntry::HasDescription(const LogLevel desc) const
-	{
-		return HasDescription(LogDescriptor(desc));
+		return profile;
 	}
 
 	const LogMessage& LogEntry::GetMsg() const
 	{
 		return message;
-	}
-
-	const LogDescriptor& LogEntry::GetDescriptor() const
-	{
-		return descriptor;
 	}
 }
