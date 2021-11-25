@@ -1,8 +1,5 @@
-﻿#pragma once
+﻿	#pragma once
 
-#include "../kLogLevel.hpp"
-
-#include "../../String/Format/FormatSymbols.hpp"
 #include "../../String/Format/Stringify/kStringifyInteger.hpp"
 
 #include <string>
@@ -45,13 +42,11 @@ namespace klib::kLogs
 		 * \brief
 		 *		Opens up the log destination
 		 */
-		virtual bool Open() = 0;
+		virtual void Open() = 0;
 
 		/**
 		 * \brief
 		 *		Closes the log destination
-		 *	\param[in] outputClosingMsg
-		 *			whether we should output the close message when closing
 		 */
 		virtual void Close() = 0;
 	};
@@ -69,29 +64,24 @@ namespace klib::kLogs
 		 *		Declare each detail specifier item with a '&' character
 		 *		Using multiple calls of the same specifiers gives different results
 		 *		Detail specifiers:
-		 *		- d/D = Day
-		 *		- m/M = Month
-		 *		- y/Y = Year
-		 *		- h/H = Hours
-		 *		- z/Z = Minutes
-		 *		- s/S = Seconds
-		 *		- c/C = Milliseconds
-		 *		- n/N = Name
-		 *		- p/P = Log descriptor [text]
-		 *		- w/W = Log descriptor [numeric value]
-		 *		- t/T = Log message
-		 *		- f/F = source file
-		 *		- l/L = source line
-		 *		- e/E = source function
-		 * \param lvl
-		 *		Log level to change the format for
+		 *		- d = Day
+		 *		- m = Month
+		 *		- y = Year
+		 *		- h = Hours
+		 *		- z = Minutes
+		 *		- s = Seconds
+		 *		- c = Milliseconds
+		 *		- n = Profile name
+		 *		- p = Log descriptor [text]
+		 *		- w = Log descriptor [numeric value]
+		 *		- t = Log message
 		 */
-		virtual void SetFormat( const LogLevel lvl, const std::string_view& format ) noexcept;
+		virtual void SetFormat( const std::string_view& format ) noexcept;
 	public:
 		inline static constexpr auto DetailSpecifier = '&';
 
 	protected:
-		std::unordered_map<LogLevel::Value, std::string> formatMap;
+		std::string messageFormat;
 
 	private:
 		static const std::unordered_map<char, std::string> LogFormatSpecifiersMap;
