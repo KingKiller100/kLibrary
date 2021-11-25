@@ -26,57 +26,26 @@ namespace klib
 			std::mutex g_kConsoleLoggerMutex;
 		}
 
-		ConsoleLogger::ConsoleLogger(std::string* pName)
-			: active(false)
-			, name(pName)
-			, consoleColour(ConsoleColour::WHITE)
-			, enableDebugStringOutput(false)
+		ConsoleLogger::ConsoleLogger()
+			: active( false )
+			, consoleColour( ConsoleColour::WHITE )
 		{
-			LogDestWithFormatSpecifier::SetFormat(LogLevel::RAW, "&t");
-
 			LogDestWithFormatSpecifier::SetFormat(
-				LogLevel::TRC
-				, "[&hh:&zz:&ss:&ccc] [&n] [&p]: &t");
-
-			LogDestWithFormatSpecifier::SetFormat(
-				LogLevel::BNR
-				, "[&hh:&zz:&ss:&ccc] [&n] [&p]: &t");
-
-			LogDestWithFormatSpecifier::SetFormat(
-				LogLevel::DBG
-				, "[&hh:&zz:&ss:&ccc] [&n] [&w]: &t");
-
-			LogDestWithFormatSpecifier::SetFormat(
-				LogLevel::NRM
-				, "[&hh:&zz:&ss:&ccc] [&n] [&w]: &t");
-
-			LogDestWithFormatSpecifier::SetFormat(
-				LogLevel::INF
-				, "[&hh:&zz:&ss:&ccc] [&n] [&w]: &t");
-
-			LogDestWithFormatSpecifier::SetFormat(
-				LogLevel::WRN
-				, "[&hh:&zz:&ss:&ccc] [&n] [&w]: &t");
-
-			LogDestWithFormatSpecifier::SetFormat(
-				LogLevel::ERR
-				, "[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
-				"\n[Source]: &f [&l]");
-
-			LogDestWithFormatSpecifier::SetFormat(
-				LogLevel::FTL
-				, "[&hh:&zz:&ss:&ccc] [&n] [&w]: &t"
-				"\n[File]: &f"
-				"\n[Line]: &l");
+				"[&hh:&zz:&ss:&ccc] [&n]: &t"
+			);
 		}
 
 		ConsoleLogger::~ConsoleLogger() noexcept
-			= default;
+		= default;
 
-		bool ConsoleLogger::Open()
+		std::string_view ConsoleLogger::GetName() const
+		{
+			return "Console Logger";
+		}
+
+		void ConsoleLogger::Open()
 		{
 			active = true;
-			return active;
 		}
 
 		bool ConsoleLogger::IsOpen() const
@@ -84,49 +53,42 @@ namespace klib
 			return active;
 		}
 
-		void ConsoleLogger::SetName(std::string* newName)
+		void ConsoleLogger::AddEntry( const LogEntry& entry )
 		{
-			name = newName;
+			const auto logLine = CreateLogText( entry );
+
+			UpdateConsoleColour( entry.GetLevel() );
+			Flush( logLine );
 		}
 
-		void ConsoleLogger::AddEntry(const LogEntry& entry)
+		std::string ConsoleLogger::CreateLogText( const LogEntry& entry ) const
 		{
-			if (!IsOpen())
-				return;
-
 			const auto& msg = entry.GetMsg();
-			const auto& desc = entry.GetDescriptor();
-			const auto logLine = CreateLogText(msg, desc);
+			const auto& profile = entry.GetProfile();
 
-			UpdateConsoleColour(desc.lvl);
-			Flush(logLine);
-		}
+			// Level
+			const auto lvl = entry.GetLevel();
 
-		std::string ConsoleLogger::CreateLogText(const LogMessage& msg, const LogDescriptor& desc) const
-		{
+			// Profile
+			const auto& name = profile.GetName();
+
 			// Message details
-			const auto& t = msg.time;
-			const auto& hour = t.GetHour();
-			const auto& minute = t.GetMinute();
-			const auto& second = t.GetSecond();
-			const auto& milli = t.GetMillisecond();
+			const auto& time = msg.time;
+			const auto& hour = time.GetHour();
+			const auto& minute = time.GetMinute();
+			const auto& second = time.GetSecond();
+			const auto& milli = time.GetMillisecond();
 
-			const auto& d = msg.date;
-			const auto& day = d.GetDay();
-			const auto& month = d.GetMonth();
-			const auto& year = d.GetYear();
+			const auto& date = msg.date;
+			const auto& day = date.GetDay();
+			const auto& month = date.GetMonth();
+			const auto& year = date.GetYear();
 
 			const auto& text = msg.text;
 
-			const auto& sourceInfo = msg.sourceInfo;
+			// Profile name
 
-			// Description details
-			const auto lvl = desc.lvl;
-			const auto info = desc.info;
-
-			const auto format = formatMap.at(lvl);
-
-			std::string logLine = ToString(format,
+			std::string logLine = ToString( messageFormat,
 				day,
 				month,
 				year,
@@ -134,23 +96,20 @@ namespace klib
 				minute,
 				second,
 				milli,
-				*name,
-				info,
+				name,
+				lvl.ToString(),
 				lvl.ToUnderlying(),
-				text,
-				sourceInfo.file,
-				sourceInfo.line,
-				sourceInfo.func
+				text
 			);
 
-			logLine.push_back('\n');
+			logLine.push_back( '\n' );
 
 			return logLine;
 		}
 
-		void ConsoleLogger::UpdateConsoleColour(const LogLevel lvl)
+		void ConsoleLogger::UpdateConsoleColour( const LogLevel lvl )
 		{
-			switch (lvl.ToEnum())
+			switch ( lvl.ToEnum() )
 			{
 			case LogLevel::DBG:
 				consoleColour = ConsoleColour::AQUA_BLUE;
@@ -170,74 +129,38 @@ namespace klib
 			case LogLevel::FTL:
 				consoleColour = ConsoleColour::RED_BG_WHITE_TEXT;
 				break;
-			case LogLevel::RAW:
-			case LogLevel::BNR:
-				consoleColour = ConsoleColour::WHITE;
-				break;
 			default:
-				throw std::runtime_error("Unknown log level! Cannot map to a known console colour: "
-					+ std::string(lvl.ToString()));
+				throw std::runtime_error( "Unknown log level! Cannot map to a known console colour: "
+					+ std::string( lvl.ToString() ) );
 			}
 		}
 
-
-
-		void ConsoleLogger::Close(const bool outputClosingMsg)
+		void ConsoleLogger::Close()
 		{
-			if (outputClosingMsg)
-			{
-				const std::string padding(73, '*');
-				const auto msg
-					= ToString(R"(
-               {0}: Console Logger Concluded
-)"
-, *name
-);
-
-				Flush(padding);
-				Flush(msg);
-				Flush(padding);
-				Flush("\n");
-			}
-
 			active = false;
 		}
 
-		void ConsoleLogger::SetDebugStringOutput(bool enable)
+		void ConsoleLogger::Flush( const std::string_view& msg ) const
 		{
-			enableDebugStringOutput = enable;
-		}
+			std::scoped_lock scoped_lock( g_kConsoleLoggerMutex );
 
-		void ConsoleLogger::Flush(const std::string_view& msg) const
-		{
-			std::scoped_lock scoped_lock(g_kConsoleLoggerMutex);
-
-			if (!active)
+			if ( !active )
 				return;
 
-			OutputToConsole(msg);
-			OutputToDebugString(msg);
+			OutputToConsole( msg );
 		}
 
-		void ConsoleLogger::OutputToDebugString(const std::string_view& msg) const
+		void ConsoleLogger::OutputToConsole( const std::string_view& msg ) const
 		{
-			if (enableDebugStringOutput)
-			{
-				kDebug::WriteToOutputWindow(msg);
-			}
-		}
+			static constexpr ConsoleColour whiteText = static_cast<WORD>( ConsoleColour::WHITE );
 
-		void ConsoleLogger::OutputToConsole(const std::string_view& msg) const
-		{
-			static constexpr auto whiteText = CAST(WORD, ConsoleColour::WHITE);
+			auto* handle = ::GetStdHandle( STD_OUTPUT_HANDLE );
 
-			auto* handle = GetStdHandle(STD_OUTPUT_HANDLE);
+			SetConsoleTextAttribute( handle, consoleColour.ToUnderlying() );
+			std::printf( "%s", msg.data() );
 
-			SetConsoleTextAttribute(handle, consoleColour);
-			std::printf("%s", msg.data());
-
-			if (whiteText != consoleColour)
-				SetConsoleTextAttribute(handle, whiteText);
+			if ( whiteText != consoleColour )
+				SetConsoleTextAttribute( handle, whiteText.ToUnderlying() );
 		}
 	}
 }

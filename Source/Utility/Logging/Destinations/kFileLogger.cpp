@@ -5,6 +5,7 @@
 #include "../kLogProfile.hpp"
 
 #include "../../Calendar/kCalendar.hpp"
+#include "../../Calendar/kCalendarToString.hpp"
 #include "../../String/kToString.hpp"
 #include "../../FileSystem/kFileSystem.hpp"
 
@@ -18,47 +19,20 @@ namespace klib
 
 	namespace kLogs
 	{
-		FileLogger::FileLogger(const std::filesystem::path& path)
-			: path(path)
+		FileLogger::FileLogger( const std::filesystem::path& path )
+			: path( path )
 		{
 			LogDestWithFormatSpecifier::SetFormat(
-				LogLevel::TRC
-				, "[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t");
-
-			LogDestWithFormatSpecifier::SetFormat(
-				LogLevel::DBG
-				, "[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t");
-
-			LogDestWithFormatSpecifier::SetFormat(
-				LogLevel::NRM
-				, "[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t");
-
-			LogDestWithFormatSpecifier::SetFormat(
-				LogLevel::INF
-				, "[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t");
-
-			LogDestWithFormatSpecifier::SetFormat(
-				LogLevel::WRN
-				, "[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t");
-
-			LogDestWithFormatSpecifier::SetFormat(
-				LogLevel::ERR
-				, "[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
-				"\n                  [Source]: &f [&l]");
-
-			LogDestWithFormatSpecifier::SetFormat(
-				LogLevel::FTL
-				, "[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&p]: &t"
-				"\n                  [File]: &f"
-				"\n                  [Line]: &l");
+				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&n]: &t"
+			);
 		}
 
 		FileLogger::~FileLogger() noexcept
-			= default;
+		= default;
 
 		std::string_view FileLogger::GetName() const
 		{
-			return "Console Logger";
+			return "File Logger";
 		}
 
 		std::string FileLogger::GetFileName() const
@@ -66,10 +40,10 @@ namespace klib
 			return path.stem().string();
 		}
 
-		void FileLogger::SetFileName(const std::string_view& newFilename)
+		void FileLogger::SetFileName( const std::string_view& newFilename )
 		{
 			Close();
-			path.replace_filename(GetFileNameWithoutExtension(newFilename));
+			path.replace_filename( GetFileNameWithoutExtension( newFilename ) );
 			Open();
 		}
 
@@ -78,9 +52,9 @@ namespace klib
 			return path.extension().string();
 		}
 
-		void FileLogger::SetExtension(const std::string_view& newExtension)
+		void FileLogger::SetExtension( const std::string_view& newExtension )
 		{
-			path.replace_extension(newExtension);
+			path.replace_extension( newExtension );
 		}
 
 		std::string FileLogger::GetDirectory() const
@@ -88,12 +62,12 @@ namespace klib
 			return path.parent_path().string();
 		}
 
-		void FileLogger::SetDirectory(const std::filesystem::path& newDir)
+		void FileLogger::SetDirectory( const std::filesystem::path& newDir )
 		{
 			Close();
 			const auto filename = path.filename().string();
 			path.clear();
-			path = (newDir / filename);
+			path = ( newDir / filename );
 			Open();
 		}
 
@@ -102,22 +76,20 @@ namespace klib
 			return path.string();
 		}
 
-		void FileLogger::SetPath(const std::filesystem::path& path)
+		void FileLogger::SetPath( const std::filesystem::path& path )
 		{
 			this->path = path;
 		}
 
-		bool FileLogger::Open()
+		void FileLogger::Open()
 		{
-			std::scoped_lock<decltype(lock)> scoped_lock(lock);
+			std::scoped_lock<decltype(lock)> scoped_lock( lock );
 
-			if (!IsOpen())
+			if ( !IsOpen() )
 			{
-				CreateNewDirectories(path.parent_path());
-				fileStream.open(path, std::ios::out | std::ios::in | std::ios::app);
+				CreateNewDirectories( path.parent_path() );
+				fileStream.open( path, std::ios::out | std::ios::in | std::ios::app );
 			}
-
-			return fileStream.good();
 		}
 
 		bool FileLogger::IsOpen() const
@@ -125,18 +97,24 @@ namespace klib
 			return fileStream.is_open() && fileStream.good();
 		}
 
-		void FileLogger::AddEntry(const LogEntry& entry)
+		void FileLogger::AddEntry( const LogEntry& entry )
 		{
-			if (!IsOpen())
-				return;
+			const auto logLine = CreateLogText( entry );
 
-			const auto logLine = CreateLogText(entry.GetProfile(), entry.GetMsg());
-
-			Flush(logLine);
+			Flush( logLine );
 		}
 
-		std::string FileLogger::CreateLogText( const LogProfile& profile, const LogMessage& msg ) const
+		std::string FileLogger::CreateLogText( const LogEntry& entry ) const
 		{
+			const auto& profile = entry.GetProfile();
+			const auto& msg = entry.GetMsg();
+
+			// Level
+			const auto lvl = entry.GetLevel();
+
+			// Profile
+			const auto profileName = profile.GetName();
+
 			// Message details
 			const auto& t = msg.time;
 			const auto& hour = t.GetHour();
@@ -150,15 +128,9 @@ namespace klib
 			const auto& year = d.GetYear();
 
 			const auto& text = msg.text;
-			
-			const auto& sourceInfo = msg.sourceInfo;
 
-			// Description details
-			const auto name = profile.GetName();
-			
-			const auto format = formatMap.at(lvl);
 
-			std::string logLine = ToString(format,
+			std::string logLine = ToString( messageFormat,
 				day,
 				month,
 				year,
@@ -166,45 +138,28 @@ namespace klib
 				minute,
 				second,
 				milli,
-				name,
-				text,
-				sourceInfo.file,
-				sourceInfo.line,
-				sourceInfo.func
+				profileName,
+				lvl.ToString(),
+				lvl.ToUnderlying(),
+				text
 			);
 
-
-			logLine.push_back('\n');
+			logLine.push_back( '\n' );
 
 			return logLine;
 		}
 
-		void FileLogger::Close(const bool outputClosingMsg)
+		void FileLogger::Close()
 		{
-			if (!IsOpen())
+			if ( !IsOpen() )
 				return;
-
-			if (outputClosingMsg)
-			{
-				static constexpr char msg[] = "File Logging Concluded";
-
-				const std::string padding(81, '*');
-				const std::string spacing(25, ' ');
-				const auto logMsg = spacing + msg + spacing;
-
-				Flush(padding + logMsg + padding);
-				Flush("\n");
-			}
 
 			fileStream.close();
 		}
 
-		void FileLogger::Flush(const std::string_view& msg)
+		void FileLogger::Flush( const std::string_view& msg )
 		{
-			std::scoped_lock scoped_lock(lock);
-
-			if (!IsOpen())
-				return;
+			std::scoped_lock scoped_lock( lock );
 
 			fileStream << msg;
 			fileStream.flush();

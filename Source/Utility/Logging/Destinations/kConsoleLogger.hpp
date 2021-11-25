@@ -8,42 +8,35 @@ namespace klib
 {
 	namespace kLogs
 	{
-		class LogDescriptor;
-		class LogLevel;
-		struct LogMessage;
+		ENUM_CLASS_FWD_DCL( LogLevel );
 
 		class ConsoleLogger final : public LogDestWithFormatSpecifier
 		{
 		public:
-			ConsoleLogger(std::string* pName);
+			ConsoleLogger();
 			~ConsoleLogger() noexcept;
 
-			void SetName(std::string* newName) override;
+			std::string_view GetName() const override;
 
-			void AddEntry(const LogEntry& entry) override;
+			void AddEntry( const LogEntry& entry ) override;
 
-			bool Open() override;
+			void Open() override;
 
 			bool IsOpen() const override;
 
-			void Close(const bool outputClosingMsg) override;
-
-			void SetDebugStringOutput(bool enable);
+			void Close() override;
 
 		private:
-			void UpdateConsoleColour(const LogLevel lvl);
+			void UpdateConsoleColour( const LogLevel lvl );
 
-			std::string CreateLogText(const LogMessage& msg, const LogDescriptor& desc) const;
+			std::string CreateLogText( const LogEntry& entry ) const;
 
-			void Flush(const std::string_view& msg) const;
-			void OutputToDebugString(const std::string_view& msg) const;
-			void OutputToConsole(const std::string_view& msg) const;
-
+			void Flush( const std::string_view& msg ) const;
+			void OutputToConsole( const std::string_view& msg ) const;
+			
 		private:
 			bool active;
-			std::string* name;
 			kMisc::ConsoleColour consoleColour;
-			bool enableDebugStringOutput;
 		};
 	}
 }

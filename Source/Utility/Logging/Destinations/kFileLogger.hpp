@@ -16,34 +16,34 @@ namespace klib
 		class FileLogger final : public LogDestWithFormatSpecifier
 		{
 		public:
-			FileLogger(const std::filesystem::path& path);
+			FileLogger( const std::filesystem::path& path );
 			~FileLogger() noexcept;
 
 			std::string_view GetName() const override;
 
 			USE_RESULT std::string GetFileName() const;
-			void SetFileName(const std::string_view& newFilename);
+			void SetFileName( const std::string_view& newFilename );
 
 			USE_RESULT std::string GetExtension() const;
-			void SetExtension(const std::string_view& newExtension);
+			void SetExtension( const std::string_view& newExtension );
 
 			USE_RESULT std::string GetDirectory() const;
-			void SetDirectory(const std::filesystem::path& newDir);
+			void SetDirectory( const std::filesystem::path& newDir );
 
 			USE_RESULT std::filesystem::path GetPath() const;
-			void SetPath(const std::filesystem::path& path);
-			
-			void AddEntry(const LogEntry& entry) override;
+			void SetPath( const std::filesystem::path& path );
 
-			bool Open() override;
+			void AddEntry( const LogEntry& entry ) override;
+
+			void Open() override;
 
 			bool IsOpen() const override;
 
 			void Close() override;
 
 		private:
-			void Flush(const std::string_view& msg);
-			std::string CreateLogText( const LogProfile&, const LogMessage& msg ) const;
+			void Flush( const std::string_view& msg );
+			std::string CreateLogText( const LogEntry& entry ) const;
 
 		private:
 			std::filesystem::path path;
