@@ -27,10 +27,6 @@ namespace klib
 		class Logging
 		{
 		public:
-			// using LogEntries = std::deque<LogEntry>;
-			// using LogDestList = std::vector<std::unique_ptr<iLoggerDestination>>;
-
-		public:
 			Logging();
 
 			~Logging();
@@ -89,11 +85,9 @@ namespace klib
 			 * \param params 
 			 */
 			template <typename T, typename ...Params>
-			void AddDestination( Params&& ...params )
+			std::shared_ptr<T>& AddDestination( Params&& ...params )
 			{
-				T* dest = new T( std::forward<Params>( params )... );
-				dest->SetName( &name );
-				destinations.emplace_back( dest );
+				return destinations.emplace_back( std::make_shared<T>(std::forward<Params>(params)...) );
 			}
 
 			/**
@@ -115,18 +109,18 @@ namespace klib
 			 *		Formats log message and level to the appropriate log message and then logs it
 			 * \param message
 			 *		Log message details including time, data, text, source file and source line
+			 * \param profile
+			 *		Source of log
 			 * \param level
 			 *		Log entry details
 			 */
-			void AddEntry( const LogProfile& profile, const LogLevel& level, const LogMessage& message );
+			void AddEntry( const LogLevel& level, const LogProfile& profile, const LogMessage& message );
 
 			/**
 			 * \brief
 			 *		Formats the log banner to become the appropriate log banner message and logs it
 			 * \param message
 			 *		Log message details including time, data, text, source file and source line
-			 * \param[in] descriptor
-			 *		Log descriptor of lvl and type info
 			 * \param frontPadding
 			 *		Padding character/string before banner text
 			 * \param backPadding
@@ -135,8 +129,7 @@ namespace klib
 			 *		Repetition of paddings
 			 */
 			void AddBanner(
-				const std::string_view& descriptor
-				, const LogMessage& message
+				const LogMessage& message
 				, const std::string_view& frontPadding
 				, const std::
 				string_view& backPadding

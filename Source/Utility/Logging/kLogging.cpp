@@ -70,23 +70,23 @@ namespace klib::kLogs
 
 	void Logging::AddRaw( const std::string_view& text )
 	{
-		AddLog( LogEntry( LogProfile( "" ), text.data() ) );
+		AddLog( LogEntry( LogLevel::NRM, LogProfile( "" ), text.data() ) );
 	}
 
-	void Logging::AddEntry( const LogProfile& profile, const LogLevel& level, const LogMessage& message )
+	void Logging::AddEntry( const LogLevel& level, const LogProfile& profile, const LogMessage& message )
 	{
 		if ( GetLevel( profile ) > level )
 			return;
 
 		AddLog( LogEntry(
+			level,
 			profile,
 			message
 		) );
 	}
 
 	void Logging::AddBanner(
-		const std::string_view& descriptor
-		, const LogMessage& message
+		const LogMessage& message
 		, const std::string_view& frontPadding
 		, const std::string_view& backPadding
 		, const std::uint16_t paddingCount
@@ -99,20 +99,20 @@ namespace klib::kLogs
 			back.append( backPadding );
 		}
 
-		const auto text = ToString<char>( tags::NoFormatTag{}
-			, front
-			, message.text
-			, back
-		);
+		const auto text = front + message.text + back;
 
 		const LogMessage banner( text, message );
 
-		AddLog( LogEntry( LogProfile( "" ), banner ) );
+		AddLog( LogEntry( LogLevel::NRM, LogProfile( "" ), banner ) );
 	}
 
 	void Logging::AddLog( const LogEntry& entry )
 	{
 		entriesCache.push_back( entry );
+
+		if ( !outputEnabled )
+			return;
+
 		Flush();
 	}
 
@@ -133,7 +133,8 @@ namespace klib::kLogs
 	{
 		for ( auto& dest : destinations )
 		{
-			if ( !dest->Open() )
+			dest->Open();
+			if ( !dest->IsOpen() )
 			{
 				throw std::runtime_error( ToString( "Failed to open log destination: {0}", dest->GetName() ) );
 			}
@@ -179,7 +180,7 @@ namespace klib::kLogs
 		if ( entriesCache.empty() )
 			return false;
 
-		while ( count-- != 0 )
+		while ( !entriesCache.empty() && count-- != 0 )
 		{
 			entriesCache.pop_back();
 		}
