@@ -68,9 +68,9 @@ namespace klib {
 			output.reserve(reserveSize);
 			for (size_t i = 0; i < argCount; ++i)
 			{
-				output.push_back(format::g_OpenerSymbol<CharT>);
+				output.push_back(format::g_ToStringOpenerSymbol<CharT>);
 				output.append(stringify::StringUnsignedIntegral<CharT>(i));
-				output.push_back(format::g_CloserSymbol<CharT>);
+				output.push_back(format::g_ToStringCloserSymbol<CharT>);
 			}
 
 			secret::impl::ToStringImpl<CharT, T, Ts...>(output, 0, 0, arg, argPack...);
@@ -94,9 +94,9 @@ namespace klib {
 					output.append(CharT(' '));
 				}
 
-				output.push_back(format::g_OpenerSymbol<CharT>);
+				output.push_back(format::g_ToStringOpenerSymbol<CharT>);
 				output.append(stringify::StringUnsignedIntegral<CharT>(i));
-				output.push_back(format::g_CloserSymbol<CharT>);
+				output.push_back(format::g_ToStringCloserSymbol<CharT>);
 			}
 
 			secret::impl::ToStringImpl<CharT, T, Ts...>(output, 0, 0, arg, argPack...);

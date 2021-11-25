@@ -19,12 +19,12 @@ namespace klib::kString::secret::impl
 
 		const auto data = outFmt.data();
 		
-		Char_t buff[5]{ Char_t(), Char_t(), Char_t(), format::g_CloserSymbol<Char_t> }; // '{' 'x' 'x' '}/:' '\0'
+		Char_t buff[5]{ Char_t(), Char_t(), Char_t(), format::g_ToStringCloserSymbol<Char_t> }; // '{' 'x' 'x' '}/:' '\0'
 		Char_t* const pCloser = std::end(buff) - 2;
 		Char_t* searchStr = pCloser;
 
 		searchStr = stringify::UintToStr(searchStr, argIndex, 10);
-		*(--searchStr) = format::g_OpenerSymbol<Char_t>;
+		*(--searchStr) = format::g_ToStringOpenerSymbol<Char_t>;
 
 		size_t openerPos = Find(data, searchStr, offset);
 		if (openerPos != npos)
@@ -34,7 +34,7 @@ namespace klib::kString::secret::impl
 		if (openerPos != npos)
 			return openerPos;
 
-		*pCloser = format::g_SpecifierSymbol<Char_t>;
+		*pCloser = format::g_ToStringSpecifierSymbol<Char_t>;
 		openerPos = Find(data, searchStr, offset);
 
 		if (openerPos != npos)
@@ -58,7 +58,7 @@ namespace klib::kString::secret::impl
 		try
 		{
 			size_t openerPos = FindOpenerPosition(outFmt, argIndex, offset);
-			size_t closerPos = Find_First_Of(GetData(outFmt), format::g_CloserSymbol<Char_t>, openerPos);
+			size_t closerPos = Find_First_Of(GetData(outFmt), format::g_ToStringCloserSymbol<Char_t>, openerPos);
 
 			const auto initialOpenerPos = openerPos;
 			size_t repSize = 0;
@@ -66,7 +66,7 @@ namespace klib::kString::secret::impl
 			while (openerPos != npos && closerPos != npos)
 			{
 				const auto infoSize = closerPos - openerPos;
-				const size_t colonPos = Find_First_Of(GetData(outFmt), format::g_SpecifierSymbol<Char_t>, openerPos);
+				const size_t colonPos = Find_First_Of(GetData(outFmt), format::g_ToStringSpecifierSymbol<Char_t>, openerPos);
 
 				StringWriter<Char_t> specifier;
 
@@ -90,7 +90,7 @@ namespace klib::kString::secret::impl
 
 				openerPos = FindOpenerPosition(outFmt, argIndex, openerPos + repSize);
 				if (openerPos != npos)
-					closerPos = Find_First_Of(GetData(outFmt), format::g_CloserSymbol<Char_t>, openerPos);
+					closerPos = Find_First_Of(GetData(outFmt), format::g_ToStringCloserSymbol<Char_t>, openerPos);
 			}
 
 			ToStringImpl<Char_t, Ts...>(outFmt, argIndex + 1, initialOpenerPos + repSize, argPack...);
