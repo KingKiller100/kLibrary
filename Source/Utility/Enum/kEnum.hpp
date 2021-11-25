@@ -129,15 +129,23 @@ public:																					\
 		return name;																	\
 	}																					\
 																						\
-	USE_RESULT constexpr bool operator<(const enumName& other) const 					\
+	static constexpr enumName FromUnderlying(underlying v)								\
 	{																					\
-		return value < other.value;														\
+		return enumName(static_cast<Value>(v));											\
 	}																					\
 																						\
-	USE_RESULT constexpr bool operator<=(const enumName& other) const 					\
+	static void ForEach(std::function<bool( enumName )> func)							\
 	{																					\
-		return value <= other.value;													\
+		for (auto v : secret_impl_##enumName::values)									\
+		{																				\
+			if ( !func( v ) )															\
+				break;																	\
+		}																				\
 	}																					\
+																						\
+	/* Operators */																		\
+	template<typename T, class = std::enable_if_t<std::is_integral_v<T>>>				\
+	constexpr operator T() const noexcept = delete;										\
 																						\
 	template<typename T>																\
 	USE_RESULT constexpr bool operator<(const T& other) const 							\
@@ -151,18 +159,44 @@ public:																					\
 		return value <= other;															\
 	}																					\
 																						\
-	static constexpr enumName FromUnderlying(underlying v)								\
+	constexpr bool operator==(const Value e) const noexcept								\
 	{																					\
-		return enumName(static_cast<Value>(v));											\
+		return value == e;																\
 	}																					\
 																						\
-	static void ForEach(std::function<bool( enumName )> func)							\
+	constexpr bool operator&(const Value e) const noexcept								\
 	{																					\
-		for (auto v : secret_impl_##enumName::values)									\
-		{																				\
-			if ( !func( v ) )															\
-				break;																	\
-		}																				\
+		return value & e;																\
+	}																					\
+																						\
+	USE_RESULT constexpr bool operator<=(const enumName& other) const 					\
+	{																					\
+		return value <= other.value;													\
+	}																					\
+																						\
+	USE_RESULT constexpr bool operator>=(const enumName& other) const 					\
+	{																					\
+		return value >= other.value;													\
+	}																					\
+																						\
+	USE_RESULT constexpr bool operator>(const enumName& other) const 					\
+	{																					\
+		return value > other.value;														\
+	}																					\
+																						\
+	constexpr bool operator==(const enumName& other) const noexcept						\
+	{																					\
+		return value == other.value;													\
+	}																					\
+																						\
+	constexpr bool operator!=(const enumName& other) const noexcept						\
+	{																					\
+		return value != other.value;													\
+	}																					\
+																						\
+	constexpr bool operator<(const enumName& other) const noexcept						\
+	{																					\
+		return value < other.value;														\
 	}																					\
 																						\
 	private:																			\
