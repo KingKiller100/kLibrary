@@ -27,8 +27,8 @@ namespace klib {
 
 		public:
 			const std::basic_string_view<Char_t> file;
-			const size_t line;
 			const std::basic_string_view<Char_t> func;
+			const size_t line;
 		};
 
 		using SourceInfo = BasicSourceInfo<char>;
