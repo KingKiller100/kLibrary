@@ -8,15 +8,15 @@ namespace klib::kLogs
 {
 	struct LogMessage
 	{
-		LogMessage(
+		explicit LogMessage(
 			const char* text
 			, kCalendar::CalendarInfoSourceType calendarInfoSource = kCalendar::CalendarInfoSourceType::LOCAL
 		);
-		LogMessage(
+		explicit LogMessage(
 			const std::string_view& text
 			, kCalendar::CalendarInfoSourceType calendarInfoSource = kCalendar::CalendarInfoSourceType::LOCAL
 		);
-		LogMessage( const std::string& text, const LogMessage& other );
+		explicit LogMessage( const std::string& text, const LogMessage& other );
 
 		const kCalendar::Time time;
 		const kCalendar::Date date;
