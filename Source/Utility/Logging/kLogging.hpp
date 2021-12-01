@@ -102,7 +102,7 @@ namespace klib
 			 * \param text
 			 *		Text to log
 			 */
-			void AddRaw( const std::string_view& text = "" );
+			void AddRaw( std::string_view text = "" );
 
 			/**
 			 * \brief
@@ -114,7 +114,7 @@ namespace klib
 			 * \param level
 			 *		Log entry details
 			 */
-			void AddEntry( const LogLevel& level, const LogProfile& profile, const LogMessage& message );
+			void AddEntry( LogLevel level, const LogProfile& profile, const LogMessage& message );
 
 			/**
 			 * \brief
@@ -130,10 +130,9 @@ namespace klib
 			 */
 			void AddBanner(
 				const LogMessage& message
-				, const std::string_view& frontPadding
-				, const std::
-				string_view& backPadding
-				, const std::uint16_t paddingCount
+				, std::string_view frontPadding
+				, std::string_view backPadding
+				, std::uint16_t paddingCount
 			);
 
 			/**

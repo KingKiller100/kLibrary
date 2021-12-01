@@ -68,12 +68,12 @@ namespace klib::kLogs
 		}
 	}
 
-	void Logging::AddRaw( const std::string_view& text )
+	void Logging::AddRaw( std::string_view text )
 	{
-		AddLog( LogEntry( LogLevel::NRM, LogProfile( "" ), text.data() ) );
+		AddLog( LogEntry( LogLevel::NRM, LogProfile( "" ), LogMessage( text ) ) );
 	}
 
-	void Logging::AddEntry( const LogLevel& level, const LogProfile& profile, const LogMessage& message )
+	void Logging::AddEntry( LogLevel level, const LogProfile& profile, const LogMessage& message )
 	{
 		if ( GetLevel( profile ) > level )
 			return;
@@ -87,9 +87,9 @@ namespace klib::kLogs
 
 	void Logging::AddBanner(
 		const LogMessage& message
-		, const std::string_view& frontPadding
-		, const std::string_view& backPadding
-		, const std::uint16_t paddingCount
+		, std::string_view frontPadding
+		, std::string_view backPadding
+		, std::uint16_t paddingCount
 	)
 	{
 		std::string front, back;
