@@ -9,6 +9,7 @@
 #include "../../String/kToString.hpp"
 #include "../../FileSystem/kFileSystem.hpp"
 
+#include <streambuf>
 #include <mutex>
 
 namespace klib
@@ -102,6 +103,34 @@ namespace klib
 			const auto logLine = CreateLogText( entry );
 
 			Flush( logLine );
+		}
+
+		bool FileLogger::Move( const std::filesystem::path& path )
+		{
+			Close();
+
+			fileStream.seekg( std::ios::beg );
+			const std::string contents{std::istreambuf_iterator<char>( fileStream ), std::istreambuf_iterator<char>()};
+
+			const auto oldPath = GetPath();
+
+			SetPath( path );
+
+			Open();
+
+			if ( IsOpen() )
+			{
+				Remove( oldPath );
+				fileStream << contents;
+				return true;
+			}
+
+			SetPath( oldPath );
+
+			// Failed to open new file. Using the original log file again
+			Open();
+
+			return false;
 		}
 
 		std::string FileLogger::CreateLogText( const LogEntry& entry ) const

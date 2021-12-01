@@ -35,6 +35,8 @@ namespace klib
 
 			void AddEntry( const LogEntry& entry ) override;
 
+			bool Move( const std::filesystem::path& path );
+
 			void Open() override;
 
 			bool IsOpen() const override;
