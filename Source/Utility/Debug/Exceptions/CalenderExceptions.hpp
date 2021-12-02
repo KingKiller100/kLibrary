@@ -1,15 +1,14 @@
 ﻿#pragma once
 
+#include "ExceptionBase.hpp"
 #include <stdexcept>
 
 namespace klib::kDebug
 {
-	class CalendarError : public std::exception
+	class CalendarError : public ExceptionBase
 	{
 	public:
-		explicit CalendarError();
-		explicit CalendarError(const std::string& _Message);
-		explicit CalendarError(const char* const _Message);
+		explicit CalendarError(std::string_view message = "Calendar Error");
 
 		~CalendarError() noexcept override = default;
 	};
@@ -17,9 +16,7 @@ namespace klib::kDebug
 	class InvalidDayError final : public CalendarError
 	{
 	public:
-		explicit InvalidDayError();
-		explicit InvalidDayError(const std::string& _Message);
-		explicit InvalidDayError(const char* const _Message);
+		explicit InvalidDayError(std::string_view message = "Invalid Day Of The Week Error");
 
 		~InvalidDayError() noexcept override = default;
 	};
@@ -27,9 +24,7 @@ namespace klib::kDebug
 	class InvalidMonthError final : public CalendarError
 	{
 	public:
-		explicit InvalidMonthError();
-		explicit InvalidMonthError(const std::string& _Message);
-		explicit InvalidMonthError(const char* const _Message);
+		explicit InvalidMonthError(std::string_view message = "Invalid Month Of The Year Error");
 
 		~InvalidMonthError() noexcept override = default;
 	};

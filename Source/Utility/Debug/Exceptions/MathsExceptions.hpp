@@ -8,9 +8,7 @@ namespace klib::kDebug
 	class MathsError : public std::logic_error
 	{
 	public:
-		explicit MathsError();
-		explicit MathsError(const char* const _Message);
-		explicit MathsError(const std::string& _Message);
+		explicit MathsError( std::string_view msg = "Maths Error" );
 
 		~MathsError() noexcept override = default;
 	};
@@ -18,33 +16,14 @@ namespace klib::kDebug
 	class DivByZeroError final : public MathsError
 	{
 	public:
-		explicit DivByZeroError();
-		explicit DivByZeroError(const char* const _Message);
-		explicit DivByZeroError(const std::string& _Message);
-
-		~DivByZeroError() noexcept override = default;
+		explicit DivByZeroError( std::string_view msg = "ERROR: Division by zero has occurred!" );
 	};
 
 	class NoRealRootError final : public MathsError
 	{
-		inline static std::string NoSpecifier = "";
 	public:
-		template<typename T>
-		NoRealRootError(T value, const size_t root);
-
-		explicit NoRealRootError(const char* const _Message);
-		explicit NoRealRootError(const std::string& _Message);
-
-		~NoRealRootError() noexcept override;
+		template <typename T>
+		NoRealRootError( T value, const size_t root );
+		explicit NoRealRootError( std::string_view msg );
 	};
-
-	class MathsLogicError final : public MathsError
-	{
-	public:
-		explicit MathsLogicError(const char* const _Message);
-		explicit MathsLogicError(const std::string& _Message);
-
-		~MathsLogicError() noexcept override;
-	};
-
 }

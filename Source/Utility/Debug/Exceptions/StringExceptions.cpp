@@ -3,13 +3,11 @@
 
 namespace klib::kDebug
 {
-	StringError::StringError(const std::string_view& msg)
-		: runtime_error(msg.data())	
-	{
-	}
+	StringError::StringError( const std::string_view& msg )
+		: ExceptionBase( msg )
+	{ }
 
-	FormatError::FormatError(const std::string_view& msg)
-		: StringError(msg)
-	{
-	}
+	FormatError::FormatError( const std::string_view& msg )
+		: StringError( msg )
+	{ }
 }

@@ -9,117 +9,82 @@ namespace klib::kDebug
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Mathematical Exception Base ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	MathsError::MathsError()
-		: logic_error("Maths Error Occur")
-	{
-	}
 
-	MathsError::MathsError(const char* const _Message)
-		: logic_error(_Message)
-	{
-	}
-
-	MathsError::MathsError(const std::string& _Message)
-		: logic_error(_Message)
-	{
-	}
+	MathsError::MathsError( std::string_view msg )
+		: logic_error( std::string( msg ) )
+	{}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// No Real Root Exception ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	template <>
-	NoRealRootError::NoRealRootError(float value, const size_t root)
-		: MathsError(kString::Sprintf(
+	NoRealRootError::NoRealRootError( float value, const size_t root )
+		: MathsError( kString::Sprintf(
 			"ERROR: Value \"%.f\" has no %u%s root",
 			value,
 			root,
-			kMisc::GetNumberSuffix<char>(root)
-		))
+			kMisc::GetNumberSuffix<char>( root )
+		) )
 	{}
-	
+
 	template <>
-	NoRealRootError::NoRealRootError(double value, const size_t root)
-		: MathsError(kString::Sprintf(
+	NoRealRootError::NoRealRootError( double value, const size_t root )
+		: MathsError( kString::Sprintf(
 			"ERROR: Value \"%.f\" has no %u%s root",
 			value,
 			root,
-			kMisc::GetNumberSuffix<char>(root)
-		))
+			kMisc::GetNumberSuffix<char>( root )
+		) )
 	{}
-	
+
 	template <>
-	NoRealRootError::NoRealRootError(long double value, const size_t root)
-		: MathsError(kString::Sprintf(
+	NoRealRootError::NoRealRootError( long double value, const size_t root )
+		: MathsError( kString::Sprintf(
 			"ERROR: Value \"%.f\" has no %u%s root",
 			value,
 			root,
-			kMisc::GetNumberSuffix<char>(root)
-		))
+			kMisc::GetNumberSuffix<char>( root )
+		) )
 	{}
-	
+
 	template <>
-	NoRealRootError::NoRealRootError(std::make_signed_t<size_t> value, const size_t root)
-		: MathsError(kString::Sprintf(
+	NoRealRootError::NoRealRootError( std::make_signed_t<size_t> value, const size_t root )
+		: MathsError( kString::Sprintf(
 			"ERROR: Value \"%.d\" has no %u%s root",
 			value,
 			root,
-			kMisc::GetNumberSuffix<char>(root)
-		))
+			kMisc::GetNumberSuffix<char>( root )
+		) )
 	{}
-	
+
 	template <>
-	NoRealRootError::NoRealRootError(size_t value, const size_t root)
-		: MathsError(kString::Sprintf(
+	NoRealRootError::NoRealRootError( size_t value, const size_t root )
+		: MathsError( kString::Sprintf(
 			"ERROR: Value \"%.d\" has no %u%s root",
 			value,
 			root,
-			kMisc::GetNumberSuffix<char>(root)
-		))
+			kMisc::GetNumberSuffix<char>( root )
+		) )
 	{}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Division By Zero Exception ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	///
-	DivByZeroError::DivByZeroError()
-		: MathsError("ERROR: Division by zero has occurred!")
-	{}
-
-	DivByZeroError::DivByZeroError(const std::string& _Message)
-		: MathsError(_Message)
-	{}
-
-	DivByZeroError::DivByZeroError(const char* const _Message)
-		: MathsError(_Message)
+	DivByZeroError::DivByZeroError( std::string_view msg )
+		: MathsError()
 	{}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// No Real Root Exception ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	NoRealRootError::NoRealRootError(const std::string& _Message)
-		: MathsError(_Message)
+	NoRealRootError::NoRealRootError( std::string_view msg )
+		: MathsError( msg )
 	{}
-
-	NoRealRootError::NoRealRootError(const char* const _Message)
-		: MathsError(_Message)
-	{}
-
-	NoRealRootError::~NoRealRootError() noexcept
-		= default;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Maths Logic Exception //////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	MathsLogicError::MathsLogicError(const std::string& _Message)
-		: MathsError(_Message)
-	{}
-
-	MathsLogicError::MathsLogicError(const char* const _Message)
-		: MathsError(_Message)
-	{}
-
-	MathsLogicError::~MathsLogicError() noexcept
-		= default;
 }

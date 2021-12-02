@@ -1,12 +1,10 @@
 ﻿#pragma once
 
-#include <stdexcept>
-#include <string>
-
+#include "ExceptionBase.hpp"
 
 namespace klib::kDebug
 {
-	class StringError : public std::runtime_error
+	class StringError : public ExceptionBase
 	{
 	public:
 		explicit StringError(const std::string_view& msg);
