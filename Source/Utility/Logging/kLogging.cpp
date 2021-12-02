@@ -24,17 +24,32 @@ namespace klib::kLogs
 		Close();
 	}
 
-	void Logging::Register( const LogProfile& profile, LogLevel level )
+	void Logging::Register( std::shared_ptr<LogProfile> profile )
 	{
-		if ( logLevels.find( profile ) != logLevels.end() )
-			return;
+		if ( std::ranges::find_if( profiles,
+			[&profile](const decltype(profiles)::value_type& pfl)
+			{
+			return profile == pfl;
+		}) != profiles.end())
+		{
+			throw std::runtime_error("Registering profile that already exists");
+		}
 
-		logLevels.emplace( profile, level );
+		profiles.emplace_back( profile );
 	}
 
-	void Logging::SetLevel( const LogProfile& profile, LogLevel newMinLevel ) noexcept
+	void Logging::SetLevel( std::shared_ptr<LogProfile> profile, LogLevel newMinLevel ) noexcept
 	{
-		logLevels.at( profile ) = newMinLevel;
+		if (const auto iter = std::ranges::find_if(profiles,
+			[&profile](const decltype(profiles)::value_type& pfl)
+		{
+			return profile == pfl;
+		}); 
+			iter != profiles.end())
+		{
+		(*iter)->SetLevel( newMinLevel );
+			return;
+		}
 	}
 
 	void Logging::Initialize()
@@ -49,7 +64,7 @@ namespace klib::kLogs
 
 	void Logging::SetGlobalLevel( const LogLevel newMin ) noexcept
 	{
-		for ( auto& [_, level] : logLevels )
+		for ( auto& [_, level] : profiles )
 		{
 			level = newMin;
 		}
@@ -151,7 +166,7 @@ namespace klib::kLogs
 
 	LogLevel Logging::GetLevel( const LogProfile& profile ) const
 	{
-		return logLevels.at( profile );
+		return profiles.at( profile );
 	}
 
 	bool Logging::HasCache() const noexcept

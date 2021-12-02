@@ -1,20 +1,28 @@
 ﻿#pragma once
 
+#include "kLogLevel.hpp"
 #include <string>
 
 namespace klib::kLogs
 {
-	class LogProfile
+	class Logging;
+
+	class LogProfile : std::enable_shared_from_this<LogProfile>
 	{
 	public:
-		explicit LogProfile( const std::string_view& profileName );
+		explicit LogProfile( std::weak_ptr<Logging> logSystem, const std::string_view& profileName, LogLevel lvl = LogLevel::INF );
 
 		[[nodiscard]] std::string_view GetName() const noexcept;
 
-		auto operator<=>(const LogProfile&) const = default;
+		[[nodiscard]] LogLevel GetLevel() const noexcept;
+
+		void SetLevel( LogLevel lvl );
+
+		auto operator<=>( const LogProfile& ) const = default;
 
 	private:
 		std::string name;
+		LogLevel level;
 	};
 }
 

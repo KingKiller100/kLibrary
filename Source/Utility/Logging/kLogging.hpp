@@ -31,8 +31,6 @@ namespace klib
 
 			~Logging();
 
-			void Register( const LogProfile& profile, LogLevel level );
-
 			/**
 			 * \brief
 			 *		Set minimum level of a log that can be stored
@@ -43,7 +41,7 @@ namespace klib
 			 * \note
 			 *		No logs less than this given level will be stored by the log system.
 			 */
-			void SetLevel( const LogProfile& profile, LogLevel newMinLevel ) noexcept;
+			void SetLevel( std::shared_ptr<LogProfile> profile, LogLevel newMinLevel ) noexcept;
 
 			/**
 			 * \brief
@@ -197,10 +195,22 @@ namespace klib
 			 */
 			void Close();
 
+			/**
+			 * \brief
+			 *		Registers a profile with a logging system
+			 * \param profile
+			 *		profile
+			 * \param level
+			 *		Initial lvl
+			 */
+			void Register( std::shared_ptr<LogProfile> profile );
+
+			friend class LogProfile;
+
 		protected:
 			std::deque<LogEntry> entriesCache; // Queue buffer to cache the logged messages
 
-			std::unordered_map<LogProfile, LogLevel> logLevels;
+			std::vector<std::shared_ptr<LogProfile>> profiles;
 			std::vector<std::shared_ptr<iLoggerDestination>> destinations;
 
 			bool outputEnabled;

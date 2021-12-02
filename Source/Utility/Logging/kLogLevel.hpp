@@ -11,7 +11,6 @@ namespace klib
 		ENUM_CLASS(LogLevel, std::uint8_t,
 			TRC, // Trace
 			DBG, // Debug
-			NRM, // Normal
 			INF, // Informative
 			WRN, // Warning
 			ERR, // Error
