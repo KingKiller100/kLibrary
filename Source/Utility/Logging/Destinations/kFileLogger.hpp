@@ -35,6 +35,8 @@ namespace klib
 
 			void AddEntry( const LogEntry& entry ) override;
 
+			void AddRaw(const LogMessage& message) override;
+
 			bool Move( const std::filesystem::path& path );
 
 			void Open() override;
@@ -46,6 +48,7 @@ namespace klib
 		private:
 			void Flush( const std::string_view& msg );
 			std::string CreateLogText( const LogEntry& entry ) const;
+			std::string CreateRawLogText( const LogMessage& msg ) const;
 
 		private:
 			std::filesystem::path path;

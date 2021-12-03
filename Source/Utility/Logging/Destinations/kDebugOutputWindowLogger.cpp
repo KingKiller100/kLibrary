@@ -14,26 +14,30 @@ namespace klib::kLogs
 {
 	namespace
 	{
-		std::mutex g_kConsoleLoggerMutex;
+		std::mutex g_kDebugOutputLoggerMutex;
 	}
 
-	DebugOutputWindowLogger::DebugOutputWindowLogger()
+	DebugOutputLogger::DebugOutputLogger()
 		: active( false )
 	{
 		FormattedLogDestinationBase::SetFormat(
 			"[&hh:&zz:&ss:&ccc] [&n] [&p]: &t"
 		);
+
+		FormattedLogDestinationBase::SetRawFormat(
+			"[&hh:&zz:&ss:&ccc]: &t"
+		);
 	}
 
-	DebugOutputWindowLogger::~DebugOutputWindowLogger()
+	DebugOutputLogger::~DebugOutputLogger()
 	= default;
 
-	std::string_view DebugOutputWindowLogger::GetName() const
+	std::string_view DebugOutputLogger::GetName() const
 	{
 		return "Debug Console Logger";
 	}
 
-	void DebugOutputWindowLogger::AddEntry( const LogEntry& entry )
+	void DebugOutputLogger::AddEntry( const LogEntry& entry )
 	{
 		const auto& msg = entry.GetMsg();
 		const auto& profile = entry.GetProfile();
@@ -42,7 +46,7 @@ namespace klib::kLogs
 		Flush( logLine );
 	}
 
-	std::string DebugOutputWindowLogger::CreateLogText( const LogEntry& entry ) const
+	std::string DebugOutputLogger::CreateLogText( const LogEntry& entry ) const
 	{
 		const auto& msg = entry.GetMsg();
 		const auto& profile = entry.GetProfile();
@@ -69,7 +73,7 @@ namespace klib::kLogs
 
 		// Profile name
 
-		std::string logLine = kString::ToString(messageFormat,
+		std::string logLine = kString::ToString( messageFormat,
 			day,
 			month,
 			year,
@@ -83,28 +87,70 @@ namespace klib::kLogs
 			text
 		);
 
-		logLine.push_back('\n');
+		logLine.push_back( '\n' );
 
 		return logLine;
 	}
 
-	bool DebugOutputWindowLogger::IsOpen() const
+	void DebugOutputLogger::AddRaw( const LogMessage& message )
+	{
+		Flush( CreateRawLogText( message ) );
+	}
+
+	std::string DebugOutputLogger::CreateRawLogText( const LogMessage& msg ) const
+	{
+		// Message details
+		const auto& time = msg.time;
+		const auto& hour = time.GetHour();
+		const auto& minute = time.GetMinute();
+		const auto& second = time.GetSecond();
+		const auto& milli = time.GetMillisecond();
+
+		const auto& date = msg.date;
+		const auto& day = date.GetDay();
+		const auto& month = date.GetMonth();
+		const auto& year = date.GetYear();
+
+		const auto& text = msg.text;
+
+		// Profile name
+
+		std::string logLine = kString::ToString( rawMessageFormat,
+			day,
+			month,
+			year,
+			hour,
+			minute,
+			second,
+			milli,
+			text
+		);
+
+		logLine.push_back( '\n' );
+
+		return logLine;
+	}
+
+
+	bool DebugOutputLogger::IsOpen() const
 	{
 		return active;
 	}
 
-	void DebugOutputWindowLogger::Open()
+	void DebugOutputLogger::Open()
 	{
 		active = true;
 	}
 
-	void DebugOutputWindowLogger::Close()
+	void DebugOutputLogger::Close()
 	{
 		active = false;
 	}
 
-	void DebugOutputWindowLogger::Flush( const std::string_view& msg ) const
+	void DebugOutputLogger::Flush( const std::string_view& msg ) const
 	{
+		std::scoped_lock lock( g_kDebugOutputLoggerMutex );
+
 		kDebug::WriteToOutputWindow( msg );
 	}
 }

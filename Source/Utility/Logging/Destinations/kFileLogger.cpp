@@ -9,7 +9,6 @@
 #include "../../String/kToString.hpp"
 #include "../../FileSystem/kFileSystem.hpp"
 
-#include <streambuf>
 #include <mutex>
 
 namespace klib
@@ -25,6 +24,9 @@ namespace klib
 		{
 			FormattedLogDestinationBase::SetFormat(
 				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&n]: &t"
+			);
+			FormattedLogDestinationBase::SetRawFormat(
+				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc]: &t"
 			);
 		}
 
@@ -105,34 +107,6 @@ namespace klib
 			Flush( logLine );
 		}
 
-		bool FileLogger::Move( const std::filesystem::path& path )
-		{
-			Close();
-
-			fileStream.seekg( std::ios::beg );
-			const std::string contents{std::istreambuf_iterator<char>( fileStream ), std::istreambuf_iterator<char>()};
-
-			const auto oldPath = GetPath();
-
-			SetPath( path );
-
-			Open();
-
-			if ( IsOpen() )
-			{
-				Remove( oldPath );
-				fileStream << contents;
-				return true;
-			}
-
-			SetPath( oldPath );
-
-			// Failed to open new file. Using the original log file again
-			Open();
-
-			return false;
-		}
-
 		std::string FileLogger::CreateLogText( const LogEntry& entry ) const
 		{
 			const auto& profile = entry.GetProfile();
@@ -178,12 +152,81 @@ namespace klib
 			return logLine;
 		}
 
+		void FileLogger::AddRaw(const LogMessage& message)
+		{
+			const auto rawLogLine = CreateRawLogText(message);
+			Flush(rawLogLine);
+		}
+
+		std::string FileLogger::CreateRawLogText( const LogMessage& msg ) const
+		{
+			// Message details
+			const auto& time = msg.time;
+			const auto& hour = time.GetHour();
+			const auto& minute = time.GetMinute();
+			const auto& second = time.GetSecond();
+			const auto& milli = time.GetMillisecond();
+
+			const auto& date = msg.date;
+			const auto& day = date.GetDay();
+			const auto& month = date.GetMonth();
+			const auto& year = date.GetYear();
+
+			const auto& text = msg.text;
+
+			// Profile name
+
+			std::string logLine = ToString( rawMessageFormat,
+				day,
+				month,
+				year,
+				hour,
+				minute,
+				second,
+				milli,
+				text
+			);
+
+			logLine.push_back( '\n' );
+
+			return logLine;
+		}
+
+
 		void FileLogger::Close()
 		{
 			if ( !IsOpen() )
 				return;
 
 			fileStream.close();
+		}
+
+		bool FileLogger::Move(const std::filesystem::path& path)
+		{
+			Close();
+
+			fileStream.seekg(std::ios::beg);
+			const std::string contents{ std::istreambuf_iterator<char>(fileStream), std::istreambuf_iterator<char>() };
+
+			const auto oldPath = GetPath();
+
+			SetPath(path);
+
+			Open();
+
+			if (IsOpen())
+			{
+				Remove(oldPath);
+				fileStream << contents;
+				return true;
+			}
+
+			SetPath(oldPath);
+
+			// Failed to open new file. Using the original log file again
+			Open();
+
+			return false;
 		}
 
 		void FileLogger::Flush( const std::string_view& msg )

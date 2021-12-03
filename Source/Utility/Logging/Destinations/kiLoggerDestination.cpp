@@ -4,47 +4,74 @@
 
 namespace klib::kLogs
 {
-	const std::unordered_map<char, std::string> FormattedLogDestinationBase::LogFormatSpecifiersMap = {
-		{'d', "0"}   // day
-		, {'m', "1"} // month
-		, {'y', "2"} // year
-		, {'h', "3"} // hour
-		, {'z', "4"} // minute
-		, {'s', "5"} // second
-		, {'c', "6"} // millisecond
-		, {'n', "7"} // Profile name
-		, {'p', "8"}  // Log descriptor [text]
-		, {'w', "9"}  // Log descriptor [numeric]
-		, {'t', "10"} // Log message
-	};
+	namespace
+	{
+		const std::unordered_map<char, std::string> g_LogFormatSpecifiersMap = {
+			{'d', "0"}    // day
+			, {'m', "1"}  // month
+			, {'y', "2"}  // year
+			, {'h', "3"}  // hour
+			, {'z', "4"}  // minute
+			, {'s', "5"}  // second
+			, {'c', "6"}  // millisecond
+			, {'n', "7"}  // Profile name
+			, {'p', "8"}  // Log descriptor [text]
+			, {'w', "9"}  // Log descriptor [numeric]
+			, {'t', "10"} // Log message
+		};
+		const std::unordered_map<char, std::string> g_RawLogFormatSpecifiersMap = {
+			{'d', "0"}   // day
+			, {'m', "1"} // month
+			, {'y', "2"} // year
+			, {'h', "3"} // hour
+			, {'z', "4"} // minute
+			, {'s', "5"} // second
+			, {'c', "6"} // millisecond
+			, {'t', "7"} // Log message
+		};
+	}
 
 	void FormattedLogDestinationBase::SetFormat( const std::string_view& format ) noexcept
 	{
-		messageFormat.clear();
+		SetFormatImpl( format, messageFormat, g_LogFormatSpecifiersMap );
+	}
 
-		const auto realFormat = kString::ToLower( format );
+	void FormattedLogDestinationBase::SetRawFormat( const std::string_view& format ) noexcept
+	{
+		SetFormatImpl( format, rawMessageFormat, g_RawLogFormatSpecifiersMap );
+	}
 
-		for ( size_t i = 0; i < realFormat.size(); ++i )
+	void FormattedLogDestinationBase::SetFormatImpl(
+		const std::string_view& format
+		, std::string& outRealFormat
+		, const std::unordered_map<char, std::string>& specifierMap
+	) noexcept
+	{
+		outRealFormat.clear();
+
+		const auto lowerCaseFmt = kString::ToLower( format );
+
+		for ( size_t i = 0; i < lowerCaseFmt.size(); ++i )
 		{
-			const auto& letter = realFormat[i];
+			const auto& letter = lowerCaseFmt[i];
 
 			if ( letter != DetailSpecifier )
 			{
-				messageFormat.push_back( format[i] );
+				outRealFormat.push_back( format[i] );
 			}
 			else
 			{
-				messageFormat.push_back( '{' );
+				outRealFormat.push_back( '{' );
 
-				const auto identifier = realFormat[i + 1];
+				const auto identifier = lowerCaseFmt[i + 1];
 
-				const auto& fi = LogFormatSpecifiersMap.at( identifier );
+				const auto& fi = specifierMap.at( identifier );
 
-				messageFormat.append( fi );
+				outRealFormat.append( fi );
 
 				const auto firstIndex = i + 1;
 
-				auto lastIndex = realFormat.find_first_not_of( identifier, firstIndex );
+				auto lastIndex = lowerCaseFmt.find_first_not_of( identifier, firstIndex );
 				if ( lastIndex == std::string::npos )
 					lastIndex = firstIndex + 1;
 
@@ -52,11 +79,11 @@ namespace klib::kLogs
 
 				if ( count > 1 )
 				{
-					messageFormat.push_back( kString::format::g_ToStringSpecifierSymbol<char> );
-					messageFormat.append( kString::stringify::StringIntegral<char>( count ) );
+					outRealFormat.push_back( kString::format::g_ToStringSpecifierSymbol<char> );
+					outRealFormat.append( kString::stringify::StringIntegral<char>( count ) );
 				}
 
-				messageFormat.push_back( '}' );
+				outRealFormat.push_back( '}' );
 
 				i += count;
 			}

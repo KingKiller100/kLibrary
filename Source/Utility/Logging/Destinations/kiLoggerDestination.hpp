@@ -86,13 +86,36 @@ namespace klib::kLogs
 		 *		- t = Log message
 		 */
 		virtual void SetFormat( const std::string_view& format ) noexcept;
+
+		/**
+		 * \brief
+		 *		Sets the format of all log message
+		 *		[Example] "[&dd/&mm/&yyyy] [&hh:&zz:&ss] [&n]: &t" can result in
+		 *		an output like this "[01/01/1970] [01:12:59] [Logger]: Pass Test!"
+		 * \param format
+		 *		Format of the log message for the destination logger
+		 *		Declare each detail specifier item with a '&' character
+		 *		Using multiple calls of the same specifiers gives different results
+		 *		Detail specifiers:
+		 *		- d = Day
+		 *		- m = Month
+		 *		- y = Year
+		 *		- h = Hours
+		 *		- z = Minutes
+		 *		- s = Seconds
+		 *		- c = Milliseconds
+		 *		- t = Log message
+		 */
+		virtual void SetRawFormat( const std::string_view& format) noexcept;
+
+	protected:
+		virtual void SetFormatImpl( const std::string_view& format, std::string& outRealFormat, const std::unordered_map<char, std::string>& specifierMap ) noexcept;
+		
 	public:
 		inline static constexpr auto DetailSpecifier = '&';
 
 	protected:
 		std::string messageFormat;
-
-	private:
-		static const std::unordered_map<char, std::string> LogFormatSpecifiersMap;
+		std::string rawMessageFormat;
 	};
 }

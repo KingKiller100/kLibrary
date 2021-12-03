@@ -6,7 +6,6 @@
 
 #include "../../Calendar/kCalendar.hpp"
 #include "../../Calendar/kCalendarToString.hpp"
-#include "../../Debug/kDebugger.hpp"
 #include "../../String/kToString.hpp"
 
 #include <mutex>
@@ -28,11 +27,22 @@ namespace klib
 
 		ConsoleLogger::ConsoleLogger()
 			: active( false )
-			, consoleColour( ConsoleColour::WHITE )
+			, consoleColours( ConsoleColour::WHITE )
 		{
 			FormattedLogDestinationBase::SetFormat(
 				"[&hh:&zz:&ss:&ccc] [&n]: &t"
 			);
+
+			FormattedLogDestinationBase::SetRawFormat(
+				"[&hh:&zz:&ss:&ccc]: &t"
+			);
+
+			consoleColours.emplace( LogLevel::TRC, ConsoleColour::LIGHT_GREEN );
+			consoleColours.emplace( LogLevel::DBG, ConsoleColour::AQUA_BLUE );
+			consoleColours.emplace( LogLevel::INF, ConsoleColour::LIGHT_GREY );
+			consoleColours.emplace( LogLevel::WRN, ConsoleColour::YELLOW );
+			consoleColours.emplace( LogLevel::ERR, ConsoleColour::SCARLET_RED );
+			consoleColours.emplace( LogLevel::FTL, ConsoleColour::RED_BG_WHITE_TEXT );
 		}
 
 		ConsoleLogger::~ConsoleLogger() noexcept
@@ -57,8 +67,8 @@ namespace klib
 		{
 			const auto logLine = CreateLogText( entry );
 
-			UpdateConsoleColour( entry.GetLevel() );
-			Flush( logLine );
+
+			Flush( logLine, UpdateConsoleColour( entry.GetLevel() ) );
 		}
 
 		std::string ConsoleLogger::CreateLogText( const LogEntry& entry ) const
@@ -107,32 +117,68 @@ namespace klib
 			return logLine;
 		}
 
-		void ConsoleLogger::UpdateConsoleColour( const LogLevel lvl )
+		void ConsoleLogger::AddRaw( const LogMessage& message )
 		{
-			switch ( lvl.ToEnum() )
-			{
-			case LogLevel::DBG:
-				consoleColour = ConsoleColour::AQUA_BLUE;
-				break;
-			case LogLevel::NRM:
-				consoleColour = ConsoleColour::LIGHT_GREY;
-				break;
-			case LogLevel::INF:
-				consoleColour = ConsoleColour::LIGHT_GREEN;
-				break;
-			case LogLevel::WRN:
-				consoleColour = ConsoleColour::YELLOW;
-				break;
-			case LogLevel::ERR:
-				consoleColour = ConsoleColour::SCARLET_RED;
-				break;
-			case LogLevel::FTL:
-				consoleColour = ConsoleColour::RED_BG_WHITE_TEXT;
-				break;
-			default:
-				throw std::runtime_error( "Unknown log level! Cannot map to a known console colour: "
-					+ std::string( lvl.ToString() ) );
-			}
+			Flush( CreateRawLogText( message ), ConsoleColour::WHITE );
+		}
+
+		std::string ConsoleLogger::CreateRawLogText( const LogMessage& msg ) const
+		{
+			// Message details
+			const auto& time = msg.time;
+			const auto& hour = time.GetHour();
+			const auto& minute = time.GetMinute();
+			const auto& second = time.GetSecond();
+			const auto& milli = time.GetMillisecond();
+
+			const auto& date = msg.date;
+			const auto& day = date.GetDay();
+			const auto& month = date.GetMonth();
+			const auto& year = date.GetYear();
+
+			const auto& text = msg.text;
+
+			// Profile name
+
+			std::string logLine = ToString( rawMessageFormat,
+				day,
+				month,
+				year,
+				hour,
+				minute,
+				second,
+				milli,
+				text
+			);
+
+			logLine.push_back( '\n' );
+
+			return logLine;
+		}
+
+		void ConsoleLogger::Flush( const std::string_view& msg, kMisc::ConsoleColour textColour ) const
+		{
+			std::scoped_lock scoped_lock( g_kConsoleLoggerMutex );
+
+			if ( !active )
+				return;
+
+			SetConsoleColour( textColour );
+			std::printf( "%s", msg.data() );
+			SetConsoleColour( ConsoleColour::WHITE );
+		}
+
+		void ConsoleLogger::SetConsoleColour( kMisc::ConsoleColour colour ) const
+		{
+			const WORD attributes = colour.ToUnderlying();
+			auto* handle = ::GetStdHandle( STD_OUTPUT_HANDLE );
+
+			SetConsoleTextAttribute( handle, attributes );
+		}
+
+		kMisc::ConsoleColour ConsoleLogger::UpdateConsoleColour( const LogLevel lvl )
+		{
+			return consoleColours.at( lvl );
 		}
 
 		void ConsoleLogger::Close()
@@ -140,27 +186,9 @@ namespace klib
 			active = false;
 		}
 
-		void ConsoleLogger::Flush( const std::string_view& msg ) const
+		void ConsoleLogger::LinkColour( LogLevel lvl, kMisc::ConsoleColour colour )
 		{
-			std::scoped_lock scoped_lock( g_kConsoleLoggerMutex );
-
-			if ( !active )
-				return;
-
-			OutputToConsole( msg );
-		}
-
-		void ConsoleLogger::OutputToConsole( const std::string_view& msg ) const
-		{
-			static constexpr ConsoleColour whiteText = static_cast<WORD>( ConsoleColour::WHITE );
-
-			auto* handle = ::GetStdHandle( STD_OUTPUT_HANDLE );
-
-			SetConsoleTextAttribute( handle, consoleColour.ToUnderlying() );
-			std::printf( "%s", msg.data() );
-
-			if ( whiteText != consoleColour )
-				SetConsoleTextAttribute( handle, whiteText.ToUnderlying() );
+			consoleColours.at( lvl ) = colour;
 		}
 	}
 }

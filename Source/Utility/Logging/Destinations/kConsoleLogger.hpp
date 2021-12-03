@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "kiLoggerDestination.hpp"
+#include "../kLogLevel.hpp"
 
 #include "../../Misc/kConsoleColour.hpp"
 
@@ -20,23 +21,29 @@ namespace klib
 
 			void AddEntry( const LogEntry& entry ) override;
 
+			void AddRaw(const LogMessage& message) override;
+
 			void Open() override;
 
 			bool IsOpen() const override;
 
 			void Close() override;
 
+			void LinkColour(LogLevel lvl, kMisc::ConsoleColour colour);
+
 		private:
-			void UpdateConsoleColour( const LogLevel lvl );
+			kMisc::ConsoleColour UpdateConsoleColour( const LogLevel lvl );
 
-			std::string CreateLogText( const LogEntry& entry ) const;
+			[[nodiscard]] std::string CreateLogText( const LogEntry& entry ) const;
+			[[nodiscard]] std::string CreateRawLogText( const LogMessage& msg ) const;
 
-			void Flush( const std::string_view& msg ) const;
-			void OutputToConsole( const std::string_view& msg ) const;
+			void Flush( const std::string_view& msg, kMisc::ConsoleColour textColour ) const;
+
+			void SetConsoleColour(kMisc::ConsoleColour colour) const;
 			
 		private:
 			bool active;
-			kMisc::ConsoleColour consoleColour;
+			std::unordered_map<LogLevel::Value, kMisc::ConsoleColour> consoleColours;
 		};
 	}
 }
