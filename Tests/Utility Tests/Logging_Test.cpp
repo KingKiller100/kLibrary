@@ -142,15 +142,15 @@ namespace kTest::utility
 		const auto* const extension = ".log";
 		const std::filesystem::path path = dir / (filename + extension);
 
-		auto testLogger = std::make_unique<Logging>(path);
+		auto testLogger = std::make_unique<LogDispatcher>(path);
 
 		testLogger->GetFile().SetFormat("[&N] [&p]: &t", LogLevel::BNR);
-		testLogger->AddBanner("Welcome to logging test", "*", "*", 20 );
+		testLogger->AddBanner( , , "Welcome to logging test", "*", "*", 20 );
 		testLogger->GetFile().Close(false);
 
 		{
-			testLogger->AddBanner("BANNER!", "*",
-				"*", 12 );
+			testLogger->AddBanner( , ,
+				"BANNER!", "*", "*", 12 );
 			const auto& last = testLogger->GetLastCachedEntry();
 			VERIFY(last.HasText("BANNER!"));
 			VERIFY(last.HasDescription("TEST"));
@@ -159,7 +159,7 @@ namespace kTest::utility
 		testLogger->SetGlobalLevel(LogLevel::NRM);
 
 		{
-			testLogger->AddEntry( LogLevel::DBG, , "DEBUG!" );
+			testLogger->AddEntry( , "DEBUG!" );
 			const auto& last = testLogger->GetLastCachedEntry();
 			VERIFY(!last.HasText("DEBUG!"));
 			VERIFY(!last.HasDescription(LogLevel::DBG));
@@ -170,7 +170,7 @@ namespace kTest::utility
 		{
 			constexpr char msg[] = "DEBUG!";
 			constexpr auto desc = LogLevel::DBG;
-			testLogger->AddEntry( desc, , msg );
+			testLogger->AddEntry( , msg );
 			const auto& last = testLogger->GetLastCachedEntry();
 			VERIFY(last.HasText(msg));
 			VERIFY(last.HasDescription(desc));
@@ -179,7 +179,7 @@ namespace kTest::utility
 		{
 			constexpr char msg[] = "NORMAL!";
 			constexpr auto desc = LogLevel::NRM;
-			testLogger->AddEntry( desc, , msg );
+			testLogger->AddEntry( , msg );
 			const auto hasCache = testLogger->HasCache();
 			VERIFY(hasCache);
 			const auto& last = testLogger->GetLastCachedEntry();
@@ -190,7 +190,7 @@ namespace kTest::utility
 		{
 			constexpr char msg[] = "INFORMATIVE!";
 			constexpr auto desc = LogLevel::INF;
-			testLogger->AddEntry( desc, , msg );
+			testLogger->AddEntry( , msg );
 			const auto& last = testLogger->GetLastCachedEntry();
 			VERIFY(last.HasText(msg));
 			VERIFY(last.HasDescription(desc));
@@ -199,7 +199,7 @@ namespace kTest::utility
 		{
 			constexpr char msg[] = "WARNING!";
 			constexpr auto desc = LogLevel::WRN;
-			testLogger->AddEntry( desc, , msg );
+			testLogger->AddEntry( , msg );
 			const auto& last = testLogger->GetLastCachedEntry();
 			VERIFY(last.HasText(msg));
 			VERIFY(last.HasDescription(desc));
@@ -208,7 +208,7 @@ namespace kTest::utility
 		{
 			constexpr char msg[] = "ERROR!";
 			constexpr auto desc = LogLevel::ERR;
-			testLogger->AddEntry( desc, , msg );
+			testLogger->AddEntry( , msg );
 			const auto& last = testLogger->GetLastCachedEntry();
 			VERIFY(last.HasText(msg));
 			VERIFY(last.HasDescription(desc));
@@ -224,7 +224,7 @@ namespace kTest::utility
 		{
 			constexpr char msg[] = "ERROR AGAIN!";
 			constexpr auto desc = LogLevel::ERR;
-			testLogger->AddEntry( desc, , msg );
+			testLogger->AddEntry( , msg );
 			const auto& last = testLogger->GetLastCachedEntry();
 			VERIFY(last.HasText(msg));
 			VERIFY(last.HasDescription(desc));
@@ -240,7 +240,7 @@ namespace kTest::utility
 		{
 			constexpr char msg[] = "END!";
 			constexpr auto desc = LogLevel::NRM;
-			testLogger->AddEntry( desc, , msg );
+			testLogger->AddEntry( , msg );
 			const auto hasCache = testLogger->HasCache();
 			VERIFY(!hasCache);
 
@@ -266,13 +266,13 @@ namespace kTest::utility
 
 	void LoggingTester::DummyLoggerTest()
 	{
-		Logging dummy(std::filesystem::current_path() / "Dummy", "Dummy");
+		LogDispatcher dummy(std::filesystem::current_path() / "Dummy", "Dummy");
 		dummy.AddDestination<DummyLogger>();
 		
 		auto& dest = dummy.GetExtraDestination<DummyLogger>(0);
 		dest.Open();
 		dest.SetFormat("&n: [&p]: &t", LogLevel::NRM);
-		dummy.AddEntry( LogLevel::NRM, , "Normal test" );
+		dummy.AddEntry( , "Normal test" );
 		dummy.Flush();
 
 		VERIFY(dest.IsOpen());
