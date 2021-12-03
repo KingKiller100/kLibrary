@@ -23,12 +23,12 @@ namespace klib
 	{
 		class iLogDestination;
 
-		class Logging
+		class LogDispatcher
 		{
 		public:
-			Logging();
+			LogDispatcher();
 
-			~Logging();
+			~LogDispatcher();
 
 			/**
 			 * \brief
@@ -37,21 +37,6 @@ namespace klib
 			 *		New min log level
 			 */
 			void SetGlobalLevel( const LogLevel newMinLevel ) noexcept;
-
-			/**
-			 * \brief 
-			 *		Adds a new destination to send log entries
-			 * \tparam T
-			 *		Derived iLoggerDestination type
-			 * \tparam Params
-			 *		Parameters to derived type's ctor
-			 * \param params 
-			 */
-			template <typename T, typename ...Params>
-			std::shared_ptr<T>& AddDestination( Params&& ...params )
-			{
-				return destinations.emplace_back( std::make_shared<T>(std::forward<Params>(params)...) );
-			}
 
 			/**
 			 * \brief
@@ -75,7 +60,7 @@ namespace klib
 			 * \param text
 			 *		Text to log
 			 */
-			void AddRaw( std::string_view text = "" );
+			void AddRaw( LogProfile* profile, std::string_view text = "" );
 
 			/**
 			 * \brief
@@ -87,7 +72,7 @@ namespace klib
 			 * \param level
 			 *		Log entry details
 			 */
-			void AddEntry( LogLevel level, const LogProfile& profile, const LogMessage& message );
+			void AddEntry( LogProfile* profile, const LogMessage& message );
 
 			/**
 			 * \brief
@@ -102,12 +87,27 @@ namespace klib
 			 *		Repetition of paddings
 			 */
 			void AddBanner(
-				const LogMessage& message
+				LogProfile* profile
+				, const LogMessage& message
 				, std::string_view frontPadding
 				, std::string_view backPadding
 				, std::uint16_t paddingCount
 			);
-			
+
+			/**
+			 * \brief
+			 *		Adds a new destination to send log entries
+			 * \tparam T
+			 *		Derived iLoggerDestination type
+			 * \tparam Params
+			 *		Parameters to derived type's ctor
+			 * \param params
+			 */
+			template <typename T, typename ...Params>
+			std::shared_ptr<T>& AddDestination(Params&& ...params)
+			{
+				return destinations.emplace_back(std::make_shared<T>(std::forward<Params>(params)...));
+			}
 
 		private:
 
@@ -146,17 +146,14 @@ namespace klib
 			 *		Registers a profile with a logging system
 			 * \param profile
 			 *		profile
-			 * \param level
-			 *		Initial lvl
 			 */
-			void Register( std::shared_ptr<LogProfile> profile );
+			void Register( LogProfile* profile );
+			void Unregister( LogProfile* profile );
 
 			friend class LogProfile;
 
 		protected:
-			// std::deque<LogEntry> entriesCache; // Queue buffer to cache the logged messages
-
-			std::vector<std::shared_ptr<LogProfile>> profiles;
+			std::vector<LogProfile*> profiles;
 			std::vector<std::shared_ptr<iLogDestination>> destinations;
 		};
 	}

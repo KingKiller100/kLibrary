@@ -9,7 +9,7 @@ namespace klib::kLogs
 	class LogEntry
 	{
 	public:
-		LogEntry( const LogLevel lvl, const LogProfile& profile, const LogMessage& data );
+		LogEntry( const LogLevel lvl, LogProfile* profile, const LogMessage& data );
 		~LogEntry();
 
 		USE_RESULT bool HasText( const std::string_view& msg ) const;
@@ -20,7 +20,7 @@ namespace klib::kLogs
 
 	private:
 		LogLevel level;
-		LogProfile profile;
+		LogProfile* profile;
 		LogMessage message;
 	};
 }

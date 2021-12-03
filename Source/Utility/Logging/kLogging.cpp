@@ -12,15 +12,15 @@ namespace klib::kLogs
 	using namespace kString;
 	using namespace kCalendar;
 
-	Logging::Logging()
+	LogDispatcher::LogDispatcher()
 	{}
 
-	Logging::~Logging()
+	LogDispatcher::~LogDispatcher()
 	{
 		Close();
 	}
 
-	void Logging::Register( std::shared_ptr<LogProfile> profile )
+	void LogDispatcher::Register( LogProfile* profile )
 	{
 		if ( std::ranges::find_if( profiles,
 			[&profile]( const decltype(profiles)::value_type& pfl )
@@ -34,7 +34,22 @@ namespace klib::kLogs
 		profiles.emplace_back( profile );
 	}
 
-	void Logging::SetGlobalLevel( const LogLevel newMin ) noexcept
+	void LogDispatcher::Unregister( LogProfile* profile )
+	{
+		if ( const auto iter = std::ranges::find_if( profiles,
+			[&profile]( const decltype(profiles)::value_type& pfl )
+			{
+				return profile == pfl;
+			} ); iter != profiles.end() )
+		{
+			profiles.erase( iter );
+			return;
+		}
+
+		throw std::runtime_error( "Unregistering profile that does not exists" );
+	}
+
+	void LogDispatcher::SetGlobalLevel( const LogLevel newMin ) noexcept
 	{
 		for ( auto& profile : profiles )
 		{
@@ -42,16 +57,13 @@ namespace klib::kLogs
 		}
 	}
 
-	void Logging::AddRaw( std::string_view text )
+	void LogDispatcher::AddRaw( LogProfile* profile, std::string_view text )
 	{
 		AddLog( LogMessage( text ) );
 	}
 
-	void Logging::AddEntry( LogLevel level, const LogProfile& profile, const LogMessage& message )
+	void LogDispatcher::AddEntry( LogProfile* profile, const LogMessage& message )
 	{
-		if ( profile.GetLevel() > level )
-			return;
-
 		AddLog( LogEntry(
 			level,
 			profile,
@@ -59,8 +71,10 @@ namespace klib::kLogs
 		) );
 	}
 
-	void Logging::AddBanner(
-		const LogMessage& message
+	void LogDispatcher::AddBanner(
+		LogLevel lvl
+		, LogProfile* profile
+		, const LogMessage& message
 		, std::string_view frontPadding
 		, std::string_view backPadding
 		, std::uint16_t paddingCount
@@ -77,20 +91,20 @@ namespace klib::kLogs
 
 		const LogMessage banner( text, message );
 
-		AddLog( banner );
+		AddLog( LogEntry(lvl, p) );
 	}
 
-	void Logging::AddLog( const LogEntry& entry )
+	void LogDispatcher::AddLog( const LogEntry& entry )
 	{
 		Flush( entry );
 	}
 
-	void Logging::AddLog( const LogMessage& message )
+	void LogDispatcher::AddLog( const LogMessage& message )
 	{
 		Flush( message );
 	}
 
-	void Logging::Flush( const LogEntry& entry )
+	void LogDispatcher::Flush( const LogEntry& entry )
 	{
 		for ( auto& dest : destinations )
 		{
@@ -98,7 +112,7 @@ namespace klib::kLogs
 		}
 	}
 
-	void Logging::Flush( const LogMessage& message )
+	void LogDispatcher::Flush( const LogMessage& message )
 	{
 		for ( auto& dest : destinations )
 		{
@@ -106,7 +120,7 @@ namespace klib::kLogs
 		}
 	}
 
-	void Logging::Open()
+	void LogDispatcher::Open()
 	{
 		for ( auto& dest : destinations )
 		{
@@ -118,7 +132,7 @@ namespace klib::kLogs
 		}
 	}
 
-	void Logging::Close()
+	void LogDispatcher::Close()
 	{
 		for ( auto& dest : destinations )
 		{

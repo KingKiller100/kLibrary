@@ -4,7 +4,7 @@
 
 namespace klib::kLogs
 {
-	LogEntry::LogEntry( const LogLevel lvl, const LogProfile& profile, const LogMessage& message )
+	LogEntry::LogEntry( const LogLevel lvl, LogProfile* profile, const LogMessage& message )
 		: level( lvl )
 		, profile( profile )
 		, message( message )
@@ -20,7 +20,7 @@ namespace klib::kLogs
 
 	const LogProfile& LogEntry::GetProfile() const
 	{
-		return profile;
+		return *profile;
 	}
 
 	const LogMessage& LogEntry::GetMsg() const
