@@ -7,7 +7,6 @@
 
 #include <cstdint>
 #include <deque>
-#include <string>
 #include <vector>
 
 namespace std
@@ -22,7 +21,7 @@ namespace klib
 {
 	namespace kLogs
 	{
-		class iLoggerDestination;
+		class iLogDestination;
 
 		class Logging
 		{
@@ -33,45 +32,11 @@ namespace klib
 
 			/**
 			 * \brief
-			 *		Set minimum level of a log that can be stored
-			 * \param[in] profile
-			 *		Log profile
-			 * \param[in] newMinLevel
-			 *		New minimum log level
-			 * \note
-			 *		No logs less than this given level will be stored by the log system.
-			 */
-			void SetLevel( std::shared_ptr<LogProfile> profile, LogLevel newMinLevel ) noexcept;
-
-			/**
-			 * \brief
 			 *		Set minimum log level for all profiles
 			 * \param newMinLevel
 			 *		New min log level
 			 */
 			void SetGlobalLevel( const LogLevel newMinLevel ) noexcept;
-
-			/**
-			 * \brief
-			 *		Get a profile's log level
-			 * \param profile
-			 *		Log level of the given profile
-			 * \return
-			 *		Profile's current log level
-			 */
-			LogLevel GetLevel( const LogProfile& profile ) const;
-
-			/**
-			 * \brief
-			 *		Toggles if logging system is enabled
-			 */
-			void EnableOutput( bool enabled ) noexcept;
-
-			/**
-			 * \brief
-			 *		Toggles whether logs output to system to keep a local cache
-			 */
-			void SetCacheMode( const bool caching ) noexcept;
 
 			/**
 			 * \brief 
@@ -91,8 +56,18 @@ namespace klib
 			/**
 			 * \brief
 			 *		Flush stored log stream to file
+			 * \param entry
+			 *		Log Entry
 			 */
-			void Flush();
+			void Flush( const LogEntry& entry );
+			
+			/**
+			 * \brief
+			 *		Flush message to destination
+			 * \param message
+			 *		Log message
+			 */
+			void Flush( const LogMessage& message );
 
 			/**
 			 * \brief
@@ -132,56 +107,27 @@ namespace klib
 				, std::string_view backPadding
 				, std::uint16_t paddingCount
 			);
-
-			/**
-			 * \brief
-			 *		Returns previous entry text
-			 *
-			 * \return
-			 *		String of the final log entry
-			*/
-			const LogEntry& GetLastCachedEntry() const;
-
-			/**
-			 * \brief
-			 *		Deletes all log entries
-			*/
-			void ClearCache();
-
-			/**
-			 * \brief
-			 *		If in cache mode, erases a maximum of count many of the most recent logs
-			 * \param count
-			 *		Number of logs to erase
-			 * \return
-			 *		TRUE if managed to erase any, FALSE if nothing erased or not in cache mode
-			 */
-			bool ErasePrevious( size_t count );
-
-			/**
-			 * \brief
-			 *		Check if cache is empty
-			 * \return
-			 *		TRUE if cache not empty OR FALSE if cache is empty
-			 */
-			bool HasCache() const noexcept;
+			
 
 		private:
-			/**
-			 * \brief
-			 *		Initialize logging system
-			 */
-			void Initialize();
 
 			/**
 			 * \brief
-			 *		Adds an entry and log description to queue
+			 *		outputs entry to destination
 			 * \param entry
 			 *		Log entry
 			 * \param entry
 			 *		Log description
 			 */
 			void AddLog( const LogEntry& entry );
+			
+			/**
+			 * \brief
+			 *		Outputs message to destination
+			 * \param message
+			 *		Log Message
+			 */
+			void AddLog( const LogMessage& message );
 
 			/**
 			 * \brief
@@ -208,12 +154,10 @@ namespace klib
 			friend class LogProfile;
 
 		protected:
-			std::deque<LogEntry> entriesCache; // Queue buffer to cache the logged messages
+			// std::deque<LogEntry> entriesCache; // Queue buffer to cache the logged messages
 
 			std::vector<std::shared_ptr<LogProfile>> profiles;
-			std::vector<std::shared_ptr<iLoggerDestination>> destinations;
-
-			bool outputEnabled;
+			std::vector<std::shared_ptr<iLogDestination>> destinations;
 		};
 	}
 

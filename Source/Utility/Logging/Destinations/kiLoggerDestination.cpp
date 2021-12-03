@@ -4,7 +4,7 @@
 
 namespace klib::kLogs
 {
-	const std::unordered_map<char, std::string> LogDestWithFormatSpecifier::LogFormatSpecifiersMap = {
+	const std::unordered_map<char, std::string> FormattedLogDestinationBase::LogFormatSpecifiersMap = {
 		{'d', "0"}   // day
 		, {'m', "1"} // month
 		, {'y', "2"} // year
@@ -18,7 +18,7 @@ namespace klib::kLogs
 		, {'t', "10"} // Log message
 	};
 
-	void LogDestWithFormatSpecifier::SetFormat( const std::string_view& format ) noexcept
+	void FormattedLogDestinationBase::SetFormat( const std::string_view& format ) noexcept
 	{
 		messageFormat.clear();
 

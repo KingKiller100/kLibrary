@@ -1,4 +1,4 @@
-﻿	#pragma once
+﻿#pragma once
 
 #include "../../String/Format/Stringify/kStringifyInteger.hpp"
 
@@ -7,12 +7,13 @@
 
 namespace klib::kLogs
 {
+	struct LogMessage;
 	class LogEntry;
 
-	class iLoggerDestination
+	class iLogDestination
 	{
 	public:
-		virtual ~iLoggerDestination() = default;
+		virtual ~iLogDestination() = default;
 
 		/**
 		 * \brief
@@ -24,11 +25,19 @@ namespace klib::kLogs
 
 		/**
 		 * \brief
+		 *		Writes log to destination without formatting it
+		 * \param message
+		 *		Message
+		 */
+		virtual void AddRaw( const LogMessage& message ) = 0;
+
+		/**
+		 * \brief
 		 *		Formats log message and level to the appropriate log message and then caches it
 		 * \param[in] entry
-		 *		Log entry containing message, time, date, log level, file and file line
+		 *		Log entry containing message, time, date, log level, and profile
 		 */
-		virtual void AddEntry(const LogEntry& entry) = 0;
+		virtual void AddEntry( const LogEntry& entry ) = 0;
 
 		/**
 		 * \brief
@@ -51,7 +60,7 @@ namespace klib::kLogs
 		virtual void Close() = 0;
 	};
 
-	struct LogDestWithFormatSpecifier : public iLoggerDestination
+	struct FormattedLogDestinationBase : public iLogDestination
 	{
 	public:
 		/**
@@ -87,4 +96,3 @@ namespace klib::kLogs
 		static const std::unordered_map<char, std::string> LogFormatSpecifiersMap;
 	};
 }
-

@@ -13,7 +13,7 @@ namespace klib
 		class LogProfile;
 		struct LogMessage;
 
-		class FileLogger final : public LogDestWithFormatSpecifier
+		class FileLogger final : public FormattedLogDestinationBase
 		{
 		public:
 			FileLogger( const std::filesystem::path& path );

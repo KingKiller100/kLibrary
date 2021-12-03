@@ -20,7 +20,7 @@ namespace klib::kLogs
 	DebugOutputWindowLogger::DebugOutputWindowLogger()
 		: active( false )
 	{
-		LogDestWithFormatSpecifier::SetFormat(
+		FormattedLogDestinationBase::SetFormat(
 			"[&hh:&zz:&ss:&ccc] [&n] [&p]: &t"
 		);
 	}

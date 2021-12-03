@@ -13,84 +13,43 @@ namespace klib::kLogs
 	using namespace kCalendar;
 
 	Logging::Logging()
-		: outputEnabled( false )
-	{
-		Initialize();
-	}
+	{}
 
 	Logging::~Logging()
 	{
-		Flush();
 		Close();
 	}
 
 	void Logging::Register( std::shared_ptr<LogProfile> profile )
 	{
 		if ( std::ranges::find_if( profiles,
-			[&profile](const decltype(profiles)::value_type& pfl)
+			[&profile]( const decltype(profiles)::value_type& pfl )
 			{
-			return profile == pfl;
-		}) != profiles.end())
+				return profile == pfl;
+			} ) != profiles.end() )
 		{
-			throw std::runtime_error("Registering profile that already exists");
+			throw std::runtime_error( "Registering profile that already exists" );
 		}
 
 		profiles.emplace_back( profile );
 	}
 
-	void Logging::SetLevel( std::shared_ptr<LogProfile> profile, LogLevel newMinLevel ) noexcept
-	{
-		if (const auto iter = std::ranges::find_if(profiles,
-			[&profile](const decltype(profiles)::value_type& pfl)
-		{
-			return profile == pfl;
-		}); 
-			iter != profiles.end())
-		{
-		(*iter)->SetLevel( newMinLevel );
-			return;
-		}
-	}
-
-	void Logging::Initialize()
-	{
-		EnableOutput( true );
-	}
-
-	void Logging::EnableOutput( bool enabled ) noexcept
-	{
-		outputEnabled = enabled;
-	}
-
 	void Logging::SetGlobalLevel( const LogLevel newMin ) noexcept
 	{
-		for ( auto& [_, level] : profiles )
+		for ( auto& profile : profiles )
 		{
-			level = newMin;
-		}
-	}
-
-	void Logging::SetCacheMode( const bool caching ) noexcept
-	{
-		if ( caching )
-		{
-			Close();
-		}
-		else
-		{
-			Open();
-			Flush();
+			profile->SetLevel( newMin );
 		}
 	}
 
 	void Logging::AddRaw( std::string_view text )
 	{
-		AddLog( LogEntry( LogLevel::NRM, LogProfile( "" ), LogMessage( text ) ) );
+		AddLog( LogMessage( text ) );
 	}
 
 	void Logging::AddEntry( LogLevel level, const LogProfile& profile, const LogMessage& message )
 	{
-		if ( GetLevel( profile ) > level )
+		if ( profile.GetLevel() > level )
 			return;
 
 		AddLog( LogEntry(
@@ -118,29 +77,32 @@ namespace klib::kLogs
 
 		const LogMessage banner( text, message );
 
-		AddLog( LogEntry( LogLevel::NRM, LogProfile( "" ), banner ) );
+		AddLog( banner );
 	}
 
 	void Logging::AddLog( const LogEntry& entry )
 	{
-		entriesCache.push_back( entry );
-
-		if ( !outputEnabled )
-			return;
-
-		Flush();
+		Flush( entry );
 	}
 
-	void Logging::Flush()
+	void Logging::AddLog( const LogMessage& message )
 	{
-		while ( !entriesCache.empty() )
+		Flush( message );
+	}
+
+	void Logging::Flush( const LogEntry& entry )
+	{
+		for ( auto& dest : destinations )
 		{
-			const auto& entry = entriesCache.front();
-			for ( auto& dest : destinations )
-			{
-				dest->AddEntry( entry );
-			}
-			entriesCache.pop_front();
+			dest->AddEntry( entry );
+		}
+	}
+
+	void Logging::Flush( const LogMessage& message )
+	{
+		for ( auto& dest : destinations )
+		{
+			dest->AddRaw( message );
 		}
 	}
 
@@ -162,44 +124,5 @@ namespace klib::kLogs
 		{
 			dest->Close();
 		}
-	}
-
-	LogLevel Logging::GetLevel( const LogProfile& profile ) const
-	{
-		return profiles.at( profile );
-	}
-
-	bool Logging::HasCache() const noexcept
-	{
-		return !entriesCache.empty();
-	}
-
-	const LogEntry& Logging::GetLastCachedEntry() const
-	{
-		if ( entriesCache.empty() )
-			throw std::runtime_error( "Log cache is empty" );
-
-		const auto& lastLog = entriesCache.back();
-
-		return lastLog;
-	}
-
-	void Logging::ClearCache()
-	{
-		if ( !entriesCache.empty() )
-			entriesCache.clear();
-	}
-
-	bool Logging::ErasePrevious( size_t count )
-	{
-		if ( entriesCache.empty() )
-			return false;
-
-		while ( !entriesCache.empty() && count-- != 0 )
-		{
-			entriesCache.pop_back();
-		}
-
-		return true;
 	}
 }

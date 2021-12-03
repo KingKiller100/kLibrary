@@ -4,7 +4,7 @@
 
 namespace klib::kLogs
 {
-	class DebugOutputWindowLogger final : public LogDestWithFormatSpecifier
+	class DebugOutputWindowLogger final : public FormattedLogDestinationBase
 	{
 	public:
 		DebugOutputWindowLogger();

@@ -6,8 +6,9 @@
 
 namespace klib::kLogs
 {
-	LogProfile::LogProfile( std::weak_ptr<Logging> logSystem, const std::string_view& profileName, LogLevel lvl = LogLevel::INF )
+	LogProfile::LogProfile( std::weak_ptr<Logging> logSystem, const std::string_view& profileName, LogLevel lvl )
 		: name( profileName )
+		, level( lvl )
 	{
 		if ( logSystem.expired() )
 			throw std::runtime_error( "Log system must be instantiated before creating a profile" );

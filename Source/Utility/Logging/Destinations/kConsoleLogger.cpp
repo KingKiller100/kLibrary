@@ -30,7 +30,7 @@ namespace klib
 			: active( false )
 			, consoleColour( ConsoleColour::WHITE )
 		{
-			LogDestWithFormatSpecifier::SetFormat(
+			FormattedLogDestinationBase::SetFormat(
 				"[&hh:&zz:&ss:&ccc] [&n]: &t"
 			);
 		}

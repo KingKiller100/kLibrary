@@ -23,7 +23,7 @@ namespace klib
 		FileLogger::FileLogger( const std::filesystem::path& path )
 			: path( path )
 		{
-			LogDestWithFormatSpecifier::SetFormat(
+			FormattedLogDestinationBase::SetFormat(
 				"[&dd/&mm/&yyyy] [&hh:&zz:&ss:&ccc] [&n]: &t"
 			);
 		}
