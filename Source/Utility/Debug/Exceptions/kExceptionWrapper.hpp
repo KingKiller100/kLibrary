@@ -32,15 +32,8 @@ namespace klib::kDebug
 			ExceptionWrapper<Exception> wrapper{e, sourceInfo};
 			return wrapper;
 		}
-
-		template <typename Exception>
-		[[noreturn]] static void Throw( const Exception& e, const SourceInfo& sourceInfo )
-		{
-			const auto wrapper = Generate( e, sourceInfo );
-			throw wrapper.what();
-		}
 	};
 }
 
-#define THROW_WITH_SRC(e) klib::kDebug::ExceptionWithSource::Throw(e, SOURCE_INFO())
+#define THROW_WITH_SRC(e) throw klib::kDebug::ExceptionWithSource::Generate(e, SOURCE_INFO())
 

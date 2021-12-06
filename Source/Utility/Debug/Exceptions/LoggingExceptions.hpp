@@ -6,14 +6,7 @@ namespace klib::kDebug
 {
 	class LoggingExceptions : ExceptionBase
 	{
-		LoggingExceptions( std::string_view message )
-			: ExceptionBase( message )
-		{ }
-	};
-
-	class LogProfileError
-	{
 	public:
-		LogProfileError();
+		explicit LoggingExceptions( std::string_view message );
 	};
 }
