@@ -22,12 +22,6 @@
 #include "Template/kToImpl.hpp"
 #include "Template/kTypeInfo.hpp"
 
-// Testing
-#include "Testing/SetUpTests.hpp"
-#include "Testing/kAddTest.hpp"
-#include "Testing/TesterBase.hpp"
-#include "Testing/TesterManager.hpp"
-
 // Util Includes
 
 // Platform OS
