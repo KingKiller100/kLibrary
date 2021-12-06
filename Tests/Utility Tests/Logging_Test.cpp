@@ -1,4 +1,4 @@
-#include "pch.hpp"
+
 #include "Logging_Test.hpp"
 
 #include "../../Source/Utility/Calendar/kCalendarToString.hpp"
@@ -39,7 +39,7 @@ namespace kTest::utility
 		DummyLogger()
 			: active( false )
 		{
-			SetRawFormat( "&t" );
+			FormattedLogDestinationBase::SetRawFormat( "&t" );
 		}
 
 		~DummyLogger() override
@@ -96,18 +96,17 @@ namespace kTest::utility
 			return active;
 		}
 
-		bool Open() override
+		void Open() override
 		{
 			active = true;
-			return active;
 		}
 
-		void Close( const bool outputClosingMsg ) override
+		void Close() override
 		{
 			active = false;
 		}
 
-		std::string GetLogs() const
+		[[nodiscard]] std::string GetLogs() const
 		{
 			return buffer.str();
 		}
