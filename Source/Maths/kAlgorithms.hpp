@@ -298,7 +298,7 @@ namespace kmaths
 	USE_RESULT constexpr T1 Clamp(const T1 value, const T2 min, const T3 max)
 	{
 		if (max <= min)
-			throw klib::kDebug::MathsLogicError("Max value cannot be less than or equal to min value");
+			throw klib::kDebug::MathsError("Max value cannot be less than or equal to min value");
 
 		return Min(static_cast<T1>(max), Max(value, min));
 	}

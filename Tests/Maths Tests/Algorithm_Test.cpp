@@ -1042,7 +1042,7 @@ namespace kTest::maths
 				const auto expected = std::clamp(value, lower, upper);
 				VERIFY(result == expected);
 			}
-			catch (const klib::kDebug::MathsLogicError& e)
+			catch (const klib::kDebug::MathsError& e)
 			{
 				constexpr auto msg = "Max value cannot be less than or equal to min value";
 				const auto result = std::strcmp(e.what(), msg) == 0;
