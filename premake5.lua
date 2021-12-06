@@ -4,7 +4,7 @@ project "kLibrary"
     language "C++"
     cppdialect "C++latest"
     characterset ("default")
-    -- characterset ("MBCS")
+    
 	staticruntime "on"
 
     targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
@@ -49,12 +49,6 @@ project "kLibrary"
         defines "KLIB_TEST"
         symbols "On"
         runtime "Debug"
-        
-        files 
-        {    
-            "Tests/**.hpp",
-            "Tests/**.cpp",
-        }
 
     filter "configurations:Release"
         defines "KLIB_RELEASE"
@@ -73,4 +67,6 @@ project "kLibrary"
         }
         optimize "Speed"
         runtime "Release"
+
+
         
