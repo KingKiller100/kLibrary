@@ -47,20 +47,18 @@ namespace kTest
 	// If results are wrong, change name to failed test function signature and line, else continues to next line
 #define VERIFY(test)															\
 	if ((test) == false)														\
-	{																			\
-		this->ReportFailedTestCase(#test, __FILE__, __FUNCTION__, __LINE__);	\
-	}																			\
+		this->ReportFailedTestCase(#test, __FILE__, __FUNCTION__, __LINE__)		\
 
 	// If results does not throw, change name to failed test function signature and line, else continues to next line
-#define VERIFY_THROWS(test) \
-	try {					\
-		test;				\
-		VERIFY(false);		\
-	}						\
-	catch (...)				\
-	{						\
-							\
-	}						\
+#define VERIFY_THROWS(test)														\
+	try {																		\
+		(void)test;																	\
+		this->ReportFailedTestCase(#test, __FILE__, __FUNCTION__, __LINE__);	\
+	}																			\
+	catch (...)																	\
+	{																			\
+																				\
+	}																			\
 
 #if MSVC_PLATFORM_TOOLSET > 141
 	// Verify result of a test if result is available at compile time
