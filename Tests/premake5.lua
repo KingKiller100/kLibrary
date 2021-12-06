@@ -1,14 +1,13 @@
 project "kTests"
-    location "."
     kind "StaticLib"
     language "C++"
     cppdialect "C++latest"
     characterset ("default")
     
-	staticruntime "on"
+	staticruntime "off"
 
-    targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
-	objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
+    targetdir ("../bin/" .. OutputDir .. "/kLibrary")
+	objdir ("../bin-int/" .. OutputDir .. "/kLibrary")
 
     files
     {
@@ -16,11 +15,7 @@ project "kTests"
         ".\\**.cpp",
         "..\\cpp.hint"
     }
-
-    links
-    {
-        "Bcrypt.lib",
-    }
+    links "kLibrary"
 
     filter "system:Windows"
         systemversion "latest"

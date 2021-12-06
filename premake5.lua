@@ -25,24 +25,23 @@ project "kLibrary"
         "Bcrypt.lib",
     }
 
+    defines 
+    {
+        "KLIB_LIB"
+    }
+
     filter "system:Windows"
         systemversion "latest"
 
         defines
         {
             "_CRT_SECURE_NO_WARNINGS",
-            "KLIB_LIB",
             "KLIB_WINDOWS_OS",
             "MSVC_PLATFORM_TOOLSET=$(PlatformToolsetVersion)"
         }
 
     filter "configurations:Debug"
         defines "KLIB_DEBUG"
-        symbols "On"
-        runtime "Debug"
-
-    filter "configurations:Test"
-        defines "KLIB_TEST"
         symbols "On"
         runtime "Debug"
 
