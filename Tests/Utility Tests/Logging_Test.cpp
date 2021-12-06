@@ -1,13 +1,11 @@
-
 #include "Logging_Test.hpp"
 
-#include "../../Source/Utility/Calendar/kCalendarToString.hpp"
 #include "../../Source/Utility/Logging/kLogging.hpp"
 #include "../../Source/Utility/Logging/Destinations/kiLoggerDestination.hpp"
-#include "../../Source/Utility/String/kToString.hpp"
+#include "../../Source/Utility/Logging/Destinations/kFileLogger.hpp"
 #include "../../Source/Template/kToImpl.hpp"
 
-#include <sstream>
+#include "../../Source/Utility/Logging/kLogEntry.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility
@@ -24,71 +22,25 @@ namespace kTest::utility
 	void LoggingTester::Prepare() noexcept
 	{
 		ADD_TEST( LogTest() );
-		ADD_TEST( DummyLoggerTest() );
 	}
 
-	void LoggingTester::CleanUp()
-	{
-		std::filesystem::remove_all( fullFilePathToDelete );
-		std::filesystem::remove( fullFilePathToDelete.parent_path() );
-	}
-
-	class DummyLogger : public FormattedLogDestinationBase
+	class CacheLogger : public FormattedLogDestinationBase
 	{
 	public:
-		DummyLogger()
+		CacheLogger()
 			: active( false )
 		{
 			FormattedLogDestinationBase::SetRawFormat( "&t" );
 		}
 
-		~DummyLogger() override
-		{}
+		~CacheLogger() override
+		= default;
 
 		void AddEntry( const LogEntry& entry ) override
 		{
 			if ( !active )
 				return;
-
-			const auto& msg = entry.GetMsg();
-			const auto& profile = entry.GetProfile();
-
-			// Message details
-			const auto& t = msg.time;
-			const auto& hour = t.GetHour();
-			const auto& minute = t.GetMinute();
-			const auto& second = t.GetSecond();
-			const auto& milli = t.GetMillisecond();
-
-			const auto& d = msg.date;
-			const auto& day = d.GetDay();
-			const auto& month = d.GetMonth();
-			const auto& year = d.GetYear();
-
-			const auto& text = msg.text;
-			
-			// Description details
-			const auto lvl = profile.GetLevel();
-			const auto profileName = profile.GetName();
-
-
-			std::string logLine = klib::kString::ToString( messageFormat,
-				day,
-				month,
-				year,
-				hour,
-				minute,
-				second,
-				milli,
-				profileName,
-				lvl.ToString(),
-				lvl.ToUnderlying(),
-				text
-			);
-
-			logLine.push_back( '\n' );
-
-			Flush( logLine );
+			Flush( entry );
 		}
 
 		bool IsOpen() const override
@@ -106,168 +58,152 @@ namespace kTest::utility
 			active = false;
 		}
 
-		[[nodiscard]] std::string GetLogs() const
+		[[nodiscard]] const LogEntry& GetLastEntry() const
 		{
-			return buffer.str();
+			return entries.back();
+		}
+
+		void Pop()
+		{
+			entries.pop_back();
+		}
+
+		void Clear()
+		{
+			entries.clear();
+		}
+		
+		std::string_view GetName() const override
+		{
+			return "Cache Logger";
+		}
+
+		void AddRaw( const LogMessage& message ) override
+		{
+			
 		}
 
 	private:
-		void Flush( const std::string& logLine )
+		void Flush( const LogEntry& message )
 		{
-			buffer << logLine;
+			entries.emplace_back( message );
 		}
-
-	private:
+	
 		bool active;
-		std::stringstream buffer;
+		std::vector<LogEntry> entries;
 	};
 
 	void LoggingTester::LogTest()
 	{
-		const std::string filename = "DiffFileName";
-		auto dir = std::filesystem::current_path();
-		dir /= "Test Results";
-		dir /= "Log Test Dir";
-		const auto* const extension = ".log";
-		const std::filesystem::path path = dir / ( filename + extension );
+		auto dispatcher = std::make_unique<LogDispatcher>();
+		const auto destination = dispatcher->AddDestination<CacheLogger>();
 
-		auto testLogger = std::make_unique<LogDispatcher>( path );
+		const auto profile = dispatcher->RegisterProfile( "Test", LogLevel::DBG ).lock();
 
-		testLogger->GetFile().SetFormat( "[&N] [&p]: &t", LogLevel::BNR );
-		testLogger->AddBanner(, , "Welcome to logging test", "*", "*", 20 );
-		testLogger->GetFile().Close( false );
+		destination->SetFormat( "[&N] [&p]: &t" );
+		profile->AddBanner( "Welcome to logging test", "*", "*", 20 );
+
+		dispatcher->Open();
 
 		{
-			testLogger->AddBanner(, ,
-				"BANNER!", "*", "*", 12 );
-			const auto& last = testLogger->GetLastCachedEntry();
+			profile->AddBanner( "BANNER!", "*", "*", 12 );
+			const auto& last = destination->GetLastEntry();
 			VERIFY( last.HasText("BANNER!") );
-			VERIFY( last.HasDescription("TEST") );
+			VERIFY( last.GetMsg().text == "************ BANNER! ************" );
 		}
 
-		testLogger->SetGlobalLevel( LogLevel::NRM );
+		dispatcher->SetGlobalLevel( LogLevel::INF );
 
 		{
-			testLogger->AddEntry(, "DEBUG!" );
-			const auto& last = testLogger->GetLastCachedEntry();
+			profile->AddEntry( LogLevel::DBG, "DEBUG!" );
+			const auto& last = destination->GetLastEntry();
 			VERIFY( !last.HasText("DEBUG!") );
-			VERIFY( !last.HasDescription(LogLevel::DBG) );
+			VERIFY( last.GetMsg().text != "DEBUG!" );
+
+			VERIFY( last.GetProfile().GetLevel() != LogLevel::DBG );
 		}
 
-		testLogger->SetGlobalLevel( LogLevel::DBG );
+		dispatcher->SetGlobalLevel( LogLevel::TRC );
+
+		{
+			constexpr char msg[] = "TRACE!";
+			constexpr auto desc = LogLevel::TRC;
+			profile->AddEntry( desc, msg );
+			const auto& last = destination->GetLastEntry();
+			VERIFY( last.HasText(msg) );
+			VERIFY( last.GetProfile().GetLevel() == desc );
+		}
 
 		{
 			constexpr char msg[] = "DEBUG!";
 			constexpr auto desc = LogLevel::DBG;
-			testLogger->AddEntry(, msg );
-			const auto& last = testLogger->GetLastCachedEntry();
+			profile->AddEntry( desc, msg );
+			const auto& last = destination->GetLastEntry();
 			VERIFY( last.HasText(msg) );
-			VERIFY( last.HasDescription(desc) );
-		}
-
-		{
-			constexpr char msg[] = "NORMAL!";
-			constexpr auto desc = LogLevel::NRM;
-			testLogger->AddEntry(, msg );
-			const auto hasCache = testLogger->HasCache();
-			VERIFY( hasCache );
-			const auto& last = testLogger->GetLastCachedEntry();
-			VERIFY( last.HasText(msg) );
-			VERIFY( last.HasDescription(desc) );
+			VERIFY( last.GetProfile().GetLevel() == desc );
 		}
 
 		{
 			constexpr char msg[] = "INFORMATIVE!";
 			constexpr auto desc = LogLevel::INF;
-			testLogger->AddEntry(, msg );
-			const auto& last = testLogger->GetLastCachedEntry();
+			profile->AddEntry( desc, msg );
+			const auto& last = destination->GetLastEntry();
 			VERIFY( last.HasText(msg) );
-			VERIFY( last.HasDescription(desc) );
+			VERIFY( last.GetProfile().GetLevel() == desc );
 		}
 
 		{
 			constexpr char msg[] = "WARNING!";
 			constexpr auto desc = LogLevel::WRN;
-			testLogger->AddEntry(, msg );
-			const auto& last = testLogger->GetLastCachedEntry();
+			profile->AddEntry( desc, msg );
+			const auto& last = destination->GetLastEntry();
 			VERIFY( last.HasText(msg) );
-			VERIFY( last.HasDescription(desc) );
+			VERIFY( last.GetProfile().GetLevel() == desc );
 		}
 
 		{
 			constexpr char msg[] = "ERROR!";
 			constexpr auto desc = LogLevel::ERR;
-			testLogger->AddEntry(, msg );
-			const auto& last = testLogger->GetLastCachedEntry();
+			profile->AddEntry( desc, msg );
+			const auto& last = destination->GetLastEntry();
 			VERIFY( last.HasText(msg) );
-			VERIFY( last.HasDescription(desc) );
+			VERIFY( last.GetProfile().GetLevel() == desc );
 		}
 
-		testLogger->ErasePrevious( 1 );
+		destination->Pop();
 
 		{
-			const auto& last = testLogger->GetLastCachedEntry();
+			const auto& last = destination->GetLastEntry();
 			VERIFY( !last.HasText("ERROR!") );
+			VERIFY( last.GetProfile().GetLevel() != LogLevel::ERR );
 		}
 
 		{
 			constexpr char msg[] = "ERROR AGAIN!";
 			constexpr auto desc = LogLevel::ERR;
-			testLogger->AddEntry(, msg );
-			const auto& last = testLogger->GetLastCachedEntry();
+			profile->AddEntry( desc, msg );
+			const auto& last = destination->GetLastEntry();
 			VERIFY( last.HasText(msg) );
-			VERIFY( last.HasDescription(desc) );
+			VERIFY( last.GetProfile().GetLevel() == desc );
 		}
 
-		testLogger->GetFile().Open();
-		testLogger->AddFatal( LogMessage( "FATAL!", __FILE__, __LINE__ ) );
-		testLogger->FinalOutput( false );
+		{
+			constexpr char msg[] = "FATAL!";
+			constexpr auto desc = LogLevel::FTL;
+			profile->AddEntry( desc, msg );
+			const auto& last = destination->GetLastEntry();
+			VERIFY( last.HasText(msg) );
+			VERIFY( last.GetProfile().GetLevel() == desc );
+		}
 
-		fullFilePathToDelete = dir / ( filename + extension );
-		VERIFY( std::filesystem::exists(fullFilePathToDelete.c_str()) == true );
+		dispatcher->Close();
 
 		{
 			constexpr char msg[] = "END!";
-			constexpr auto desc = LogLevel::NRM;
-			testLogger->AddEntry(, msg );
-			const auto hasCache = testLogger->HasCache();
-			VERIFY( !hasCache );
-
-			bool crashWhenTryingToAccessEmptyCache;
-
-			try
-			{
-				const auto& last = testLogger->GetLastCachedEntry();
-				VERIFY( !last.HasText(msg) );
-				VERIFY( !last.HasDescription(desc) );
-				crashWhenTryingToAccessEmptyCache = false;
-			}
-			catch ( ... )
-			{
-				crashWhenTryingToAccessEmptyCache = true;
-			}
-
-			VERIFY( crashWhenTryingToAccessEmptyCache );
+			constexpr auto desc = LogLevel::INF;
+			profile->AddEntry( desc, msg );
+			VERIFY_THROWS( destination->GetLastEntry() );
 		}
-	}
-
-	void LoggingTester::DummyLoggerTest()
-	{
-		LogDispatcher dummy( std::filesystem::current_path() / "Dummy", "Dummy" );
-		dummy.AddDestination<DummyLogger>();
-
-		auto& dest = dummy.GetExtraDestination<DummyLogger>( 0 );
-		dest.Open();
-		dest.SetFormat( "&n: [&p]: &t", LogLevel::NRM );
-		dummy.AddEntry(, "Normal test" );
-		dummy.Flush();
-
-		VERIFY( dest.IsOpen() );
-		const auto logs = dest.GetLogs();
-		VERIFY( !logs.empty() );
-		VERIFY( logs == "Dummy: [NRM]: Normal test\n" )
-		dest.Close( false );
-		VERIFY( !dest.IsOpen() );
 	}
 }
 #endif

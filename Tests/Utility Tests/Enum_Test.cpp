@@ -402,7 +402,7 @@ namespace kTest::utility
 	void EnumTester::PrettyTypeTest()
 	{
 		constexpr auto prettyType = TestResults::PrettyType();
-		VERIFY(prettyType == "enum TestResults")
+		VERIFY(prettyType == "enum TestResults");
 	}
 
 	void EnumTester::PrettyValueTest()
