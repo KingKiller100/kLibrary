@@ -3,7 +3,6 @@
 
 #include "../String/kToString.hpp"
 
-#if defined(KLIB_DEBUG) ||  defined(KLIB_TEST)
 namespace klib::kDebug
 {	
 	FailedConditionException::FailedConditionException(const std::string_view& expected,
@@ -16,4 +15,3 @@ namespace klib::kDebug
 	FailedConditionException::~FailedConditionException() throw()
 	{}
 }
-#endif
