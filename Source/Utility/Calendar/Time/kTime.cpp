@@ -9,6 +9,9 @@ namespace klib::kCalendar
 {
 	// TIME ////////////////////////////////////////////////////////////
 
+	extern secret::impl::iCalendarInfoSource& GetCalendarInfoSource();
+
+
 	Time::Time(CalendarInfoSourceType sourceType)
 	{
 		auto& source = GetCalendarInfoSource();

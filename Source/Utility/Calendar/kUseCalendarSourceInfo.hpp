@@ -5,6 +5,5 @@
 namespace klib::kCalendar
 {
 	void UsePlatformCalendarInfoSource();
-	secret::impl::iCalendarInfoSource& GetCalendarInfoSource();
-	void SetCalendarInfoSource(secret::impl::iCalendarInfoSource* infoSource);	
+	void SetCalendarInfoSource( secret::impl::iCalendarInfoSource* infoSource );
 }

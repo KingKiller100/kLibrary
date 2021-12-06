@@ -13,6 +13,7 @@
 namespace klib::kCalendar
 {
 	// DATE ////////////////////////////////////////////////////////////
+	extern secret::impl::iCalendarInfoSource& GetCalendarInfoSource();
 
 	Date::Date(CalendarInfoSourceType sourceType)
 	{
