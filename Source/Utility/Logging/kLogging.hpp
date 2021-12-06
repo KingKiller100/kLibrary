@@ -1,26 +1,16 @@
 #pragma once
 
 #include "kLogLevel.hpp"
-#include "kLogEntry.hpp"
 #include "kLogProfile.hpp"
-#include "kLogMessage.hpp"
 
 #include <cstdint>
-#include <deque>
 #include <vector>
-
-namespace std
-{
-	namespace filesystem
-	{
-		class path;
-	}
-}
 
 namespace klib
 {
 	namespace kLogs
 	{
+		class LogEntry;
 		class iLogDestination;
 
 		class LogDispatcher
@@ -48,9 +38,11 @@ namespace klib
 			 * \param params
 			 */
 			template <typename T, typename ...Params>
-			std::shared_ptr<T>& AddDestination(Params&& ...params)
+			std::shared_ptr<T> AddDestination(Params&& ...params)
 			{
-				return destinations.emplace_back(std::make_shared<T>(std::forward<Params>(params)...));
+				auto destination = std::make_shared<T>(std::forward<Params>(params)...);
+				destinations.emplace_back(destination);
+				return destination;
 			}
 
 			/**
@@ -59,7 +51,19 @@ namespace klib
 			 * \param name
 			 *		profile
 			 */
-			std::weak_ptr<LogProfile> Register(std::string_view name, LogLevel level);
+			std::weak_ptr<LogProfile> RegisterProfile(std::string_view name, LogLevel level);
+
+			/**
+			 * \brief
+			 *		Open log destinations
+			 */
+			void Open();
+
+			/**
+			 * \brief
+			 *		Outputs logs to file then closes it
+			 */
+			void Close();
 
 		private:
 			/**
@@ -136,18 +140,6 @@ namespace klib
 			 *		Log Message
 			 */
 			void AddLog( std::string_view text );
-
-			/**
-			 * \brief
-			 *		Open log destinations
-			 */
-			void Open();
-
-			/**
-			 * \brief
-			 *		Outputs logs to file then closes it
-			 */
-			void Close();
 			
 			/**
 			 * \brief

@@ -2,6 +2,7 @@
 #include "kLogging.hpp"
 
 #include "Destinations/kiLoggerDestination.hpp"
+#include "kLogEntry.hpp"
 
 #include "../FileSystem/kFileSystem.hpp"
 #include "../String/kToString.hpp"
@@ -11,7 +12,6 @@
 namespace klib::kLogs
 {
 	using namespace kString;
-	using namespace kCalendar;
 
 	LogDispatcher::LogDispatcher()
 		: profiles()
@@ -24,7 +24,7 @@ namespace klib::kLogs
 		UnregisterAll();
 	}
 
-	std::weak_ptr<LogProfile> LogDispatcher::Register( std::string_view name, LogLevel level )
+	std::weak_ptr<LogProfile> LogDispatcher::RegisterProfile( std::string_view name, LogLevel level )
 	{
 		if ( auto iter = std::ranges::find_if( profiles,
 			[&name]( const decltype(profiles)::value_type& pfl )
@@ -35,7 +35,7 @@ namespace klib::kLogs
 			return *iter;
 		}
 
-		const auto profile = profiles.emplace_back( std::make_shared<LogProfile>( name, level ) );
+		const auto profile = profiles.emplace_back( LogProfile::Create( name, level ) );
 		profile->SetDispatcher( this );
 		return profile;
 	}

@@ -7,12 +7,17 @@
 
 namespace klib::kLogs
 {
-	LogProfile::LogProfile( const std::string_view& profileName, LogLevel lvl )
+	LogProfile::LogProfile( std::string_view profileName, LogLevel lvl )
 		: name( profileName )
 		, level( lvl )
 		, dispatcher( nullptr )
 	{ }
 
+
+	std::shared_ptr<LogProfile> LogProfile::Create( std::string_view profileName, LogLevel lvl )
+	{
+		return std::shared_ptr<LogProfile>( new LogProfile( profileName, lvl ) );
+	}
 
 	std::string_view LogProfile::GetName() const noexcept
 	{
@@ -61,7 +66,7 @@ namespace klib::kLogs
 	void LogProfile::VerifyDispatcherSet() const
 	{
 		if ( !dispatcher )
-			throw kDebug::LoggingExceptions{ kString::ToString( "{0} cannot log before setting the dispatcher", GetName() ) };
+			throw kDebug::LoggingExceptions{kString::ToString( "{0} cannot log before setting the dispatcher", GetName() )};
 	}
 
 	bool LogProfile::Loggable( LogLevel lvl ) const

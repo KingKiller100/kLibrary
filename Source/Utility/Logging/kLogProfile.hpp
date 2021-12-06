@@ -11,7 +11,8 @@ namespace klib::kLogs
 	class LogProfile : public std::enable_shared_from_this<LogProfile>
 	{
 	public:
-		explicit LogProfile(const std::string_view& profileName, LogLevel lvl);
+		static std::shared_ptr<LogProfile> Create( std::string_view profileName, LogLevel lvl );
+
 		LogProfile( LogProfile&& ) = default;
 		LogProfile& operator=( LogProfile&& ) = default;
 
@@ -64,6 +65,8 @@ namespace klib::kLogs
 		friend class LogDispatcher;
 
 	private:
+		explicit LogProfile( std::string_view profileName, LogLevel lvl );
+
 		bool Loggable( LogLevel lvl ) const;
 
 		void SetDispatcher( LogDispatcher* dispatcher );

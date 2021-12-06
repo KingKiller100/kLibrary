@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "../../../HelperMacros.hpp"
 #include "kiLoggerDestination.hpp"
 #include <filesystem>
 #include <fstream>
@@ -19,7 +20,7 @@ namespace klib
 			FileLogger( const std::filesystem::path& path );
 			~FileLogger() noexcept;
 
-			std::string_view GetName() const override;
+			USE_RESULT std::string_view GetName() const override;
 
 			USE_RESULT std::string GetFileName() const;
 			void SetFileName( const std::string_view& newFilename );

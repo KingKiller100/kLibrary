@@ -9,8 +9,6 @@ namespace klib
 {
 	namespace kLogs
 	{
-		ENUM_CLASS_FWD_DCL( LogLevel );
-
 		class ConsoleLogger final : public FormattedLogDestinationBase
 		{
 		public:

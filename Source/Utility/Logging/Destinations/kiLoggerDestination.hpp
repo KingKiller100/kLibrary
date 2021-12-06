@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "../../String/Format/Stringify/kStringifyInteger.hpp"
 
 #include <string>
 #include <unordered_map>
@@ -85,7 +84,7 @@ namespace klib::kLogs
 		 *		- w = Log descriptor [numeric value]
 		 *		- t = Log message
 		 */
-		virtual void SetFormat( const std::string_view& format ) noexcept;
+		void SetFormat( const std::string_view& format ) noexcept;
 
 		/**
 		 * \brief
@@ -106,7 +105,7 @@ namespace klib::kLogs
 		 *		- c = Milliseconds
 		 *		- t = Log message
 		 */
-		virtual void SetRawFormat( const std::string_view& format) noexcept;
+		void SetRawFormat( const std::string_view& format) noexcept;
 
 	private:
 		virtual void SetFormatImpl( const std::string_view& format, std::string& outRealFormat, const std::unordered_map<char, std::string>& specifierMap ) noexcept;

@@ -1,6 +1,8 @@
 ﻿#include "pch.hpp"
 #include "kiLoggerDestination.hpp"
 #include "../../String/Format/FormatSymbols.hpp"
+#include "../../String/Format/Stringify/kStringifyInteger.hpp"
+#include "../../String/Tricks/kStringCases.hpp"
 
 namespace klib::kLogs
 {
