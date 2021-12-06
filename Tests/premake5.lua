@@ -14,7 +14,6 @@ project "kTests"
     {
         ".\\**.hpp",
         ".\\**.cpp",
-        "..\\Source/**/*Test*",
         "..\\cpp.hint"
     }
 

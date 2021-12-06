@@ -38,10 +38,6 @@ project "kLibrary"
 
     filter "configurations:Debug"
         defines "KLIB_DEBUG"
-        removefiles
-        {
-            "Source/**/*Test*",
-        }
         symbols "On"
         runtime "Debug"
 
@@ -52,19 +48,11 @@ project "kLibrary"
 
     filter "configurations:Release"
         defines "KLIB_RELEASE"
-        removefiles
-        {
-            "Source/**/*Test*",
-        }
         optimize "Full"
         runtime "Release"
 
     filter "configurations:Profile"
         defines "KLIB_PROFILE"
-        removefiles
-        {
-            "Source/**/*Test*",
-        }
         optimize "Speed"
         runtime "Release"
 
