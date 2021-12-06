@@ -1,29 +1,18 @@
 ﻿#include "pch.hpp"
 
 #include "kLogProfile.hpp"
-
 #include "kLogging.hpp"
+#include "../Debug/Exceptions/kExceptionWrapper.hpp"
+#include "../Debug/Exceptions/LoggingExceptions.hpp"
 
 namespace klib::kLogs
 {
-	LogProfile::LogProfile( std::weak_ptr<LogDispatcher> dispatcher, const std::string_view& profileName, LogLevel lvl )
+	LogProfile::LogProfile( const std::string_view& profileName, LogLevel lvl )
 		: name( profileName )
 		, level( lvl )
-		, dispatcher( dispatcher )
-	{
-		if ( dispatcher.expired() )
-			throw std::runtime_error( "Log dispatcher must be instantiated before creating a profile to register" );
+		, dispatcher( nullptr )
+	{ }
 
-		dispatcher.lock()->Register( this );
-	}
-
-	LogProfile::~LogProfile()
-	{
-		if ( dispatcher.expired() )
-			throw std::runtime_error( "Cannot unregister a profile after destroying the dispatcher" );
-
-		dispatcher.lock()->Unregister( this );
-	}
 
 	std::string_view LogProfile::GetName() const noexcept
 	{
@@ -35,35 +24,53 @@ namespace klib::kLogs
 		level = lvl;
 	}
 
+	LogLevel LogProfile::GetLevel() const noexcept
+	{
+		return level;
+	}
+
+	void LogProfile::AddNewLine()
+	{
+		AddRaw( "" );
+	}
+
 	void LogProfile::AddRaw( std::string_view text )
 	{
-		if ( dispatcher.expired() )
-			throw std::runtime_error( "Cannot raw log to an empty dispatcher" );
+		VerifyDispatcherSet();
 
-		dispatcher.lock()->AddRaw( this, text );
+		dispatcher->AddRaw( shared_from_this(), text );
 	}
 
-	void LogProfile::AddBanner( const LogMessage& message, std::string_view frontPadding, std::string_view backPadding, std::uint16_t paddingCount )
+	void LogProfile::AddBanner( std::string_view text, std::string_view frontPadding, std::string_view backPadding, std::uint16_t paddingCount )
 	{
-		if ( dispatcher.expired() )
-			throw std::runtime_error( "Cannot add a banner to a empty dispatcher" );
+		VerifyDispatcherSet();
 
-		dispatcher.lock()->AddBanner( , this, message, frontPadding, backPadding, paddingCount );
+		dispatcher->AddBanner( shared_from_this(), text, frontPadding, backPadding, paddingCount );
 	}
 
-	void LogProfile::AddEntry( LogLevel lvl, const LogMessage& message )
+	void LogProfile::AddEntry( LogLevel lvl, std::string_view text )
 	{
-		if ( dispatcher.expired() )
-			throw std::runtime_error( "Cannot add a log entry to an empty dispatcher" );
+		VerifyDispatcherSet();
 
 		if ( !Loggable( lvl ) )
 			return;
 
-		dispatcher.lock()->AddEntry( this, message );
+		dispatcher->AddEntry( shared_from_this(), text );
+	}
+
+	void LogProfile::VerifyDispatcherSet() const
+	{
+		if ( !dispatcher )
+			throw kDebug::LoggingExceptions{ kString::ToString( "{0} cannot log before setting the dispatcher", GetName() ) };
 	}
 
 	bool LogProfile::Loggable( LogLevel lvl ) const
 	{
 		return level <= lvl;
+	}
+
+	void LogProfile::SetDispatcher( LogDispatcher* dispatcher )
+	{
+		this->dispatcher = dispatcher;
 	}
 }

@@ -35,7 +35,7 @@ namespace klib
 
 			void AddEntry( const LogEntry& entry ) override;
 
-			void AddRaw(const LogMessage& message) override;
+			void AddRaw( const LogMessage& text ) override;
 
 			bool Move( const std::filesystem::path& path );
 

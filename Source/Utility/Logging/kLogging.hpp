@@ -36,8 +36,32 @@ namespace klib
 			 * \param newMinLevel
 			 *		New min log level
 			 */
-			void SetGlobalLevel( const LogLevel newMinLevel ) noexcept;
+			void SetGlobalLevel( LogLevel newMinLevel ) noexcept;
 
+			/**
+			 * \brief
+			 *		Adds a new destination to send log entries
+			 * \tparam T
+			 *		Derived iLoggerDestination type
+			 * \tparam Params
+			 *		Parameters to derived type's ctor
+			 * \param params
+			 */
+			template <typename T, typename ...Params>
+			std::shared_ptr<T>& AddDestination(Params&& ...params)
+			{
+				return destinations.emplace_back(std::make_shared<T>(std::forward<Params>(params)...));
+			}
+
+			/**
+			 * \brief
+			 *		Registers a profile with a logging system
+			 * \param name
+			 *		profile
+			 */
+			std::weak_ptr<LogProfile> Register(std::string_view name, LogLevel level);
+
+		private:
 			/**
 			 * \brief
 			 *		Flush stored log stream to file
@@ -60,7 +84,7 @@ namespace klib
 			 * \param text
 			 *		Text to log
 			 */
-			void AddRaw( LogProfile* profile, std::string_view text = "" );
+			void AddRaw( std::shared_ptr<LogProfile> profile, std::string_view text = "" );
 
 			/**
 			 * \brief
@@ -72,11 +96,12 @@ namespace klib
 			 * \param level
 			 *		Log entry details
 			 */
-			void AddEntry( LogProfile* profile, const LogMessage& message );
+			void AddEntry( std::shared_ptr<LogProfile> profile, std::string_view message );
 
 			/**
 			 * \brief
 			 *		Formats the log banner to become the appropriate log banner message and logs it
+			 * \param profile
 			 * \param message
 			 *		Log message details including time, data, text, source file and source line
 			 * \param frontPadding
@@ -87,29 +112,12 @@ namespace klib
 			 *		Repetition of paddings
 			 */
 			void AddBanner(
-				LogProfile* profile
-				, const LogMessage& message
+				std::shared_ptr<LogProfile> profile
+				, std::string_view message
 				, std::string_view frontPadding
 				, std::string_view backPadding
 				, std::uint16_t paddingCount
 			);
-
-			/**
-			 * \brief
-			 *		Adds a new destination to send log entries
-			 * \tparam T
-			 *		Derived iLoggerDestination type
-			 * \tparam Params
-			 *		Parameters to derived type's ctor
-			 * \param params
-			 */
-			template <typename T, typename ...Params>
-			std::shared_ptr<T>& AddDestination(Params&& ...params)
-			{
-				return destinations.emplace_back(std::make_shared<T>(std::forward<Params>(params)...));
-			}
-
-		private:
 
 			/**
 			 * \brief
@@ -124,10 +132,10 @@ namespace klib
 			/**
 			 * \brief
 			 *		Outputs message to destination
-			 * \param message
+			 * \param text
 			 *		Log Message
 			 */
-			void AddLog( const LogMessage& message );
+			void AddLog( std::string_view text );
 
 			/**
 			 * \brief
@@ -140,20 +148,17 @@ namespace klib
 			 *		Outputs logs to file then closes it
 			 */
 			void Close();
-
+			
 			/**
 			 * \brief
-			 *		Registers a profile with a logging system
-			 * \param profile
-			 *		profile
+			 *		Unregisters all previously registered profiles
 			 */
-			void Register( LogProfile* profile );
-			void Unregister( LogProfile* profile );
+			void UnregisterAll();
 
 			friend class LogProfile;
 
 		protected:
-			std::vector<LogProfile*> profiles;
+			std::vector<std::shared_ptr<LogProfile>> profiles;
 			std::vector<std::shared_ptr<iLogDestination>> destinations;
 		};
 	}

@@ -17,10 +17,4 @@ namespace klib::kLogs
 		, date( calendarInfoSource )
 		, text( text )
 	{}
-
-	LogMessage::LogMessage( const std::string& text, const LogMessage& other )
-		: time( other.time )
-		, date( other.date )
-		, text( text )
-	{}
 }

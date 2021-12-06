@@ -5,6 +5,7 @@
 
 #include "../FileSystem/kFileSystem.hpp"
 #include "../String/kToString.hpp"
+#include "../Debug/Exceptions/LoggingExceptions.hpp"
 
 
 namespace klib::kLogs
@@ -13,68 +14,64 @@ namespace klib::kLogs
 	using namespace kCalendar;
 
 	LogDispatcher::LogDispatcher()
+		: profiles()
+		, destinations()
 	{}
 
 	LogDispatcher::~LogDispatcher()
 	{
 		Close();
+		UnregisterAll();
 	}
 
-	void LogDispatcher::Register( LogProfile* profile )
+	std::weak_ptr<LogProfile> LogDispatcher::Register( std::string_view name, LogLevel level )
 	{
-		if ( std::ranges::find_if( profiles,
-			[&profile]( const decltype(profiles)::value_type& pfl )
+		if ( auto iter = std::ranges::find_if( profiles,
+			[&name]( const decltype(profiles)::value_type& pfl )
 			{
-				return profile == pfl;
-			} ) != profiles.end() )
-		{
-			throw std::runtime_error( "Registering profile that already exists" );
-		}
-
-		profiles.emplace_back( profile );
-	}
-
-	void LogDispatcher::Unregister( LogProfile* profile )
-	{
-		if ( const auto iter = std::ranges::find_if( profiles,
-			[&profile]( const decltype(profiles)::value_type& pfl )
-			{
-				return profile == pfl;
+				return name == pfl->GetName();
 			} ); iter != profiles.end() )
 		{
-			profiles.erase( iter );
-			return;
+			return *iter;
 		}
 
-		throw std::runtime_error( "Unregistering profile that does not exists" );
+		const auto profile = profiles.emplace_back( std::make_shared<LogProfile>( name, level ) );
+		profile->SetDispatcher( this );
+		return profile;
 	}
 
-	void LogDispatcher::SetGlobalLevel( const LogLevel newMin ) noexcept
+	void LogDispatcher::UnregisterAll()
 	{
-		for ( auto& profile : profiles )
+		for ( auto& logProfile : profiles )
+		{
+			profiles.clear();
+		}
+	}
+
+	void LogDispatcher::SetGlobalLevel( LogLevel newMin ) noexcept
+	{
+		for ( const auto& profile : profiles )
 		{
 			profile->SetLevel( newMin );
 		}
 	}
 
-	void LogDispatcher::AddRaw( LogProfile* profile, std::string_view text )
+	void LogDispatcher::AddRaw( std::shared_ptr<LogProfile>, std::string_view text )
 	{
-		AddLog( LogMessage( text ) );
+		AddLog( text );
 	}
 
-	void LogDispatcher::AddEntry( LogProfile* profile, const LogMessage& message )
+	void LogDispatcher::AddEntry( std::shared_ptr<LogProfile> profile, std::string_view message )
 	{
 		AddLog( LogEntry(
-			level,
 			profile,
-			message
+			LogMessage( message )
 		) );
 	}
 
 	void LogDispatcher::AddBanner(
-		LogLevel lvl
-		, LogProfile* profile
-		, const LogMessage& message
+		std::shared_ptr<LogProfile> profile
+		, std::string_view message
 		, std::string_view frontPadding
 		, std::string_view backPadding
 		, std::uint16_t paddingCount
@@ -87,11 +84,11 @@ namespace klib::kLogs
 			back.append( backPadding );
 		}
 
-		const auto text = front + message.text + back;
+		const auto text = front + std::string( message ) + back;
 
-		const LogMessage banner( text, message );
+		const LogMessage banner( text );
 
-		AddLog( LogEntry(lvl, p) );
+		AddLog( LogEntry( profile, banner ) );
 	}
 
 	void LogDispatcher::AddLog( const LogEntry& entry )
@@ -99,9 +96,9 @@ namespace klib::kLogs
 		Flush( entry );
 	}
 
-	void LogDispatcher::AddLog( const LogMessage& message )
+	void LogDispatcher::AddLog( std::string_view text )
 	{
-		Flush( message );
+		Flush( LogMessage( text ) );
 	}
 
 	void LogDispatcher::Flush( const LogEntry& entry )
@@ -127,7 +124,7 @@ namespace klib::kLogs
 			dest->Open();
 			if ( !dest->IsOpen() )
 			{
-				throw std::runtime_error( ToString( "Failed to open log destination: {0}", dest->GetName() ) );
+				throw kDebug::LoggingExceptions( ToString( "Failed to open log destination: {0}", dest->GetName() ) );
 			}
 		}
 	}

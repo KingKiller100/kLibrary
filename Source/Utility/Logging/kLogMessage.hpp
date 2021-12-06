@@ -16,7 +16,6 @@ namespace klib::kLogs
 			const std::string_view& text
 			, kCalendar::CalendarInfoSourceType calendarInfoSource = kCalendar::CalendarInfoSourceType::LOCAL
 		);
-		explicit LogMessage( const std::string& text, const LogMessage& other );
 
 		const kCalendar::Time time;
 		const kCalendar::Date date;

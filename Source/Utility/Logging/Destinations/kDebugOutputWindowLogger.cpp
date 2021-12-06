@@ -52,7 +52,7 @@ namespace klib::kLogs
 		const auto& profile = entry.GetProfile();
 
 		// Level
-		const auto lvl = entry.GetLevel();
+		const auto lvl = profile.GetLevel();
 
 		// Profile
 		const auto& name = profile.GetName();

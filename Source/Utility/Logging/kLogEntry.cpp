@@ -4,9 +4,8 @@
 
 namespace klib::kLogs
 {
-	LogEntry::LogEntry( const LogLevel lvl, LogProfile* profile, const LogMessage& message )
-		: level( lvl )
-		, profile( profile )
+	LogEntry::LogEntry( std::shared_ptr<LogProfile> profile, const LogMessage& message )
+		: profile( profile )
 		, message( message )
 	{}
 

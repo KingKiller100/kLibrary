@@ -113,7 +113,7 @@ namespace klib
 			const auto& msg = entry.GetMsg();
 
 			// Level
-			const auto lvl = entry.GetLevel();
+			const auto lvl = profile.GetLevel();
 
 			// Profile
 			const auto profileName = profile.GetName();
@@ -152,10 +152,10 @@ namespace klib
 			return logLine;
 		}
 
-		void FileLogger::AddRaw(const LogMessage& message)
+		void FileLogger::AddRaw( const LogMessage& text )
 		{
-			const auto rawLogLine = CreateRawLogText(message);
-			Flush(rawLogLine);
+			const auto rawLogLine = CreateRawLogText( LogMessage( text ) );
+			Flush( rawLogLine );
 		}
 
 		std::string FileLogger::CreateRawLogText( const LogMessage& msg ) const
@@ -201,27 +201,27 @@ namespace klib
 			fileStream.close();
 		}
 
-		bool FileLogger::Move(const std::filesystem::path& path)
+		bool FileLogger::Move( const std::filesystem::path& path )
 		{
 			Close();
 
-			fileStream.seekg(std::ios::beg);
-			const std::string contents{ std::istreambuf_iterator<char>(fileStream), std::istreambuf_iterator<char>() };
+			fileStream.seekg( std::ios::beg );
+			const std::string contents{std::istreambuf_iterator<char>( fileStream ), std::istreambuf_iterator<char>()};
 
 			const auto oldPath = GetPath();
 
-			SetPath(path);
+			SetPath( path );
 
 			Open();
 
-			if (IsOpen())
+			if ( IsOpen() )
 			{
-				Remove(oldPath);
+				Remove( oldPath );
 				fileStream << contents;
 				return true;
 			}
 
-			SetPath(oldPath);
+			SetPath( oldPath );
 
 			// Failed to open new file. Using the original log file again
 			Open();

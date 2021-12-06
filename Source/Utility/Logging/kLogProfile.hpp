@@ -8,19 +8,19 @@ namespace klib::kLogs
 	struct LogMessage;
 	class LogDispatcher;
 
-	class LogProfile
+	class LogProfile : public std::enable_shared_from_this<LogProfile>
 	{
 	public:
-		explicit LogProfile( std::weak_ptr<LogDispatcher> dispatcher, const std::string_view& profileName, LogLevel lvl = LogLevel::INF );
-
-		LogProfile(LogProfile&&) = default;
-		LogProfile& operator=(LogProfile&&) = default;
-
-		~LogProfile();
+		explicit LogProfile(const std::string_view& profileName, LogLevel lvl);
+		LogProfile( LogProfile&& ) = default;
+		LogProfile& operator=( LogProfile&& ) = default;
 
 		[[nodiscard]] std::string_view GetName() const noexcept;
-		
+
 		void SetLevel( LogLevel lvl );
+		LogLevel GetLevel() const noexcept;
+
+		void AddNewLine();
 
 		/**
 		 * \brief
@@ -28,12 +28,12 @@ namespace klib::kLogs
 		 * \param text
 		 *		Text to log
 		 */
-		void AddRaw(std::string_view text = "");
+		void AddRaw( std::string_view text );
 
 		/**
 		 * \brief
 		 *		Formats the log banner to become the appropriate log banner message and logs it
-		 * \param message
+		 * \param text
 		 *		Log message details including time, data, text, source file and source line
 		 * \param frontPadding
 		 *		Padding character/string before banner text
@@ -43,7 +43,7 @@ namespace klib::kLogs
 		 *		Repetition of paddings
 		 */
 		void AddBanner(
-			const LogMessage& message
+			std::string_view text
 			, std::string_view frontPadding
 			, std::string_view backPadding
 			, std::uint16_t paddingCount
@@ -52,20 +52,26 @@ namespace klib::kLogs
 		/**
 		 * \brief
 		 *		Formats log message and level to the appropriate log message and then logs it
-		 * \param message
+		 * \param text
 		 *		Log message details including time, data, text, source file and source line
 		 * \param lvl
 		 *		Log entry details
 		 */
-		void AddEntry(LogLevel lvl, const LogMessage& message);
+		void AddEntry( LogLevel lvl, std::string_view text );
+
+		void VerifyDispatcherSet() const;
+
+		friend class LogDispatcher;
 
 	private:
-		bool Loggable(LogLevel lvl) const;
+		bool Loggable( LogLevel lvl ) const;
+
+		void SetDispatcher( LogDispatcher* dispatcher );
 
 	private:
 		std::string name;
 		LogLevel level;
-		std::weak_ptr<LogDispatcher> dispatcher;
+		LogDispatcher* dispatcher;
 	};
 }
 

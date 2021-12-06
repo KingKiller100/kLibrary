@@ -108,7 +108,7 @@ namespace klib::kLogs
 		 */
 		virtual void SetRawFormat( const std::string_view& format) noexcept;
 
-	protected:
+	private:
 		virtual void SetFormatImpl( const std::string_view& format, std::string& outRealFormat, const std::unordered_map<char, std::string>& specifierMap ) noexcept;
 		
 	public:

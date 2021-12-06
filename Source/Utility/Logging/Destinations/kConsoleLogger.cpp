@@ -68,7 +68,7 @@ namespace klib
 			const auto logLine = CreateLogText( entry );
 
 
-			Flush( logLine, UpdateConsoleColour( entry.GetLevel() ) );
+			Flush( logLine, UpdateConsoleColour( entry.GetProfile().GetLevel() ) );
 		}
 
 		std::string ConsoleLogger::CreateLogText( const LogEntry& entry ) const
@@ -77,7 +77,7 @@ namespace klib
 			const auto& profile = entry.GetProfile();
 
 			// Level
-			const auto lvl = entry.GetLevel();
+			const auto lvl = profile.GetLevel();
 
 			// Profile
 			const auto& name = profile.GetName();
