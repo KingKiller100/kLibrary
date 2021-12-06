@@ -1,8 +1,6 @@
 #include "pch.hpp"
 #include "TesterBase.hpp"
 
-#ifdef TESTING_ENABLED
-
 #include <iostream>
 
 namespace kTest
@@ -78,5 +76,3 @@ namespace kTest
 			, file, function, line));
 	}
 }
-
-#endif
