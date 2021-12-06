@@ -159,12 +159,17 @@ public:																					\
 		return value <= other;															\
 	}																					\
 																						\
-	constexpr bool operator==(const Value e) const noexcept								\
+	constexpr bool operator==(Value e) const noexcept									\
 	{																					\
 		return value == e;																\
 	}																					\
 																						\
-	constexpr bool operator&(const Value e) const noexcept								\
+	constexpr bool operator!=(Value e) const noexcept									\
+	{																					\
+		return !(*this == e);															\
+	}																					\
+																						\
+	constexpr bool operator&(Value e) const noexcept									\
 	{																					\
 		return value & e;																\
 	}																					\
