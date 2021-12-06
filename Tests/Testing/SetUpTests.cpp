@@ -1,4 +1,4 @@
-﻿#include "pch.hpp"
+﻿
 #include "SetUpTests.hpp"
 
 #include "kAddTest.hpp"

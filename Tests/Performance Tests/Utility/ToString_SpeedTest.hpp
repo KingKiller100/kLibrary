@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../Source/Testing/Performance/PerformanceTestBase.hpp"
+#include "../../IncludePerformanceTesterBase.hpp"
 
 namespace kTest::performance::util
 { 

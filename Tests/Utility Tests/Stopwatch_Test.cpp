@@ -1,4 +1,4 @@
-#include "pch.hpp"
+
 #include "../Utility Tests/Stopwatch_Test.hpp"
 
 #ifdef TESTING_ENABLED

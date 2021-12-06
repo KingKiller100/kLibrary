@@ -1,4 +1,4 @@
-#include "pch.hpp"
+
 #include "TesterBase.hpp"
 
 #include <iostream>

@@ -1,4 +1,4 @@
-#include "pch.hpp"
+
 #include "ToString_Test.hpp"
 
 #include "../../Source/Utility/String/STL/VectorToString.hpp"

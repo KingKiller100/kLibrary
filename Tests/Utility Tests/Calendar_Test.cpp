@@ -1,4 +1,4 @@
-#include "pch.hpp"
+
 #include "Calendar_Test.hpp"
 
 #include "../../Source/Utility/Calendar/kCalendar.hpp"

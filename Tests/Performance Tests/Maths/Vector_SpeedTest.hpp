@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../../../Source/Testing/Performance/PerformanceTestBase.hpp"
+#include "../../IncludePerformanceTesterBase.hpp"
 
 
 #ifdef TESTING_ENABLED

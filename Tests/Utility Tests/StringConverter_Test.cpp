@@ -1,4 +1,4 @@
-﻿#include "pch.hpp"
+﻿
 #include "StringConverter_Test.hpp"
 
 #include "../../Source/Utility/String/kStringConverter.hpp"

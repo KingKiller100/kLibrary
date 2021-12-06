@@ -1,4 +1,4 @@
-﻿#include "pch.hpp"
+﻿
 #include "Vector_SpeedTest.hpp"
 
 #include "../../../Source/Maths/Vectors/PredefinedVectors.hpp"

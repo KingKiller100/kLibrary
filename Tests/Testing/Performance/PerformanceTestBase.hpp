@@ -3,7 +3,7 @@
 #include "../EnableTesting.hpp"
 
 #ifdef TESTING_ENABLED
-#include "../../Utility/Profiler/kProfiler.hpp"
+#include "../../kLib.hpp"
 
 #include <cstdint>
 #include <ctime>

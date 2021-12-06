@@ -1,4 +1,4 @@
-﻿#include "pch.hpp"
+﻿
 #include "BytesStorage_Test.hpp"
 
 #ifdef TESTING_ENABLED

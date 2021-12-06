@@ -1,4 +1,4 @@
-#include "pch.hpp"
+
 #include "Vectors_Test.hpp"
 
 #include "../../Source/Maths/Vectors/VectorMathsHelper.hpp"

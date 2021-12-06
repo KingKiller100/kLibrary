@@ -1,4 +1,4 @@
-﻿#include "pch.hpp"
+﻿
 #include "Enum_Test.hpp"
 
 #include "../../Source/Utility/Enum/kEnum.hpp"

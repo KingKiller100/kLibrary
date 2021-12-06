@@ -1,4 +1,4 @@
-﻿#include "pch.hpp"
+﻿
 #include "Fraction_Test.hpp"
 
 #ifdef TESTING_ENABLED

@@ -1,4 +1,4 @@
-﻿#include "pch.hpp"
+﻿
 #include "PerformanceTestManager.hpp"
 #include "PerformanceTestBase.hpp"
 

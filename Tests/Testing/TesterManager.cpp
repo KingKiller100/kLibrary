@@ -1,4 +1,4 @@
-#include "pch.hpp"
+
 #include "TesterManager.hpp"
 
 #ifdef TESTING_ENABLED
@@ -11,10 +11,7 @@
 #include "Performance/PerformanceTestManager.hpp"
 
 // Change console colour
-#include "../Utility/Misc/kConsoleColour.hpp"
-
-#include "../Utility/Thread/kThreadPool.hpp"
-#include "../Utility/FileSystem/kFileSystem.hpp"
+#include "../kLib.hpp"
 
 #include <iostream>
 #include <stdexcept>

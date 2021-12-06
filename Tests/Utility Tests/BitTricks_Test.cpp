@@ -1,4 +1,4 @@
-﻿#include "pch.hpp"
+﻿
 #include "BitTricks_Test.hpp"
 
 #include "../../Source/Utility/Bits/kBitTricks.hpp"

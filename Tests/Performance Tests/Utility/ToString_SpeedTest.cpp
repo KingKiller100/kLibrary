@@ -1,4 +1,4 @@
-﻿#include "pch.hpp"
+﻿
 #include "ToString_SpeedTest.hpp"
 
 #include "../../../Source/Utility/String/kToString.hpp"

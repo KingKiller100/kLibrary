@@ -1,4 +1,4 @@
-﻿#include "pch.hpp"
+﻿
 #include "Profiler_Test.hpp"
 
 #ifdef TESTING_ENABLED

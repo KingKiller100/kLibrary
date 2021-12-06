@@ -1,4 +1,4 @@
-#include "pch.hpp"
+
 #include "Algorithm_Test.hpp"
 
 #include "../../Source/Maths/kAlgorithms.hpp"

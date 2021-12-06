@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../../Source/Testing/TesterBase.hpp"
+#include "../IncludeTesterBase.hpp"
 
 #ifdef TESTING_ENABLED
 namespace kTest::utility

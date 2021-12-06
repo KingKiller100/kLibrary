@@ -1,4 +1,4 @@
-﻿#include "pch.hpp"
+﻿
 #include "Quaternion_Test.hpp"
 
 #include "../../Source/Maths/Matrices/Matrix3x4.hpp"

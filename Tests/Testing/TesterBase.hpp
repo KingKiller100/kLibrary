@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include "../Utility/String/kSprintf.hpp"
-#include "../TypeTraits/Constexpr.hpp"
+#include "../../Source/Utility/String/kSprintf.hpp"
+#include "../../Source/TypeTraits/Constexpr.hpp"
 
 #include <string>
 

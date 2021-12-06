@@ -1,4 +1,4 @@
-﻿#include "pch.hpp"
+﻿
 #include "StringTricks_Test.hpp"
 
 #include "../../Source/Utility/String/kStringTricks.hpp"
