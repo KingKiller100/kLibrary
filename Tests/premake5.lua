@@ -1,5 +1,4 @@
 project "kTests"
-    location "."
     kind "StaticLib"
     language "C++"
     cppdialect "C++latest"
@@ -14,7 +13,6 @@ project "kTests"
     {
         ".\\**.hpp",
         ".\\**.cpp",
-        "..\\cpp.hint"
     }
 
     defines 
