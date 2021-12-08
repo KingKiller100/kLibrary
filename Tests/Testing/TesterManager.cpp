@@ -1,4 +1,3 @@
-
 #include "TesterManager.hpp"
 
 #ifdef TESTING_ENABLED
@@ -10,7 +9,6 @@
 // Speed Testing
 #include "Performance/PerformanceTestManager.hpp"
 
-// Change console colour
 #include "../kLib.hpp"
 
 #include <iostream>
@@ -24,10 +22,10 @@ namespace kTest
 	using namespace kString;
 
 	TesterManager::TesterManager()
-		: success(true)
-		, skipPerformanceTests(false)
+		: success( true )
+		, skipPerformanceTests( false )
 	{
-		std::cout.precision(3);
+		std::cout.precision( 3 );
 	}
 
 	TesterManager::~TesterManager()
@@ -35,103 +33,105 @@ namespace kTest
 		Shutdown();
 	}
 
-	void TesterManager::Initialize(bool skipPerformanceTesting)
+	void TesterManager::Initialize( bool skipPerformanceTesting )
 	{
 		using namespace klib;
 
 		skipPerformanceTests = skipPerformanceTesting;
-		
-		kFileSystem::SetCurrentWorkingDirectory(kFileSystem::GetExeDirectory());
+
+		kFileSystem::SetCurrentWorkingDirectory( kFileSystem::GetExeDirectory() );
 
 		path = std::filesystem::current_path().string() + "\\Test Results\\";
-		const auto isMade = std::filesystem::create_directory(path.c_str());
+		const auto isMade = std::filesystem::create_directory( path.c_str() );
 
-		if (!isMade && !std::filesystem::exists(path))
+		if ( !isMade && !std::filesystem::exists( path ) )
 		{
-			throw std::runtime_error("Test results directory could not be created/found. Please check why!");
+			throw std::runtime_error( "Test results directory could not be created/found. Please check why!" );
 		}
 
 		path += "Results.txt";
-		std::filesystem::remove(path.c_str());
+		std::filesystem::remove( path.c_str() );
 
-		file.open(path, std::ios::out | std::ios::app);
+		file.open( path, std::ios::out | std::ios::app );
 	}
-	
-	void TesterManager::Add(TesterBase* test)
+
+	void TesterManager::Add( TesterBase* test )
 	{
-		tests.insert(std::unique_ptr<TesterBase>(std::move(test)));
+		tests.insert( std::unique_ptr<TesterBase>( test ) );
 	}
 
-	void TesterManager::RunAll(size_t noOfThreads)
+	void TesterManager::RunAll( bool threaded )
 	{
 		const auto testCount = tests.size();
 
-		if (testCount == 0)
+		if ( testCount == 0 )
 		{
 			std::cout << "TestManager empty\n";
 			return;
 		}
-		const auto maxThreads = (std::min<size_t>)(ULTRA_THREAD_RIPPER, tests.size());
-		noOfThreads = std::clamp<size_t>(noOfThreads, SINGLE, maxThreads);
 
-		std::cout << "Testing: " << (noOfThreads > 1 ? "Multi-Threaded" : "Single Threaded") <<
-			"[" << noOfThreads << "]" << "\n";
+		const auto threadsCount = ( std::min<size_t> )( std::thread::hardware_concurrency(), tests.size() );
 
-		testTimes.reserve(testCount);
+		std::cout << "Testing: " << ( threaded ? "Multi-Threaded" : "Single Threaded" ) <<
+			"[" << threaded << "]" << "\n";
+
+		testTimes.reserve( testCount );
 
 		clock_t start;
 
-		PerformTests(noOfThreads, start);
+		PerformTests( threadsCount, start );
 
 		const clock_t end = std::clock();
 
-		const auto finalTime = static_cast<double>(end - start) / CLOCKS_PER_SEC;
-		const auto secs = static_cast<unsigned>(finalTime);
+		const auto finalTime = static_cast<float>( end - start ) / CLOCKS_PER_SEC;
+		const auto secs = static_cast<unsigned>( finalTime );
 		const auto remainder = finalTime - secs;
-		const unsigned millis = static_cast<unsigned>(std::chrono::milliseconds::period::den * remainder);
+		const auto millis = static_cast<unsigned>( std::chrono::milliseconds::period::den * remainder );
 		const auto avgTime = GetAverageTime();
 
-		auto timeStr = Sprintf("Total Runtime: %us %ums | ", secs, millis);
-		timeStr.append(Sprintf("Average Runtime: %.3fms", avgTime));
+		auto timeStr = Sprintf( "Total Runtime: %us %ums | ", secs, millis );
+		timeStr.append( Sprintf( "Average Runtime: %.3fms", avgTime ) );
 
-		WriteToFile(timeStr);
+		WriteToFile( timeStr );
 
 		std::cout << "\n" << timeStr << "\n";
 
 		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path << std::endl;
 	}
 
-	void TesterManager::PerformTests(const size_t noOfThreads, std::clock_t& outStart)
+	void TesterManager::PerformTests( const size_t noOfThreads, std::clock_t& outStart )
 	{
-		if (noOfThreads != 0)
+		if ( noOfThreads != 0 )
 		{
-			kThread::ThreadPool threads(noOfThreads);
+			kThread::ThreadPool threads( noOfThreads );
 
 			outStart = std::clock();
-			for (const auto& test : tests)
+			for ( const auto& test : tests )
 			{
-				threads.QueueJob({ [this, &test]
+				threads.QueueJob( {
+					[this, &test]
 					{
-						Run(*test);
+						Run( *test );
 					}
-					, test->GetName() });
+					, test->GetName()
+				} );
 			}
 		}
 		else
 		{
 			outStart = std::clock();
-			for (const auto& test : tests)
+			for ( const auto& test : tests )
 			{
-				Run(*test);
+				Run( *test );
 			}
 		}
 	}
 
 	double TesterManager::GetAverageTime() const
 	{
-		double avgTime(0);
+		double avgTime( 0 );
 
-		for (auto t : testTimes)
+		for ( auto t : testTimes )
 			avgTime += t;
 
 		avgTime /= testTimes.size();
@@ -140,19 +140,19 @@ namespace kTest
 
 	void TesterManager::RunPerformanceTests() const
 	{
-		if (!success || skipPerformanceTests)
+		if ( !success || skipPerformanceTests )
 			return;
-		
+
 		auto& test = performance::PerformanceTestManager::Get();
 		std::cout << "Now Testing: " << test.GetName() << " ";
 		test.Run();
 	}
 
-	void TesterManager::Run(TesterBase& test)
+	void TesterManager::Run( TesterBase& test )
 	{
-		std::string nameOpener("Ran: ");
-		nameOpener.append(test.GetName());
-		nameOpener.append(" | ");
+		std::string nameOpener( "Ran: " );
+		nameOpener.append( test.GetName() );
+		nameOpener.append( " | " );
 
 		const auto start = std::chrono::high_resolution_clock::now();
 		const auto pass = test.Run();
@@ -161,60 +161,59 @@ namespace kTest
 		const auto duration = end - start;
 
 		const auto testTime =
-			static_cast<double>(std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count()) / 1'000'000;
+			static_cast<double>( std::chrono::duration_cast<std::chrono::nanoseconds>( duration ).count() ) / 1'000'000;
 
-		testTimes.push_back(testTime);
+		testTimes.push_back( testTime );
 
-		const auto resTimeStr = Sprintf("| Runtime: %.3fms"
-			, testTime);
+		const auto resTimeStr = Sprintf( "| Runtime: %.3fms"
+			, testTime );
 
-		WriteToConsole(pass, nameOpener, resTimeStr);
+		WriteToConsole( pass, nameOpener, resTimeStr );
 
-		if (!pass)
+		if ( !pass )
 			success = false;
 
 		const auto results = pass
-			? Sprintf("Success: %s %s\n\n",
-				test.GetName(),
-				resTimeStr) // Success Case
-			: Sprintf("Failure: %s %s\n%s",
-				test.GetName(),
-				resTimeStr,
-				test.GetFailureData()); // Fail Case
+			                     ? Sprintf( "Success: %s %s\n\n",
+				                     test.GetName(),
+				                     resTimeStr ) // Success Case
+			                     : Sprintf( "Failure: %s %s\n%s",
+				                     test.GetName(),
+				                     resTimeStr,
+				                     test.GetFailureData() ); // Fail Case
 
-		WriteToFile(results);
+		WriteToFile( results );
 	}
 
-	void TesterManager::WriteToConsole(const bool pass, const std::string& nameOpenerStr,
-		const std::string& resTimeStr)
+	void TesterManager::WriteToConsole( const bool pass, std::string_view nameOpenerStr, std::string_view resTimeStr )
 	{
-		const auto scopeLocker = std::scoped_lock(consoleMutex);
+		const auto scopeLocker = std::scoped_lock( consoleMutex );
 
-		auto* const hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+		auto* const hConsole = GetStdHandle( STD_OUTPUT_HANDLE );
 
 		std::cout << nameOpenerStr;
 
-		SetConsoleTextAttribute(hConsole, pass
-			? kMisc::ConsoleColour::LIGHT_GREEN
-			: kMisc::ConsoleColour::SCARLET_RED);
+		SetConsoleTextAttribute( hConsole, pass
+			                                   ? kMisc::ConsoleColour::LIGHT_GREEN
+			                                   : kMisc::ConsoleColour::SCARLET_RED );
 
-		std::cout << (pass ? "Pass" : "Fail");
+		std::cout << ( pass ? "Pass" : "Fail" );
 
-		SetConsoleTextAttribute(hConsole, kMisc::ConsoleColour::LIGHT_GREY);
+		SetConsoleTextAttribute( hConsole, kMisc::ConsoleColour::LIGHT_GREY );
 
 		std::cout << " " << resTimeStr << "\n";
 	}
 
-	void TesterManager::WriteToFile(const std::string& results)
+	void TesterManager::WriteToFile( std::string_view results )
 	{
-		const auto scopeLocker = std::scoped_lock(fileMutex);
+		const auto scopeLocker = std::scoped_lock( fileMutex );
 		file << results;
-		std::flush(file);
+		file.flush();
 	}
 
 	void TesterManager::Shutdown()
 	{
-		if (file.is_open())
+		if ( file.is_open() )
 			file.close();
 
 		ClearAllTests();
@@ -222,7 +221,7 @@ namespace kTest
 
 	void TesterManager::ClearAllTests()
 	{
-		if (!tests.empty())
+		if ( !tests.empty() )
 			tests.clear();
 
 		testTimes.clear();
