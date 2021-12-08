@@ -1,5 +1,7 @@
 #include "TesterManager.hpp"
 
+#include <numeric>
+
 #ifdef TESTING_ENABLED
 
 #include "TesterBase.hpp"
@@ -129,12 +131,9 @@ namespace kTest
 
 	double TesterManager::GetAverageTime() const
 	{
-		double avgTime( 0 );
-
-		for ( auto t : testTimes )
-			avgTime += t;
-
-		avgTime /= testTimes.size();
+		double avgTime = 0;
+		avgTime = std::accumulate( testTimes.begin(), testTimes.end(), avgTime );
+		avgTime /= static_cast<double>( testTimes.size() );
 		return avgTime;
 	}
 
