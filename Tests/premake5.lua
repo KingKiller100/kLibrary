@@ -1,13 +1,14 @@
 project "kTests"
+    location "."
     kind "StaticLib"
     language "C++"
     cppdialect "C++latest"
     characterset ("default")
+	staticruntime "on"
     
-	staticruntime "off"
 
-    targetdir ("../bin/" .. OutputDir .. "/kLibrary")
-	objdir ("../bin-int/" .. OutputDir .. "/kLibrary")
+    targetdir (BinDir)
+	objdir (ObjDir)
 
     files
     {
@@ -15,6 +16,12 @@ project "kTests"
         ".\\**.cpp",
         "..\\cpp.hint"
     }
+
+    defines 
+    {
+        "KLIB_TEST"
+    }
+    
     links "kLibrary"
 
     filter "system:Windows"
@@ -22,11 +29,20 @@ project "kTests"
 
         defines
         {
-            "_CRT_SECURE_NO_WARNINGS",
             "KLIB_LIB",
+            "_CRT_SECURE_NO_WARNINGS",
             "KLIB_WINDOWS_OS",
             "MSVC_PLATFORM_TOOLSET=$(PlatformToolsetVersion)"
         }
 
+    filter "configurations:Debug"
+        defines "KLIB_DEBUG"
+        symbols "On"
+        runtime "Debug"
+
+    filter "configurations:Release"
+        defines "KLIB_RELEASE"
+        optimize "Full"
+        runtime "Release"
 
         

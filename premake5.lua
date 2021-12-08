@@ -4,11 +4,11 @@ project "kLibrary"
     language "C++"
     cppdialect "C++latest"
     characterset ("default")
-    
 	staticruntime "on"
+    
 
-    targetdir ("bin/" .. OutputDir .. "/%{prj.name}")
-	objdir ("bin-int/" .. OutputDir .. "/%{prj.name}")
+    targetdir (BinDir)
+	objdir (ObjDir)
 
     pchheader "pch.hpp"
     pchsource "Source/pch.cpp"
@@ -22,7 +22,7 @@ project "kLibrary"
 
     links
     {
-        "Bcrypt.lib",
+        "Bcrypt.lib"
     }
 
     defines 
