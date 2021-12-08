@@ -4,16 +4,30 @@
 
 namespace klib::kThread
 {
-	ThreadPool::ThreadPool(size_t count)
+	ThreadPool::Job::Job() noexcept
+		: task( nullptr )
+	{}
+
+	ThreadPool::Job::Job( std::function<Func_t> taskToDo, std::string_view description )
+		: task( taskToDo )
+		, desc( description )
+	{}
+
+	void ThreadPool::Job::operator()() const
 	{
-		AddThread(count);
+		task();
+	}
+
+	ThreadPool::ThreadPool( size_t count )
+	{
+		AddThread( count );
 	}
 
 	ThreadPool::~ThreadPool()
 	{
 		{
 			// Unblock any threads and tell them to stop
-			std::scoped_lock<std::mutex> l(mutex);
+			std::scoped_lock<std::mutex> l( mutex );
 
 			ShutdownAll();
 			condVar.notify_all();
@@ -23,92 +37,56 @@ namespace klib::kThread
 		JoinAndPopAll();
 	}
 
-	void ThreadPool::AddThread(size_t count)
+	void ThreadPool::AddThread( size_t count )
 	{
 		// Create the specified number of threads
-		count = kmaths::Clamp(count, 0, std::numeric_limits<std::uint8_t>::max());
+		count = kmaths::Clamp( count, 0, std::numeric_limits<std::uint8_t>::max() );
 
 		const auto currentSize = GetSize();
 		const auto newSize = currentSize + count;
-		threads.reserve(newSize);
-		shutdowns.reserve(newSize);
+		threads.reserve( newSize );
+		shutdowns.reserve( newSize );
 
-		for (auto i = 0; i < count; ++i)
+		for ( auto i = 0; i < count; ++i )
 		{
-			const auto& sd = shutdowns.emplace_back(false);
-			threads.emplace_back([this, &sd] { ThreadLoop(sd); });
+			const auto& sd = shutdowns.emplace_back( false );
+			threads.emplace_back( [this, &sd]
+			{
+				ThreadLoop( sd );
+			} );
 		}
-	}
-
-	void ThreadPool::Shutdown(size_t index)
-	{
-		if (index >= threads.size())
-			throw std::out_of_range("Thread index >= number of threads");
-		shutdowns[index] = true;
 	}
 
 	void ThreadPool::ShutdownAll()
 	{
-		for (auto& sd : shutdowns)
+		for ( auto& sd : shutdowns )
 			sd = true;
-	}
-
-	bool ThreadPool::CanJoin(size_t index) const
-	{
-		if (index >= threads.size())
-			throw std::out_of_range("Thread index >= number of threads");
-		return threads[index].joinable();
 	}
 
 	bool ThreadPool::CanJoinAll() const
 	{
-		for (const auto& thr : threads)
+		for ( const auto& thr : threads )
 		{
-			if (!thr.joinable())
+			if ( !thr.joinable() )
 				return false;
 		}
-		
+
 		return true;
-	}
-
-	void ThreadPool::Join(size_t index)
-	{
-		if (index >= threads.size())
-			throw std::out_of_range("Thread index >= number of threads");
-		threads[index].join();
-	}
-
-	void ThreadPool::JoinAll()
-	{
-		for (auto&& thread : threads)
-		{
-			thread.join();
-		}
 	}
 
 	void ThreadPool::JoinAndPopAll()
 	{
-		while (!threads.empty())
+		while ( !threads.empty() )
 		{
 			auto& thr = threads.back();
-			if (thr.joinable())
+			if ( thr.joinable() )
+			{
+				shutdowns.back() = true;
 				thr.join();
+			}
+
 			threads.pop_back();
-		}
-	}
-
-	void ThreadPool::Detach(size_t index)
-	{
-		if (index >= threads.size())
-			throw std::out_of_range("Thread index >= number of threads");
-		threads[index].join();
-	}
-
-	void ThreadPool::DetachAll()
-	{
-		for (auto&& thread : threads)
-		{
-			thread.detach();
+			shutdowns.pop_back();
 		}
 	}
 
@@ -119,7 +97,7 @@ namespace klib::kThread
 
 	void ThreadPool::ClearJobs()
 	{
-		while (!jobs.empty())
+		while ( !jobs.empty() )
 		{
 			PopJob();
 		}
@@ -130,68 +108,51 @@ namespace klib::kThread
 		return threads.size();
 	}
 
-	std::thread::id ThreadPool::GetID(size_t index) const
-	{
-		if (index >= threads.size())
-			throw std::out_of_range("Thread index >= number of threads");
-		return threads[index].get_id();
-	}
-
 	std::vector<std::thread::id> ThreadPool::GetIDs() const
 	{
 		std::vector<std::thread::id> ids;
-		ids.reserve(threads.size());
+		ids.reserve( threads.size() );
 
-		for (auto&& thread : threads)
+		for ( auto&& thread : threads )
 		{
-			ids.emplace_back(thread.get_id());
+			ids.emplace_back( thread.get_id() );
 		}
 
 		return ids;
 	}
 
-	void ThreadPool::QueueJob(const ThreadPool::Job& job)
+	void ThreadPool::QueueJob( const Job& job )
 	{
 		// Place a job on the queue and unblock a thread
-		std::unique_lock<std::mutex> l(mutex);
+		std::unique_lock<std::mutex> l( mutex );
 
-		jobs.emplace(std::move(job));
+		jobs.emplace( std::move( job ) );
 		condVar.notify_one();
 	}
 
-	std::thread& ThreadPool::GetThread(size_t index)
-	{
-		if (index >= threads.size())
-			throw std::out_of_range("Thread index >= number of threads");
-		return threads[index];
-	}
-
-	const std::thread& ThreadPool::GetThread(size_t index) const
-	{
-		if (index >= threads.size())
-			throw std::out_of_range("Thread index >= number of threads");
-		return threads[index];
-	}
-
-	void ThreadPool::ThreadLoop(const type_trait::BooleanWrapper& sd)
+	void ThreadPool::ThreadLoop( const type_trait::BooleanWrapper& shuttingDown )
 	{
 		Job job;
 
-		while (true)
+		// Infinite loop
+		while ( true )
 		{
 			{
-				std::unique_lock<std::mutex> lock(mutex);
+				std::unique_lock<std::mutex> lock( mutex );
 
-				condVar.wait(lock, [&sd, this] { return sd || !jobs.empty(); });
+				condVar.wait( lock, [&shuttingDown, this]
+				{
+					return shuttingDown || !jobs.empty();
+				} );
 
-				if (jobs.empty())
+				if ( jobs.empty() )
 				{
 					// No jobs to do and we are shutting down
 					return;
 				}
 
-				job = std::move(jobs.front());
-				prevJob = std::move(job.desc);
+				job = std::move( jobs.front() );
+				prevJobDesc = std::move( job.desc );
 				jobs.pop();
 			}
 
