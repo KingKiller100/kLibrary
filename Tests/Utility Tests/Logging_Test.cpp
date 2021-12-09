@@ -60,6 +60,8 @@ namespace kTest::utility
 
 		[[nodiscard]] const LogEntry& GetLastEntry() const
 		{
+			if (entries.empty())
+				throw std::out_of_range("No log entries left");
 			return entries.back();
 		}
 
@@ -72,47 +74,47 @@ namespace kTest::utility
 		{
 			entries.clear();
 		}
-		
+
 		std::string_view GetName() const override
 		{
 			return "Cache Logger";
 		}
 
 		void AddRaw( const LogMessage& message ) override
-		{
-			
-		}
+		{ }
 
 	private:
 		void Flush( const LogEntry& message )
 		{
 			entries.emplace_back( message );
 		}
-	
+
 		bool active;
 		std::vector<LogEntry> entries;
 	};
 
 	void LoggingTester::LogTest()
 	{
-		auto dispatcher = std::make_unique<LogDispatcher>();
-		const auto destination = dispatcher->AddDestination<CacheLogger>();
+		LogDispatcher dispatcher;
+		const auto destination = dispatcher.AddDestination<CacheLogger>();
+		const auto profile = dispatcher.RegisterProfile( "Test", LogLevel::DBG ).lock();
 
-		const auto profile = dispatcher->RegisterProfile( "Test", LogLevel::DBG ).lock();
 
 		destination->SetFormat( "[&N] [&p]: &t" );
 		profile->AddBanner( "Welcome to logging test", "*", "*", 20 );
 
-		dispatcher->Open();
+		VERIFY_THROWS( destination->GetLastEntry() );
+
+		dispatcher.Open();
 
 		{
 			profile->AddBanner( "BANNER!", "*", "*", 12 );
 			const auto& last = destination->GetLastEntry();
 			VERIFY( last.HasText("BANNER!") );
-			VERIFY( last.GetMsg().text == "************ BANNER! ************" );
+			VERIFY( last.GetMsg().text == "************BANNER!************" );
 		}
 
-		dispatcher->SetGlobalLevel( LogLevel::INF );
+		dispatcher.SetGlobalLevel( LogLevel::INF );
 
 		{
 			profile->AddEntry( LogLevel::DBG, "DEBUG!" );
@@ -123,7 +125,7 @@ namespace kTest::utility
 			VERIFY( last.GetProfile().GetLevel() != LogLevel::DBG );
 		}
 
-		dispatcher->SetGlobalLevel( LogLevel::TRC );
+		dispatcher.SetGlobalLevel( LogLevel::TRC );
 
 		{
 			constexpr char msg[] = "TRACE!";
@@ -196,7 +198,7 @@ namespace kTest::utility
 			VERIFY( last.GetProfile().GetLevel() == desc );
 		}
 
-		dispatcher->Close();
+		dispatcher.Close();
 
 		{
 			constexpr char msg[] = "END!";
