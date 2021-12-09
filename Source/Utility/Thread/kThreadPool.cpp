@@ -15,7 +15,8 @@ namespace klib::kThread
 
 	void ThreadPool::Job::operator()() const
 	{
-		task();
+		if ( task )
+			task();
 	}
 
 	ThreadPool::ThreadPool( size_t count )
@@ -128,6 +129,11 @@ namespace klib::kThread
 
 		jobs.emplace( std::move( job ) );
 		condVar.notify_one();
+	}
+
+	std::string_view ThreadPool::LatestJob() const noexcept
+	{
+		return prevJobDesc;
 	}
 
 	void ThreadPool::ThreadLoop( const type_trait::BooleanWrapper& shuttingDown )

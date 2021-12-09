@@ -53,6 +53,8 @@ namespace klib::kThread
 
 		void QueueJob(const Job& job);
 
+		std::string_view LatestJob() const noexcept;
+
 	protected:
 		void ThreadLoop(const type_trait::BooleanWrapper& shuttingDown);
 
