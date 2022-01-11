@@ -6,15 +6,83 @@
 #include <cstdint>
 #include <vector>
 
+#include "../Debug/Exceptions/LoggingExceptions.hpp"
+#include "Destinations/kiLoggerDestination.hpp"
+
 namespace klib
 {
 	namespace kLogs
 	{
 		class LogEntry;
-		class iLogDestination;
 
 		class LogDispatcher
 		{
+			class LogDestRef : public iLogDestination
+			{
+			public:
+				std::string_view GetName() const override;
+
+				void AddRaw( const LogMessage& message ) override;
+
+				void AddEntry( const LogEntry& entry ) override;
+
+				bool IsOpen() const override;
+
+				void Open() override;
+
+				void Close() override;
+
+				iLogDestination& Ref() const;
+
+				template <typename T>
+				T& Ref() const
+				{
+					auto ptr = std::dynamic_pointer_cast<T>( dest );
+					if ( !ptr )
+						throw kDebug::LoggingExceptions(
+							"Cannot cast log destination to type " + std::string( typeid( T ).name() )
+						);
+					return *ptr;
+				}
+
+				friend class LogDispatcher;
+
+			private:
+				explicit LogDestRef( std::shared_ptr<iLogDestination> destination );
+
+			private:
+				std::shared_ptr<iLogDestination> dest;
+			};
+
+			class LogProfileRef
+			{
+			public:
+				[[nodiscard]] std::string_view GetName() const noexcept;
+
+				void SetLevel( LogLevel lvl ) const;
+
+				void AddNewLine() const;
+
+				void AddRaw( std::string_view text ) const;
+
+				void AddBanner(
+					std::string_view text
+					, std::string_view frontPadding
+					, std::string_view backPadding
+					, std::uint16_t paddingCount
+				) const;
+
+				void AddEntry( LogLevel lvl, std::string_view text ) const;
+
+				friend class LogDispatcher;
+
+			private:
+				explicit LogProfileRef( std::shared_ptr<LogProfile> prof );
+
+			private:
+				std::shared_ptr<LogProfile> profile;
+			};
+
 		public:
 			LogDispatcher();
 
@@ -38,11 +106,11 @@ namespace klib
 			 * \param params
 			 */
 			template <typename T, typename ...Params>
-			std::shared_ptr<T> AddDestination(Params&& ...params)
+			LogDestRef AddDestination( Params&& ...params )
 			{
-				auto destination = std::make_shared<T>(std::forward<Params>(params)...);
-				destinations.emplace_back(destination);
-				return destination;
+				auto destination = std::make_shared<T>( std::forward<Params>( params )... );
+				destinations.emplace_back( destination );
+				return LogDestRef( destination );
 			}
 
 			/**
@@ -51,7 +119,7 @@ namespace klib
 			 * \param name
 			 *		profile
 			 */
-			std::weak_ptr<LogProfile> RegisterProfile(std::string_view name, LogLevel level);
+			LogProfileRef RegisterProfile( std::string_view name, LogLevel level );
 
 			/**
 			 * \brief
@@ -73,7 +141,7 @@ namespace klib
 			 *		Log Entry
 			 */
 			void Flush( const LogEntry& entry );
-			
+
 			/**
 			 * \brief
 			 *		Flush message to destination
@@ -132,7 +200,7 @@ namespace klib
 			 *		Log description
 			 */
 			void AddLog( const LogEntry& entry );
-			
+
 			/**
 			 * \brief
 			 *		Outputs message to destination
@@ -140,7 +208,7 @@ namespace klib
 			 *		Log Message
 			 */
 			void AddLog( std::string_view text );
-			
+
 			/**
 			 * \brief
 			 *		Unregisters all previously registered profiles

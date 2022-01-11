@@ -13,6 +13,79 @@ namespace klib::kLogs
 {
 	using namespace kString;
 
+	std::string_view LogDispatcher::LogDestRef::GetName() const
+	{
+		return dest->GetName();
+	}
+
+	void LogDispatcher::LogDestRef::AddRaw( const LogMessage& message )
+	{
+		dest->AddRaw( message );
+	}
+
+	void LogDispatcher::LogDestRef::AddEntry( const LogEntry& entry )
+	{
+		dest->AddEntry( entry );
+	}
+
+	bool LogDispatcher::LogDestRef::IsOpen() const
+	{
+		return dest->IsOpen();
+	}
+
+	void LogDispatcher::LogDestRef::Open()
+	{
+		dest->Open();
+	}
+
+	void LogDispatcher::LogDestRef::Close()
+	{
+		dest->Close();
+	}
+
+	iLogDestination& LogDispatcher::LogDestRef::Ref() const
+	{
+		return *dest;
+	}
+
+	LogDispatcher::LogDestRef::LogDestRef( std::shared_ptr<iLogDestination> destination )
+		: dest( destination )
+	{}
+
+	std::string_view LogDispatcher::LogProfileRef::GetName() const noexcept
+	{
+		return profile->GetName();
+	}
+
+	void LogDispatcher::LogProfileRef::SetLevel( LogLevel lvl ) const
+	{
+		profile->SetLevel( lvl );
+	}
+
+	void LogDispatcher::LogProfileRef::AddNewLine() const
+	{
+		profile->AddNewLine();
+	}
+
+	void LogDispatcher::LogProfileRef::AddRaw( std::string_view text ) const
+	{
+		profile->AddRaw( text );
+	}
+
+	void LogDispatcher::LogProfileRef::AddBanner( std::string_view text, std::string_view frontPadding, std::string_view backPadding, std::uint16_t paddingCount ) const
+	{
+		profile->AddBanner( text, frontPadding, backPadding, paddingCount );
+	}
+
+	void LogDispatcher::LogProfileRef::AddEntry( LogLevel lvl, std::string_view text ) const
+	{
+		profile->AddEntry( lvl, text );
+	}
+
+	LogDispatcher::LogProfileRef::LogProfileRef( std::shared_ptr<LogProfile> prof )
+		: profile( prof )
+	{ }
+
 	LogDispatcher::LogDispatcher()
 		: profiles()
 		, destinations()
@@ -24,7 +97,7 @@ namespace klib::kLogs
 		UnregisterAll();
 	}
 
-	std::weak_ptr<LogProfile> LogDispatcher::RegisterProfile( std::string_view name, LogLevel level )
+	LogDispatcher::LogProfileRef LogDispatcher::RegisterProfile( std::string_view name, LogLevel level )
 	{
 		if ( auto iter = std::ranges::find_if( profiles,
 			[&name]( const decltype(profiles)::value_type& pfl )
@@ -32,12 +105,12 @@ namespace klib::kLogs
 				return name == pfl->GetName();
 			} ); iter != profiles.end() )
 		{
-			return *iter;
+			return LogProfileRef( *iter );
 		}
 
 		const auto profile = profiles.emplace_back( LogProfile::Create( name, level ) );
 		profile->SetDispatcher( this );
-		return profile;
+		return LogProfileRef( profile );
 	}
 
 	void LogDispatcher::UnregisterAll()

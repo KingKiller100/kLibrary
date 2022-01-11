@@ -96,20 +96,20 @@ namespace kTest::utility
 	void LoggingTester::LogTest()
 	{
 		LogDispatcher dispatcher;
-		const auto destination = dispatcher.AddDestination<CacheLogger>();
-		const auto profile = dispatcher.RegisterProfile( "Test", LogLevel::DBG ).lock();
+		auto& destination = dispatcher.AddDestination<CacheLogger>().Ref<CacheLogger>();
+		const auto profile = dispatcher.RegisterProfile( "Test", LogLevel::DBG );
 
 
-		destination->SetFormat( "[&N] [&p]: &t" );
-		profile->AddBanner( "Welcome to logging test", "*", "*", 20 );
+		destination.SetFormat( "[&N] [&p]: &t" );
+		profile.AddBanner( "Welcome to logging test", "*", "*", 20 );
 
-		VERIFY_THROWS( destination->GetLastEntry() );
+		VERIFY_THROWS( destination.GetLastEntry() );
 
 		dispatcher.Open();
 
 		{
-			profile->AddBanner( "BANNER!", "*", "*", 12 );
-			const auto& last = destination->GetLastEntry();
+			profile.AddBanner( "BANNER!", "*", "*", 12 );
+			const auto& last = destination.GetLastEntry();
 			VERIFY( last.HasText("BANNER!") );
 			VERIFY( last.GetMsg().text == "************BANNER!************" );
 		}
@@ -117,8 +117,8 @@ namespace kTest::utility
 		dispatcher.SetGlobalLevel( LogLevel::INF );
 
 		{
-			profile->AddEntry( LogLevel::DBG, "DEBUG!" );
-			const auto& last = destination->GetLastEntry();
+			profile.AddEntry( LogLevel::DBG, "DEBUG!" );
+			const auto& last = destination.GetLastEntry();
 			VERIFY( !last.HasText("DEBUG!") );
 			VERIFY( last.GetMsg().text != "DEBUG!" );
 
@@ -130,8 +130,8 @@ namespace kTest::utility
 		{
 			constexpr char msg[] = "TRACE!";
 			constexpr auto desc = LogLevel::TRC;
-			profile->AddEntry( desc, msg );
-			const auto& last = destination->GetLastEntry();
+			profile.AddEntry( desc, msg );
+			const auto& last = destination.GetLastEntry();
 			VERIFY( last.HasText(msg) );
 			VERIFY( last.GetProfile().GetLevel() == desc );
 		}
@@ -139,8 +139,8 @@ namespace kTest::utility
 		{
 			constexpr char msg[] = "DEBUG!";
 			constexpr auto desc = LogLevel::DBG;
-			profile->AddEntry( desc, msg );
-			const auto& last = destination->GetLastEntry();
+			profile.AddEntry( desc, msg );
+			const auto& last = destination.GetLastEntry();
 			VERIFY( last.HasText(msg) );
 			VERIFY( last.GetProfile().GetLevel() == desc );
 		}
@@ -148,8 +148,8 @@ namespace kTest::utility
 		{
 			constexpr char msg[] = "INFORMATIVE!";
 			constexpr auto desc = LogLevel::INF;
-			profile->AddEntry( desc, msg );
-			const auto& last = destination->GetLastEntry();
+			profile.AddEntry( desc, msg );
+			const auto& last = destination.GetLastEntry();
 			VERIFY( last.HasText(msg) );
 			VERIFY( last.GetProfile().GetLevel() == desc );
 		}
@@ -157,8 +157,8 @@ namespace kTest::utility
 		{
 			constexpr char msg[] = "WARNING!";
 			constexpr auto desc = LogLevel::WRN;
-			profile->AddEntry( desc, msg );
-			const auto& last = destination->GetLastEntry();
+			profile.AddEntry( desc, msg );
+			const auto& last = destination.GetLastEntry();
 			VERIFY( last.HasText(msg) );
 			VERIFY( last.GetProfile().GetLevel() == desc );
 		}
@@ -166,16 +166,16 @@ namespace kTest::utility
 		{
 			constexpr char msg[] = "ERROR!";
 			constexpr auto desc = LogLevel::ERR;
-			profile->AddEntry( desc, msg );
-			const auto& last = destination->GetLastEntry();
+			profile.AddEntry( desc, msg );
+			const auto& last = destination.GetLastEntry();
 			VERIFY( last.HasText(msg) );
 			VERIFY( last.GetProfile().GetLevel() == desc );
 		}
 
-		destination->Pop();
+		destination.Pop();
 
 		{
-			const auto& last = destination->GetLastEntry();
+			const auto& last = destination.GetLastEntry();
 			VERIFY( !last.HasText("ERROR!") );
 			VERIFY( last.GetProfile().GetLevel() != LogLevel::ERR );
 		}
@@ -183,8 +183,8 @@ namespace kTest::utility
 		{
 			constexpr char msg[] = "ERROR AGAIN!";
 			constexpr auto desc = LogLevel::ERR;
-			profile->AddEntry( desc, msg );
-			const auto& last = destination->GetLastEntry();
+			profile.AddEntry( desc, msg );
+			const auto& last = destination.GetLastEntry();
 			VERIFY( last.HasText(msg) );
 			VERIFY( last.GetProfile().GetLevel() == desc );
 		}
@@ -192,8 +192,8 @@ namespace kTest::utility
 		{
 			constexpr char msg[] = "FATAL!";
 			constexpr auto desc = LogLevel::FTL;
-			profile->AddEntry( desc, msg );
-			const auto& last = destination->GetLastEntry();
+			profile.AddEntry( desc, msg );
+			const auto& last = destination.GetLastEntry();
 			VERIFY( last.HasText(msg) );
 			VERIFY( last.GetProfile().GetLevel() == desc );
 		}
@@ -203,8 +203,8 @@ namespace kTest::utility
 		{
 			constexpr char msg[] = "END!";
 			constexpr auto desc = LogLevel::INF;
-			profile->AddEntry( desc, msg );
-			VERIFY_THROWS( destination->GetLastEntry() );
+			profile.AddEntry( desc, msg );
+			VERIFY_THROWS( destination.GetLastEntry() );
 		}
 	}
 }
