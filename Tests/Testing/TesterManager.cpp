@@ -75,7 +75,7 @@ namespace kTest
 		const auto threadsCount = ( std::min<size_t> )( std::thread::hardware_concurrency(), tests.size() );
 
 		std::cout << "Testing: " << ( threaded ? "Multi-Threaded" : "Single Threaded" ) <<
-			"[" << threaded << "]" << "\n";
+			"[" << threadsCount << "]" << "\n";
 
 		testTimes.reserve( testCount );
 

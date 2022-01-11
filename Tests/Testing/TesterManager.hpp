@@ -27,7 +27,7 @@ namespace kTest
 		void Shutdown();
 		void RunPerformanceTests() const;
 		void Add(TesterBase* test);
-		void RunAll( bool threaded = 1 );
+		void RunAll( bool threaded = true );
 		void ClearAllTests();
 		
 	private:
