@@ -57,6 +57,11 @@ namespace klib::kLogs
 		return profile->GetName();
 	}
 
+	LogLevel::Value LogDispatcher::LogProfileRef::GetLevel() const
+	{
+		return profile->GetLevel();
+	}
+
 	void LogDispatcher::LogProfileRef::SetLevel( LogLevel lvl ) const
 	{
 		profile->SetLevel( lvl );

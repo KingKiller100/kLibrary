@@ -18,7 +18,7 @@ namespace klib::kLogs
 		USE_RESULT const LogMessage& GetMsg() const;
 
 	private:
-		std::shared_ptr<LogProfile> profile;
 		LogMessage message;
+		std::shared_ptr<LogProfile> profile;
 	};
 }

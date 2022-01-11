@@ -3,7 +3,6 @@
 #include "../../Source/Utility/Logging/kLogging.hpp"
 #include "../../Source/Utility/Logging/Destinations/kiLoggerDestination.hpp"
 #include "../../Source/Utility/Logging/Destinations/kFileLogger.hpp"
-#include "../../Source/Template/kToImpl.hpp"
 
 #include "../../Source/Utility/Logging/kLogEntry.hpp"
 
@@ -56,12 +55,13 @@ namespace kTest::utility
 		void Close() override
 		{
 			active = false;
+			Clear();
 		}
 
 		[[nodiscard]] const LogEntry& GetLastEntry() const
 		{
-			if (entries.empty())
-				throw std::out_of_range("No log entries left");
+			if ( entries.empty() )
+				throw std::out_of_range( "No log entries left" );
 			return entries.back();
 		}
 
@@ -99,6 +99,7 @@ namespace kTest::utility
 		auto& destination = dispatcher.AddDestination<CacheLogger>().Ref<CacheLogger>();
 		const auto profile = dispatcher.RegisterProfile( "Test", LogLevel::DBG );
 
+		VERIFY( profile.GetLevel() == LogLevel::DBG );
 
 		destination.SetFormat( "[&N] [&p]: &t" );
 		profile.AddBanner( "Welcome to logging test", "*", "*", 20 );
@@ -114,15 +115,10 @@ namespace kTest::utility
 			VERIFY( last.GetMsg().text == "************BANNER!************" );
 		}
 
-		dispatcher.SetGlobalLevel( LogLevel::INF );
+		dispatcher.SetGlobalLevel( LogLevel::ERR );
 
 		{
-			profile.AddEntry( LogLevel::DBG, "DEBUG!" );
-			const auto& last = destination.GetLastEntry();
-			VERIFY( !last.HasText("DEBUG!") );
-			VERIFY( last.GetMsg().text != "DEBUG!" );
-
-			VERIFY( last.GetProfile().GetLevel() != LogLevel::DBG );
+			VERIFY( profile.GetLevel() == LogLevel::ERR );
 		}
 
 		dispatcher.SetGlobalLevel( LogLevel::TRC );
@@ -142,7 +138,7 @@ namespace kTest::utility
 			profile.AddEntry( desc, msg );
 			const auto& last = destination.GetLastEntry();
 			VERIFY( last.HasText(msg) );
-			VERIFY( last.GetProfile().GetLevel() == desc );
+			VERIFY( last.GetProfile().GetLevel() != desc );
 		}
 
 		{
@@ -151,7 +147,7 @@ namespace kTest::utility
 			profile.AddEntry( desc, msg );
 			const auto& last = destination.GetLastEntry();
 			VERIFY( last.HasText(msg) );
-			VERIFY( last.GetProfile().GetLevel() == desc );
+			VERIFY( last.GetProfile().GetLevel() != desc );
 		}
 
 		{
@@ -160,7 +156,7 @@ namespace kTest::utility
 			profile.AddEntry( desc, msg );
 			const auto& last = destination.GetLastEntry();
 			VERIFY( last.HasText(msg) );
-			VERIFY( last.GetProfile().GetLevel() == desc );
+			VERIFY( last.GetProfile().GetLevel() != desc );
 		}
 
 		{
@@ -169,7 +165,7 @@ namespace kTest::utility
 			profile.AddEntry( desc, msg );
 			const auto& last = destination.GetLastEntry();
 			VERIFY( last.HasText(msg) );
-			VERIFY( last.GetProfile().GetLevel() == desc );
+			VERIFY( last.GetProfile().GetLevel() != desc );
 		}
 
 		destination.Pop();
@@ -186,7 +182,7 @@ namespace kTest::utility
 			profile.AddEntry( desc, msg );
 			const auto& last = destination.GetLastEntry();
 			VERIFY( last.HasText(msg) );
-			VERIFY( last.GetProfile().GetLevel() == desc );
+			VERIFY( last.GetProfile().GetLevel() != desc );
 		}
 
 		{
@@ -195,7 +191,7 @@ namespace kTest::utility
 			profile.AddEntry( desc, msg );
 			const auto& last = destination.GetLastEntry();
 			VERIFY( last.HasText(msg) );
-			VERIFY( last.GetProfile().GetLevel() == desc );
+			VERIFY( last.GetProfile().GetLevel() != desc );
 		}
 
 		dispatcher.Close();

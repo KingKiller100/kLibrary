@@ -59,6 +59,7 @@ namespace klib
 			public:
 				[[nodiscard]] std::string_view GetName() const noexcept;
 
+				LogLevel::Value GetLevel() const;
 				void SetLevel( LogLevel lvl ) const;
 
 				void AddNewLine() const;
