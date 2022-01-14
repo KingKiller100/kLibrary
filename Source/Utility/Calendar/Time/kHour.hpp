@@ -13,16 +13,17 @@
 namespace klib::kCalendar
 {
 	class Hour final : public TimeComponentBase<std::chrono::duration<std::int16_t, std::ratio<3600>>>
-		, private CalendarComponentToStringImplExtended
+		, private CalendarComponentToStringImpl
 		, public kTemplate::SimpleComparisonOperators<Hour>
 	{
 	public:
 		enum CycleType : std::uint8_t
 		{
-			CYCLE_12 = 12,
-			CYCLE_24 = 24,
+			CYCLE_12 = 12
+			, CYCLE_24 = 24
+			,
 		};
-		
+
 		static constexpr std::string_view Units = "h";
 		static constexpr auto FormatToken = 'h';
 
@@ -42,9 +43,9 @@ namespace klib::kCalendar
 			return VerifyImpl(cycleType);
 		}
 
-		USE_RESULT constexpr void Limit()
+		USE_RESULT constexpr void Normalize()
 		{
-			LimitImpl(cycleType);
+			NormalizeImpl(cycleType);
 		}
 
 		USE_RESULT std::string ToString(const std::string_view& format = "h") const;
@@ -52,14 +53,9 @@ namespace klib::kCalendar
 		friend class Time;
 
 	protected:
-		USE_RESULT std::string ToStringUsingTokenCount(const size_t count) const override;
-		
+		USE_RESULT std::string ToStringUsingTokenCount(size_t count) const;
+
 	private:
 		CycleType cycleType;
 	};
-
-	constexpr Hour operator ""_hh(unsigned long long hours)
-	{
-		return Hour(static_cast<Hour::Rep_t>(hours), Hour::CYCLE_24);
-	}
 }

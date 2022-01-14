@@ -12,7 +12,7 @@
 namespace klib::kCalendar
 {
 	class Minute final : public TimeComponentBase<std::chrono::duration<std::int16_t, std::ratio<60>>>
-		, private CalendarComponentToStringImplExtended
+		, private CalendarComponentToStringImpl
 		, public kTemplate::SimpleComparisonOperators<Minute>
 	{
 	public:
@@ -31,7 +31,7 @@ namespace klib::kCalendar
 
 		USE_RESULT constexpr void Limit()
 		{
-			LimitImpl(60);
+			NormalizeImpl(60);
 		}
 		
 		USE_RESULT std::string ToString(const std::string_view& format = "m") const;
@@ -39,12 +39,7 @@ namespace klib::kCalendar
 		friend class Time;
 
 	protected:
-		USE_RESULT std::string ToStringUsingTokenCount(const size_t count) const override;
+		USE_RESULT std::string ToStringUsingTokenCount( size_t count) const;
 	};
-
-	constexpr Minute operator ""_mm(unsigned long long mins)
-	{
-		return Minute(static_cast<Minute::Rep_t>(mins));
-	}
 }
 

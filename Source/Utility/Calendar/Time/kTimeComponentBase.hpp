@@ -52,7 +52,7 @@ namespace klib::kCalendar
 			return GetValue() < limit;
 		}
 		
-		constexpr void LimitImpl(const Rep_t& limit)
+		constexpr void NormalizeImpl(const Rep_t& limit)
 		{
 			value %= limit;
 		}

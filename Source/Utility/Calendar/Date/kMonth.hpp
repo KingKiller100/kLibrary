@@ -12,7 +12,7 @@ namespace klib::kCalendar
 	class Year;
 	class Day;
 
-	class Month final : private CalendarComponentToStringImplExtended, public kTemplate::SimpleComparisonOperators<Month>
+	class Month final : private CalendarComponentToStringImpl, public kTemplate::SimpleComparisonOperators<Month>
 	{
 	public:
 		enum MonthOfTheYear : unsigned char
@@ -75,14 +75,9 @@ namespace klib::kCalendar
 
 	protected:
 		USE_RESULT std::string GetMonthStr() const;
-		USE_RESULT std::string ToStringUsingTokenCount(const size_t count) const override;
+		USE_RESULT std::string ToStringUsingTokenCount(const size_t count) const;
 
 	private:
 		MonthOfTheYear moty;
 	};
-
-	constexpr Month operator"" _m(unsigned long long month)
-	{
-		return Month(static_cast<Month::MonthOfTheYear>(month));
-	}
 }

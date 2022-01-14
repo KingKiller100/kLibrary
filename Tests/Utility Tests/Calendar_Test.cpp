@@ -105,7 +105,7 @@ namespace kTest::utility
 		}
 
 		{
-			const auto day = 30_d;
+			const Day day = 30;
 			VERIFY( day.GetValue() == 30 );
 			VERIFY( day.GetDayOfTheWeek() == Day::MONDAY );
 			VERIFY( day.Verify() );
@@ -142,7 +142,7 @@ namespace kTest::utility
 		}
 
 		{
-			const auto year = 2000_y;
+			constexpr Year year{ 2000 };
 			VERIFY( year.IsLeapYear() );
 			VERIFY( year.GetValue() == 2000 );
 			VERIFY( year.TotalDays() == 366 );
@@ -197,9 +197,9 @@ namespace kTest::utility
 		}
 
 		{
-			const auto month = 2_m;
-			const auto day = 29_d;
-			const auto year = 1999_y;
+			const Month month{ Month::FEB };
+			const Day day{ 29 };
+			const Year year{ 1999 };
 			VERIFY( month.GetMonthNumber() == 2 );
 			VERIFY( month.GetValue() == Month::FEB );
 			VERIFY( !month.Verify(day, year) );
@@ -278,7 +278,7 @@ namespace kTest::utility
 		}
 
 		{
-			const auto sec( 100_ss );
+			constexpr Second sec( 100 );
 			VERIFY( sec.GetValue() == 100 );
 			VERIFY( !sec.Verify() );
 			VERIFY( sec.ToString("s") == "100" );
@@ -311,7 +311,7 @@ namespace kTest::utility
 		}
 
 		{
-			const auto minute( 1000_mm );
+			constexpr Millisecond minute( 1000 );
 			VERIFY( minute.GetValue() == 1000 );
 			VERIFY( !minute.Verify() );
 			VERIFY( minute.ToString("m") == "1000" );
@@ -344,7 +344,7 @@ namespace kTest::utility
 		}
 
 		{
-			const auto hour( 30_hh );
+			constexpr Hour hour( 30 );
 			VERIFY( hour.GetValue() == 30 );
 			VERIFY( !hour.Verify() );
 			VERIFY( hour.ToString("h") == "30" );

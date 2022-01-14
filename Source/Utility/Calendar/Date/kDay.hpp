@@ -11,7 +11,7 @@
 
 namespace klib::kCalendar
 {
-	class Day : private CalendarComponentToStringImplExtended, public kTemplate::SimpleComparisonOperators<Day>
+	class Day : private CalendarComponentToStringImpl, public kTemplate::SimpleComparisonOperators<Day>
 	{
 	public:
 		enum DayOfTheWeek : std::uint16_t
@@ -89,17 +89,12 @@ namespace klib::kCalendar
 	private:
 		USE_RESULT std::string GetDayStr() const;
 		USE_RESULT std::string GetDayOfTheWeekStr() const;
-		USE_RESULT std::string ToStringUsingTokenCount(const size_t count) const override;
+		USE_RESULT std::string ToStringUsingTokenCount(const size_t count) const;
 
 	private:
 		std::uint16_t day;
 		DayOfTheWeek dayOfTheWeek;
 	};
-
-
-	constexpr Day operator"" _d(unsigned long long day)
-	{
-		return Day(static_cast<std::uint16_t>(day));
-	}
+	
 }
 
