@@ -311,7 +311,7 @@ namespace kTest::utility
 		}
 
 		{
-			constexpr Millisecond minute( 1000 );
+			constexpr Minute minute( 1000 );
 			VERIFY( minute.GetValue() == 1000 );
 			VERIFY( !minute.Verify() );
 			VERIFY( minute.ToString("m") == "1000" );
