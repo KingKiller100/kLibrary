@@ -57,7 +57,7 @@ namespace klib::type_trait
 	template<typename T>
 	constexpr bool Is_Stringish_V = Is_Stringish<T>::value;
 
-#if MSVC_PLATFORM_TOOLSET > 141
+#if MSVC_PLATFORM_TOOLSET >= 142
 	template<typename T>
 	concept Is_String_c = Is_String_V<T> == true;
 	
