@@ -66,8 +66,6 @@ namespace klib
 		void ConsoleLogger::AddEntry( const LogEntry& entry )
 		{
 			const auto logLine = CreateLogText( entry );
-
-
 			Flush( logLine, UpdateConsoleColour( entry.GetProfile().GetLevel() ) );
 		}
 
