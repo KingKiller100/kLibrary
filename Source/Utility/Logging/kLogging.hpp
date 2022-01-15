@@ -1,7 +1,6 @@
 #pragma once
 
 #include "kLogLevel.hpp"
-#include "kLogProfile.hpp"
 
 #include <cstdint>
 #include <vector>
@@ -13,67 +12,20 @@ namespace klib
 {
 	namespace kLogs
 	{
+		class LogProfile;
 		class LogEntry;
 
 		class LogDispatcher
 		{
-			class LogDestRef : public iLogDestination
-			{
-			public:
-				std::string_view GetName() const override;
-
-				void AddRaw( const LogMessage& message ) override;
-
-				void AddEntry( const LogEntry& entry ) override;
-
-				bool IsOpen() const override;
-
-				void Open() override;
-
-				void Close() override;
-
-				iLogDestination& Ref() const;
-
-				template <typename T>
-				T& Ref() const
-				{
-					auto ptr = std::dynamic_pointer_cast<T>( dest );
-					if ( !ptr )
-						throw kDebug::LoggingExceptions(
-							"Cannot cast log destination to type " + std::string( typeid( T ).name() )
-						);
-					return *ptr;
-				}
-
-				friend class LogDispatcher;
-
-			private:
-				explicit LogDestRef( std::shared_ptr<iLogDestination> destination );
-
-			private:
-				std::shared_ptr<iLogDestination> dest;
-			};
-
+		public:
 			class LogProfileRef
 			{
 			public:
-				[[nodiscard]] std::string_view GetName() const noexcept;
+				LogProfileRef() noexcept = default;
 
-				LogLevel::Value GetLevel() const;
-				void SetLevel( LogLevel lvl ) const;
+				LogProfile* operator->() const;
 
-				void AddNewLine() const;
-
-				void AddRaw( std::string_view text ) const;
-
-				void AddBanner(
-					std::string_view text
-					, std::string_view frontPadding
-					, std::string_view backPadding
-					, std::uint16_t paddingCount
-				) const;
-
-				void AddEntry( LogLevel lvl, std::string_view text ) const;
+				[[nodiscard]] bool IsNull() const noexcept;
 
 				friend class LogDispatcher;
 
@@ -81,7 +33,34 @@ namespace klib
 				explicit LogProfileRef( std::shared_ptr<LogProfile> prof );
 
 			private:
-				std::shared_ptr<LogProfile> profile;
+				std::shared_ptr<LogProfile> profile_;
+			};
+
+			template <typename T, typename = std::enable_if_t<std::is_base_of_v<iLogDestination, T>>>
+			class LogDestRef
+			{
+			public:
+				LogDestRef() noexcept = default;
+
+				T* operator->() const
+				{
+					return dest_.operator->();
+				}
+
+				[[nodiscard]] bool IsNull() const
+				{
+					return dest_ == nullptr;
+				}
+
+				friend class LogDispatcher;
+
+			private:
+				explicit LogDestRef( std::shared_ptr<iLogDestination> destination )
+					: dest_( std::dynamic_pointer_cast<T>( destination ) )
+				{ }
+
+			private:
+				std::shared_ptr<T> dest_;
 			};
 
 		public:
@@ -107,11 +86,11 @@ namespace klib
 			 * \param params
 			 */
 			template <typename T, typename ...Params>
-			LogDestRef AddDestination( Params&& ...params )
+			LogDestRef<T> AddDestination( Params&& ...params )
 			{
 				auto destination = std::make_shared<T>( std::forward<Params>( params )... );
 				destinations.emplace_back( destination );
-				return LogDestRef( destination );
+				return LogDestRef<T>( destination );
 			}
 
 			/**

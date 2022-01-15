@@ -13,83 +13,34 @@ namespace klib::kLogs
 {
 	using namespace kString;
 
-	std::string_view LogDispatcher::LogDestRef::GetName() const
+	LogProfile* LogDispatcher::LogProfileRef::operator->() const
 	{
-		return dest->GetName();
+		return profile_.get();
 	}
 
-	void LogDispatcher::LogDestRef::AddRaw( const LogMessage& message )
+	bool LogDispatcher::LogProfileRef::IsNull() const noexcept
 	{
-		dest->AddRaw( message );
+		return profile_ == nullptr;
 	}
 
-	void LogDispatcher::LogDestRef::AddEntry( const LogEntry& entry )
-	{
-		dest->AddEntry( entry );
-	}
+	LogDispatcher::LogProfileRef::LogProfileRef( std::shared_ptr<LogProfile> prof )
+		: profile_( prof )
+	{}
 
-	bool LogDispatcher::LogDestRef::IsOpen() const
-	{
-		return dest->IsOpen();
-	}
 
-	void LogDispatcher::LogDestRef::Open()
+	iLogDestination* LogDispatcher::LogDestRef::operator->() const
 	{
-		dest->Open();
-	}
-
-	void LogDispatcher::LogDestRef::Close()
-	{
-		dest->Close();
+		return dest_.operator->();
 	}
 
 	iLogDestination& LogDispatcher::LogDestRef::Ref() const
 	{
-		return *dest;
+		return *dest_;
 	}
 
 	LogDispatcher::LogDestRef::LogDestRef( std::shared_ptr<iLogDestination> destination )
-		: dest( destination )
+		: dest_( destination )
 	{}
-
-	std::string_view LogDispatcher::LogProfileRef::GetName() const noexcept
-	{
-		return profile->GetName();
-	}
-
-	LogLevel::Value LogDispatcher::LogProfileRef::GetLevel() const
-	{
-		return profile->GetLevel();
-	}
-
-	void LogDispatcher::LogProfileRef::SetLevel( LogLevel lvl ) const
-	{
-		profile->SetLevel( lvl );
-	}
-
-	void LogDispatcher::LogProfileRef::AddNewLine() const
-	{
-		profile->AddNewLine();
-	}
-
-	void LogDispatcher::LogProfileRef::AddRaw( std::string_view text ) const
-	{
-		profile->AddRaw( text );
-	}
-
-	void LogDispatcher::LogProfileRef::AddBanner( std::string_view text, std::string_view frontPadding, std::string_view backPadding, std::uint16_t paddingCount ) const
-	{
-		profile->AddBanner( text, frontPadding, backPadding, paddingCount );
-	}
-
-	void LogDispatcher::LogProfileRef::AddEntry( LogLevel lvl, std::string_view text ) const
-	{
-		profile->AddEntry( lvl, text );
-	}
-
-	LogDispatcher::LogProfileRef::LogProfileRef( std::shared_ptr<LogProfile> prof )
-		: profile( prof )
-	{ }
 
 	LogDispatcher::LogDispatcher()
 		: profiles()
