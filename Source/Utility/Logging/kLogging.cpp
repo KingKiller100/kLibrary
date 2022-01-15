@@ -13,38 +13,23 @@ namespace klib::kLogs
 {
 	using namespace kString;
 
-	LogProfile* LogDispatcher::LogProfileRef::operator->() const
+	LogProfile* LogProfileRef::operator->() const
 	{
 		return profile_.get();
 	}
 
-	bool LogDispatcher::LogProfileRef::IsNull() const noexcept
+	bool LogProfileRef::IsNull() const noexcept
 	{
 		return profile_ == nullptr;
 	}
 
-	LogDispatcher::LogProfileRef::LogProfileRef( std::shared_ptr<LogProfile> prof )
+	LogProfileRef::LogProfileRef( std::shared_ptr<LogProfile> prof )
 		: profile_( prof )
 	{}
 
-
-	iLogDestination* LogDispatcher::LogDestRef::operator->() const
-	{
-		return dest_.operator->();
-	}
-
-	iLogDestination& LogDispatcher::LogDestRef::Ref() const
-	{
-		return *dest_;
-	}
-
-	LogDispatcher::LogDestRef::LogDestRef( std::shared_ptr<iLogDestination> destination )
-		: dest_( destination )
-	{}
-
 	LogDispatcher::LogDispatcher()
-		: profiles()
-		, destinations()
+		: profiles_()
+		, destinations_()
 	{}
 
 	LogDispatcher::~LogDispatcher()
@@ -53,33 +38,33 @@ namespace klib::kLogs
 		UnregisterAll();
 	}
 
-	LogDispatcher::LogProfileRef LogDispatcher::RegisterProfile( std::string_view name, LogLevel level )
+	LogProfileRef LogDispatcher::RegisterProfile( std::string_view name, LogLevel level )
 	{
-		if ( auto iter = std::ranges::find_if( profiles,
-			[&name]( const decltype(profiles)::value_type& pfl )
+		if ( auto iter = std::ranges::find_if( profiles_,
+			[&name]( const decltype(profiles_)::value_type& pfl )
 			{
 				return name == pfl->GetName();
-			} ); iter != profiles.end() )
+			} ); iter != profiles_.end() )
 		{
 			return LogProfileRef( *iter );
 		}
 
-		const auto profile = profiles.emplace_back( LogProfile::Create( name, level ) );
+		const auto profile = profiles_.emplace_back( LogProfile::Create( name, level ) );
 		profile->SetDispatcher( this );
 		return LogProfileRef( profile );
 	}
 
 	void LogDispatcher::UnregisterAll()
 	{
-		for ( auto& logProfile : profiles )
+		for ( auto& logProfile : profiles_ )
 		{
-			profiles.clear();
+			profiles_.clear();
 		}
 	}
 
 	void LogDispatcher::SetGlobalLevel( LogLevel newMin ) noexcept
 	{
-		for ( const auto& profile : profiles )
+		for ( const auto& profile : profiles_ )
 		{
 			profile->SetLevel( newMin );
 		}
@@ -132,7 +117,7 @@ namespace klib::kLogs
 
 	void LogDispatcher::Flush( const LogEntry& entry )
 	{
-		for ( auto& dest : destinations )
+		for ( auto& dest : destinations_ )
 		{
 			dest->AddEntry( entry );
 		}
@@ -140,7 +125,7 @@ namespace klib::kLogs
 
 	void LogDispatcher::Flush( const LogMessage& message )
 	{
-		for ( auto& dest : destinations )
+		for ( auto& dest : destinations_ )
 		{
 			dest->AddRaw( message );
 		}
@@ -148,7 +133,7 @@ namespace klib::kLogs
 
 	void LogDispatcher::Open()
 	{
-		for ( auto& dest : destinations )
+		for ( auto& dest : destinations_ )
 		{
 			dest->Open();
 			if ( !dest->IsOpen() )
@@ -160,7 +145,7 @@ namespace klib::kLogs
 
 	void LogDispatcher::Close()
 	{
-		for ( auto& dest : destinations )
+		for ( auto& dest : destinations_ )
 		{
 			dest->Close();
 		}

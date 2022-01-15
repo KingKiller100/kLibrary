@@ -76,6 +76,24 @@ namespace klib::kLogs
 		LogLevel level;
 		LogDispatcher* dispatcher;
 	};
+
+	class LogProfileRef
+	{
+	public:
+		LogProfileRef() noexcept = default;
+
+		LogProfile* operator->() const;
+
+		[[nodiscard]] bool IsNull() const noexcept;
+
+		friend class LogDispatcher;
+
+	private:
+		explicit LogProfileRef(std::shared_ptr<LogProfile> prof);
+
+	private:
+		std::shared_ptr<LogProfile> profile_;
+	};
 }
 
 namespace std

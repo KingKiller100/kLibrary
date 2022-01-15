@@ -1,41 +1,22 @@
 #pragma once
 
+#include "kLogProfile.hpp"
 #include "kLogLevel.hpp"
 
 #include <cstdint>
 #include <vector>
 
-#include "../Debug/Exceptions/LoggingExceptions.hpp"
 #include "Destinations/kiLoggerDestination.hpp"
 
 namespace klib
 {
 	namespace kLogs
 	{
-		class LogProfile;
 		class LogEntry;
 
 		class LogDispatcher
 		{
 		public:
-			class LogProfileRef
-			{
-			public:
-				LogProfileRef() noexcept = default;
-
-				LogProfile* operator->() const;
-
-				[[nodiscard]] bool IsNull() const noexcept;
-
-				friend class LogDispatcher;
-
-			private:
-				explicit LogProfileRef( std::shared_ptr<LogProfile> prof );
-
-			private:
-				std::shared_ptr<LogProfile> profile_;
-			};
-
 			template <typename T, typename = std::enable_if_t<std::is_base_of_v<iLogDestination, T>>>
 			class LogDestRef
 			{
@@ -89,7 +70,7 @@ namespace klib
 			LogDestRef<T> AddDestination( Params&& ...params )
 			{
 				auto destination = std::make_shared<T>( std::forward<Params>( params )... );
-				destinations.emplace_back( destination );
+				destinations_.emplace_back( destination );
 				return LogDestRef<T>( destination );
 			}
 
@@ -198,8 +179,8 @@ namespace klib
 			friend class LogProfile;
 
 		protected:
-			std::vector<std::shared_ptr<LogProfile>> profiles;
-			std::vector<std::shared_ptr<iLogDestination>> destinations;
+			std::vector<std::shared_ptr<LogProfile>> profiles_;
+			std::vector<std::shared_ptr<iLogDestination>> destinations_;
 		};
 	}
 
