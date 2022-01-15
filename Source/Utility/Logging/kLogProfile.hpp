@@ -60,8 +60,6 @@ namespace klib::kLogs
 		 */
 		void AddEntry( LogLevel lvl, std::string_view text );
 
-		void VerifyDispatcherSet() const;
-
 		friend class LogDispatcher;
 
 	private:
@@ -70,6 +68,8 @@ namespace klib::kLogs
 		bool Loggable( LogLevel lvl ) const;
 
 		void SetDispatcher( LogDispatcher* dispatcher );
+		
+		void VerifyDispatcherSet() const;
 
 	private:
 		std::string name;
@@ -80,8 +80,6 @@ namespace klib::kLogs
 	class LogProfileRef
 	{
 	public:
-		LogProfileRef() noexcept = default;
-
 		LogProfile* operator->() const;
 
 		[[nodiscard]] bool IsNull() const noexcept;
