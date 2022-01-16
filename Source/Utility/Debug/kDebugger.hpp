@@ -30,8 +30,7 @@ namespace klib
 
 		bool IsDebuggerAttached() noexcept;
 
-		void WaitForDebugger(const kFileSystem::Path& path,
-			std::chrono::milliseconds refreshTime = std::chrono::milliseconds(500)) noexcept;
+		bool WaitForDebugger( const kFileSystem::Path& path, std::chrono::milliseconds refreshTime = std::chrono::milliseconds( 500 ) ) noexcept;
 
 		bool ScanForDebugger(std::chrono::milliseconds waitTime);
 

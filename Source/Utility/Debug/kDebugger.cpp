@@ -1,6 +1,9 @@
 #include "pch.hpp"
 #include "kDebugger.hpp"
 
+#include <chrono>
+#include <chrono>
+
 #include "Compiler/VisualStudio.hpp"
 #include "../FileSystem/kFileSystem.hpp"
 
@@ -17,38 +20,42 @@ namespace klib::kDebug
 		return IsDebuggerAttachedImpl();
 	}
 
-	void WaitForDebugger(const kFileSystem::Path& flagName, std::chrono::milliseconds refreshTime) noexcept
+	bool WaitForDebugger( const kFileSystem::Path& flagName, std::chrono::milliseconds refreshTime ) noexcept
 	{
-		if (IsDebuggerAttached())
-			return;
-		
-		while (kFileSystem::CheckFileExists(flagName))
+		if ( IsDebuggerAttached() )
+			return true;
+
+		bool attached = false;
+		while ( kFileSystem::CheckFileExists( flagName ) )
 		{
-			if (IsDebuggerAttachedImpl())
+			attached = IsDebuggerAttachedImpl();
+			if ( attached )
 			{
-				return;
+				break;
 			}
-			std::this_thread::sleep_for(refreshTime);
+			std::this_thread::sleep_for( refreshTime );
 		}
+
+		return attached;
 	}
 
-	bool ScanForDebugger(std::chrono::milliseconds waitTime)
+	bool ScanForDebugger( std::chrono::milliseconds waitTime )
 	{
 		using namespace std::chrono;
-		
-		if (IsDebuggerAttachedImpl())
+
+		if ( IsDebuggerAttachedImpl() )
 			return true;
 
 		const auto endTimePoint = high_resolution_clock::now() + waitTime;
-		
-		while (endTimePoint >= high_resolution_clock::now())
+
+		while ( endTimePoint >= high_resolution_clock::now() )
 		{
-			if (IsDebuggerAttachedImpl())
+			if ( IsDebuggerAttachedImpl() )
 			{
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -57,14 +64,13 @@ namespace klib::kDebug
 		BreakPointImpl();
 	}
 
-	void WriteToOutputWindow(std::string_view msg)
+	void WriteToOutputWindow( std::string_view msg )
 	{
-		WriteToOutputWindowImpl(msg);
+		WriteToOutputWindowImpl( msg );
 	}
 
-	void WriteToOutputWindow(std::wstring_view msg)
+	void WriteToOutputWindow( std::wstring_view msg )
 	{
-		WriteToOutputWindowImpl(msg);
+		WriteToOutputWindowImpl( msg );
 	}
-
 }
