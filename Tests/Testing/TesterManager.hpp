@@ -1,6 +1,11 @@
 #pragma once
 
 
+#include <chrono>
+#include <chrono>
+#include <chrono>
+#include <chrono>
+
 #include "EnableTesting.hpp"
 
 #ifdef TESTING_ENABLED
@@ -56,7 +61,7 @@ namespace kTest
 		static void WriteToConsole(const TestResult& result);
 		[[nodiscard]] double GetAverageTime() const;
 		void WriteToFile( std::string_view results );
-		void PerformTests( size_t noOfThreads, std::chrono::high_resolution_clock::time_point& outStart );
+		void PerformTests( size_t noOfThreads, std::chrono::high_resolution_clock::time_point& , std::chrono::high_resolution_clock::time_point& );
 
 	private:
 		std::string path;

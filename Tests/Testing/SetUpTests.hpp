@@ -11,7 +11,7 @@ namespace kTest
 	}
 
 	void InitializeMathsTests(TesterManager& tm);
-	void InitializeUtilityTests(TesterManager& tm, bool includeTimeTests);
+	void InitializeUtilityTests(TesterManager& tm, bool includeTimeTests = true);
 	void InitializeTemplateTests(TesterManager& tm);
 	void InitializeAllTests(TesterManager& tm);
 }

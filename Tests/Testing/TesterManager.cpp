@@ -96,9 +96,8 @@ namespace kTest
 			"[" << threadsCount << "]" << "\n";
 
 		testResults.reserve( testCount );
-		high_resolution_clock::time_point startTimePoint;
-		PerformTests( threadsCount, startTimePoint );
-		const auto endTimePoint = high_resolution_clock::now();
+		high_resolution_clock::time_point startTimePoint, endTimePoint;
+		PerformTests( threadsCount, startTimePoint, endTimePoint);
 
 		std::sort( testResults.begin(), testResults.end(), []( const TestResult& lhs, const TestResult& rhs )
 		{
@@ -126,37 +125,51 @@ namespace kTest
 		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path << std::endl;
 	}
 
-	void TesterManager::PerformTests( size_t noOfThreads, std::chrono::high_resolution_clock::time_point& outStart )
+	void TesterManager::PerformTests( size_t noOfThreads, std::chrono::high_resolution_clock::time_point& outStartTimePoint, std::chrono::high_resolution_clock::time_point& outEndTimePoint )
 	{
 		if ( noOfThreads > 1 )
 		{
 			std::vector<std::future<TestResult>> testFutures;
+			std::vector<std::thread> testThreads;
 
-			outStart = std::chrono::high_resolution_clock::now();
+			const auto count = tests.size();
+			testThreads.reserve( count );
+			testFutures.reserve( count );
+
+			outStartTimePoint = std::chrono::high_resolution_clock::now();
 			while ( !tests.empty() )
 			{
 				const auto loops = ( std::min )( noOfThreads, tests.size() );
 				for ( size_t i = 0; i < loops; ++i )
 				{
-					auto test = tests.top();
-					testFutures.emplace_back(  std::async( std::launch::async, &TesterManager::Run, test ) );
+					std::promise<TestResult> testPromise;
+					testFutures.emplace_back( testPromise.get_future() );
+					testThreads.emplace_back( std::thread( &TesterManager::RunThreaded, tests.top(), std::move( testPromise ) ) );
 					tests.pop();
 				}
 			}
+
+			outEndTimePoint = std::chrono::high_resolution_clock::now();
 
 			for ( auto& future : testFutures )
 			{
 				testResults.emplace_back( future.get() );
 			}
+
+			for ( auto& thread : testThreads )
+			{
+				thread.join();
+			}
 		}
 		else
 		{
-			outStart = std::chrono::high_resolution_clock::now();
+			outStartTimePoint = std::chrono::high_resolution_clock::now();
 			while ( !tests.empty() )
 			{
 				testResults.emplace_back( Run( tests.top() ) );
 				tests.pop();
 			}
+			outEndTimePoint = std::chrono::high_resolution_clock::now();
 		}
 	}
 
@@ -189,7 +202,7 @@ namespace kTest
 		result.duration = std::chrono::duration_cast<std::chrono::microseconds>( duration );
 
 		const auto durationStr =
-			Sprintf( "| Runtime: %.3fms", static_cast<double>( duration.count() ) / 1'000'000 );
+			Sprintf( "| Runtime: %.3fms", static_cast<double>( duration.count() ) / 1'000'000.0 );
 
 		result.report = passed
 			                ? Sprintf( "Success: %s %s\n\n", result.testName, durationStr )                          // Success Case
