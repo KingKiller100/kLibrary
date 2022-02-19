@@ -41,7 +41,7 @@ namespace klib::kThread
 	void ThreadPool::AddThread( size_t count )
 	{
 		// Create the specified number of threads
-		count = kmaths::Clamp( count, 0, std::numeric_limits<std::uint8_t>::max() );
+		count = kmaths::Min( count, std::numeric_limits<std::uint8_t>::max() );
 
 		const auto currentSize = GetSize();
 		const auto newSize = currentSize + count;
