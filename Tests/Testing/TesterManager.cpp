@@ -1,14 +1,8 @@
 #include "TesterManager.hpp"
 
-#include <chrono>
-#include <chrono>
-#include <numeric>
-
 #ifdef TESTING_ENABLED
 
 #include "TesterBase.hpp"
-
-#include "SetUpTests.hpp"
 
 // Speed Testing
 #include "Performance/PerformanceTestManager.hpp"
@@ -17,9 +11,8 @@
 
 #include <iostream>
 #include <stdexcept>
-#include <mutex>
 #include <utility>
-#include <Windows.h>
+#include <thread>
 
 namespace kTest
 {
@@ -28,7 +21,6 @@ namespace kTest
 
 	TesterManager::TesterManager()
 		: success( true )
-		, skipPerformanceTests( false )
 	{
 		std::cout.precision( 3 );
 	}
@@ -42,7 +34,6 @@ namespace kTest
 	{
 		using namespace klib;
 
-		skipPerformanceTests = ( initRequest == InitializationRequest::NoPerformanceTests );
 
 		const auto cwd = std::filesystem::path( __argv[0] ).parent_path();
 		current_path( cwd );
@@ -83,21 +74,61 @@ namespace kTest
 
 		const auto maxResources = std::thread::hardware_concurrency();
 
-		const auto coresToUse = resourceUtilization == ResourceUtilization::All
-			                        ? maxResources
-			                        : resourceUtilization == ResourceUtilization::Half
-			                        ? maxResources >> 1
-			                        : 1;
+		const auto threadAvailable = resourceUtilization == ResourceUtilization::All
+			                             ? maxResources
+			                             : resourceUtilization == ResourceUtilization::Half
+			                             ? maxResources >> 1
+			                             : 1;
 
-		const auto threadsCount = ( std::min<size_t> )( coresToUse, testCount );
+		const auto threadsCount = ( std::min<size_t> )( threadAvailable, testCount );
 
 		std::cout << "Testing: " <<
 			( threadsCount > 1 ? "Multi-Threaded" : "Single Threaded" ) <<
 			"[" << threadsCount << "]" << "\n";
 
-		testResults.reserve( testCount );
+		testResults.resize( testCount );
 		high_resolution_clock::time_point startTimePoint, endTimePoint;
-		PerformTests( threadsCount, startTimePoint, endTimePoint);
+		PerformTests( threadsCount, startTimePoint, endTimePoint );
+		ReportDuration( startTimePoint, endTimePoint );
+
+		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path << std::endl;
+	}
+
+
+	void TesterManager::PerformTests(
+		size_t noOfThreads
+		, std::chrono::high_resolution_clock::time_point& outStartTimePoint
+		, std::chrono::high_resolution_clock::time_point& outEndTimePoint
+	)
+	{
+		size_t index{0};
+
+		outStartTimePoint = std::chrono::high_resolution_clock::now();
+		if ( noOfThreads > 1 )
+		{
+			klib::kThread::ThreadPool testPool( noOfThreads );
+			while ( !tests.empty() )
+			{
+				const auto& currentTest = tests.top();
+				testPool.QueueJob( kThread::ThreadPool::Job(
+					[this, currentTest, i = index++]
+					{
+						Run( currentTest, i );
+					}
+					, currentTest->GetName() ) );
+				tests.pop();
+			}
+		}
+		else
+		{
+			while ( !tests.empty() )
+			{
+				Run( tests.top(), index++ );
+				tests.pop();
+			}
+		}
+
+		outEndTimePoint = std::chrono::high_resolution_clock::now();
 
 		std::sort( testResults.begin(), testResults.end(), []( const TestResult& lhs, const TestResult& rhs )
 		{
@@ -109,9 +140,15 @@ namespace kTest
 			WriteToFile( result.report );
 			WriteToConsole( result );
 		}
+	}
 
-		const auto finalTime = duration_cast<milliseconds>( endTimePoint - startTimePoint ).count();
-		const auto millis = finalTime % milliseconds::period::den;
+	void TesterManager::ReportDuration(
+		std::chrono::high_resolution_clock::time_point startTimePoint
+		, std::chrono::high_resolution_clock::time_point endTimePoint
+	)
+	{
+		const auto finalTime = std::chrono::duration_cast<std::chrono::milliseconds>( endTimePoint - startTimePoint ).count();
+		const auto millis = finalTime % std::chrono::milliseconds::period::den;
 		const auto secs = finalTime - millis;
 		const auto avgTime = GetAverageTime();
 
@@ -121,61 +158,11 @@ namespace kTest
 		WriteToFile( timeStr );
 
 		std::cout << "\n" << timeStr << "\n";
-
-		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path << std::endl;
-	}
-
-	void TesterManager::PerformTests( size_t noOfThreads, std::chrono::high_resolution_clock::time_point& outStartTimePoint, std::chrono::high_resolution_clock::time_point& outEndTimePoint )
-	{
-		if ( noOfThreads > 1 )
-		{
-			std::vector<std::future<TestResult>> testFutures;
-			std::vector<std::thread> testThreads;
-
-			const auto count = tests.size();
-			testThreads.reserve( count );
-			testFutures.reserve( count );
-
-			outStartTimePoint = std::chrono::high_resolution_clock::now();
-			while ( !tests.empty() )
-			{
-				const auto loops = ( std::min )( noOfThreads, tests.size() );
-				for ( size_t i = 0; i < loops; ++i )
-				{
-					std::promise<TestResult> testPromise;
-					testFutures.emplace_back( testPromise.get_future() );
-					testThreads.emplace_back( std::thread( &TesterManager::RunThreaded, tests.top(), std::move( testPromise ) ) );
-					tests.pop();
-				}
-			}
-
-			outEndTimePoint = std::chrono::high_resolution_clock::now();
-
-			for ( auto& future : testFutures )
-			{
-				testResults.emplace_back( future.get() );
-			}
-
-			for ( auto& thread : testThreads )
-			{
-				thread.join();
-			}
-		}
-		else
-		{
-			outStartTimePoint = std::chrono::high_resolution_clock::now();
-			while ( !tests.empty() )
-			{
-				testResults.emplace_back( Run( tests.top() ) );
-				tests.pop();
-			}
-			outEndTimePoint = std::chrono::high_resolution_clock::now();
-		}
 	}
 
 	void TesterManager::RunPerformanceTests() const
 	{
-		if ( !success || skipPerformanceTests )
+		if ( !success )
 			return;
 
 		auto& test = performance::PerformanceTestManager::Get();
@@ -183,15 +170,15 @@ namespace kTest
 		test.Run();
 	}
 
-	void TesterManager::RunThreaded( std::shared_ptr<TesterBase> test, std::promise<TestResult> promise )
-	{
-		const auto result = Run( std::move( test ) );
-		promise.set_value( result );
-	}
+	// void TesterManager::RunThreaded( std::shared_ptr<TesterBase> test, std::promise<TestResult> promise )
+	// {
+	// const auto result = Run( std::move( test ) );
+	// promise.set_value( result );
+	// }
 
-	TesterManager::TestResult TesterManager::Run( std::shared_ptr<TesterBase> test )
+	void TesterManager::Run( std::shared_ptr<TesterBase> test, size_t index )
 	{
-		TestResult result;
+		TestResult& result = testResults[index];
 
 		const auto start = std::chrono::high_resolution_clock::now();
 		const auto passed = test->Run();
@@ -207,8 +194,6 @@ namespace kTest
 		result.report = passed
 			                ? Sprintf( "Success: %s %s\n\n", result.testName, durationStr )                          // Success Case
 			                : Sprintf( "Failure: %s %s\n%s", result.testName, durationStr, test->GetFailureData() ); // Fail Case
-
-		return result;
 	}
 
 	void TesterManager::WriteToConsole( const TesterManager::TestResult& result )

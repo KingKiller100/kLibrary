@@ -1,20 +1,15 @@
 #pragma once
 
 
-#include <chrono>
-#include <chrono>
-#include <chrono>
-#include <chrono>
-
 #include "EnableTesting.hpp"
 
 #ifdef TESTING_ENABLED
+#include <chrono>
 #include <fstream>
 #include <stack>
 #include <memory>
 #include <string>
 #include <vector>
-#include <future>
 
 namespace kTest
 {
@@ -23,7 +18,7 @@ namespace kTest
 	class TesterManager
 	{
 	public:
-		enum class InitializationRequest { All = 0b0, NoPerformanceTests = 0b1 };
+		enum class InitializationRequest { All = 0b0 };
 
 		enum class ResourceUtilization { All, Half, Single };
 
@@ -56,20 +51,21 @@ namespace kTest
 		void ClearAllTests();
 
 	private:
-		static void RunThreaded( std::shared_ptr<TesterBase> test, std::promise<TestResult> promise );
-		static TestResult Run( std::shared_ptr<TesterBase> test );
-		static void WriteToConsole(const TestResult& result);
+		void Run( std::shared_ptr<TesterBase> test, size_t index );
+		static void WriteToConsole( const TestResult& result );
 		[[nodiscard]] double GetAverageTime() const;
 		void WriteToFile( std::string_view results );
-		void PerformTests( size_t noOfThreads, std::chrono::high_resolution_clock::time_point& , std::chrono::high_resolution_clock::time_point& );
-
+		void PerformTests( size_t noOfThreads, std::chrono::high_resolution_clock::time_point&, std::chrono::high_resolution_clock::time_point& );
+		void ReportDuration(
+			std::chrono::high_resolution_clock::time_point startTimePoint
+			, std::chrono::high_resolution_clock::time_point endTimePoint
+		);
 	private:
 		std::string path;
 		std::stack<std::shared_ptr<TesterBase>> tests;
 		std::vector<TestResult> testResults;
 		std::ofstream file;
 		bool success;
-		bool skipPerformanceTests;
 	};
 }
 
