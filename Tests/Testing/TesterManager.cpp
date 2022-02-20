@@ -1,5 +1,8 @@
 #include "TesterManager.hpp"
 
+#include <numeric>
+
+
 #ifdef TESTING_ENABLED
 
 #include "TesterBase.hpp"
@@ -20,7 +23,9 @@ namespace kTest
 	using namespace kString;
 
 	TesterManager::TesterManager()
-		: success( true )
+		: threadPool_( 0 )
+		, endTimePointValue_( 0 )
+		, success_( true )
 	{
 		std::cout.precision( 3 );
 	}
@@ -38,33 +43,33 @@ namespace kTest
 		const auto cwd = std::filesystem::path( __argv[0] ).parent_path();
 		current_path( cwd );
 
-		path = ( cwd / "Test Results" ).string();
-		path += "/";
+		path_ = ( cwd / "Test Results" ).string();
+		path_ += "/";
 
-		if ( !std::filesystem::exists( path ) )
+		if ( !std::filesystem::exists( path_ ) )
 		{
-			if ( !std::filesystem::create_directory( path.c_str() ) )
+			if ( !std::filesystem::create_directory( path_.c_str() ) )
 			{
 				throw std::runtime_error( "Test results directory could not be created/found. Please check why!" );
 			}
 		}
 
-		path += "Results.txt";
-		std::filesystem::remove( path.c_str() );
+		path_ += "Results.txt";
+		std::filesystem::remove( path_.c_str() );
 
-		file.open( path, std::ios::out | std::ios::app );
+		file_.open( path_, std::ios::out | std::ios::app );
 	}
 
 	void TesterManager::Add( TesterBase* test )
 	{
-		tests.push( std::unique_ptr<TesterBase>( test ) );
+		tests_.push( std::unique_ptr<TesterBase>( test ) );
 	}
 
 	void TesterManager::RunAll( ResourceUtilization resourceUtilization )
 	{
 		using namespace std::chrono;
 
-		const auto testCount = tests.size();
+		const auto testCount = tests_.size();
 
 		if ( testCount == 0 )
 		{
@@ -86,69 +91,111 @@ namespace kTest
 			( threadsCount > 1 ? "Multi-Threaded" : "Single Threaded" ) <<
 			"[" << threadsCount << "]" << "\n";
 
-		testResults.resize( testCount );
-		high_resolution_clock::time_point startTimePoint, endTimePoint;
-		PerformTests( threadsCount, startTimePoint, endTimePoint );
-		ReportDuration( startTimePoint, endTimePoint );
+		results_.resize( testCount );
+		finishedTests_.resize( testCount, false );
 
-		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path << std::endl;
+		PerformTests( threadsCount );
+		ReportDuration();
+
+		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path_ << std::endl;
 	}
 
 
-	void TesterManager::PerformTests(
-		size_t noOfThreads
-		, std::chrono::high_resolution_clock::time_point& outStartTimePoint
-		, std::chrono::high_resolution_clock::time_point& outEndTimePoint
-	)
+	void TesterManager::PerformTests( size_t noOfThreads )
 	{
-		size_t index{0};
+		size_t index{ 0 };
 
-		outStartTimePoint = std::chrono::high_resolution_clock::now();
 		if ( noOfThreads > 1 )
 		{
-			klib::kThread::ThreadPool testPool( noOfThreads );
-			while ( !tests.empty() )
+			threadPool_.AddThread( noOfThreads );
+
+			startTimePoint_ = std::chrono::high_resolution_clock::now();
+
+			while ( !tests_.empty() )
 			{
-				const auto& currentTest = tests.top();
-				testPool.QueueJob( kThread::ThreadPool::Job(
+				const auto& currentTest = tests_.top();
+
+				threadPool_.QueueJob( kThread::ThreadPool::Job(
 					[this, currentTest, i = index++]
 					{
 						Run( currentTest, i );
 					}
 					, currentTest->GetName() ) );
-				tests.pop();
+
+				tests_.pop();
 			}
 		}
 		else
 		{
-			while ( !tests.empty() )
+			startTimePoint_ = std::chrono::high_resolution_clock::now();
+			while ( !tests_.empty() )
 			{
-				Run( tests.top(), index++ );
-				tests.pop();
+				Run( tests_.top(), index++ );
+				tests_.pop();
 			}
 		}
+	}
 
-		outEndTimePoint = std::chrono::high_resolution_clock::now();
+	void TesterManager::RunPerformanceTests() const
+	{
+		if ( !success_ )
+			return;
 
-		std::sort( testResults.begin(), testResults.end(), []( const TestResult& lhs, const TestResult& rhs )
+		auto& test = performance::PerformanceTestManager::Get();
+		std::cout << "Now Testing: " << test.GetName() << " ";
+		test.Run();
+	}
+
+	void TesterManager::Run( std::shared_ptr<TesterBase> test, size_t index )
+	{
+		auto& result = results_[index];
+		auto& isFinished = finishedTests_[index];
+
+		const auto startTime = std::chrono::high_resolution_clock::now();
+		const auto passed = test->Run();
+		const auto endTime = std::chrono::high_resolution_clock::now();
+
+		const auto duration = endTime - startTime;
+
+		result.testName = test->GetName();
+		result.passed = passed;
+		result.duration = std::chrono::duration_cast<TargetSubDuration_t>( duration );
+
+		const auto durationStr =
+			Sprintf( "| Runtime: %.3fms", static_cast<double>( duration.count() ) / 1'000'000.0 );
+
+		result.report = passed
+			                ? Sprintf( "Success: %s %s\n\n", result.testName, durationStr )                          // Success Case
+			                : Sprintf( "Failure: %s %s\n%s", result.testName, durationStr, test->GetFailureData() ); // Fail Case
+
+		endTimePointValue_.store( endTime.time_since_epoch().count() );
+		isFinished = true;
+	}
+
+	void TesterManager::ReportDuration()
+	{
+		while ( std::any_of( finishedTests_.begin(), finishedTests_.end(),
+				[]( auto&& bw )
+				{
+					return bw == false;
+				} )
+		)
+		{ }
+
+		// Sort fastest -> slowest
+		std::ranges::sort( results_, []( const TestResult& lhs, const TestResult& rhs )
 		{
 			return lhs.duration < rhs.duration;
 		} );
 
-		for ( const auto& result : testResults )
+		for ( const auto& result : results_ )
 		{
 			WriteToFile( result.report );
 			WriteToConsole( result );
 		}
-	}
 
-	void TesterManager::ReportDuration(
-		std::chrono::high_resolution_clock::time_point startTimePoint
-		, std::chrono::high_resolution_clock::time_point endTimePoint
-	)
-	{
-		const auto finalTime = std::chrono::duration_cast<std::chrono::milliseconds>( endTimePoint - startTimePoint ).count();
-		const auto millis = finalTime % std::chrono::milliseconds::period::den;
+		const auto finalTime = std::chrono::duration_cast<TargetDuration_t>( std::chrono::nanoseconds( endTimePointValue_ ) - startTimePoint_.time_since_epoch() ).count();
+		const auto millis = finalTime % TargetDuration_t::period::den;
 		const auto secs = finalTime - millis;
 		const auto avgTime = GetAverageTime();
 
@@ -160,48 +207,11 @@ namespace kTest
 		std::cout << "\n" << timeStr << "\n";
 	}
 
-	void TesterManager::RunPerformanceTests() const
-	{
-		if ( !success )
-			return;
-
-		auto& test = performance::PerformanceTestManager::Get();
-		std::cout << "Now Testing: " << test.GetName() << " ";
-		test.Run();
-	}
-
-	// void TesterManager::RunThreaded( std::shared_ptr<TesterBase> test, std::promise<TestResult> promise )
-	// {
-	// const auto result = Run( std::move( test ) );
-	// promise.set_value( result );
-	// }
-
-	void TesterManager::Run( std::shared_ptr<TesterBase> test, size_t index )
-	{
-		TestResult& result = testResults[index];
-
-		const auto start = std::chrono::high_resolution_clock::now();
-		const auto passed = test->Run();
-		const auto duration = std::chrono::high_resolution_clock::now() - start;
-
-		result.testName = test->GetName();
-		result.passed = passed;
-		result.duration = std::chrono::duration_cast<std::chrono::microseconds>( duration );
-
-		const auto durationStr =
-			Sprintf( "| Runtime: %.3fms", static_cast<double>( duration.count() ) / 1'000'000.0 );
-
-		result.report = passed
-			                ? Sprintf( "Success: %s %s\n\n", result.testName, durationStr )                          // Success Case
-			                : Sprintf( "Failure: %s %s\n%s", result.testName, durationStr, test->GetFailureData() ); // Fail Case
-	}
-
 	void TesterManager::WriteToConsole( const TesterManager::TestResult& result )
 	{
 		const auto& pass = result.passed;
 		const auto& name = result.testName;
-		const auto& duration = std::chrono::duration_cast<std::chrono::microseconds>( result.duration );
-
+		const auto millis = static_cast<double>( result.duration.count() ) / 1'000.0;
 		auto* const hConsole = GetStdHandle( STD_OUTPUT_HANDLE );
 
 		std::cout << "Ran: " << name << "| ";
@@ -214,39 +224,39 @@ namespace kTest
 
 		SetConsoleTextAttribute( hConsole, kMisc::ConsoleColour::LIGHT_GREY );
 
-		std::cout << " | " << static_cast<double>( duration.count() ) / 1'000.0 << "ms\n";
+		std::cout << " | " << millis << "ms\n";
 	}
 
 	void TesterManager::WriteToFile( std::string_view results )
 	{
-		file << results;
-		file.flush();
+		file_ << results;
+		file_.flush();
 	}
 
 	double TesterManager::GetAverageTime() const
 	{
 		double avgTime = 0;
-		for ( const auto& result : testResults )
+		for ( const auto& result : results_ )
 		{
-			const auto millis = std::chrono::duration_cast<std::chrono::milliseconds>( result.duration );
+			const auto millis = std::chrono::duration_cast<TargetDuration_t>( result.duration );
 			avgTime += static_cast<double>( millis.count() );
 		}
 
-		avgTime /= static_cast<double>( testResults.size() );
+		avgTime /= static_cast<double>( results_.size() );
 		return avgTime;
 	}
 
 	void TesterManager::Shutdown()
 	{
-		if ( file.is_open() )
-			file.close();
+		if ( file_.is_open() )
+			file_.close();
 
 		ClearAllTests();
 	}
 
 	void TesterManager::ClearAllTests()
 	{
-		testResults.clear();
+		results_.clear();
 	}
 }
 #endif // TESTING_ENABLED

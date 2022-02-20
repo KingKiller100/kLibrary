@@ -1,9 +1,9 @@
 #pragma once
 
-
 #include "EnableTesting.hpp"
 
 #ifdef TESTING_ENABLED
+#include "../kLib.hpp"
 #include <chrono>
 #include <fstream>
 #include <stack>
@@ -18,6 +18,9 @@ namespace kTest
 	class TesterManager
 	{
 	public:
+		using TargetDuration_t = std::chrono::milliseconds;
+		using TargetSubDuration_t = std::chrono::microseconds;
+		
 		enum class InitializationRequest { All = 0b0 };
 
 		enum class ResourceUtilization { All, Half, Single };
@@ -26,7 +29,7 @@ namespace kTest
 		{
 			std::string testName;
 			std::string report;
-			std::chrono::microseconds duration;
+			TargetSubDuration_t duration;
 			bool passed;
 
 			TestResult()
@@ -36,7 +39,7 @@ namespace kTest
 				, passed( true )
 			{ }
 		};
-
+		
 	public:
 		using Test_t = TesterBase;
 
@@ -55,17 +58,18 @@ namespace kTest
 		static void WriteToConsole( const TestResult& result );
 		[[nodiscard]] double GetAverageTime() const;
 		void WriteToFile( std::string_view results );
-		void PerformTests( size_t noOfThreads, std::chrono::high_resolution_clock::time_point&, std::chrono::high_resolution_clock::time_point& );
-		void ReportDuration(
-			std::chrono::high_resolution_clock::time_point startTimePoint
-			, std::chrono::high_resolution_clock::time_point endTimePoint
-		);
+		void PerformTests( size_t noOfThreads );
+		void ReportDuration();
 	private:
-		std::string path;
-		std::stack<std::shared_ptr<TesterBase>> tests;
-		std::vector<TestResult> testResults;
-		std::ofstream file;
-		bool success;
+		klib::kThread::ThreadPool threadPool_;
+		std::string path_;
+		std::stack<std::shared_ptr<TesterBase>> tests_;
+		std::vector<TestResult> results_;
+		std::vector<klib::type_trait::BooleanWrapper> finishedTests_;
+		std::ofstream file_;
+		std::chrono::high_resolution_clock::time_point startTimePoint_;
+		std::atomic_uint64_t endTimePointValue_;
+		bool success_;
 	};
 }
 
