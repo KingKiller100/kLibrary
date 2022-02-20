@@ -165,8 +165,8 @@ namespace kTest
 			Sprintf( "| Runtime: %.3fms", static_cast<double>( duration.count() ) / 1'000'000.0 );
 
 		result.report = passed
-			                ? Sprintf( "Success: %s %s\n\n", result.testName, durationStr )                          // Success Case
-			                : Sprintf( "Failure: %s %s\n%s", result.testName, durationStr, test->GetFailureData() ); // Fail Case
+			                ? Sprintf( "%zu) Success: %s %s\n\n", index + 1, result.testName, durationStr )                          // Success Case
+			                : Sprintf( "%zu) Failure: %s %s\n%s", index + 1, result.testName, durationStr, test->GetFailureData() ); // Fail Case
 
 		endTimePointValue_.store( endTime.time_since_epoch().count() );
 		isFinished = true;
@@ -182,6 +182,11 @@ namespace kTest
 		)
 		{ }
 
+		for ( const auto& result : results_ )
+		{
+			WriteToFile( result.report );
+		}
+
 		// Sort fastest -> slowest
 		std::ranges::sort( results_, []( const TestResult& lhs, const TestResult& rhs )
 		{
@@ -190,7 +195,6 @@ namespace kTest
 
 		for ( const auto& result : results_ )
 		{
-			WriteToFile( result.report );
 			WriteToConsole( result );
 		}
 
