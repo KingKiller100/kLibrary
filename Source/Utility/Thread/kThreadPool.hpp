@@ -1,10 +1,11 @@
 #pragma once
-#include "../../TypeTraits/BooleanTraits.hpp"
 
+#include <atomic>
 #include <functional>
 #include <mutex>
 #include <queue>
 #include <thread>
+#include <condition_variable>
 
 namespace klib::kThread
 {
@@ -15,8 +16,8 @@ namespace klib::kThread
 
 		struct Job
 		{
-			std::function<Func_t> task;
 			std::string desc;
+			std::function<Func_t> task;
 
 			Job() noexcept;
 
@@ -25,30 +26,8 @@ namespace klib::kThread
 			void operator()() const;
 		};
 
-		class SafeThread
-		{
-		public:
-			explicit SafeThread();
-
-			explicit SafeThread( std::thread t, std::function<void()> exitEvent );
-
-			~SafeThread();
-
-			[[nodiscard]] bool Active() const noexcept;
-
-			void SetThread( std::thread&& t );
-
-			void SetExitEvent( std::function<void()> exitEvent );
-
-			[[nodiscard]] auto GetID() const;
-
-		private:
-			std::thread thread_;
-			std::function<void()> onExitEvent_;
-		};
-
 	public:
-		ThreadPool( size_t count );
+		ThreadPool();
 
 		ThreadPool( const ThreadPool& other ) noexcept = delete;
 		ThreadPool& operator=( const ThreadPool& other ) noexcept = delete;
@@ -58,9 +37,9 @@ namespace klib::kThread
 
 		~ThreadPool();
 
-		void AddThread( size_t count );
+		void Launch( size_t count );
 
-		void ShutdownAll();
+		void Shutdown();
 
 		bool CanJoinAll() const;
 
@@ -77,19 +56,19 @@ namespace klib::kThread
 
 		[[nodiscard]] std::vector<std::thread::id> GetIDs() const;
 
+		// Place a job on the queue and unblock a thread
 		void QueueJob( const Job& job );
-
-		std::string_view LatestJob() const noexcept;
+		
+	protected:
+		void ThreadLoop();
+		void ModifyAtomicString(std::atomic<const char*>& str, std::string_view text) const;
 
 	protected:
-		void ThreadLoop( size_t index );
-
-	protected:
-		std::mutex mutex_;
+		std::mutex jobsMutex_;
 		std::condition_variable threadNotifier_;
-		std::vector<type_trait::BooleanWrapper> shutdowns_;
-		std::queue<Job> jobs_;
-		std::vector<std::unique_ptr<SafeThread>> threads_;
-		std::string prevJobDesc_;
+		std::atomic_bool terminator_;
+		std::queue<Job> jobsQueue_;
+		std::atomic<const char*> lastJob_;
+		std::vector<std::thread> pool_;
 	};
 }

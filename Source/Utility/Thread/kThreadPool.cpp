@@ -8,8 +8,8 @@ namespace klib::kThread
 	{}
 
 	ThreadPool::Job::Job( std::function<Func_t> taskToDo, std::string_view description )
-		: task( taskToDo )
-		, desc( description )
+		: desc( description )
+		, task( taskToDo )
 	{}
 
 	void ThreadPool::Job::operator()() const
@@ -18,98 +18,51 @@ namespace klib::kThread
 			task();
 	}
 
-	ThreadPool::SafeThread::SafeThread() = default;
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// Thread Pool ///////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	ThreadPool::SafeThread::SafeThread( std::thread t, std::function<void()> exitEvent )
-		: thread_( std::move( t ) )
-		, onExitEvent_( exitEvent )
-	{}
-
-	ThreadPool::SafeThread::~SafeThread()
-	{
-		if ( thread_.joinable() )
-		{
-			if ( onExitEvent_ )
-				onExitEvent_();
-			thread_.join();
-		}
-	}
-
-	bool ThreadPool::SafeThread::Active() const noexcept
-	{
-		return thread_.joinable();
-	}
-
-	void ThreadPool::SafeThread::SetThread( std::thread&& t )
-	{
-		thread_ = std::move( t );
-	}
-
-	void ThreadPool::SafeThread::SetExitEvent( std::function<void()> exitEvent )
-	{
-		onExitEvent_ = std::move( exitEvent );
-	}
-
-	auto ThreadPool::SafeThread::GetID() const
-	{
-		return thread_.get_id();
-	}
-
-	ThreadPool::ThreadPool( size_t count )
-	{
-		AddThread( count );
-	}
+	ThreadPool::ThreadPool()
+		: terminator_( false )
+		, lastJob_( nullptr )
+		, threadNotifier_()
+	{ }
 
 	ThreadPool::~ThreadPool()
 	{
-		// Unblock any threads and tell them to stop
-		std::scoped_lock<std::mutex> lock( mutex_ );
-
-		// Wait for all threads to stop
 		JoinAndPopAll();
 	}
 
-	void ThreadPool::AddThread( size_t count )
+	void ThreadPool::Launch( size_t count )
 	{
+		terminator_.store( false );
+
 		// Create the specified number of threads
 		const auto currentSize = GetSize();
 		const auto newSize = currentSize + count;
 
-		threads_.reserve( newSize );
-		shutdowns_.resize( newSize, false );
+		pool_.resize( newSize );
 
-		for ( size_t i = 0; i < count; ++i )
+		for ( auto& thread : pool_ )
 		{
-			auto& safeThr = threads_.emplace_back( std::make_unique<SafeThread>(  ) );
-			// SafeThread safeThr;
-			safeThr->SetExitEvent( [&,i]
+			thread = std::thread( [this]
 			{
-				shutdowns_[i] = true;
-				threadNotifier_.notify_all();
+				ThreadLoop();
 			} );
-			safeThr->SetThread( std::move( std::thread( [this, i]
-				{
-					ThreadLoop( i );
-				} ) )
-			);
 		}
 	}
 
-	void ThreadPool::ShutdownAll()
+	void ThreadPool::Shutdown()
 	{
-		std::ranges::for_each( shutdowns_, []( auto&& bw )
-		{
-			bw = true;
-		} );
-
+		terminator_.store( true );
 		threadNotifier_.notify_all();
 	}
 
 	bool ThreadPool::CanJoinAll() const
 	{
-		for ( const auto& thr : threads_ )
+		for ( const auto& thr : pool_ )
 		{
-			if ( !thr->Active() )
+			if ( !thr.joinable() )
 				return false;
 		}
 
@@ -118,13 +71,18 @@ namespace klib::kThread
 
 	void ThreadPool::JoinAndPopAll()
 	{
-		threads_.clear();
-		shutdowns_.clear();
+		Shutdown();
+		for ( auto& thread : pool_ )
+		{
+			if ( thread.joinable() )
+				thread.join();
+		}
+		pool_.clear();
 	}
 
 	void ThreadPool::ClearJobs()
 	{
-		while ( !jobs_.empty() )
+		while ( !jobsQueue_.empty() )
 		{
 			PopJob();
 		}
@@ -132,32 +90,32 @@ namespace klib::kThread
 
 	void ThreadPool::PopJob()
 	{
-		jobs_.pop();
+		jobsQueue_.pop();
 	}
 
 	size_t ThreadPool::QueueSize() const
 	{
-		return jobs_.size();
+		return jobsQueue_.size();
 	}
 
 	bool ThreadPool::IsQueueEmpty() const
 	{
-		return jobs_.empty();
+		return jobsQueue_.empty();
 	}
 
 	size_t ThreadPool::GetSize() const
 	{
-		return threads_.size();
+		return pool_.size();
 	}
 
 	std::vector<std::thread::id> ThreadPool::GetIDs() const
 	{
 		std::vector<std::thread::id> ids;
-		ids.reserve( threads_.size() );
+		ids.reserve( pool_.size() );
 
-		for ( auto&& thread : threads_ )
+		for ( auto&& thread : pool_ )
 		{
-			ids.emplace_back( thread->GetID() );
+			ids.emplace_back( thread.get_id() );
 		}
 
 		return ids;
@@ -165,46 +123,50 @@ namespace klib::kThread
 
 	void ThreadPool::QueueJob( const Job& job )
 	{
-		// Place a job on the queue and unblock a thread
-		std::unique_lock<std::mutex> l( mutex_ );
+		{
+			std::unique_lock<std::mutex> l( jobsMutex_ );
+			jobsQueue_.emplace( std::move( job ) );
+		}
 
-		jobs_.emplace( std::move( job ) );
 		threadNotifier_.notify_one();
 	}
 
-	std::string_view ThreadPool::LatestJob() const noexcept
-	{
-		return prevJobDesc_;
-	}
-
-	void ThreadPool::ThreadLoop( size_t index )
+	void ThreadPool::ThreadLoop()
 	{
 		Job job;
-		const auto& sd = shutdowns_[index];
 
-		while ( !sd )
+		while ( true )
 		{
 			{
-				std::unique_lock<std::mutex> lock( mutex_ );
+				std::unique_lock<std::mutex> lock( jobsMutex_ );
 
-				threadNotifier_.wait( lock, [this, &sd]
-				{
-					return sd || !IsQueueEmpty();
-				} );
+				threadNotifier_.wait( lock,
+					[&]()
+					{
+						return !jobsQueue_.empty() || terminator_.load();
+					}
+				);
 
-				if ( IsQueueEmpty() )
+				if ( jobsQueue_.empty() )
 				{
 					// No jobs to do and we are shutting down
-					return;
+					break;
 				}
 
-				job = std::move( jobs_.front() );
-				prevJobDesc_ = std::move( job.desc );
-				jobs_.pop();
+				job = std::move( jobsQueue_.front() );
+				ModifyAtomicString( lastJob_, job.desc );
+				jobsQueue_.pop();
 			}
 
 			// Do the job without holding any locks
 			job();
 		}
+	}
+
+	void ThreadPool::ModifyAtomicString( std::atomic<const char*>& str, std::string_view text ) const
+	{
+		auto tempStr = std::make_unique<char[]>( text.size() + 1 );
+		std::memcpy( tempStr.get(), text.data(), sizeof( char ) * text.size() );
+		delete[] str.exchange( tempStr.release() );
 	}
 }

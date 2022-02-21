@@ -23,7 +23,7 @@ namespace kTest
 	using namespace kString;
 
 	TesterManager::TesterManager()
-		: threadPool_( 0 )
+		: threadPool_(  )
 		, endTimePointValue_( 0 )
 		, success_( true )
 	{
@@ -107,7 +107,7 @@ namespace kTest
 
 		if ( noOfThreads > 1 )
 		{
-			threadPool_.AddThread( noOfThreads );
+			threadPool_.Launch( noOfThreads );
 
 			startTimePoint_ = std::chrono::high_resolution_clock::now();
 
@@ -174,13 +174,16 @@ namespace kTest
 
 	void TesterManager::ReportDuration()
 	{
+		// Wait until all tests have been processed
 		while ( std::any_of( finishedTests_.begin(), finishedTests_.end(),
 				[]( auto&& bw )
 				{
 					return bw == false;
 				} )
 		)
-		{ }
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		}
 
 		for ( const auto& result : results_ )
 		{
