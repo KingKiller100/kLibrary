@@ -27,17 +27,16 @@ namespace kTest::utility
 
 	void DebugTester::IsDebuggerAttachedTest()
 	{
-		constexpr auto waitTime = 1000ms;
+		constexpr auto waitTime = std::chrono::duration_cast<std::chrono::milliseconds>( 2ms );
 		using Duration = std::remove_const_t<decltype(waitTime)>;
 
 		const auto startTimePoint = std::chrono::high_resolution_clock::now();
-		Duration duration(0);
 
 		ScanForDebugger(waitTime);
 
 		const auto endTimePoint = std::chrono::high_resolution_clock::now();
 
-		duration = std::chrono::duration_cast<Duration>(endTimePoint - startTimePoint);
+		const auto duration = std::chrono::duration_cast<Duration>( endTimePoint - startTimePoint );
 
 		if (IsDebuggerAttached())
 		{
