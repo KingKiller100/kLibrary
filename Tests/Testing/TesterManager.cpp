@@ -23,7 +23,7 @@ namespace kTest
 	using namespace kString;
 
 	TesterManager::TesterManager()
-		: threadPool_(  )
+		: threadPool_()
 		, endTimePointValue_( 0 )
 		, success_( true )
 	{
@@ -105,34 +105,22 @@ namespace kTest
 	{
 		size_t index{ 0 };
 
-		if ( noOfThreads > 1 )
+		threadPool_.Launch( noOfThreads );
+
+		startTimePoint_ = std::chrono::high_resolution_clock::now();
+
+		while ( !tests_.empty() )
 		{
-			threadPool_.Launch( noOfThreads );
+			const auto& currentTest = tests_.top();
 
-			startTimePoint_ = std::chrono::high_resolution_clock::now();
+			threadPool_.QueueJob( kThread::ThreadPool::Job(
+				[this, currentTest, i = index++]
+				{
+					Run( currentTest, i );
+				}
+				, currentTest->GetName() ) );
 
-			while ( !tests_.empty() )
-			{
-				const auto& currentTest = tests_.top();
-
-				threadPool_.QueueJob( kThread::ThreadPool::Job(
-					[this, currentTest, i = index++]
-					{
-						Run( currentTest, i );
-					}
-					, currentTest->GetName() ) );
-
-				tests_.pop();
-			}
-		}
-		else
-		{
-			startTimePoint_ = std::chrono::high_resolution_clock::now();
-			while ( !tests_.empty() )
-			{
-				Run( tests_.top(), index++ );
-				tests_.pop();
-			}
+			tests_.pop();
 		}
 	}
 
@@ -182,7 +170,7 @@ namespace kTest
 				} )
 		)
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(50));
+			std::this_thread::sleep_for( std::chrono::milliseconds( 50 ) );
 		}
 
 		for ( const auto& result : results_ )
