@@ -79,7 +79,7 @@ namespace klib::kThread
 			}
 
 			threadNotifier_.notify_one();
-			return future;
+			return future.share();
 		}
 
 	protected:

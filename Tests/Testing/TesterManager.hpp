@@ -54,9 +54,9 @@ namespace kTest
 		void ClearAllTests();
 
 	private:
-		void Run( std::shared_ptr<TesterBase> test, size_t index );
+		TesterManager::TestResult Run( std::shared_ptr<TesterBase> test );
 		static void WriteToConsole( const TestResult& result );
-		[[nodiscard]] double GetAverageTime() const;
+		[[nodiscard]] double GetAverageTime( const std::vector<TestResult>& results ) const;
 		void WriteToFile( std::string_view results );
 		void PerformTests( size_t noOfThreads );
 		void ReportDuration();
@@ -64,8 +64,7 @@ namespace kTest
 		klib::kThread::ThreadPool threadPool_;
 		std::string path_;
 		std::stack<std::shared_ptr<TesterBase>> tests_;
-		std::vector<TestResult> results_;
-		std::vector<klib::type_trait::BooleanWrapper> finishedTests_;
+		std::vector<std::shared_future<TestResult>> futureResults_;
 		std::ofstream file_;
 		std::chrono::high_resolution_clock::time_point startTimePoint_;
 		std::atomic_uint64_t endTimePointValue_;

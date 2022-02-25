@@ -91,8 +91,7 @@ namespace kTest
 			( threadsCount > 1 ? "Multi-Threaded" : "Single Threaded" ) <<
 			"[" << threadsCount << "]" << "\n";
 
-		results_.resize( testCount );
-		finishedTests_.resize( testCount, false );
+		futureResults_.reserve( testCount );
 
 		PerformTests( threadsCount );
 		ReportDuration();
@@ -113,12 +112,13 @@ namespace kTest
 		{
 			const auto& currentTest = tests_.top();
 
-			threadPool_.QueueJob( kThread::ThreadPool::Job(
-				[this, currentTest, i = index++]
+			const auto future = threadPool_.QueueJob( [this]( auto test ) -> TestResult
 				{
-					Run( currentTest, i );
-				}
-				, currentTest->GetName() ) );
+					return this->Run( test );
+				}, currentTest
+			);
+
+			futureResults_.emplace_back( std::move( future ) );
 
 			tests_.pop();
 		}
@@ -134,10 +134,9 @@ namespace kTest
 		test.Run();
 	}
 
-	void TesterManager::Run( std::shared_ptr<TesterBase> test, size_t index )
+	TesterManager::TestResult TesterManager::Run( std::shared_ptr<TesterBase> test )
 	{
-		auto& result = results_[index];
-		auto& isFinished = finishedTests_[index];
+		TestResult result;
 
 		const auto startTime = std::chrono::high_resolution_clock::now();
 		const auto passed = test->Run();
@@ -153,38 +152,34 @@ namespace kTest
 			Sprintf( "| Runtime: %.3fms", static_cast<double>( duration.count() ) / 1'000'000.0 );
 
 		result.report = passed
-			                ? Sprintf( "%zu) Success: %s %s\n\n", index + 1, result.testName, durationStr )                          // Success Case
-			                : Sprintf( "%zu) Failure: %s %s\n%s", index + 1, result.testName, durationStr, test->GetFailureData() ); // Fail Case
+			                ? Sprintf( "Success: %s %s\n\n", result.testName, durationStr )                          // Success Case
+			                : Sprintf( "Failure: %s %s\n%s", result.testName, durationStr, test->GetFailureData() ); // Fail Case
 
 		endTimePointValue_.store( endTime.time_since_epoch().count() );
-		isFinished = true;
+		return result;
 	}
 
 	void TesterManager::ReportDuration()
 	{
-		// Wait until all tests have been processed
-		while ( std::any_of( finishedTests_.begin(), finishedTests_.end(),
-				[]( auto&& bw )
-				{
-					return bw == false;
-				} )
-		)
+		std::vector<TestResult> results;
+		results.reserve( futureResults_.size() );
+
+		for ( auto& fRes : futureResults_ )
 		{
-			std::this_thread::sleep_for( std::chrono::milliseconds( 50 ) );
+			const auto result = fRes.get();
+			WriteToFile( result.report );
+			results.emplace_back( result );
 		}
 
-		for ( const auto& result : results_ )
-		{
-			WriteToFile( result.report );
-		}
+		futureResults_.clear();
 
 		// Sort fastest -> slowest
-		std::ranges::sort( results_, []( const TestResult& lhs, const TestResult& rhs )
+		std::ranges::sort( results, []( const TestResult& lhs, const TestResult& rhs )
 		{
 			return lhs.duration < rhs.duration;
 		} );
 
-		for ( const auto& result : results_ )
+		for ( const auto& result : results )
 		{
 			WriteToConsole( result );
 		}
@@ -192,7 +187,7 @@ namespace kTest
 		const auto finalTime = std::chrono::duration_cast<TargetDuration_t>( std::chrono::nanoseconds( endTimePointValue_ ) - startTimePoint_.time_since_epoch() ).count();
 		const auto millis = finalTime % TargetDuration_t::period::den;
 		const auto secs = finalTime - millis;
-		const auto avgTime = GetAverageTime();
+		const auto avgTime = GetAverageTime( results );
 
 		auto timeStr = Sprintf( "Total Runtime: %us %ums | ", secs, millis );
 		timeStr.append( Sprintf( "Average Runtime: %.3fms", avgTime ) );
@@ -228,16 +223,16 @@ namespace kTest
 		file_.flush();
 	}
 
-	double TesterManager::GetAverageTime() const
+	double TesterManager::GetAverageTime( const std::vector<TestResult>& results ) const
 	{
 		double avgTime = 0;
-		for ( const auto& result : results_ )
+		for ( const auto& result : results )
 		{
 			const auto millis = std::chrono::duration_cast<TargetDuration_t>( result.duration );
 			avgTime += static_cast<double>( millis.count() );
 		}
 
-		avgTime /= static_cast<double>( results_.size() );
+		avgTime /= static_cast<double>( results.size() );
 		return avgTime;
 	}
 
@@ -246,12 +241,13 @@ namespace kTest
 		if ( file_.is_open() )
 			file_.close();
 
+		threadPool_.Shutdown();
 		ClearAllTests();
 	}
 
 	void TesterManager::ClearAllTests()
 	{
-		results_.clear();
+		futureResults_.clear();
 	}
 }
 #endif // TESTING_ENABLED
