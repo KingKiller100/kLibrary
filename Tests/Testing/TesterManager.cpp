@@ -91,47 +91,37 @@ namespace kTest
 			( threadsCount > 1 ? "Multi-Threaded" : "Single Threaded" ) <<
 			"[" << threadsCount << "]" << "\n";
 
-		futureResults_.reserve( testCount );
-
-		PerformTests( threadsCount );
-		ReportDuration();
-
+		ReportDuration( PerformTests( threadsCount ) );;
 		std::cout << "\nTests have concluded. Please find results in the following path:\n" << path_ << std::endl;
 	}
 
 
-	void TesterManager::PerformTests( size_t noOfThreads )
+	std::vector<std::shared_future<TesterManager::TestResult>> TesterManager::PerformTests( size_t noOfThreads )
 	{
 		size_t index{ 0 };
 
+		std::vector<std::shared_future<TestResult>> futureResults;
+		futureResults.reserve( tests_.size() );
+		
 		threadPool_.Launch( noOfThreads );
-
-		startTimePoint_ = std::chrono::high_resolution_clock::now();
 
 		while ( !tests_.empty() )
 		{
 			const auto& currentTest = tests_.top();
 
-			const auto future = threadPool_.QueueJob( [this]( auto test ) -> TestResult
-				{
-					return this->Run( test );
-				}, currentTest
+			futureResults.emplace_back(
+				threadPool_.QueueJob( [this]( auto test ) -> TestResult
+					{
+						return this->Run( test );
+					}, currentTest
+				)
 			);
-
-			futureResults_.emplace_back( std::move( future ) );
 
 			tests_.pop();
 		}
-	}
 
-	void TesterManager::RunPerformanceTests() const
-	{
-		if ( !success_ )
-			return;
-
-		auto& test = performance::PerformanceTestManager::Get();
-		std::cout << "Now Testing: " << test.GetName() << " ";
-		test.Run();
+		startTimePoint_ = std::chrono::high_resolution_clock::now();
+		return futureResults;
 	}
 
 	TesterManager::TestResult TesterManager::Run( std::shared_ptr<TesterBase> test )
@@ -159,19 +149,19 @@ namespace kTest
 		return result;
 	}
 
-	void TesterManager::ReportDuration()
+	void TesterManager::ReportDuration( std::vector<std::shared_future<TestResult>> futureResults )
 	{
 		std::vector<TestResult> results;
-		results.reserve( futureResults_.size() );
+		results.reserve( futureResults.size() );
 
-		for ( auto& fRes : futureResults_ )
+		for ( auto& fRes : futureResults )
 		{
-			const auto result = fRes.get();
+			const auto& result = fRes.get();
 			WriteToFile( result.report );
 			results.emplace_back( result );
 		}
 
-		futureResults_.clear();
+		futureResults.clear();
 
 		// Sort fastest -> slowest
 		std::ranges::sort( results, []( const TestResult& lhs, const TestResult& rhs )
@@ -236,6 +226,16 @@ namespace kTest
 		return avgTime;
 	}
 
+	void TesterManager::RunPerformanceTests() const
+	{
+		if (!success_)
+			return;
+
+		auto& test = performance::PerformanceTestManager::Get();
+		std::cout << "Now Testing: " << test.GetName() << " ";
+		test.Run();
+	}
+
 	void TesterManager::Shutdown()
 	{
 		if ( file_.is_open() )
@@ -247,7 +247,10 @@ namespace kTest
 
 	void TesterManager::ClearAllTests()
 	{
-		futureResults_.clear();
+		while ( !tests_.empty() )
+		{
+			tests_.pop();
+		}
 	}
 }
 #endif // TESTING_ENABLED

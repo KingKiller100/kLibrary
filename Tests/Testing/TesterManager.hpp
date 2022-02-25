@@ -58,14 +58,13 @@ namespace kTest
 		static void WriteToConsole( const TestResult& result );
 		[[nodiscard]] double GetAverageTime( const std::vector<TestResult>& results ) const;
 		void WriteToFile( std::string_view results );
-		void PerformTests( size_t noOfThreads );
-		void ReportDuration();
+		std::vector<std::shared_future<TestResult>> PerformTests( size_t noOfThreads );
+		void ReportDuration( std::vector<std::shared_future<TestResult>> futureResults );
 	private:
+		std::ofstream file_;
 		klib::kThread::ThreadPool threadPool_;
 		std::string path_;
 		std::stack<std::shared_ptr<TesterBase>> tests_;
-		std::vector<std::shared_future<TestResult>> futureResults_;
-		std::ofstream file_;
 		std::chrono::high_resolution_clock::time_point startTimePoint_;
 		std::atomic_uint64_t endTimePointValue_;
 		bool success_;
