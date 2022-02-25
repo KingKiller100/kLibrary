@@ -6,6 +6,7 @@
 #include <queue>
 #include <thread>
 #include <condition_variable>
+#include <future>
 
 namespace klib::kThread
 {
@@ -16,12 +17,9 @@ namespace klib::kThread
 
 		struct Job
 		{
-			std::string desc;
 			std::function<Func_t> task;
 
-			Job() noexcept;
-
-			Job( std::function<Func_t> taskToDo, std::string_view description );
+			Job( std::function<Func_t> taskToDo = nullptr ) noexcept;
 
 			void operator()() const;
 		};
@@ -43,11 +41,11 @@ namespace klib::kThread
 
 		bool CanJoinAll() const;
 
-		void JoinAndPopAll();
-
 		void PopJob();
 
 		void ClearJobs();
+
+		std::int64_t IdleCount() const noexcept;
 
 		[[nodiscard]] size_t QueueSize() const;
 		[[nodiscard]] bool IsQueueEmpty() const;
@@ -57,18 +55,44 @@ namespace klib::kThread
 		[[nodiscard]] std::vector<std::thread::id> GetIDs() const;
 
 		// Place a job on the queue and unblock a thread
-		void QueueJob( const Job& job );
-		
-	protected:
-		void ThreadLoop();
-		void ModifyAtomicString(std::atomic<const char*>& str, std::string_view text) const;
+		template <typename Fn, typename ...Params>
+		auto QueueJob( Fn&& jobImpl, Params&&... params )
+		{
+			using Ret_t = decltype(jobImpl( std::forward<Params>( params )... ));
+
+			auto task = std::make_shared<std::packaged_task<Ret_t( void )>>(
+				std::bind( std::forward<Fn>( jobImpl ),
+					std::forward<Params>( params )... )
+			);
+
+			auto future = task->get_future();
+
+			{
+				const std::function<void()> jobWrapper =
+					[task]() mutable 
+				{
+					(*task)();
+				};
+
+				std::unique_lock<std::mutex> l( jobsMutex_ );
+				jobsQueue_.emplace( Job{ jobWrapper } );
+			}
+
+			threadNotifier_.notify_one();
+			return future;
+		}
 
 	protected:
-		std::mutex jobsMutex_;
-		std::condition_variable threadNotifier_;
+		void ThreadLoop();
+		void ModifyAtomicString( std::atomic<const char*>& str, std::string_view text ) const;
+
+	protected:
 		std::atomic_bool terminator_;
 		std::queue<Job> jobsQueue_;
-		std::atomic<const char*> lastJob_;
 		std::vector<std::thread> pool_;
+		std::atomic_int64_t waiting_;
+
+		std::mutex jobsMutex_;
+		std::condition_variable threadNotifier_;
 	};
 }

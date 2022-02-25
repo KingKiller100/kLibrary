@@ -3,13 +3,9 @@
 
 namespace klib::kThread
 {
-	ThreadPool::Job::Job() noexcept
-		: Job( nullptr, "" )
-	{}
-
-	ThreadPool::Job::Job( std::function<Func_t> taskToDo, std::string_view description )
-		: desc( description )
-		, task( taskToDo )
+	
+	ThreadPool::Job::Job( std::function<Func_t> taskToDo ) noexcept
+		: task( taskToDo )
 	{}
 
 	void ThreadPool::Job::operator()() const
@@ -24,18 +20,22 @@ namespace klib::kThread
 
 	ThreadPool::ThreadPool()
 		: terminator_( false )
-		, lastJob_( nullptr )
+		, waiting_( 0 )
 		, threadNotifier_()
 	{ }
 
 	ThreadPool::~ThreadPool()
 	{
-		JoinAndPopAll();
+		if ( !pool_.empty() )
+		{
+			std::terminate();
+		}
 	}
 
 	void ThreadPool::Launch( size_t count )
 	{
 		terminator_.store( false );
+		waiting_.store( 0 );
 
 		// Create the specified number of threads
 		const auto currentSize = GetSize();
@@ -56,6 +56,12 @@ namespace klib::kThread
 	{
 		terminator_.store( true );
 		threadNotifier_.notify_all();
+		for ( auto& thread : pool_ )
+		{
+			if ( thread.joinable() )
+				thread.join();
+		}
+		pool_.clear();
 	}
 
 	bool ThreadPool::CanJoinAll() const
@@ -69,23 +75,17 @@ namespace klib::kThread
 		return true;
 	}
 
-	void ThreadPool::JoinAndPopAll()
-	{
-		Shutdown();
-		for ( auto& thread : pool_ )
-		{
-			if ( thread.joinable() )
-				thread.join();
-		}
-		pool_.clear();
-	}
-
 	void ThreadPool::ClearJobs()
 	{
 		while ( !jobsQueue_.empty() )
 		{
 			PopJob();
 		}
+	}
+
+	std::int64_t ThreadPool::IdleCount() const noexcept
+	{
+		return waiting_.load();
 	}
 
 	void ThreadPool::PopJob()
@@ -121,40 +121,31 @@ namespace klib::kThread
 		return ids;
 	}
 
-	void ThreadPool::QueueJob( const Job& job )
-	{
-		{
-			std::unique_lock<std::mutex> l( jobsMutex_ );
-			jobsQueue_.emplace( std::move( job ) );
-		}
-
-		threadNotifier_.notify_one();
-	}
-
 	void ThreadPool::ThreadLoop()
 	{
 		Job job;
 
-		while ( true )
+		while ( !terminator_.load() )
 		{
 			{
 				std::unique_lock<std::mutex> lock( jobsMutex_ );
 
+				waiting_.fetch_add( 1 );
 				threadNotifier_.wait( lock,
 					[&]()
 					{
 						return !jobsQueue_.empty() || terminator_.load();
 					}
 				);
+				waiting_.fetch_sub( 1 );
 
-				if ( jobsQueue_.empty() )
+				if ( terminator_.load() || jobsQueue_.empty() )
 				{
 					// No jobs to do and we are shutting down
 					break;
 				}
 
 				job = std::move( jobsQueue_.front() );
-				ModifyAtomicString( lastJob_, job.desc );
 				jobsQueue_.pop();
 			}
 
