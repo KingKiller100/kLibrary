@@ -32,7 +32,6 @@ namespace kTest
 
 	TesterManager::~TesterManager()
 	{
-		Shutdown();
 	}
 
 	void TesterManager::Initialize( InitializationRequest initRequest )
@@ -102,7 +101,7 @@ namespace kTest
 
 		std::vector<std::shared_future<TestResult>> futureResults;
 		futureResults.reserve( tests_.size() );
-		
+
 		threadPool_.Launch( noOfThreads );
 
 		while ( !tests_.empty() )
@@ -110,7 +109,7 @@ namespace kTest
 			const auto& currentTest = tests_.top();
 
 			futureResults.emplace_back(
-				threadPool_.QueueJob( [this]( auto test ) -> TestResult
+				threadPool_.EnqueueJob( [this]( auto test ) -> TestResult
 					{
 						return this->Run( test );
 					}, currentTest
@@ -156,9 +155,16 @@ namespace kTest
 
 		for ( auto& fRes : futureResults )
 		{
-			const auto& result = fRes.get();
-			WriteToFile( result.report );
-			results.emplace_back( result );
+			// try
+			// {
+				const auto& result = fRes.get();
+				WriteToFile( result.report );
+				results.emplace_back( result );
+			// }
+			// catch ( const std::exception& e )
+			// {
+				// WriteToFile( kString::Sprintf( "A test threw an exception: %s", e.what() ) );
+			// }
 		}
 
 		futureResults.clear();
@@ -228,7 +234,7 @@ namespace kTest
 
 	void TesterManager::RunPerformanceTests() const
 	{
-		if (!success_)
+		if ( !success_ )
 			return;
 
 		auto& test = performance::PerformanceTestManager::Get();
