@@ -3,8 +3,7 @@
 
 namespace klib::kThread
 {
-	
-	ThreadPool::Job::Job( std::function<Func_t> taskToDo ) noexcept
+	ThreadPool::Job::Job( std::function<Task_t> taskToDo ) noexcept
 		: task( taskToDo )
 	{}
 
@@ -21,7 +20,6 @@ namespace klib::kThread
 	ThreadPool::ThreadPool()
 		: terminator_( false )
 		, waiting_( 0 )
-		, threadNotifier_()
 	{ }
 
 	ThreadPool::~ThreadPool()
@@ -47,15 +45,15 @@ namespace klib::kThread
 		{
 			thread = std::thread( [this]
 			{
-				ThreadLoop();
+				WorkLoop();
 			} );
 		}
 	}
 
 	void ThreadPool::Shutdown()
 	{
+		jobsQueue_.Terminate();
 		terminator_.store( true );
-		threadNotifier_.notify_all();
 		for ( auto& thread : pool_ )
 		{
 			if ( thread.joinable() )
@@ -77,7 +75,7 @@ namespace klib::kThread
 
 	void ThreadPool::ClearJobs()
 	{
-		while ( !jobsQueue_.empty() )
+		while ( !jobsQueue_.IsEmpty() )
 		{
 			PopJob();
 		}
@@ -90,17 +88,12 @@ namespace klib::kThread
 
 	void ThreadPool::PopJob()
 	{
-		jobsQueue_.pop();
+		( void )jobsQueue_.Dequeue();
 	}
 
 	size_t ThreadPool::QueueSize() const
 	{
-		return jobsQueue_.size();
-	}
-
-	bool ThreadPool::IsQueueEmpty() const
-	{
-		return jobsQueue_.empty();
+		return jobsQueue_.Size();
 	}
 
 	size_t ThreadPool::GetSize() const
@@ -121,43 +114,26 @@ namespace klib::kThread
 		return ids;
 	}
 
-	void ThreadPool::ThreadLoop()
+	void ThreadPool::WorkLoop()
 	{
-		Job job;
+		std::optional<Job> job;
 
 		while ( !terminator_.load() )
 		{
 			{
-				std::unique_lock<std::mutex> lock( jobsMutex_ );
-
 				waiting_.fetch_add( 1 );
-				threadNotifier_.wait( lock,
-					[&]()
-					{
-						return !jobsQueue_.empty() || terminator_.load();
-					}
-				);
+				job = jobsQueue_.Dequeue();
 				waiting_.fetch_sub( 1 );
 
-				if ( terminator_.load() || jobsQueue_.empty() )
+				if ( job == std::nullopt || terminator_.load() )
 				{
-					// No jobs to do and we are shutting down
+					// No jobs to do and/or we are shutting down
 					break;
 				}
-
-				job = std::move( jobsQueue_.front() );
-				jobsQueue_.pop();
 			}
 
 			// Do the job without holding any locks
-			job();
+			( *job )();
 		}
-	}
-
-	void ThreadPool::ModifyAtomicString( std::atomic<const char*>& str, std::string_view text ) const
-	{
-		auto tempStr = std::make_unique<char[]>( text.size() + 1 );
-		std::memcpy( tempStr.get(), text.data(), sizeof( char ) * text.size() );
-		delete[] str.exchange( tempStr.release() );
 	}
 }

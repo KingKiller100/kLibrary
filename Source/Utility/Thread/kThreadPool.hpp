@@ -1,25 +1,25 @@
 #pragma once
 
+#include "kSafeQueue.hpp"
+
 #include <atomic>
 #include <functional>
-#include <mutex>
-#include <queue>
-#include <thread>
-#include <condition_variable>
 #include <future>
+#include <thread>
+
 
 namespace klib::kThread
 {
 	class ThreadPool
 	{
 	public:
-		using Func_t = void();
+		using Task_t = void();
 
 		struct Job
 		{
-			std::function<Func_t> task;
+			std::function<Task_t> task;
 
-			Job( std::function<Func_t> taskToDo = nullptr ) noexcept;
+			Job( std::function<Task_t> taskToDo = nullptr ) noexcept;
 
 			void operator()() const;
 		};
@@ -45,10 +45,9 @@ namespace klib::kThread
 
 		void ClearJobs();
 
-		std::int64_t IdleCount() const noexcept;
+		[[nodiscard]] std::int64_t IdleCount() const noexcept;
 
 		[[nodiscard]] size_t QueueSize() const;
-		[[nodiscard]] bool IsQueueEmpty() const;
 
 		[[nodiscard]] size_t GetSize() const;
 
@@ -56,11 +55,11 @@ namespace klib::kThread
 
 		// Place a job on the queue and unblock a thread
 		template <typename Fn, typename ...Params>
-		auto QueueJob( Fn&& jobImpl, Params&&... params )
+		auto EnqueueJob( Fn&& jobImpl, Params&&... params )
 		{
-			using Ret_t = decltype(jobImpl( std::forward<Params>( params )... ));
+			using Ret_t = decltype( jobImpl( std::forward<Params>( params )... ) );
 
-			auto task = std::make_shared<std::packaged_task<Ret_t( void )>>(
+			auto task = std::make_shared<std::packaged_task<Ret_t()>>(
 				std::bind( std::forward<Fn>( jobImpl ),
 					std::forward<Params>( params )... )
 			);
@@ -68,31 +67,26 @@ namespace klib::kThread
 			auto future = task->get_future();
 
 			{
-				const std::function<void()> jobWrapper =
-					[task]() mutable 
+				const std::function<Task_t> jobWrapper =
+					[task]() mutable
 				{
-					(*task)();
+					( *task )();
 				};
-
-				std::unique_lock<std::mutex> l( jobsMutex_ );
-				jobsQueue_.emplace( Job{ jobWrapper } );
+				
+				jobsQueue_.Enqueue( Job{ jobWrapper } );
 			}
-
-			threadNotifier_.notify_one();
+			
 			return future.share();
 		}
 
 	protected:
-		void ThreadLoop();
-		void ModifyAtomicString( std::atomic<const char*>& str, std::string_view text ) const;
+		void WorkLoop();
 
 	protected:
+		SafeQueue<Job> jobsQueue_;
 		std::atomic_bool terminator_;
-		std::queue<Job> jobsQueue_;
 		std::vector<std::thread> pool_;
 		std::atomic_int64_t waiting_;
-
-		std::mutex jobsMutex_;
-		std::condition_variable threadNotifier_;
+		
 	};
 }
