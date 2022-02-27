@@ -19,7 +19,7 @@ namespace kTest
 	{
 	public:
 		using TargetDuration_t = std::chrono::milliseconds;
-		using TargetSubDuration_t = std::chrono::microseconds;
+		using TargetSubDuration_t = std::chrono::high_resolution_clock::duration;
 		
 		enum class InitializationRequest { All = 0b0 };
 
@@ -56,17 +56,16 @@ namespace kTest
 	private:
 		TesterManager::TestResult Run( std::shared_ptr<TesterBase> test );
 		static void WriteToConsole( const TestResult& result );
-		[[nodiscard]] double GetAverageTime( const std::vector<TestResult>& results ) const;
+		[[nodiscard]] TargetDuration_t CalculateTotalTestTime( const std::vector<TestResult>& results ) const;
 		void WriteToFile( std::string_view results );
 		std::vector<std::shared_future<TestResult>> PerformTests( size_t noOfThreads );
 		void ReportDuration( std::vector<std::shared_future<TestResult>> futureResults );
 	private:
-		std::ofstream file_;
 		klib::kThread::ThreadPool threadPool_;
-		std::string path_;
+		std::ofstream file_;
 		std::stack<std::shared_ptr<TesterBase>> tests_;
+		std::string path_;
 		std::chrono::high_resolution_clock::time_point startTimePoint_;
-		std::atomic_uint64_t endTimePointValue_;
 		bool success_;
 	};
 }

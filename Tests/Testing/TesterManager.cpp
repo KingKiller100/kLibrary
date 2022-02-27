@@ -1,8 +1,5 @@
 #include "TesterManager.hpp"
 
-#include <numeric>
-
-
 #ifdef TESTING_ENABLED
 
 #include "TesterBase.hpp"
@@ -24,15 +21,13 @@ namespace kTest
 
 	TesterManager::TesterManager()
 		: threadPool_()
-		, endTimePointValue_( 0 )
 		, success_( true )
 	{
 		std::cout.precision( 3 );
 	}
 
 	TesterManager::~TesterManager()
-	{
-	}
+	{ }
 
 	void TesterManager::Initialize( InitializationRequest initRequest )
 	{
@@ -143,8 +138,6 @@ namespace kTest
 		result.report = passed
 			                ? Sprintf( "Success: %s %s\n\n", result.testName, durationStr )                          // Success Case
 			                : Sprintf( "Failure: %s %s\n%s", result.testName, durationStr, test->GetFailureData() ); // Fail Case
-
-		endTimePointValue_.store( endTime.time_since_epoch().count() );
 		return result;
 	}
 
@@ -155,17 +148,19 @@ namespace kTest
 
 		for ( auto& fRes : futureResults )
 		{
-			// try
-			// {
+			try
+			{
 				const auto& result = fRes.get();
 				WriteToFile( result.report );
 				results.emplace_back( result );
-			// }
-			// catch ( const std::exception& e )
-			// {
-				// WriteToFile( kString::Sprintf( "A test threw an exception: %s", e.what() ) );
-			// }
+			}
+			catch ( const std::exception& e )
+			{
+				WriteToFile( kString::Sprintf( "A test threw an exception: %s", e.what() ) );
+			}
 		}
+
+		const auto endTimePoint = std::chrono::high_resolution_clock::now();
 
 		futureResults.clear();
 
@@ -180,13 +175,16 @@ namespace kTest
 			WriteToConsole( result );
 		}
 
-		const auto finalTime = std::chrono::duration_cast<TargetDuration_t>( std::chrono::nanoseconds( endTimePointValue_ ) - startTimePoint_.time_since_epoch() ).count();
-		const auto millis = finalTime % TargetDuration_t::period::den;
-		const auto secs = finalTime - millis;
-		const auto avgTime = GetAverageTime( results );
+		const auto duration = endTimePoint - startTimePoint_;
+		const auto totalMilliseconds = std::chrono::duration_cast<TargetDuration_t>( duration ).count();
+		const auto millis = totalMilliseconds % TargetDuration_t::period::den;
+		const auto secs = totalMilliseconds - millis;
+		const auto totalTestTime = CalculateTotalTestTime( results );
+		const auto avgTestTime = static_cast<double>( totalTestTime.count() ) / static_cast<double>( results.size() );
 
-		auto timeStr = Sprintf( "Total Runtime: %us %ums | ", secs, millis );
-		timeStr.append( Sprintf( "Average Runtime: %.3fms", avgTime ) );
+		auto timeStr = Sprintf( "Runtime: %us %ums | ", secs, millis );
+		timeStr.append( Sprintf( "Total Test Runtime: %ums | ", totalTestTime.count() ) );
+		timeStr.append( Sprintf( "Average Test Runtime: %.3fms", avgTestTime ) );
 
 		WriteToFile( timeStr );
 
@@ -197,7 +195,7 @@ namespace kTest
 	{
 		const auto& pass = result.passed;
 		const auto& name = result.testName;
-		const auto millis = static_cast<double>( result.duration.count() ) / 1'000.0;
+		const auto millis = static_cast<double>( std::chrono::duration_cast<std::chrono::microseconds>( result.duration ).count() ) / TargetDuration_t::period::den;
 		auto* const hConsole = GetStdHandle( STD_OUTPUT_HANDLE );
 
 		std::cout << "Ran: " << name << "| ";
@@ -219,17 +217,15 @@ namespace kTest
 		file_.flush();
 	}
 
-	double TesterManager::GetAverageTime( const std::vector<TestResult>& results ) const
+	TesterManager::TargetDuration_t TesterManager::CalculateTotalTestTime( const std::vector<TestResult>& results ) const
 	{
-		double avgTime = 0;
+		TargetSubDuration_t totalDuration{ 0 };
 		for ( const auto& result : results )
 		{
-			const auto millis = std::chrono::duration_cast<TargetDuration_t>( result.duration );
-			avgTime += static_cast<double>( millis.count() );
+			totalDuration += result.duration;
 		}
 
-		avgTime /= static_cast<double>( results.size() );
-		return avgTime;
+		return std::chrono::duration_cast<TargetDuration_t>( totalDuration );
 	}
 
 	void TesterManager::RunPerformanceTests() const

@@ -84,11 +84,11 @@ namespace kTest
 		AddTest<utility::StringManipulationTester>(tm);
 		AddTest<utility::FormatToStringTester>(tm);
 		AddTest<utility::SourceInfoTester>(tm);
+		AddTest<utility::DebugTester>(tm);
+		AddTest<utility::StringViewTester>(tm);
+		AddTest<utility::LoggingTester>(tm);
 		AddTest<utility::CalendarTester>(tm);
 		AddTest<utility::FileSystemTester>(tm);
-		AddTest<utility::DebugTester>(tm);
-		AddTest<utility::LoggingTester>(tm);
-		AddTest<utility::StringViewTester>(tm);
 		
 		if (includeTimeTests)
 		{
