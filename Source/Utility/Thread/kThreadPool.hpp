@@ -12,17 +12,7 @@ namespace klib::kThread
 {
 	class ThreadPool
 	{
-	public:
-		using Task_t = void();
-
-		struct Job
-		{
-			std::function<Task_t> task;
-
-			Job( std::function<Task_t> taskToDo = nullptr ) noexcept;
-
-			void operator()() const;
-		};
+		using Job_t = std::function<void()>;
 
 	public:
 		ThreadPool();
@@ -66,16 +56,14 @@ namespace klib::kThread
 
 			auto future = task->get_future();
 
+			const auto jobWrapper =
+				[task]() 
 			{
-				const std::function<Task_t> jobWrapper =
-					[task]() mutable
-				{
-					( *task )();
-				};
-				
-				jobsQueue_.Enqueue( Job{ jobWrapper } );
-			}
-			
+				( *task )();
+			};
+
+			jobsQueue_.Enqueue( std::move( jobWrapper ) );
+
 			return future.share();
 		}
 
@@ -83,10 +71,9 @@ namespace klib::kThread
 		void WorkLoop();
 
 	protected:
-		SafeQueue<Job> jobsQueue_;
+		SafeQueue<Job_t> jobsQueue_;
 		std::atomic_bool terminator_;
 		std::vector<std::thread> pool_;
 		std::atomic_int64_t waiting_;
-		
 	};
 }
