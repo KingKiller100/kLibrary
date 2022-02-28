@@ -160,7 +160,8 @@ namespace kTest
 			}
 		}
 
-		const auto endTimePoint = std::chrono::high_resolution_clock::now();
+		const auto duration = std::chrono::high_resolution_clock::now() - startTimePoint_;
+		const auto totalTestTime = CalculateTotalTestTime( results );
 
 		futureResults.clear();
 
@@ -175,11 +176,9 @@ namespace kTest
 			WriteToConsole( result );
 		}
 
-		const auto duration = endTimePoint - startTimePoint_;
 		const auto totalMilliseconds = std::chrono::duration_cast<TargetDuration_t>( duration ).count();
 		const auto millis = totalMilliseconds % TargetDuration_t::period::den;
 		const auto secs = totalMilliseconds - millis;
-		const auto totalTestTime = CalculateTotalTestTime( results );
 		const auto avgTestTime = static_cast<double>( totalTestTime.count() ) / static_cast<double>( results.size() );
 
 		auto timeStr = Sprintf( "Runtime: %us %ums | ", secs, millis );
