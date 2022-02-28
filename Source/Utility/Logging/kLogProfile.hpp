@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "kLogLevel.hpp"
+#include "../String/kToString.hpp"
 #include <string>
 
 namespace klib::kLogs
@@ -60,6 +61,12 @@ namespace klib::kLogs
 		 */
 		void AddEntry( LogLevel lvl, std::string_view text );
 
+		template <typename Arg0, typename ...Args>
+		void AddEntry( LogLevel lvl, std::string_view fmt, const Arg0& arg0, const Args& ...args )
+		{
+			AddEntry( lvl, kString::ToString( fmt, arg0, args... ) );
+		}
+
 		friend class LogDispatcher;
 
 	private:
@@ -68,7 +75,7 @@ namespace klib::kLogs
 		bool Loggable( LogLevel lvl ) const;
 
 		void SetDispatcher( LogDispatcher* dispatcher );
-		
+
 		void VerifyDispatcherSet() const;
 
 	private:
@@ -87,7 +94,7 @@ namespace klib::kLogs
 		friend class LogDispatcher;
 
 	private:
-		explicit LogProfileRef(std::shared_ptr<LogProfile> prof);
+		explicit LogProfileRef( std::shared_ptr<LogProfile> prof );
 
 	private:
 		std::shared_ptr<LogProfile> profile_;

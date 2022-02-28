@@ -48,14 +48,14 @@ namespace klib::kLogs
 
 	void LogProfile::AddBanner( std::string_view text, std::string_view frontPadding, std::string_view backPadding, std::uint16_t paddingCount )
 	{
-		VerifyDispatcherSet();
+		// VerifyDispatcherSet();
 
 		dispatcher->AddBanner( shared_from_this(), text, frontPadding, backPadding, paddingCount );
 	}
 
 	void LogProfile::AddEntry( LogLevel lvl, std::string_view text )
 	{
-		VerifyDispatcherSet();
+		// VerifyDispatcherSet();
 
 		if ( !Loggable( lvl ) )
 			return;
